@@ -1,17 +1,8 @@
 // components/FileUploadButton.tsx
 import AssignmentAddIcon from '@mui/icons-material/AssignmentAdd';
-import { Button, ButtonProps, Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import React from 'react';
-interface FileUploadButtonProps {
-  onFileSelect: (file: File) => void;
-  label?: string;
-  size?: ButtonProps['size'];
-  accept?: string;
-  iconSize?: string;
-  buttonVariant?: ButtonProps['variant'];
-  buttonColor?: ButtonProps['color'];
-}
-
+import { FileUploadButtonProps } from './FileUploadButton.d';
 const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   onFileSelect,
   label = 'Upload File',
