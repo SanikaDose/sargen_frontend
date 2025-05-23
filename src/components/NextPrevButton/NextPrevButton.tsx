@@ -8,7 +8,7 @@ import { FaChevronRight } from 'react-icons/fa6';
 import { FaChevronLeft } from 'react-icons/fa6';
 
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
-export type ButtonColor = 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+export type ButtonColor = 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning' | '#10557C';
 export type ArrowDirection = 'left' | 'right' | 'up' | 'down';
 
 type CustomButtonProps = {
@@ -53,19 +53,28 @@ export const NextPrevButton: React.FC<CustomButtonProps> = ({
   //   };
 
   return (
-    <Button variant={variant} color={color} onClick={onClick} className={className} {...rest}>
-      {arrow === 'left' && (
-        <span style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center' }}>
-          <FaLongArrowAltLeft size={20} />
-        </span>
-      )}
-      {children}
-      {arrow === 'right' && (
-        <span style={{ marginLeft: 8, display: 'inline-flex', alignItems: 'center' }}>
-          <FaLongArrowAltRight size={20} />
-        </span>
-      )}
-      {/* {getArrow()} */}
+    <Button
+      variant={variant}
+      onClick={onClick}
+      className={className}
+      {...rest}
+      style={{ borderRadius: 12, padding: 12, backgroundColor: '#10557C' }}
+    >
+      <span
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          flexDirection: 'column',
+          paddingLeft: 8,
+          paddingRight: 8,
+          color: 'white',
+        }}
+      >
+        {arrow === 'left' && <FaChevronLeft />}
+        {arrow === 'right' && <FaChevronRight />}
+        {children}
+      </span>
     </Button>
   );
 };
