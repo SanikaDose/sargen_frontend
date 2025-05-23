@@ -15,6 +15,6 @@ type Story = StoryObj<typeof SideBar>;
 export const Default: Story = {
   args: {
     open: true,
-    drawerList: ['viren'],
+    drawerList: ['All mail', 'Trash', 'Spam'],
   },
 };
