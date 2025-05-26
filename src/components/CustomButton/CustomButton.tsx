@@ -18,27 +18,27 @@ type CustomButtonProps = {
   width?: number | string;
 } & Omit<ButtonProps, 'variant' | 'color'>;
 
-export const NextPrevButton: React.FC<CustomButtonProps> = ({
+export const CustomButton: React.FC<CustomButtonProps> = ({
   children,
   variant = 'text',
   color = 'primary',
   onClick,
   className = '',
   icon,
-  height = 48,
-  width = 'auto',
+  height = 64,
+  width = 100,
   ...rest
 }) => {
   const renderIcon = () => {
     switch (icon) {
       case 'left':
-        return <FaChevronLeft />;
+        return <FaChevronLeft size={20} />;
       case 'right':
-        return <FaChevronRight />;
+        return <FaChevronRight size={20} />;
       case 'alert':
-        return <MdOutlineAddAlert size={20} />;
+        return <MdOutlineAddAlert size={24} />;
       case 'success':
-        return <PlaylistAddCheckCircleIcon />;
+        return <PlaylistAddCheckCircleIcon fontSize="medium" />;
       default:
         return null;
     }
@@ -62,9 +62,12 @@ export const NextPrevButton: React.FC<CustomButtonProps> = ({
       <span
         style={{
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          gap: 6,
+          justifyContent: 'center',
+          gap: 4,
           color: 'white',
+          textAlign: 'center',
         }}
       >
         {renderIcon()}
