@@ -1,0 +1,28 @@
+.buttonGrid {
+  height: auto;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+}
+
+.questionButton {
+  height: 50px;
+  border-radius: 4px;
+  padding: 4px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  background-color: lightgray;
+  color: black;
+  margin: 3%;
+}
+
+.reviewed {
+  background-color: rgba(161, 208, 102, 1);
+}
+
+.selected {
+  background-color: #1976d2;
+  color: rgba(223, 224, 221, 1);
+}

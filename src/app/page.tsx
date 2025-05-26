@@ -1,3 +1,9 @@
+import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
+
 export default function Home() {
-  return <h1>PAge</h1>;
+  return (
+    <div style={{height:"100vh"}}>
+      <PreviewSideBox />
+    </div>
+  );
 }
