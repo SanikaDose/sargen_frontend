@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { NextPrevButton } from './NextPrevButton';
+import { NextPrevButton } from './CustomButton';
 
 const meta: Meta<typeof NextPrevButton> = {
   title: 'Components/CustomButton',
