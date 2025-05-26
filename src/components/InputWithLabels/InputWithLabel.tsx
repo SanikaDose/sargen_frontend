@@ -25,6 +25,12 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, req
         size="medium"
         required={required}
         fullWidth
+        sx={{
+          '& input::placeholder': {
+            fontWeight: 600, // Make placeholder bold
+            color: '#888', // Optional: placeholder color
+          },
+        }}
         {...textFieldProps}
       />
     </FormControl>
