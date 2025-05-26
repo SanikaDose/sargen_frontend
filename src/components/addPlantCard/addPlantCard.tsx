@@ -23,6 +23,7 @@ function AddPlantCard({ label, backgroundColor, onClick }: AddPlantCardProps) {
           height: '280px',
           boxShadow: '1px solid #837878',
         }}
+        onClick={onClick}
       >
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
           <path
@@ -31,7 +32,7 @@ function AddPlantCard({ label, backgroundColor, onClick }: AddPlantCardProps) {
           />
         </svg>
         <CardContent>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} onClick={onClick}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {label}
           </Typography>
         </CardContent>
