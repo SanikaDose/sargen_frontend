@@ -12,12 +12,11 @@ const meta: Meta<typeof NextPrevButton> = {
       options: ['text', 'contained', 'outlined'],
     },
     color: {
-      control: 'select',
-      options: ['primary', 'secondary', 'success', 'error', 'info', 'warning', 'inherit'],
+      control: 'text',
     },
-    arrow: {
+    icon: {
       control: 'select',
-      options: ['left', 'right', 'up', 'down', undefined],
+      options: ['left', 'right', 'alert', 'success', undefined],
     },
     children: {
       control: 'text',
@@ -33,7 +32,7 @@ export const ArrowLeft: Story = {
     children: 'Go Back',
     color: 'secondary',
     variant: 'text',
-    arrow: 'left',
+    icon: 'left',
   },
 };
 
@@ -42,24 +41,24 @@ export const ArrowRight: Story = {
     children: 'Continue',
     color: 'success',
     variant: 'contained',
-    arrow: 'right',
+    icon: 'right',
   },
 };
 
-export const ArrowUp: Story = {
-  args: {
-    children: 'Scroll Up',
-    color: 'info',
-    variant: 'outlined',
-    arrow: 'up',
-  },
-};
+// export const ArrowUp: Story = {
+//   args: {
+//     children: 'Scroll Up',
+//     color: 'info',
+//     variant: 'outlined',
+//     arrow: 'up',
+//   },
+// };
 
-export const ArrowDown: Story = {
-  args: {
-    children: 'Scroll Down',
-    color: 'warning',
-    variant: 'outlined',
-    arrow: 'down',
-  },
-};
+// export const ArrowDown: Story = {
+//   args: {
+//     children: 'Scroll Down',
+//     color: 'warning',
+//     variant: 'outlined',
+//     arrow: 'down',
+//   },
+// };
