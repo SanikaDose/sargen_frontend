@@ -42,10 +42,15 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps> = ({
       <Typography
         variant="body2"
         sx={{
-          color: gray[500],
-          flexGrow: 1,
-           fontSize: '1rem'
-        }}
+    color: gray[500],
+    flexGrow: 1,
+    fontSize: {
+      xs: '1.2rem',  // phones
+      sm: '1.4rem',  // tablets
+      md: '1.6rem',  // desktops
+      lg: '1.8rem',  // large screens
+    },
+  }}
       >
         {fieldName}
       </Typography>
@@ -54,15 +59,25 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps> = ({
         sx={{
           display: 'flex',
           flexDirection: 'row',
-          gap: "5px",
+          gap: "7px",
           alignItems: 'flex-end',
           ml: 2,
         }}
       >
         <Box
           sx={{
-            px: 1,
-            py: 1,
+           px: {
+      xs: 1,
+      sm: 2,
+      md: 3,
+      lg: 4,
+    },
+    py: {
+      xs: 1,
+      sm: 1.5,
+      md: 2,
+      lg: 2,
+    },
             borderRadius: 2,
             border: 1,
             borderColor: '#e0e0e0',
@@ -74,6 +89,12 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps> = ({
             variant="body1"
             sx={{
               color: gray[400],
+              fontSize: {
+      xs: '1.2rem',  // phones
+      sm: '1.4rem',  // tablets
+      md: '1.6rem',  // desktops
+      lg: '1.8rem',  // large screens
+    },
             }}
           >
             {stringValue}
@@ -84,6 +105,12 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps> = ({
           sx={{
             mt: 0.5,
             color: gray[400],
+            fontSize: {
+      xs: '1.2rem',  // phones
+      sm: '1.4rem',  // tablets
+      md: '1.6rem',  // desktops
+      lg: '1.8rem',  // large screens
+    },
           }}
         >
           %
