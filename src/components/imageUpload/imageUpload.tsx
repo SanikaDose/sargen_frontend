@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Avatar, IconButton, Box, Stack } from '@mui/material';
 import Edit from '@mui/icons-material/Edit';
-import styles from '../imageUpload/style.module.css'; // Adjust the path as necessary';
-const imageUploader: React.FC = () => {
+import styles from './style.module.css';
+const ImageUploader: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,4 +35,4 @@ const imageUploader: React.FC = () => {
   );
 };
 
-export default imageUploader;
+export default ImageUploader;
