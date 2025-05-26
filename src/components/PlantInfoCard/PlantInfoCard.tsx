@@ -100,9 +100,7 @@ const PlantInfoCard = ({ data }: { data?: PlantData }) => {
         <Box>
           <Typography className={styles.statusLabel}>Status</Typography>
           <Divider sx={{ marginBottom: 1 }} />
-          <Button className={styles.startButton} sx={{ bgcolor: '#10557C33' }}>
-            START ASSESSMENT
-          </Button>
+          <Button children={'Start Assesment'} color={'secondary'} variant={'text'} sx={{ bgcolor: '#10557C33' }} />
         </Box>
         <Box className={styles.progressCircle}>
           <ProgressCircle color="#1976d2" size={100} thickness={4} value={75} />
