@@ -1,0 +1,41 @@
+.buttonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: white;
+  text-transform: none;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.button {
+  border-radius: 16px;
+  background-color: #10557c;
+  padding: 12px 16px;
+  min-width: 90px;
+  font-size: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 600px) {
+  .button {
+    min-width: 120px;
+    font-size: 0.875rem;
+    padding: 14px 20px;
+  }
+}
+
+@media (min-width: 900px) {
+  .button {
+    min-width: 150px;
+    font-size: 1rem;
+    padding: 16px 24px;
+  }
+}
