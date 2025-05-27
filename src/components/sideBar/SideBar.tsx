@@ -84,11 +84,11 @@ const SideBar: React.FC<SideBarProps> = ({
         <Grid size={12}>
           <Divider />
         </Grid>
-        <Grid container direction="row" spacing={1} padding={2} border={1}>
+        <Grid container direction="row" spacing={1} padding={2}>
           <Grid size={{ xs: 12, md: 6 }} border={3}>
             <img src="/elansolLogo.png" alt="App Icon" width={100} height={50} />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }} border={1} textAlign="center">
+          <Grid size={{ xs: 12, md: 6 }} textAlign="center">
             <ListItemText
               secondary="Version 1.0.0"
               slotProps={{
