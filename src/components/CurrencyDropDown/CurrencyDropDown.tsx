@@ -97,7 +97,7 @@ const CurrencyValueSelector: React.FC = () => {
     endAdornment: (
       <InputAdornment position="end">
         <IconButton onClick={handleMenuClick}>
-          <ArrowDropDownIcon />
+      
         </IconButton>
       </InputAdornment>
     ),
@@ -106,13 +106,13 @@ const CurrencyValueSelector: React.FC = () => {
 
 
       {/* Dropdown menu for values */}
-      <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
+      {/* <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
         {predefinedValues.map((val) => (
           <MenuItem key={val} onClick={() => handleMenuItemClick(val)}>
             {val}
           </MenuItem>
         ))}
-      </Menu>
+      </Menu> */}
     </Box>
   );
 };
