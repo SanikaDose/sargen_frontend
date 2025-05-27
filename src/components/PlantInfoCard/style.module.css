@@ -1,0 +1,105 @@
+.card {
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f2f2f2;
+  max-width: 400px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.titleSm {
+  font-size: 1.2rem;
+}
+
+.titleMd {
+  font-size: 1.4rem;
+}
+
+.editButton {
+  padding: 4px;
+  font-size: 1rem;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.content {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+.infoGrid {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textLabel {
+  font-size: 1rem;
+}
+
+.textLabelSm {
+  font-size: 0.8rem;
+}
+
+.textLabelMd {
+  font-size: 0.9rem;
+}
+
+.datesTitle {
+  color: gray;
+  font-weight: bold;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusLabel {
+  color: gray;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.startButton {
+  margin-top: 8px;
+  background-color: #10557c33;
+  padding: 6px 24px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.progressCircle {
+  position: relative;
+  display: inline-flex;
+}
+
+.textLabel {
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .textLabel {
+    font-size: 0.8rem;
+  }
+}
+@media (min-width: 600px) and (max-width: 900px) {
+  .textLabel {
+    font-size: 0.9rem;
+  }
+}
