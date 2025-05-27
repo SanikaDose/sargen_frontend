@@ -14,7 +14,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp }) => {
       reader.readAsDataURL(file);
     }
   };
-
+  // this is an image uploader component that allows users to upload an image and display it as an avatar. If no image is uploaded, it defaults to a specified image path.
+  // If imageProp is provided, it will be used as the default image.
   const avatarSrc = image || imageProp || '/images/default-logo-image.png';
 
   return (
