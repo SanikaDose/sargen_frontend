@@ -1,10 +1,6 @@
 import React from 'react';
 import { Tooltip, Typography } from '@mui/material';
-
-interface TooltipLabelProps {
-  label: string;
-  children: React.ReactNode;
-}
+import {TooltipLabelProps} from './HoverToolTip.types'
 
 const TooltipLabel: React.FC<TooltipLabelProps> = ({ label, children }) => (
   <Tooltip title={label}>

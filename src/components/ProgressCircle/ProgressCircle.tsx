@@ -1,13 +1,7 @@
-// ProgressCircle.tsx
 import React from 'react';
 import { CircularProgress, Box, Typography } from '@mui/material';
-
-interface ProgressCircleProps {
-  value: number;        // percentage (0–100)
-  size?: number;        // diameter in px
-  thickness?: number;   // stroke width
-  color?: string;       // circle color
-}
+import { ProgressCircleProps } from './ProgressCircle.types';
+import styles from './style.module.css';
 
 const ProgressCircle: React.FC<ProgressCircleProps> = ({
   value,
@@ -16,12 +10,7 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({
   color = '#1976d2',
 }) => {
   return (
-    <Box
-      position="relative"
-      display="inline-flex"
-      alignItems="center"
-      justifyContent="center"
-    >
+    <Box className={styles.container}>
       <CircularProgress
         variant="determinate"
         value={value}
@@ -29,16 +18,7 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({
         thickness={thickness}
         style={{ color }}
       />
-      <Box
-        top={0}
-        left={0}
-        bottom={0}
-        right={0}
-        position="absolute"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Box className={styles.overlay}>
         <Typography variant="caption" component="div" color="textSecondary">
           {`${Math.round(value)}%`}
         </Typography>

@@ -11,15 +11,15 @@ import {
   TextField,
   IconButton,
 } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import styles from './style.module.css'; // ✅ import the CSS module
 
-const currencies = ['USD', 'EUR', 'INR', 'JPY'];
-const predefinedValues = ['10', '20', '50', '100'];
+const currencies = ['USD', 'EUR', 'INR', 'JPY', 'UAE'];
 const currencySymbols: Record<string, string> = {
   USD: '$',
   EUR: '€',
   INR: '₹',
   JPY: '¥',
+  UAE: 'د.إ'
 };
 
 const CurrencyValueSelector: React.FC = () => {
@@ -33,17 +33,13 @@ const CurrencyValueSelector: React.FC = () => {
     setCurrency(event.target.value);
   };
 
- const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const input = event.target.value;
-
-  // Regex: optional digits, optional 1 decimal point, max 2 decimal digits
-  const isValid = /^(\d+\.?\d{0,2}|\.\d{0,2})?$/.test(input);
-
-  if (isValid) {
-    setValue(input);
-  }
-};
-
+  const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value;
+    const isValid = /^(\d+\.?\d{0,2}|\.\d{0,2})?$/.test(input);
+    if (isValid) {
+      setValue(input);
+    }
+  };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -55,9 +51,8 @@ const CurrencyValueSelector: React.FC = () => {
   };
 
   return (
-    <Box display="flex" gap={2}>
-      {/* Currency with symbol */}
-      <FormControl sx={{ minWidth: 200 }}>
+    <Box className={styles.container}>
+      <FormControl className={styles.formControl}>
         <InputLabel id="currency-label">Currency</InputLabel>
         <Select
           labelId="currency-label"
@@ -83,36 +78,23 @@ const CurrencyValueSelector: React.FC = () => {
         </Select>
       </FormControl>
 
-      {/* Input field + dropdown menu */}
-     <TextField
-  label="Value"
-  type="text" // Use text to remove spinner arrows
-  value={value}
-  onChange={handleValueChange}
-  sx={{ minWidth: 200 }}
-  inputProps={{
-    inputMode: 'decimal', // numeric keyboard on mobile
-  }}
-  InputProps={{
-    endAdornment: (
-      <InputAdornment position="end">
-        <IconButton onClick={handleMenuClick}>
-      
-        </IconButton>
-      </InputAdornment>
-    ),
-  }}
-/>
-
-
-      {/* Dropdown menu for values */}
-      {/* <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
-        {predefinedValues.map((val) => (
-          <MenuItem key={val} onClick={() => handleMenuItemClick(val)}>
-            {val}
-          </MenuItem>
-        ))}
-      </Menu> */}
+      <TextField
+        className={styles.textField}
+        label="Value"
+        type="text"
+        value={value}
+        onChange={handleValueChange}
+        inputProps={{
+          inputMode: 'decimal',
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={handleMenuClick}></IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
     </Box>
   );
 };
