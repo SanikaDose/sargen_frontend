@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { gray } from '@/theme/themePrimitives';
+import { Box, Typography, Grid } from '@mui/material';
 
 interface OverallCostProfileCardProps {
   fieldName: string;
@@ -31,91 +30,95 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps> = ({
         borderRadius: 2,
         bgcolor: boxBackgroundColor,
         color: textColor,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
         minWidth: '250px',
         padding: '20px',
         boxShadow: 5,
       }}
     >
-      <Typography
-        variant="body2"
-        sx={{
-    color: gray[500],
-    flexGrow: 1,
-    fontSize: {
-      xs: '1.2rem',  // phones
-      sm: '1.4rem',  // tablets
-      md: '1.6rem',  // desktops
-      lg: '1.8rem',  // large screens
-    },
-  }}
-      >
-        {fieldName}
-      </Typography>
-
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: "7px",
-          alignItems: 'flex-end',
-          ml: 2,
-        }}
-      >
-        <Box
-          sx={{
-           px: {
-      xs: 1,
-      sm: 2,
-      md: 3,
-      lg: 4,
-    },
-    py: {
-      xs: 1,
-      sm: 1.5,
-      md: 2,
-      lg: 2,
-    },
-            borderRadius: 2,
-            border: 1,
-            borderColor: '#e0e0e0',
-            minWidth: '70px',
-            textAlign: 'right',
-          }}
+      <Grid container alignItems="center" justifyContent="space-between">
+        <Grid
+          
         >
           <Typography
-            variant="body1"
+            variant="body2"
             sx={{
-              color: gray[400],
+         
+                  color: textColor,
               fontSize: {
-      xs: '1.2rem',  // phones
-      sm: '1.4rem',  // tablets
-      md: '1.6rem',  // desktops
-      lg: '1.8rem',  // large screens
-    },
+                xs: '1.2rem',
+                sm: '1.4rem',
+                md: '1.6rem',
+                lg: '1.8rem',
+              },
             }}
           >
-            {stringValue}
+            {fieldName}
           </Typography>
-        </Box>
-        <Typography
-          variant="caption"
-          sx={{
-            mt: 0.5,
-            color: gray[400],
-            fontSize: {
-      xs: '1.2rem',  // phones
-      sm: '1.4rem',  // tablets
-      md: '1.6rem',  // desktops
-      lg: '1.8rem',  // large screens
-    },
-          }}
-        >
-          %
-        </Typography>
-      </Box>
+        </Grid>
+
+        <Grid>
+          <Grid container alignItems="center" spacing={1} wrap="nowrap">
+            <Grid>
+              <Box
+                sx={{
+                  px: {
+                    xs: 1,
+                    sm: 2,
+                    md: 2,
+                    lg: 3,
+                  },
+                  py: {
+                    xs: 0.5,
+                    sm: 1,
+                    md: 1.2,
+                    lg: 1.5,
+                  },
+                  borderRadius: 2,
+                  border: 1,
+                  borderColor: '#e0e0e0',
+                  minWidth: '70px',
+                  textAlign: 'right',
+                  
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: textColor,
+                    fontSize: {
+                      xs: '1.2rem',
+                      sm: '1.4rem',
+                      md: '1.6rem',
+                      lg: '1.8rem',
+                    },
+                  }}
+                >
+                  {stringValue}
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid>
+              <Typography
+                variant="caption"
+                sx={{
+                  mt: 0.5,
+              
+                   color: textColor,
+                  fontSize: {
+                    xs: '1.2rem',
+                    sm: '1.4rem',
+                    md: '1.6rem',
+                    lg: '1.8rem',
+                  },
+                }}
+              >
+                %
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
