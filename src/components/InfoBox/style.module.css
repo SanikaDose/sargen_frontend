@@ -1,0 +1,21 @@
+/* components/InfoBox/InfoBox.module.css */
+.infoBoxContainer {
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f5fafd;
+  max-width: 800px;
+}
+
+.infoBoxHeading {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  text-align: left;
+}
+
+.infoBoxContent {
+  color: #666;
+  line-height: 1.5;
+  min-height: 100px;
+}
