@@ -1,5 +1,4 @@
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import React from 'react';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { AddPlantCardProps } from './AddPlantCard.d';
 import styles from './style.module.css';
 function AddPlantCard({ label, backgroundColor, onClick }: AddPlantCardProps) {
