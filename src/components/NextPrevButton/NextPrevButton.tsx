@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, ButtonProps } from '@mui/material';
-import { FaChevronRight } from 'react-icons/fa6';
+import { FaChevronRight } from 'react-icons/fa';
+
 import { FaChevronLeft } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';

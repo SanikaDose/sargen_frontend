@@ -52,15 +52,29 @@ const PreviewSideBox = () => {
 
       <Box className={styles.statusLegend}>
         <section className={styles.innerStatusLegend}>
-          <Box className={`${styles.statusDot} ${styles.statusReviewed}`} />
-          <Typography sx={{ fontSize: { xs: '1rem', sm: '0.7rem', md: '1rem' } }} className={styles.statusLabel}>
+          <Box
+            sx={{
+              width: { xs: '8px', sm: '10px', md: '20px' },
+              height: { xs: '8px', sm: '10px', md: '20px' },
+              borderRadius: '50%',
+            }}
+            className={`${styles.statusDot} ${styles.statusReviewed}`}
+          />
+          <Typography sx={{ fontSize: { xs: '1rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
             Reviewed
           </Typography>
         </section>
 
         <section className={styles.innerStatusLegend}>
-          <Box className={`${styles.statusDot} ${styles.statusNotReviewed}`} />
-          <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '1rem' } }} className={styles.statusLabel}>
+          <Box
+            sx={{
+              width: { xs: '8px', sm: '10px', md: '20px' },
+              height: { xs: '8px', sm: '10px', md: '20px' },
+              borderRadius: '50%',
+            }}
+            className={`${styles.statusDot} ${styles.statusNotReviewed}`}
+          />
+          <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
             Not Reviewed
           </Typography>
         </section>

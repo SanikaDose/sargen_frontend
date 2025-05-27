@@ -77,8 +77,6 @@
 }
 
 .statusDot {
-  width: 10%;
-  height: 44%;
   border-radius: 50%;
   /* border: 1px solid red; */
 }
