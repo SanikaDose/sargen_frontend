@@ -3,7 +3,7 @@ import { Card, CardContent, Typography, Grid, Avatar, Box, Divider, Button, Circ
 import defaulImage from '../../../public/images/default-logo-image.png';
 import Edit from '@mui/icons-material/Edit';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
-import ImageUploader from '../ImageUpload/ImageUpload';
+import ImageUploader from '../../ImageUpload/ImageUpload';
 import styles from './style.module.css';
 import { PlantInfoCardProps, PlantData } from './PlantInfoCard.d';
 
