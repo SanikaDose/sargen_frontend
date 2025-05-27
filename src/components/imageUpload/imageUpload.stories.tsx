@@ -14,5 +14,5 @@ type Story = StoryObj<typeof ImageUploader>;
 export const Default: Story = {};
 
 Default.args = {
-  imageProp: defaultImage.src,
+  imageProp: defaultImage.src || '',
 };
