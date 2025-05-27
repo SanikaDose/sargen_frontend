@@ -1,7 +1,7 @@
 // components/InfoBox/InfoBox.tsx
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { InfoBoxProps } from './InfoBox.d';
+import { InfoBoxProps } from './InfoBox.types';
 
 const InfoBox: React.FC<InfoBoxProps> = ({
   heading = 'About Industry',
@@ -38,6 +38,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
           lineHeight: 1.5,
           flexGrow: 1,
           p: 2,
+          textAlign: 'justify',
         }}
       >
         {content || 'Please Enter the About us in Organization Entry Portal'}

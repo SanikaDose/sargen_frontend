@@ -3,7 +3,7 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import React, { useEffect, useRef } from 'react';
 import styles from './style.module.css';
-import { TextAreaProps } from './TextArea.d';
+import { TextAreaProps } from './TextArea.types';
 
 const TextArea: React.FC<TextAreaProps> = ({
   value,
