@@ -1,12 +1,6 @@
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import React from 'react';
-
-type AddPlantCardProps = {
-  label?: string;
-  backgroundColor?: string;
-  onClick?: () => void;
-};
-
+import { AddPlantCardProps } from './AddPlantCard.d';
 function AddPlantCard({ label, backgroundColor, onClick }: AddPlantCardProps) {
   return (
     <Box>

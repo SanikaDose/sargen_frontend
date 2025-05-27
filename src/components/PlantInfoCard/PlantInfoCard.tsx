@@ -5,22 +5,7 @@ import Edit from '@mui/icons-material/Edit';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import ImageUploader from '../ImageUpload/ImageUpload';
 import styles from './style.module.css';
-interface PlantData {
-  name: string;
-  plantLogo: string;
-  location: string;
-  registrationNo: string;
-  age: number;
-  gstin: string;
-  revenue: string;
-  numberOfEmployees: number;
-  numberOfLines: number;
-  createdAt: string;
-  updatedAt: string;
-  assessmentStartDate: string;
-  debriefDate: string;
-  assessmentCompletionPercentage: number;
-}
+import { PlantInfoCardProps, PlantData } from './PlantInfoCard.d';
 
 const defaultPlantData: PlantData = {
   name: 'Unknown Plant',
@@ -39,7 +24,7 @@ const defaultPlantData: PlantData = {
   assessmentCompletionPercentage: 565460,
 };
 
-const PlantInfoCard = ({ data }: { data?: PlantData }) => {
+const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
   const plantData = data ?? defaultPlantData;
 
   return (
@@ -100,7 +85,13 @@ const PlantInfoCard = ({ data }: { data?: PlantData }) => {
         <Box>
           <Typography className={styles.statusLabel}>Status</Typography>
           <Divider sx={{ marginBottom: 1 }} />
-          <Button children={'Start Assesment'} color={'secondary'} variant={'text'} sx={{ bgcolor: '#10557C33' }} />
+          <Button
+            children={'Start Assesment'}
+            color={'secondary'}
+            variant={'text'}
+            sx={{ bgcolor: '#10557C33' }}
+            onClick={onClick}
+          />
         </Box>
         <Box className={styles.progressCircle}>
           <ProgressCircle color="#1976d2" size={100} thickness={4} value={75} />
