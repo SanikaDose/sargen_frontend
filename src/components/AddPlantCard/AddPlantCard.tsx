@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { AddPlantCardProps } from './AddPlantCard.d';
+
+import { AddPlantCardProps } from './AddPlantCards.types';
 import styles from './style.module.css';
 function AddPlantCard({ label, backgroundColor, onClick }: AddPlantCardProps) {
   return (

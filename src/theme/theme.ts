@@ -1,12 +1,13 @@
 // src/theme/theme.ts
-import { createTheme } from "@mui/material/styles";
+import { createTheme } from '@mui/material/styles';
 
-import { dataDisplayCustomizations } from "./customizations/dataDisplay";
-import { feedbackCustomizations } from "./customizations/feedback";
-import { inputsCustomizations } from "./customizations/inputs";
-import { navigationCustomizations } from "./customizations/navigation";
-import { surfacesCustomizations } from "./customizations/surfaces";
-import { colorSchemes, shadows, shape, typography } from "./themePrimitives";
+import { dataDisplayCustomizations } from './customizations/dataDisplay';
+import { feedbackCustomizations } from './customizations/feedback';
+import { inputsCustomizations } from './customizations/inputs';
+import { navigationCustomizations } from './customizations/navigation';
+import sargenTheme from './customizations/sargenTheme';
+import { surfacesCustomizations } from './customizations/surfaces';
+import { colorSchemes, shadows, shape, typography } from './themePrimitives';
 
 /**
  * Add the custom or overrided properties of the material ui components
@@ -17,8 +18,8 @@ import { colorSchemes, shadows, shape, typography } from "./themePrimitives";
  */
 const theme = createTheme({
   cssVariables: {
-    colorSchemeSelector: "data-mui-color-scheme",
-    cssVarPrefix: "template",
+    colorSchemeSelector: 'data-mui-color-scheme',
+    cssVarPrefix: 'template',
   },
   colorSchemes,
   typography: {
@@ -30,10 +31,11 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: "none",
+          textTransform: 'none',
         },
       },
     },
+    ...sargenTheme,
     ...inputsCustomizations,
     ...dataDisplayCustomizations,
     ...feedbackCustomizations,
