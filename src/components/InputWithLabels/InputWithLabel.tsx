@@ -22,7 +22,7 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, req
         id={name}
         name={name}
         variant="outlined"
-        size="medium"
+        size="small"
         required={required}
         fullWidth
         sx={{

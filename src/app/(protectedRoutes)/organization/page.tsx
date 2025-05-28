@@ -12,29 +12,28 @@ const OrganizationPage = () => {
     return (
         <>
             {/* stepper component */}
-            <Grid>
-                <Box
-                    sx={{
-                        padding: '20px',
-                        borderRadius: '15px',
-                        m: 1,
-                        boxShadow: 4
-                    }}
-                >
-                    <Stepper steps={[{ label: 'Logo' }, { label: 'Name' }, { label: 'Website' }, { label: 'GST IN' }, { label: 'Revenue' }, { label: 'No. of Employee' }]} />
-                </Box>
+            <Grid
+                // sx={{
+                //     //   //  padding: '20px',
+                //     borderRadius: '15px',
+                //     //     // m: 1,
+                //     boxShadow: 4
+                // }}
+            >
+
+                <Stepper steps={[{ label: 'Logo' }, { label: 'Name' }, { label: 'Website' }, { label: 'GST IN' }, { label: 'Revenue' }, { label: 'No. of Employee' }]} />
+
             </Grid>
             {/* heading */}
-
-            <Grid>
+            <Grid >
                 <Typography variant="h6" sx={{ mx: 2 }}>
                     Organization Details
                 </Typography>
             </Grid>
-            <Grid container sx={{ mx: 10 }}>
+            <Grid container sx={{ mx: 2 }}>
                 {/* Left- Image Uploader */}
-                <Grid size={{md:5}} >
-                    <Grid container alignItems="center" style={{ height: '100%' }}>
+                <Grid size={{ md: 5 }} >
+                    <Grid container alignItems="center" justifyContent='center'>
                         <Grid >
                             <ImageUploader />
                         </Grid>
@@ -55,7 +54,7 @@ const OrganizationPage = () => {
                         type="text"
                         placeholder="Enter company website"
                     />
-                    <Grid container spacing={2}>
+                    <Grid container >
                         <Grid size={{ xs: 12, md: 6 }}>
                             <InputWithLabel
                                 label="GST In Details"
@@ -75,8 +74,8 @@ const OrganizationPage = () => {
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid container spacing={2} sx={{ mx: 3 }}>
-                <Grid size={{ md: 4 }}>
+            <Grid container sx={{ mx: 3 }}>
+                <Grid size={{ md: 5 }}>
                     <InputWithLabel
                         label="Organization Revenue"
                         name="TotalRevenue"
@@ -92,7 +91,7 @@ const OrganizationPage = () => {
                         placeholder="UOM"
                     />
                 </Grid>
-                <Grid size={{ md: 1 }}></Grid>
+
                 <Grid size={{ md: 5 }} >
                     <InputWithLabel
                         label="Number Of Employee"
@@ -112,7 +111,7 @@ const OrganizationPage = () => {
                 />
 
             </Grid>
-            <Grid container justifyContent="space-between" sx={{ m: 2, borderRadius: 4, backgroundColor: '#B0E0E6', p: 1 }}>
+            <Grid container justifyContent="space-between" sx={{ borderRadius: 4, backgroundColor: '#B0E0E6' }}>
                 <Grid >
                     <CustomButton
                         children="Back"
@@ -130,7 +129,7 @@ const OrganizationPage = () => {
                         color="#10557C"
                         icon="right"
                         height="50px"
-                        width="80px"   
+                        width="80px"
                     />
                 </Grid>
             </Grid>
