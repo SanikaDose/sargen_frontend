@@ -1,11 +1,11 @@
 import { Stepper as MuiStepper, Step, StepLabel } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { StepperProps } from './Stepper.d';
+import { StepperProps } from './Stepper.types';
 const Stepper: React.FC<StepperProps> = ({ steps = [{ label: 'Test' }, { label: 'Test2' }, { label: 'Test3' }] }) => {
   const activeStep = 1;
   const completedSteps = [0, 2];
   return (
-    <Grid container justifyContent="center" sx={{ height: '100vh', width: '100vw' }}>
+    <Grid container justifyContent="center">
       <Grid size={{ xs: 4, md: 12 }}>
         <MuiStepper activeStep={activeStep} alternativeLabel>
           {steps.map((step, index) => {
