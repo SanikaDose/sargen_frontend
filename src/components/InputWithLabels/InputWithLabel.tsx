@@ -14,7 +14,7 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
 export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, required = false, ...textFieldProps }) => {
   return (
     <FormControl fullWidth margin="normal">
-      <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 1, color: '#000000' }}>
+      <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000' , fontSize:'13px'}}>
         {label}
         {required ? ' *' : ''}
       </FormLabel>
@@ -27,7 +27,7 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, req
         fullWidth
         sx={{
           '& input::placeholder': {
-            fontWeight: 600, // Make placeholder bold
+            fontWeight: 500, // Make placeholder bold
             color: '#888', // Optional: placeholder color
           },
         }}
@@ -36,3 +36,4 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, req
     </FormControl>
   );
 };
+
