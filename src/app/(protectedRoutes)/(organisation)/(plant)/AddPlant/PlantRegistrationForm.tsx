@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { Box, Typography } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
@@ -11,25 +11,35 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from './AddPlant.module.css';
 import { useForm, Controller } from 'react-hook-form';
 import { PlantFormType } from './AddPlant.types';
-import { useAddPlantInfoMutation } from './AddPlantApis';
+import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 
 const stepLabels = plantFormInputs.map((input) => ({ label: input.label }));
-
 const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
+const plantId = '8c28e6c8-8b17-4edc-b4f2-6e2a5585b1ea';
 
 const PlantRegistrationForm = () => {
   const { control, handleSubmit, reset } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
+  const [uploadPlantLogo] = useUploadPlantLogoMutation();
+  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+
+  const handleUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await uploadPlantLogo({ tenantId, plantId, formData }).unwrap();
+      const localUrl = URL.createObjectURL(file);
+      setLogoUrl(localUrl); // update preview after successful upload
+    } catch (error) {
+      console.error('Image upload failed:', error);
+    }
+  };
 
   const onSubmit = async (data: PlantFormType) => {
     try {
-      const {
-        about, // Remove "about" if not needed in the backend
-        ...body
-      } = data;
-
+      const { about, ...body } = data;
       await addPlantInfo({ tenantId, body }).unwrap();
-      reset(); // Optional: reset form after submission
+      reset();
     } catch (error) {
       console.error('Failed to add plant info:', error);
     }
@@ -47,13 +57,13 @@ const PlantRegistrationForm = () => {
 
       <Box className={styles.formContainer}>
         <Box className={styles.imageBox}>
-          <ImageUploader imageProp="/images/default-logo-image.png?ignore" />
+          <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
         </Box>
 
         <Box className={styles.formFieldsBox}>
           <Grid container spacing={2}>
             {plantFormInputs.map((input) => (
-              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3, xl: 3 }} key={input.name}>
+              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
                 <Controller
                   name={input.name as keyof PlantFormType}
                   control={control}
