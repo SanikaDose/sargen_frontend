@@ -5,7 +5,7 @@ const Stepper: React.FC<StepperProps> = ({ steps = [{ label: 'Test' }, { label: 
   const activeStep = 1;
   const completedSteps = [0, 2];
   return (
-    <Grid container justifyContent="center">
+    <Grid container justifyContent="center" width="100%">
       <Grid size={{ xs: 4, md: 12 }}>
         <MuiStepper activeStep={activeStep} alternativeLabel>
           {steps.map((step, index) => {

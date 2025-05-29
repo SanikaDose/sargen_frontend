@@ -1,0 +1,51 @@
+.heading {
+  margin-left: 5px;
+  font-weight: 600;
+  /* padding: 00 1rem 1rem; */
+}
+
+.stepperContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.formContainer {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 0 2rem 2rem;
+  gap: 2.5rem;
+  flex-direction: column;
+}
+
+@media (min-width: 1200px) {
+  .formContainer {
+    flex-direction: row;
+    gap: 2.5rem;
+  }
+}
+
+.imageBox {
+  display: flex;
+  width: 27%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.formFieldsBox {
+  width: 60%;
+  height: 100%;
+}
+
+.aboutSection {
+  padding: 0 2rem 2rem;
+}
+
+.buttonSection {
+  padding: 0 2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+}

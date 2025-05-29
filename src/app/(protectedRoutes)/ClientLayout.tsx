@@ -2,7 +2,7 @@
 
 import { Header } from '@/components/Header/Header';
 import InfoBox from '@/components/InfoBox/InfoBox';
-import SideBar from '@/components/SideBar/SideBar';
+import SideBar from '@/components/sideBar/SideBar';
 
 import { Grid, useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [open, setOpen] = useState(true);
   const isMobile = useMediaQuery('(max-width:600px)');
   const isTablet = useMediaQuery('(min-width:600px) and (max-width:900px)');
-  const [showInfoBox, setShowInfoBox] = useState(false);
+  const [showInfoBox, setShowInfoBox] = useState(true);
   useEffect(() => {}, [open]);
 
   return (
