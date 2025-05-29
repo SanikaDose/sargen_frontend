@@ -1,0 +1,202 @@
+.h1 {
+  border: 1px solid red;
+  text-align: center;
+}
+.main_article {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5vh;
+}
+.left_section {
+  height: 100%;
+  width: 55%;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: start;
+}
+.right_section {
+  height: 100%;
+  width: 45%;
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chip {
+  height: 10vh;
+  width: 5vw;
+  position: absolute;
+  top: 48vh;
+  left: 34vw;
+  z-index: 9;
+  background-color: #6366f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5vh;
+}
+.chip h1 {
+  font-size: 4vh;
+  color: white;
+}
+.chip2 {
+  height: 10vh;
+  width: 10vw;
+  position: absolute;
+  top: 16vh;
+  right: 34vw;
+  z-index: 8;
+  background-color: #6366f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5vh;
+}
+.chip2 h4 {
+  color: white;
+}
+.imageWrapper {
+  position: relative;
+  height: 50%;
+  width: 70%;
+  background-color: transparent;
+}
+.login_image {
+  object-fit: cover;
+}
+.text_outer_container {
+  height: 27%;
+  width: 100%;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+}
+.text_outer_container h1 {
+  width: 50%;
+  color: white;
+  font-size: 5vh;
+  font-weight: bold;
+  letter-spacing: 0.1vw;
+}
+.text_outer_container p {
+  width: 70%;
+  color: white;
+  font-size: 2.5vh;
+  letter-spacing: 0.05vw;
+}
+.chip_outer_div {
+  height: 10%;
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.chip_outer_div span {
+  height: 50%;
+  width: 25%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  backdrop-filter: blur(12px) saturate(200%);
+  -webkit-backdrop-filter: blur(12px) saturate(200%);
+  background-color: rgba(255, 255, 255, 0.76);
+  border-radius: 0.4vw;
+}
+.chip_outer_div h4 {
+  font-size: larger;
+  color: black;
+}
+.videoSetteing {
+  height: 20vh;
+  width: 40vw;
+}
+@media (max-width: 1366px) {
+  .imageWrapper {
+    position: relative;
+    height: 30%;
+    width: 59%;
+  }
+  .login_image {
+    object-fit: cover;
+  }
+  .chip_outer_div span {
+    height: 50%;
+    width: 30%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    backdrop-filter: blur(12px) saturate(200%);
+    -webkit-backdrop-filter: blur(12px) saturate(200%);
+    background-color: rgba(255, 255, 255, 0.76);
+    border-radius: 0.4vw;
+  }
+  .chip_outer_div h4 {
+    font-size: small;
+    color: black;
+  }
+  .chip {
+    height: 10vh;
+    width: 8vw;
+    position: absolute;
+    top: 43vh;
+    left: 38vw;
+    z-index: 9;
+    background-color: #6366f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5vh;
+  }
+  .chip h1 {
+    font-size: 4vh;
+    color: white;
+  }
+  .chip2 {
+    height: 10vh;
+    width: 8vw;
+    position: absolute;
+    top: 14vh;
+    right: 37vw;
+    z-index: 8;
+    background-color: #6366f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5vh;
+  }
+  .chip2 h4 {
+    color: white;
+  }
+  .videoSetteing {
+    height: 30vh;
+    width: 40vw;
+  }
+}
+@media (min-width: 1600px) {
+  .chip2 {
+    height: 10vh;
+    width: 5vw;
+    position: absolute;
+    top: 16vh;
+    right: 34vw;
+    z-index: 8;
+    background-color: #6366f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5vh;
+  }
+  .chip2 h4 {
+    color: white;
+  }
+  .videoSetteing {
+    height: 40vh;
+    width: 35vw;
+  }
+}

@@ -1,110 +1,57 @@
 'use client';
+import Image from 'next/image';
+import styles from './style.module.css';
+import login_Image from '../../../../public/login_image.svg';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import RouteIcon from '@mui/icons-material/Route';
+import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 
-import { yupResolver } from '@hookform/resolvers/yup';
-import { LockOutlined } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  Paper,
-  TextField,
-  Typography,
-} from '@mui/material';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-
-import * as yup from 'yup';
-
-// Define FormData type first
-type FormData = {
-  email: string;
-  password: string;
-  remember: boolean;
-};
-
-// Create schema with proper typing
-const schema = yup
-  .object({
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-    remember: yup.boolean().default(false),
-  })
-  .required();
-
-// Explicitly type the schema to match FormData
-type SchemaType = yup.InferType<typeof schema>;
-
-interface LoginFormProps {
-  onSubmit: (data: FormData) => void;
-  loading?: boolean;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading = false }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      remember: false,
+export default function Page() {
+  const chip = [
+    {
+      icon: <VerifiedIcon sx={{ color: 'green' }} />,
+      text: 'Siri Analysis',
     },
-  });
+    {
+      icon: <RouteIcon sx={{ color: 'purple' }} />,
+      text: 'Road Map',
+    },
+    {
+      icon: <EmojiObjectsIcon sx={{ color: 'orange' }} />,
+      text: 'Modern Solution',
+    },
+  ];
 
   return (
-    <Box
-      component={Paper}
-      elevation={3}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        p: 4,
-        maxWidth: 400,
-        mx: 'auto',
-        mt: 8,
-      }}
-    >
-      <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-        <LockOutlined />
-      </Avatar>
-      <Typography component="h1" variant="h5">
-        Sign in
-      </Typography>
+    <article className={styles.main_article}>
+      <div className={styles.chip}>
+        <h1>QA</h1>
+      </div>
+      <div className={styles.chip2}>
+        <h4>Future</h4>
+      </div>
+      <section className={styles.left_section}>
+        <figure className={styles.imageWrapper}>
+          <Image src={login_Image} alt="image" fill className={styles.login_image} />
+        </figure>
+        <div className={styles.text_outer_container}>
+          <h1>Unlock Your Industry&apos;s Future</h1>
+          <p>
+            Transform your business with AI-powered roadmaps and strategic insights tailored to your industry&apos;s
+            unique challenges.
+          </p>
+        </div>
 
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
-        <TextField
-          margin="normal"
-          fullWidth
-          id="email"
-          label="Email Address"
-          autoComplete="email"
-          autoFocus
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register('email')}
-        />
-        <TextField
-          margin="normal"
-          fullWidth
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register('password')}
-        />
-        <FormControlLabel control={<Checkbox color="primary" {...register('remember')} />} label="Remember me" />
-        <Button type="submit" fullWidth variant="contained" disabled={loading} sx={{ mt: 3, mb: 2 }}>
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
-        </Button>
-      </Box>
-    </Box>
+        <section className={styles.chip_outer_div}>
+          {chip.map((item, indx) => (
+            <span key={indx}>
+              {item.icon}
+              <h4>{item.text}</h4>
+            </span>
+          ))}
+        </section>
+      </section>
+      <section className={styles.right_section}>{/* <AuthForm mode="register" /> */}</section>
+    </article>
   );
-};
-
-export default LoginForm;
+}
