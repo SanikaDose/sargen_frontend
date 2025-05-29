@@ -1,8 +1,5 @@
 'use client';
 
-import AnswerCard from '@/components/AnswerCard/AnswerCard';
-import { PasswordTextField } from '@/components/Password/Password';
-import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import { useForm } from 'react-hook-form';
 
 export default function Home() {

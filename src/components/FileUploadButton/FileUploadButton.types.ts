@@ -1,7 +1,7 @@
 import { ButtonProps } from '@mui/material/Button';
 
 export interface FileUploadButtonProps {
-  onFileSelect: (file: File) => void;
+  onFileSelect?: (file: File) => void;
   label?: string;
   size?: ButtonProps['size'];
   accept?: string;

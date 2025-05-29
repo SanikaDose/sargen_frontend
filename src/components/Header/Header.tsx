@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({ title, onMenuClick, user }) => {
           justifyContent: 'space-between',
           '&.MuiToolbar-root': {
             height: 48,
-            minHeight: 48,
+            maxHeight: 48,
           },
         }}
       >
