@@ -1,10 +1,5 @@
+import { Props } from './PreviewSideBox.types';
 import styles from './questionSection.module.css';
-
-interface Props {
-  questions: { section: string; questionNo: number; status: string }[];
-  selected?: { section: string; questionNo: number } | null;
-  onSelect: (q: { section: string; questionNo: number }) => void;
-}
 
 const QuestionSection: React.FC<Props> = ({ questions, selected, onSelect }) => {
   return (

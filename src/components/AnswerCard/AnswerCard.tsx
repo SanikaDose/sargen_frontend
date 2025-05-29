@@ -1,21 +1,24 @@
 import { Box, Typography } from '@mui/material';
-import styles from './answerCard.module.css';
-
-interface AnswerCardProps {
-  questionNumber: number;
-  questionText: string;
-}
+import styles from './style.module.css';
+import type { AnswerCardProps } from './AnswerCard.types';
 
 const AnswerCard = ({
-  questionNumber = 1,
-  questionText = 'How is product Design and  WORK INSTRUCTIONS  transferred to manufacturing so that they know how to produce it?',
+  answerNumber = 1,
+  answerText = 'How is product Design and  WORK INSTRUCTIONS  transferred to manufacturing so that they know how to produce it?',
+  isSelected = false,
 }: AnswerCardProps) => {
   return (
     <>
-      <Box className={styles.outerContainer}>
+      <Box
+        className={styles.outerContainer}
+        sx={{
+          backgroundColor: isSelected ? 'rgba(16, 85, 124, 1)' : 'rgba(255, 255, 255, 1)',
+          color: isSelected ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
+        }}
+      >
         <Typography variant="body1" className={styles.questionText}>
-          <strong>{String(questionNumber).padStart(2, '0')}.</strong>&nbsp;&nbsp;
-          {questionText}
+          <strong>{String(answerNumber).padStart(2, '0')}.</strong>&nbsp;&nbsp;
+          {answerText}
         </Typography>
       </Box>
     </>
