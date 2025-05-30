@@ -5,8 +5,40 @@ import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
+import { useState } from 'react';
+import { PocPayload } from './ContactPerson.types';
+import { useSubmitPointOfContactMutation } from './ContactPersonApi';
 
 const ContactPersonForm = () => {
+  const [formData, setFormData] = useState<PocPayload>({
+    firstName: '',
+    lastName: '',
+    employeeId: '',
+    email: '',
+    country: '',
+    designation: '',
+    contactNumber: '',
+    jobRole: '',
+  });
+
+  const [submitPointOfContact, { isLoading }] = useSubmitPointOfContactMutation();
+
+  const tenantId = 'Elansol-Technologies-Pvt.-Ltd.-f65980e8-b4dd-4f83-8db1-7ee4afbb';
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await submitPointOfContact({ tenantId, body: formData }).unwrap();
+      console.log('Form submitted successfully');
+    } catch (err) {
+      console.error('Error submitting form', err);
+    }
+  };
+
   const textFieldStyles = {
     '& .MuiOutlinedInput-root': { borderRadius: '8px' },
   };
@@ -43,6 +75,8 @@ const ContactPersonForm = () => {
                     label="First name"
                     name="firstName"
                     placeholder="Enter First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
                     sx={textFieldStyles}
                   />
                 </Grid>
@@ -51,6 +85,8 @@ const ContactPersonForm = () => {
                     label="Last Name"
                     name="lastName"
                     placeholder="Enter Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
                     sx={textFieldStyles}
                   />
                 </Grid>
@@ -60,15 +96,31 @@ const ContactPersonForm = () => {
                   label="Employee ID"
                   name="employeeId"
                   placeholder="Enter Employee ID"
+                  value={formData.employeeId}
+                  onChange={handleChange}
                   sx={textFieldStyles}
                 />
               </Box>
               <Grid container spacing={2}>
                 <Grid size={6}>
-                  <InputWithLabel label="E-mail" name="email" placeholder="Enter Email" sx={textFieldStyles} />
+                  <InputWithLabel
+                    label="E-mail"
+                    name="email"
+                    placeholder="Enter Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    sx={textFieldStyles}
+                  />
                 </Grid>
                 <Grid size={6}>
-                  <InputWithLabel label="Country" name="country" placeholder="Enter Country" sx={textFieldStyles} />
+                  <InputWithLabel
+                    label="Country"
+                    name="country"
+                    placeholder="Enter Country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    sx={textFieldStyles}
+                  />
                 </Grid>
               </Grid>
               <Grid container spacing={2}>
@@ -77,6 +129,8 @@ const ContactPersonForm = () => {
                     label="Designation"
                     name="designation"
                     placeholder="Enter Designation"
+                    value={formData.designation}
+                    onChange={handleChange}
                     sx={textFieldStyles}
                   />
                 </Grid>
@@ -85,6 +139,8 @@ const ContactPersonForm = () => {
                     label="Contact Number"
                     name="contactNumber"
                     placeholder="Enter Contact Number"
+                    value={formData.contactNumber}
+                    onChange={handleChange}
                     sx={textFieldStyles}
                   />
                 </Grid>
@@ -99,6 +155,8 @@ const ContactPersonForm = () => {
             placeholder="Specify Job Role"
             multiline
             rows={4}
+            value={formData.jobRole}
+            onChange={handleChange}
             sx={textFieldStyles}
           />
         </Grid>
@@ -117,8 +175,8 @@ const ContactPersonForm = () => {
           Back
         </CustomButton>
 
-        <CustomButton variant="contained" icon="success" color="#10557C">
-          Save
+        <CustomButton variant="contained" icon="success" color="#10557C" onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>
     </>

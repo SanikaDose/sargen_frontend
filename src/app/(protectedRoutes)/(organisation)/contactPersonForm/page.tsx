@@ -1,4 +1,4 @@
-import ContactPersonForm from './ContactPersonForm';
+import ContactPersonForm from './contactPersonForm';
 
 const Page = () => {
   return <ContactPersonForm />;
