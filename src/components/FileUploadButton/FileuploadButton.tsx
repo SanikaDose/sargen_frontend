@@ -1,4 +1,5 @@
 // components/FileUploadButton.tsx
+'use client';
 import AssignmentAddIcon from '@mui/icons-material/AssignmentAdd';
 import { Button, Grid } from '@mui/material';
 import React from 'react';
@@ -21,9 +22,6 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      onFileSelect(file);
-    }
   };
 
   return (

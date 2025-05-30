@@ -1,19 +1,16 @@
-// import plantAssessmentReducer from '@/app/(protectedRoute)/[...plantAssement]/plantAssementSlice';
-// import decodedTokenReducer from '@/app/(unprotectedRoute)/login/loginSlice';
-// import toasterReducer from '@/components/Toaster/toasterSlice';
-// import { protectedApi, publicApi } from '@/services/api';
-// import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+import { protectedApi } from './api/protectedApis/baseProtectedApi';
+import { publicApi } from './api/publicApis/basePublicApi';
 
-// export const store = configureStore({
-//   reducer: {
-//     toasterGlobal: toasterReducer,
-//     decodedTokenGlobal: decodedTokenReducer,
-//     plantAssessmentGlobal: plantAssessmentReducer,
+export const store = configureStore({
+  reducer: {
+    // add more slices here
 
-//     [protectedApi.reducerPath]: protectedApi.reducer,
-//     [publicApi.reducerPath]: publicApi.reducer,
-//   },
-// });
+    [protectedApi.reducerPath]: protectedApi.reducer,
+    [publicApi.reducerPath]: publicApi.reducer,
+  },
+});
 
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
+// Types for use in your app
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

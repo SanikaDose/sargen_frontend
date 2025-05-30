@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Avatar, IconButton } from '@mui/material';
+'use client';
 import Edit from '@mui/icons-material/Edit';
-import styles from './style.module.css';
+import { Avatar, IconButton } from '@mui/material';
+import React, { useState } from 'react';
 import { ImageUploaderProps } from './ImageUpload.d';
+import styles from './style.module.css';
 const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp }) => {
   const [image, setImage] = useState<string | null>(null);
 
