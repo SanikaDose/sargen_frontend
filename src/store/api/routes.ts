@@ -12,6 +12,15 @@ export const apiControllerPath = {
     enquiry: '/enquiry',
     test: '/test',
   },
+  userLogos: {
+    // add tenantId and plantId further in the request
+    root: 'user-logos',
+    uploadLogo: '/upload-user-logo',
+    getLogo: '/get-user-logo',
+    deleteLogo: '/get-user-logo',
+    uploadPlantLogo: '/upload-plant-logo',
+    getPlantLogo: '/get-plant-logo',
+  },
   onboardingStatus: {
     root: 'onboarding-status',
     getOnboardingStatus: '/:tenantId/onboarding-status',
@@ -25,7 +34,7 @@ export const apiControllerPath = {
   },
   plantInfo: {
     root: 'plantInfo',
-    addPlantInfo: '/:tenantId/add-plant-info',
+    addPlantInfo: '/add-plant-info',
     updatePlantInfo: '/:tenantId/:plantId/edit-plant-info',
     getAllPlantsInfo: '/:tenantId/get-all-plant-info',
     getPlantInfo: '/:tenantId/:plantId/get-plant-info',
