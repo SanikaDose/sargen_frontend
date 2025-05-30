@@ -1,57 +1,130 @@
 'use client';
-import Image from 'next/image';
-import styles from './style.module.css';
-import login_Image from '../../../../public/login_image.svg';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import RouteIcon from '@mui/icons-material/Route';
-import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 
-export default function Page() {
-  const chip = [
-    {
-      icon: <VerifiedIcon sx={{ color: 'green' }} />,
-      text: 'Siri Analysis',
-    },
-    {
-      icon: <RouteIcon sx={{ color: 'purple' }} />,
-      text: 'Road Map',
-    },
-    {
-      icon: <EmojiObjectsIcon sx={{ color: 'orange' }} />,
-      text: 'Modern Solution',
-    },
-  ];
+import React, { useState } from 'react';
+import { Box, Button, Container, IconButton, InputAdornment, TextField, Typography, Paper } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useForm, Controller, Control } from 'react-hook-form';
+
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
+
+const formFields: {
+  name: keyof LoginFormInputs;
+  label: string;
+  placeholder: string;
+  type?: string;
+}[] = [
+  { name: 'email', label: 'Email', placeholder: 'Enter your email', type: 'text' },
+  { name: 'password', label: 'Password', placeholder: 'Enter your password', type: 'password' },
+];
+
+type FormInputProps = {
+  name: keyof LoginFormInputs;
+  label: string;
+  placeholder: string;
+  type?: string;
+  control: Control<LoginFormInputs>;
+  showPassword?: boolean;
+  togglePasswordVisibility?: () => void;
+};
+
+const FormInput = ({
+  name,
+  label,
+  placeholder,
+  type = 'text',
+  control,
+  showPassword,
+  togglePasswordVisibility,
+}: FormInputProps) => (
+  <Controller
+    name={name}
+    control={control}
+    defaultValue=""
+    rules={{ required: `${label} is required` }}
+    render={({ field }) => (
+      <TextField
+        {...field}
+        fullWidth
+        label={label}
+        placeholder={placeholder}
+        type={name === 'password' && !showPassword ? 'password' : 'text'}
+        margin="normal"
+        variant="outlined"
+        InputProps={{
+          endAdornment:
+            name === 'password' ? (
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ) : undefined,
+        }}
+      />
+    )}
+  />
+);
+
+const LoginPage = () => {
+  const { control, handleSubmit } = useForm<LoginFormInputs>();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onSubmit = (data: LoginFormInputs) => {
+    console.log('Login Data:', data);
+    // You can replace this with your API call
+  };
 
   return (
-    <article className={styles.main_article}>
-      <div className={styles.chip}>
-        <h1>QA</h1>
-      </div>
-      <div className={styles.chip2}>
-        <h4>Future</h4>
-      </div>
-      <section className={styles.left_section}>
-        <figure className={styles.imageWrapper}>
-          <Image src={login_Image} alt="image" fill className={styles.login_image} />
-        </figure>
-        <div className={styles.text_outer_container}>
-          <h1>Unlock Your Industry&apos;s Future</h1>
-          <p>
-            Transform your business with AI-powered roadmaps and strategic insights tailored to your industry&apos;s
-            unique challenges.
-          </p>
-        </div>
+    <Container maxWidth="sm" sx={{ mt: 10 }}>
+      <Paper
+        elevation={3}
+        sx={{ borderRadius: 3, p: 4, background: 'linear-gradient(to bottom right, #e0eafc, #cfdef3)' }}
+      >
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          Welcome Back
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+          Sign in to access your industry roadmap
+        </Typography>
 
-        <section className={styles.chip_outer_div}>
-          {chip.map((item, indx) => (
-            <span key={indx}>
-              {item.icon}
-              <h4>{item.text}</h4>
-            </span>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate mt={3}>
+          {formFields.map((field) => (
+            <FormInput
+              key={field.name}
+              {...field}
+              control={control}
+              showPassword={showPassword}
+              togglePasswordVisibility={() => setShowPassword((prev) => !prev)}
+            />
           ))}
-        </section>
-      </section>
-      <section className={styles.right_section}>{/* <AuthForm mode="register" /> */}</section>
-    </article>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 3,
+              py: 1.5,
+              backgroundColor: '#3f75f6',
+              borderRadius: 2,
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              '&:hover': { backgroundColor: '#365fd0' },
+            }}
+          >
+            Sign In
+          </Button>
+
+          <Typography variant="body2" mt={2} textAlign="center" color="primary">
+            Forgot password?
+          </Typography>
+        </Box>
+      </Paper>
+    </Container>
   );
-}
+};
+
+export default LoginPage;
