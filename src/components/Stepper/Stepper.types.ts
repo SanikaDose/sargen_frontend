@@ -1,3 +1,5 @@
-export interface StepperProps {
-  steps?: { label: string }[];
-}
+export type StepperProps = {
+  steps: { label: string }[];
+  activeStep?: number;
+  completedSteps?: number[];
+};

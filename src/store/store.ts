@@ -5,7 +5,6 @@ import { publicApi } from './api/publicApis/basePublicApi';
 export const store = configureStore({
   reducer: {
     // add more slices here
-
     [protectedApi.reducerPath]: protectedApi.reducer,
     [publicApi.reducerPath]: publicApi.reducer,
   },
