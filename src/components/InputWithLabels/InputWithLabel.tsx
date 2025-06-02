@@ -35,6 +35,7 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = (
           },
         }}
         {...textFieldProps}
+        InputProps={{ inputProps: { min: 0 } }}
       />
     </FormControl>
   );

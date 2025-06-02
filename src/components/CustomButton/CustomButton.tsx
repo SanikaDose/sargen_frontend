@@ -3,9 +3,9 @@ import { Button, ButtonProps } from '@mui/material';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
-
+import SaveIcon from '@mui/icons-material/Save';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
-export type ButtonIcon = 'left' | 'right' | 'alert' | 'success';
+export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
@@ -35,6 +35,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return <FaChevronLeft size={20} />;
       case 'right':
         return <FaChevronRight size={20} />;
+      case 'save':
+        return <SaveIcon fontSize="medium" />;
       case 'alert':
         return <MdOutlineAddAlert size={24} />;
       case 'success':
