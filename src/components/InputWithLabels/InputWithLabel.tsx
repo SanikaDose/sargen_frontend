@@ -11,10 +11,13 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
  * A reusable, production-ready input with a label.
  * Built on top of MUI's TextField and FormControl.
  */
-export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, required = false, ...textFieldProps }) => {
+export const InputWithLabel: React.FC<InputWithLabelProps> = (
+  { label, name, required = false, ...textFieldProps },
+  ref,
+) => {
   return (
     <FormControl fullWidth margin="normal">
-      <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000' , fontSize:'13px'}}>
+      <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000', fontSize: '13px' }}>
         {label}
         {required ? ' *' : ''}
       </FormLabel>
@@ -36,4 +39,3 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, name, req
     </FormControl>
   );
 };
-
