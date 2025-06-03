@@ -3,16 +3,18 @@
 import { Box, Grid, Typography, FormControl, Select, MenuItem } from '@mui/material';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import defaultUserLogo from '../../../../../../public/images/default-logo-image.png';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { useState, useEffect } from 'react';
-import { CountryOptions, PocPayload } from './ContactPerson.types';
-import { useAddPointOfContactMutation, useGetPointOfContactQuery } from './ContactPersonApi';
-
-interface ContactPersonFormProps {
-  tenantId: string;
-  editMode?: boolean;
-}
+import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
+import {
+  useAddPointOfContactMutation,
+  useGetPointOfContactQuery,
+  useUploadPocProfilePicMutation,
+} from './ContactPersonApi';
+import styles from './ContactPerson.module.css';
+import { CountryOptions } from '@/app/utils/CountryOptions';
 
 const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProps) => {
   const [formData, setFormData] = useState<PocPayload>({
@@ -26,14 +28,17 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     jobRole: '',
   });
 
+  const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
+  const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
   const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
     skip: !editMode,
   });
+  const [activeStep, setActiveStep] = useState<number>(-1);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
   useEffect(() => {
     if (editMode && existingData) {
-      console.log('Setting formData with:', existingData);
       setFormData((prev) => ({
         ...prev,
         ...existingData,
@@ -41,9 +46,38 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     }
   }, [editMode, existingData]);
 
+  const handleUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await uploadPocProfilePic({ tenantId, formData }).unwrap();
+      const localUrl = URL.createObjectURL(file);
+      setProfilePicUrl(localUrl);
+    } catch (error) {
+      console.error('Image upload failed:', error);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const fieldIndex = steps.findIndex((s) => s.label.toLowerCase().replace(/ /g, '') === name.toLowerCase());
+    setFormData((prev) => {
+      const newData = { ...prev, [name]: value };
+
+      if (value.trim() && !completedSteps.includes(fieldIndex)) {
+        setCompletedSteps((prev) => [...prev, fieldIndex]);
+      } else if (!value.trim() && completedSteps.includes(fieldIndex)) {
+        setCompletedSteps((prev) => prev.filter((step) => step !== fieldIndex));
+      }
+
+      return newData;
+    });
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    const index = steps.findIndex((s) => s.label.toLowerCase().replace(/ /g, '') === name.toLowerCase());
+    setActiveStep(index);
   };
 
   const handleSubmit = async () => {
@@ -79,124 +113,126 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
   }
 
   return (
-    <>
-      <Grid mb={2} mt={2}>
-        <Stepper steps={steps} />
+    <form>
+      <Grid className={styles.stepperContainer}>
+        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
       </Grid>
       <Grid>
         <Typography variant="h5" fontSize={20} component="h5" fontWeight="bold" ml={2}>
           User Profile
         </Typography>
-        <Grid display="flex" gap={2} alignItems="stretch" ml={2} mr={2}>
-          <Box display="flex" justifyContent="center" alignItems="center" width="30%" minHeight="100%">
-            <ImageUploader imageProp="./images/default-logo-image.png?ignore" />
+        <Grid className={styles.formContainer}>
+          <Box className={styles.imageBox}>
+            <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
           </Box>
-          <Box flex={1} width="70%">
-            <Grid spacing={1}>
-              <Grid container spacing={2}>
-                <Grid size={6}>
-                  <InputWithLabel
-                    label="First name"
-                    name="firstName"
-                    placeholder="Enter First Name"
-                    value={formData.firstName || ''}
-                    onChange={handleChange}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <InputWithLabel
-                    label="Last Name"
-                    name="lastName"
-                    placeholder="Enter Last Name"
-                    value={formData.lastName || ''}
-                    onChange={handleChange}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
+          <Box className={styles.formFieldsBox}>
+            <Grid container spacing={1}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <InputWithLabel
+                  label="First name"
+                  name="firstName"
+                  placeholder="Enter First Name"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  sx={textFieldStyles}
+                />
               </Grid>
-              <Box>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <InputWithLabel
+                  label="Last Name"
+                  name="lastName"
+                  placeholder="Enter Last Name"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  sx={textFieldStyles}
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
                 <InputWithLabel
                   label="Employee ID"
                   name="employeeId"
                   placeholder="Enter Employee ID"
-                  value={formData.employeeId || ''}
+                  value={formData.employeeId}
                   onChange={handleChange}
+                  onFocus={handleFocus}
                   sx={textFieldStyles}
                 />
-              </Box>
-              <Grid container spacing={2}>
-                <Grid size={6}>
-                  <InputWithLabel
-                    label="E-mail"
-                    name="email"
-                    placeholder="Enter Email"
-                    value={formData.email || ''}
-                    onChange={handleChange}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <FormControl fullWidth sx={{ mt: 2 }}>
-                    <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
-                    <Select
-                      displayEmpty
-                      value={formData.country || ''}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          country: e.target.value,
-                        }))
-                      }
-                      inputProps={{ 'aria-label': 'Select Country' }}
-                      sx={{ borderRadius: '8px' }}
-                    >
-                      <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                        <em>Select Country</em>
-                      </MenuItem>
-                      {CountryOptions.map((country) => (
-                        <MenuItem key={country.code} value={country.name}>
-                          {country.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
               </Grid>
-              <Grid container spacing={2}>
-                <Grid size={6}>
-                  <InputWithLabel
-                    label="Designation"
-                    name="designation"
-                    placeholder="Enter Designation"
-                    value={formData.designation || ''}
-                    onChange={handleChange}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-                <Grid size={6}>
-                  <InputWithLabel
-                    label="Contact Number"
-                    name="contactNumber"
-                    placeholder="Enter Contact Number"
-                    value={formData.contactNumber || ''}
-                    onChange={handleChange}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <InputWithLabel
+                  label="E-mail"
+                  name="email"
+                  placeholder="Enter Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  sx={textFieldStyles}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
+                  <Select
+                    displayEmpty
+                    value={formData.country}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        country: e.target.value,
+                      }))
+                    }
+                    onFocus={handleFocus}
+                    inputProps={{ 'aria-label': 'Select Country' }}
+                    sx={{ borderRadius: '8px' }}
+                  >
+                    <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                      <em>Select Country</em>
+                    </MenuItem>
+                    {CountryOptions.map((country) => (
+                      <MenuItem key={country.code} value={country.name}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <InputWithLabel
+                  label="Designation"
+                  name="designation"
+                  placeholder="Enter Designation"
+                  value={formData.designation}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  sx={textFieldStyles}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <InputWithLabel
+                  label="Contact Number"
+                  name="contactNumber"
+                  placeholder="Enter Contact Number"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  sx={textFieldStyles}
+                />
               </Grid>
             </Grid>
           </Box>
         </Grid>
-        <Grid ml={2} mr={2}>
+        <Grid ml={5} mr={5}>
           <InputWithLabel
             label="Job Role"
             name="jobRole"
             placeholder="Specify Job Role"
             multiline
             rows={4}
-            value={formData.jobRole || ''}
+            value={formData.jobRole}
             onChange={handleChange}
+            onFocus={handleFocus}
             sx={textFieldStyles}
           />
         </Grid>
@@ -206,20 +242,19 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
         justifyContent="space-between"
         alignItems="center"
         p={1}
-        mt={2}
-        ml={2}
-        mr={2}
+        mt={1}
+        ml={5}
+        mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
         <CustomButton variant="contained" icon="left" color="#10557C">
           Back
         </CustomButton>
-
-        <CustomButton variant="contained" icon="success" color="#10557C" onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? 'Saving...' : editMode ? 'Update' : 'Save'}
+        <CustomButton variant="contained" icon="save" color="#10557C" onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>
-    </>
+    </form>
   );
 };
 

@@ -20,8 +20,8 @@ export const apiRoutes = {
     root: '/onboarding',
     addOrganizationsInformation: '/:tenantId/add-organization-information',
     getOrganizationsInformation: '/:tenantId/get-organization-information',
-    addPointOfContact: '/:tenantId/add-point-of-contact',
-    getPointOfContact: '/:tenantId/get-point-of-contact',
+    addPointOfContact: '/add-point-of-contact',
+    getPointOfContact: '/get-point-of-contact',
   },
   plantInfo: {
     root: '/plantInfo',
