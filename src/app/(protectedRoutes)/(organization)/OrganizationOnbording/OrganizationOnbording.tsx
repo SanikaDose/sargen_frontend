@@ -14,14 +14,14 @@ function OrganizationOnbording() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: '',
+      companyName: '',
       website: '',
       gstin: '',
       country: '',
-      TotalRevenue: '',
+      revenue: '',
       uom: '',
-      numberEmp: '',
-      OrgDetails: '',
+      numberOfEmployees: '',
+      about: '',
     },
   });
 
@@ -72,7 +72,7 @@ function OrganizationOnbording() {
         {/* Inputs */}
         <Grid size={{ md: 7, xs: 12, lg: 8 }}>
           <Controller
-            name="name"
+            name="companyName"
             control={control}
             rules={{ required: 'Company name is required' }}
             render={({ field }) => (
@@ -139,7 +139,7 @@ function OrganizationOnbording() {
       <Grid container spacing={{ xs: 0, md: 1 }} sx={{ px: 1 }}>
         <Grid size={{ xs: 12, md: 5 }}>
           <Controller
-            name="TotalRevenue"
+            name="revenue"
             control={control}
             render={({ field }) => (
               <InputWithLabel label="Organization Revenue" placeholder="Enter Total Revenue" {...field} />
@@ -157,7 +157,7 @@ function OrganizationOnbording() {
 
         <Grid size={{ xs: 12, md: 5 }}>
           <Controller
-            name="numberEmp"
+            name="numberOfEmployees"
             control={control}
             render={({ field }) => (
               <InputWithLabel label="Number Of Employee" placeholder="Enter Total no" {...field} />
@@ -169,7 +169,7 @@ function OrganizationOnbording() {
       {/* About Org */}
       <Grid sx={{ px: 1 }}>
         <Controller
-          name="OrgDetails"
+          name="about"
           control={control}
           render={({ field }) => (
             <InputWithLabel
