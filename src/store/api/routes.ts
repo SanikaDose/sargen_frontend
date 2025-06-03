@@ -33,6 +33,8 @@ export const apiControllerPath = {
     getOrganizationsInformation: '/:tenantId/get-organization-information',
     addPointOfContact: '/:tenantId/add-point-of-contact',
     getPointOfContact: '/:tenantId/get-point-of-contact',
+    uploadLogo: '/upload-user-logo/:tenantId',
+   
   },
   plantInfo: {
     root: 'plantInfo',

@@ -81,6 +81,17 @@ export const onboardingApi = protectedApi.injectEndpoints({
       // Provide a tag so that the cache can be updated later when necessary
       providesTags: (result, error, tenantId) => [{ type: 'Poc', id: tenantId }],
     }),
+      // 📤 Upload Plant Logo
+    uploadOrganizationLogo: builder.mutation<void, { tenantId: string;  formData: FormData }>({
+      query: ({ tenantId, formData }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadLogo}${tenantId}`,
+        method: 'POST',
+        body: formData,
+      }),
+
+      invalidatesTags: (result, error,{tenantId}) => [{ type: 'PlantLogo',id:tenantId }],
+    }),
+
   }),
 });
 
@@ -89,4 +100,5 @@ export const {
   useSubmitPointOfContactMutation,
   useGetOrganizationInfoQuery,
   useGetPointOfConnectInfoQuery,
+  useUploadOrganizationLogoMutation
 } = onboardingApi;

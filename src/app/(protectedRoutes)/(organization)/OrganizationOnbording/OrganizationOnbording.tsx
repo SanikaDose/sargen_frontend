@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
@@ -6,8 +6,15 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { Dropdown } from '@/components/Dropdown/Dropdown';
-
+import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganizationOnbordingAPi';
+import { useRouter } from 'next/navigation';
+import { MenuItem, FormControl, OutlinedInput, Select} from '@mui/material';
 function OrganizationOnbording() {
+    const router=useRouter()
+    const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+    const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
+      const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+    const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
   const {
     control,
     handleSubmit,
@@ -25,8 +32,30 @@ function OrganizationOnbording() {
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log('Form Data:', data);
+//hnadle organization logo
+const handleUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await uploadOrganizationLogo({ tenantId, formData }).unwrap();
+      const localUrl = URL.createObjectURL(file);
+      setLogoUrl(localUrl);
+    } catch (error) {
+      console.error('Image upload failed:', error);
+    }
+  };
+
+  //on form submit
+  const onSubmit = async (data: any) => {
+    console.log('country value', data.country)
+     console.log('Form Data:', data);
+  try {
+        await submitOrganizationInfo({tenantId, body:data}).unwrap()
+        console.log('Organization info submitted');//use toster 
+        router.push('/AddContactPerson')
+      } catch (error) {
+        console.log('api submition failed',error) 
+      }
   };
 
   const onError = (errors: any) => {
@@ -66,7 +95,7 @@ function OrganizationOnbording() {
       >
         {/* Image Upload */}
         <Box sx={{ display: 'flex', width: '27%', justifyContent: 'center', alignItems: 'center' }}>
-          <ImageUploader imageProp="/images/default-logo-image.png?ignore" />
+          <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
         </Box>
 
         {/* Inputs */}
@@ -99,38 +128,45 @@ function OrganizationOnbording() {
               />
             </Grid>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '13px', mb: '1px', mt: 2, ml: '5px' }}>
-                Country
-              </Typography>
-              <Box
-                sx={{
-                  width: '100%',
-                  '& .MuiFormControl-root': {
-                    mt: 0,
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    height: '40px',
-                    color: '#888',
-                  },
-                  sm: { width: '100%' },
-                }}
-              >
-                <Controller
-                  name="country"
-                  control={control}
-                  //   rules={{ required: 'Country is required' }}
-                  render={({ field }) => (
-                    <Dropdown
-                      {...field}
-                      options={['India', 'United States', 'Canada', 'Germany']}
-                      placeholder="Select From Dropdown"
-                      multiSelect={false}
-                    />
-                  )}
-                />
-              </Box>
-            </Grid>
+           <Grid size={{ xs: 12, md: 6 }}>
+  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '13px', mb: '1px', mt: 2, ml: '5px' }}>
+    Country
+  </Typography>
+  <FormControl fullWidth sx={{ mt: 0 }}>
+    <Controller
+      name="country"
+      control={control}
+      rules={{ required: 'Country is required' }}
+      render={({ field }) => (
+        <Select
+          {...field}
+          displayEmpty
+          input={<OutlinedInput />}
+          value={field.value || ''}
+          onChange={(e) => field.onChange(e.target.value)}
+          sx={{
+            height: '40px',
+            color: '#888',
+            width: '100%',
+          }}
+          renderValue={(selected) => {
+            if (!selected) return <em style={{ color: '#888' }}>Select From Dropdown</em>;
+            return selected;
+          }}
+        >
+          <MenuItem disabled value="">
+            <em>Select From Dropdown</em>
+          </MenuItem>
+          {['India', 'United States', 'Canada', 'Germany'].map((country) => (
+            <MenuItem key={country} value={country}>
+              {country}
+            </MenuItem>
+          ))}
+        </Select>
+      )}
+    />
+  </FormControl>
+</Grid>
           </Grid>
         </Grid>
       </Box>
@@ -188,7 +224,7 @@ function OrganizationOnbording() {
       <Grid
         container
         justifyContent="space-between"
-        sx={{ p: 1, borderRadius: 4, backgroundColor: '#B0E0E6', border: '1px solid purple' }}
+        sx={{ p: 0.5, borderRadius: 4, backgroundColor: '#B0E0E6', border: '1px solid purple' }}
       >
         <Grid>
           <CustomButton children="Back" variant="contained" color="#10557C" icon="left" height="55px" width="80px" />
