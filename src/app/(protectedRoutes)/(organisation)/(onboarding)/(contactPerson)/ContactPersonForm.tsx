@@ -1,15 +1,20 @@
 'use client';
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, FormControl, Select, MenuItem } from '@mui/material';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { useState } from 'react';
-import { PocPayload } from './ContactPerson.types';
-import { useSubmitPointOfContactMutation } from './ContactPersonApi';
+import { useState, useEffect } from 'react';
+import { CountryOptions, PocPayload } from './ContactPerson.types';
+import { useAddPointOfContactMutation, useGetPointOfContactQuery } from './ContactPersonApi';
 
-const ContactPersonForm = () => {
+interface ContactPersonFormProps {
+  tenantId: string;
+  editMode?: boolean;
+}
+
+const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProps) => {
   const [formData, setFormData] = useState<PocPayload>({
     firstName: '',
     lastName: '',
@@ -21,11 +26,22 @@ const ContactPersonForm = () => {
     jobRole: '',
   });
 
-  const [submitPointOfContact, { isLoading }] = useSubmitPointOfContactMutation();
+  const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
+  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
+    skip: !editMode,
+  });
 
-  const tenantId = 'Elansol-Technologies-Pvt.-Ltd.-f65980e8-b4dd-4f83-8db1-7ee4afbb';
+  useEffect(() => {
+    if (editMode && existingData) {
+      console.log('Setting formData with:', existingData);
+      setFormData((prev) => ({
+        ...prev,
+        ...existingData,
+      }));
+    }
+  }, [editMode, existingData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -50,9 +66,17 @@ const ContactPersonForm = () => {
     'Email',
     'Country',
     'Designation',
-    'Contact Number',
+    'Contact',
     'Job Role',
   ].map((label) => ({ label }));
+
+  if (editMode && isFetching) {
+    return (
+      <Typography ml={2} mt={2}>
+        Loading contact data...
+      </Typography>
+    );
+  }
 
   return (
     <>
@@ -75,7 +99,7 @@ const ContactPersonForm = () => {
                     label="First name"
                     name="firstName"
                     placeholder="Enter First Name"
-                    value={formData.firstName}
+                    value={formData.firstName || ''}
                     onChange={handleChange}
                     sx={textFieldStyles}
                   />
@@ -85,7 +109,7 @@ const ContactPersonForm = () => {
                     label="Last Name"
                     name="lastName"
                     placeholder="Enter Last Name"
-                    value={formData.lastName}
+                    value={formData.lastName || ''}
                     onChange={handleChange}
                     sx={textFieldStyles}
                   />
@@ -96,7 +120,7 @@ const ContactPersonForm = () => {
                   label="Employee ID"
                   name="employeeId"
                   placeholder="Enter Employee ID"
-                  value={formData.employeeId}
+                  value={formData.employeeId || ''}
                   onChange={handleChange}
                   sx={textFieldStyles}
                 />
@@ -107,20 +131,36 @@ const ContactPersonForm = () => {
                     label="E-mail"
                     name="email"
                     placeholder="Enter Email"
-                    value={formData.email}
+                    value={formData.email || ''}
                     onChange={handleChange}
                     sx={textFieldStyles}
                   />
                 </Grid>
                 <Grid size={6}>
-                  <InputWithLabel
-                    label="Country"
-                    name="country"
-                    placeholder="Enter Country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    sx={textFieldStyles}
-                  />
+                  <FormControl fullWidth sx={{ mt: 2 }}>
+                    <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
+                    <Select
+                      displayEmpty
+                      value={formData.country || ''}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          country: e.target.value,
+                        }))
+                      }
+                      inputProps={{ 'aria-label': 'Select Country' }}
+                      sx={{ borderRadius: '8px' }}
+                    >
+                      <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                        <em>Select Country</em>
+                      </MenuItem>
+                      {CountryOptions.map((country) => (
+                        <MenuItem key={country.code} value={country.name}>
+                          {country.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
               <Grid container spacing={2}>
@@ -129,7 +169,7 @@ const ContactPersonForm = () => {
                     label="Designation"
                     name="designation"
                     placeholder="Enter Designation"
-                    value={formData.designation}
+                    value={formData.designation || ''}
                     onChange={handleChange}
                     sx={textFieldStyles}
                   />
@@ -139,7 +179,7 @@ const ContactPersonForm = () => {
                     label="Contact Number"
                     name="contactNumber"
                     placeholder="Enter Contact Number"
-                    value={formData.contactNumber}
+                    value={formData.contactNumber || ''}
                     onChange={handleChange}
                     sx={textFieldStyles}
                   />
@@ -155,7 +195,7 @@ const ContactPersonForm = () => {
             placeholder="Specify Job Role"
             multiline
             rows={4}
-            value={formData.jobRole}
+            value={formData.jobRole || ''}
             onChange={handleChange}
             sx={textFieldStyles}
           />
@@ -176,7 +216,7 @@ const ContactPersonForm = () => {
         </CustomButton>
 
         <CustomButton variant="contained" icon="success" color="#10557C" onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'Save'}
+          {isLoading ? 'Saving...' : editMode ? 'Update' : 'Save'}
         </CustomButton>
       </Box>
     </>
