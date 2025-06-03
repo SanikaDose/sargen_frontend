@@ -7,30 +7,13 @@ import ImageUploader from '../ImageUpload/ImageUpload';
 import styles from './style.module.css';
 import { PlantInfoCardProps, PlantData } from './PlantInfoCard.d';
 
-const defaultPlantData: PlantData = {
-  name: 'Unknown Plant',
-  plantLogo: defaulImage.src,
-  location: 'Unknown N/A',
-  registrationNo: 'Unknown N/A',
-  age: 100,
-  gstin: '675454354',
-  revenue: '1010210',
-  numberOfEmployees: 3514350,
-  numberOfLines: 55550,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  assessmentStartDate: new Date().toISOString(),
-  debriefDate: new Date().toISOString(),
-  assessmentCompletionPercentage: 565460,
-};
-
 const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
-  const plantData = data ?? defaultPlantData;
+  const plantData = data;
 
   return (
     <Box className={styles.card}>
       <Box className={styles.header}>
-        <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData.name}</Typography>
+        <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
         <Typography className={styles.editButton} onClick={() => alert('Edit Plant Info')}>
           <Edit />
         </Typography>
@@ -38,32 +21,37 @@ const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
 
       {/* Content */}
       <Box className={styles.content}>
-        <ImageUploader imageProp={plantData.plantLogo} />
+        <Box className={styles.plantImage}>
+          <ImageUploader imageProp={plantData?.plantLogo} />
+        </Box>
 
         {/* Info Grid */}
         <Box className={styles.infoGrid}>
           <Typography className={styles.textLabel}>
-            Location: <b>{plantData.location}</b>
+            Location: <b>{plantData?.location}</b>
           </Typography>
           <Typography className={styles.textLabel}>
-            Registration No.: <b>{plantData.registrationNo}</b>
+            Registration No.: <b>{plantData?.registrationNo}</b>
           </Typography>
           <Typography className={styles.textLabel}>
-            GST IN: <b>{plantData.gstin}</b>
+            GST IN: <b>{plantData?.gstin}</b>
           </Typography>
           <Typography className={styles.textLabel}>
-            Plant Age: <b>{plantData.age} years</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Revenue: <b>₹{(+plantData.revenue).toLocaleString()}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Total Employees: <b>{plantData.numberOfEmployees}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Total Lines: <b>{plantData.numberOfLines}</b>
+            Plant Age: <b>{plantData?.age} years</b>
           </Typography>
         </Box>
+      </Box>
+      <Divider sx={{ marginBottom: 1 }} />
+      <Box sx={{ display: 'flex', mt: 1 }} className={styles.infoBox}>
+        <Typography className={styles.textLabel}>
+          Revenue: <b>₹{+(plantData?.revenue ?? 0)}</b>
+        </Typography>
+        <Typography className={styles.textLabel}>
+          Total Employees: <b>{plantData?.numberOfEmployees}</b>
+        </Typography>
+        <Typography className={styles.textLabel}>
+          Total Lines: <b>{plantData?.numberOfLines}</b>
+        </Typography>
       </Box>
 
       {/* Dates */}
@@ -72,10 +60,10 @@ const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
         <Divider sx={{ marginBottom: 1 }} />
         <Box>
           <Typography className={styles.textLabel}>
-            Plant Created: {new Date(plantData.createdAt).toLocaleDateString()}
+            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString()}
           </Typography>
           <Typography className={styles.textLabel}>
-            Plant Updated: {new Date(plantData.updatedAt).toLocaleDateString()}
+            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString()}
           </Typography>
         </Box>
       </Box>
@@ -94,7 +82,7 @@ const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
           />
         </Box>
         <Box className={styles.progressCircle}>
-          <ProgressCircle color="#1976d2" size={100} thickness={4} value={75} />
+          <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
         </Box>
       </Box>
     </Box>

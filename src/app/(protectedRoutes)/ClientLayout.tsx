@@ -11,7 +11,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [open, setOpen] = useState(true);
   const isMobile = useMediaQuery('(max-width:600px)');
   const isTablet = useMediaQuery('(min-width:600px) and (max-width:900px)');
-  const [showInfoBox, setShowInfoBox] = useState(true);
+  const [showInfoBox, setShowInfoBox] = useState(false);
   useEffect(() => {}, [open]);
 
   return (

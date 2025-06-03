@@ -39,7 +39,7 @@ export const apiControllerPath = {
     root: 'plantInfo',
     addPlantInfo: '/add-plant-info',
     updatePlantInfo: '/edit-plant-info',
-    getAllPlantsInfo: '/:tenantId/get-all-plant-info',
+    getAllPlantsInfo: '/get-all-plant-info',
     getPlantInfo: '/:tenantId/:plantId/get-plant-info',
   },
 

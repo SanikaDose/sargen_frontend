@@ -1,7 +1,7 @@
 'use client';
 
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, FormControl, Grid, MenuItem, Select, Typography } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import defaultUserLogo from '../../../../../../public/images/default-logo-image.png';
 import styles from './PointOfContact.module.css';
@@ -12,6 +12,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { useEditPlantInfoMutation, useUploadPlantPointOfContactLogoMutation } from './PlantPointOfContactApi';
+import { CountryOptions } from '../../(onboarding)/(contactPerson)/ContactPerson.types';
 
 export default function PlantPointOfContact() {
   const { control, handleSubmit, reset, setFocus } = useForm<PlantPointOfContactType>();
@@ -54,17 +55,18 @@ export default function PlantPointOfContact() {
     'First Name',
     'Last Name',
     'Email Mail',
-    'Country',
     'Contact No.',
     'Designation',
+    'Country',
     'Employee Id',
     'jobRole',
   ].map((label) => ({ label }));
 
   const allInputs = [
     ...plantPointOfContactFormInputs,
+    { name: 'pocCountry', label: 'Country' },
     { name: 'pocEmployeeId', label: 'Employee Id' },
-    { name: 'jobRole', label: 'Job Role' },
+    { name: 'pocJobRole', label: 'Job Role' },
   ];
 
   // ✅ Compute activeStep based on focused field index
@@ -101,7 +103,7 @@ export default function PlantPointOfContact() {
           <Box className={styles.formFieldsBox}>
             <Grid container spacing={1}>
               {plantPointOfContactFormInputs.map((input, index) => (
-                <Grid key={index} size={{ xs: 12, sm: 6, md: 6, lg: 5, xl: 5 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <Controller
                     name={input.name as keyof PlantPointOfContactType}
                     control={control}
@@ -120,8 +122,38 @@ export default function PlantPointOfContact() {
                   />
                 </Grid>
               ))}
+
+              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                <Controller
+                  name="pocCountry"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                      <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
+                      <Select
+                        {...field}
+                        displayEmpty
+                        value={field.value || ''}
+                        inputProps={{ 'aria-label': 'Select Country' }}
+                        sx={{ borderRadius: '8px' }}
+                        onFocus={() => setFocusedField('pocCountry')}
+                      >
+                        <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                          <em>Select Country</em>
+                        </MenuItem>
+                        {CountryOptions.map((country) => (
+                          <MenuItem key={country.code} value={country.name}>
+                            {country.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </Grid>
             </Grid>
-            <br />
+
             <Box>
               <Controller
                 name="pocEmployeeId"
