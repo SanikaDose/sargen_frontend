@@ -84,7 +84,7 @@ function OrganizationOnbording() {
             name="website"
             control={control}
             render={({ field }) => (
-              <InputWithLabel label="Company Website" placeholder="Enter company website" {...field} />
+              <InputWithLabel label="Company Website" placeholder="Enter company website" {...field} required={true} />
             )}
           />
 
