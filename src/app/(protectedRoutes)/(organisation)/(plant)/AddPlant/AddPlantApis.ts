@@ -1,35 +1,16 @@
-import { rtkAPIToast } from '@/app/utils/RtkApiToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
-
-interface AddPlant {
-  name: string;
-  location: string;
-  registrationNo: string;
-  revenue: number;
-  type: string;
-  age: number;
-  numberOfEmployees: number;
-  numberOfLines: number;
-  assessmentStartDate: string;
-  debriefDate: string;
-}
+import { AddPlantApi } from './AddPlant.types';
 
 export const plantInfoApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
-    addPlantInfo: builder.mutation<void, { tenantId: string; body: AddPlant }>({
+    addPlantInfo: builder.mutation<void, { tenantId: string; body: AddPlantApi }>({
       query: ({ tenantId, body }) => ({
         url: `${apiControllerPath.plantInfo.root}/${tenantId}${apiControllerPath.plantInfo.addPlantInfo}`,
         method: 'POST',
         body,
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Plant Information Added Succesfully!',
-          errorMessage: 'Failed To Add Plant Information!',
-          duration: 4000,
-        });
-      },
+
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
     // 📤 Upload Plant Logo
@@ -39,13 +20,7 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Plant logo uploaded successfully!',
-          errorMessage: 'Failed to upload plant logo!',
-          duration: 4000,
-        });
-      },
+
       invalidatesTags: (result, error, { plantId }) => [{ type: 'PlantLogo', id: plantId }],
     }),
 

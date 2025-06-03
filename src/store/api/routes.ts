@@ -20,6 +20,8 @@ export const apiControllerPath = {
     deleteLogo: '/get-user-logo',
     uploadPlantLogo: '/upload-plant-logo',
     getPlantLogo: '/get-plant-logo',
+    uploadPlantPointOfContactLogo: '/upload-plant-point-of-contact-logo',
+    getPlantPointOfContactLogo: '/get-plant-point-of-contact-logo',
   },
   onboardingStatus: {
     root: 'onboarding-status',
@@ -35,7 +37,7 @@ export const apiControllerPath = {
   plantInfo: {
     root: 'plantInfo',
     addPlantInfo: '/add-plant-info',
-    updatePlantInfo: '/:tenantId/:plantId/edit-plant-info',
+    updatePlantInfo: '/edit-plant-info',
     getAllPlantsInfo: '/:tenantId/get-all-plant-info',
     getPlantInfo: '/:tenantId/:plantId/get-plant-info',
   },

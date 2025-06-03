@@ -14,15 +14,7 @@
   width: 100%;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  gap: 1rem; /* Default for small screens */
-}
-
-@media (min-width: 1200px) {
-  .formContainer {
-    flex-direction: row;
-    gap: 2.5rem;
-  }
+  gap: 5rem; /* Default for small screens */
 }
 
 .imageBox {
@@ -51,6 +43,7 @@
 @media (min-width: 280px) and (max-width: 768px) {
   .formContainer {
     gap: 1.5rem;
+    flex-direction: column;
   }
 
   .stepperContainer {
