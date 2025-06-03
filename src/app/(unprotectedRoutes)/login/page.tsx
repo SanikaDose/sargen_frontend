@@ -1,128 +1,78 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Box, Button, Container, IconButton, InputAdornment, TextField, Typography, Paper } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useForm, Controller, Control } from 'react-hook-form';
-
-interface LoginFormInputs {
-  email: string;
-  password: string;
-}
-
-const formFields: {
-  name: keyof LoginFormInputs;
-  label: string;
-  placeholder: string;
-  type?: string;
-}[] = [
-  { name: 'email', label: 'Email', placeholder: 'Enter your email', type: 'text' },
-  { name: 'password', label: 'Password', placeholder: 'Enter your password', type: 'password' },
-];
-
-type FormInputProps = {
-  name: keyof LoginFormInputs;
-  label: string;
-  placeholder: string;
-  type?: string;
-  control: Control<LoginFormInputs>;
-  showPassword?: boolean;
-  togglePasswordVisibility?: () => void;
-};
-
-const FormInput = ({
-  name,
-  label,
-  placeholder,
-  type = 'text',
-  control,
-  showPassword,
-  togglePasswordVisibility,
-}: FormInputProps) => (
-  <Controller
-    name={name}
-    control={control}
-    defaultValue=""
-    rules={{ required: `${label} is required` }}
-    render={({ field }) => (
-      <TextField
-        {...field}
-        fullWidth
-        label={label}
-        placeholder={placeholder}
-        type={name === 'password' && !showPassword ? 'password' : 'text'}
-        margin="normal"
-        variant="outlined"
-        InputProps={{
-          endAdornment:
-            name === 'password' ? (
-              <InputAdornment position="end">
-                <IconButton onClick={togglePasswordVisibility} edge="end">
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ) : undefined,
-        }}
-      />
-    )}
-  />
-);
+import React from 'react';
+import { Box, Button, Container, Typography, Paper } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import { PasswordTextField } from '@/components/Password/Password';
+import styles from './style.module.css';
+import { LoginFormInputs } from './login.types';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
-  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = (data: LoginFormInputs) => {
-    console.log('Login Data:', data);
-    // You can replace this with your API call
+    console.log('Form Data:', data);
+    // Send to API here
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
-      <Paper
-        elevation={3}
-        sx={{ borderRadius: 3, p: 4, background: 'linear-gradient(to bottom right, #e0eafc, #cfdef3)' }}
-      >
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Welcome Back
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          Sign in to access your industry roadmap
-        </Typography>
+    <Container maxWidth="sm" className={styles.container}>
+      <Box className={styles.paper}>
+        <section className={styles.textContainer}>
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
+            Welcome Back
+          </Typography>
+          <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
+            Sign in to access your industry roadmap
+          </Typography>
+        </section>
 
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate mt={3}>
-          {formFields.map((field) => (
-            <FormInput
-              key={field.name}
-              {...field}
-              control={control}
-              showPassword={showPassword}
-              togglePasswordVisibility={() => setShowPassword((prev) => !prev)}
-            />
-          ))}
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Email is required' }}
+            render={({ field }) => (
+              <InputWithLabel
+                {...field}
+                label="Email Address"
+                name="email"
+                placeholder="Enter your email"
+                type="email"
+              />
+            )}
+          />
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{
-              mt: 3,
-              py: 1.5,
-              backgroundColor: '#3f75f6',
-              borderRadius: 2,
-              fontWeight: 'bold',
-              fontSize: '1rem',
-              '&:hover': { backgroundColor: '#365fd0' },
-            }}
-          >
+          <Controller
+            name="password"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Password is required' }}
+            render={({ field }) => (
+              <PasswordTextField
+                {...field}
+                autoComplete="new-password"
+                fullWidth={true}
+                label="Password"
+                placeholder="Enter your password"
+                showLockIcon={false}
+                showPasswordToggle
+                showStrengthIndicator
+              />
+            )}
+          />
+
+          <Button type="submit" fullWidth variant="contained" className={styles.button}>
             Sign In
           </Button>
 
-          <Typography variant="body2" mt={2} textAlign="center" color="primary">
+          <Typography variant="body2" className={styles.forgotPassword}>
             Forgot password?
           </Typography>
         </Box>
-      </Paper>
+      </Box>
     </Container>
   );
 };

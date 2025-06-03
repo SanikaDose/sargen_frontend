@@ -3,7 +3,7 @@ export const apiControllerPath = {
     app: '/api',
   },
   authentication: {
-    root: 'authentication',
+    root: '/authentication',
     login: '/login',
     signup: '/signup',
     restpassword: '/reset-password',
