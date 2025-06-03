@@ -2,65 +2,90 @@
 
 import { Header } from '@/components/Header/Header';
 import InfoBox from '@/components/InfoBox/InfoBox';
-import SideBar from '@/components/sideBar/SideBar';
+import SideBar from '@/components/SideBar/SideBar';
+import theme from '@/theme/theme';
 
-import { Grid, useMediaQuery } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Fab, Grid, useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(true);
-  const isMobile = useMediaQuery('(max-width:600px)');
-  const isTablet = useMediaQuery('(min-width:600px) and (max-width:900px)');
+  const [openSideBar, setOpenSideBar] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899
+  const isCompactDesktop = useMediaQuery('(min-width:901px) and (max-width:1045px)');
+  console.log(openSideBar);
+  // Check if sidebar should be permanent
+  const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
+
   const [showInfoBox, setShowInfoBox] = useState(false);
-  useEffect(() => {}, [open]);
+
+  useEffect(() => {
+    console.log('width:', window.innerWidth);
+  }, []);
+
+  // Auto-close drawer on mobile/tablet for better UX
+  useEffect(() => {
+    if (isMobile || isTablet) {
+      setOpenSideBar(false);
+    } else if (isPermanentSidebar) {
+      setOpenSideBar(true);
+    }
+  }, [isMobile, isTablet, isPermanentSidebar]);
 
   return (
+    // Grid 1
     <Grid
       container
       sx={{
         minHeight: '100vh',
         margin: 0,
         width: '100%',
+        position: 'relative', // For FAB positioning
       }}
       padding={0.5}
+      size={12}
     >
       {/* Sidebar */}
-      {open && (
-        <Grid
-          size={{ xs: 12, sm: 12, md: 2, lg: 2, xl: 2 }}
-          sx={{
-            position: isMobile || isTablet ? 'fixed' : 'relative',
-            zIndex: 1200,
-            // width: isMobile || isTablet ? '100vw' : 'auto',
-            height: isMobile || isTablet ? '100vh' : 'auto',
-          }}
-        >
-          <SideBar
-            onCloseTrigger={() => setOpen(false)}
-            drawerType={isMobile || isTablet ? 'temporary' : 'permanent'}
-          />
+      {/* Grid 1{1} */}
+      {openSideBar && isPermanentSidebar && (
+        <Grid size={{ lg: 2, xl: 2 }}>
+          <SideBar onCloseTrigger={() => setOpenSideBar(false)} drawerType="permanent" />
         </Grid>
       )}
 
+      {/* Temporary Sidebar (Mobile/Tablet/Compact) - Outside Grid System */}
+      {openSideBar && !isPermanentSidebar && (
+        <SideBar onCloseTrigger={() => setOpenSideBar(false)} open={openSideBar} drawerType="temporary" />
+      )}
+
       {/* Main content wrapper */}
+      {/* Grid 1{2} */}
       <Grid
-        size={{ xs: 12, sm: 12, md: open ? 10 : 12, lg: 10, xl: 10 }}
+        size={
+          openSideBar && isPermanentSidebar
+            ? { xs: 12, sm: 12, md: 12, lg: 10, xl: 10 } // Adjust for sidebar space
+            : { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } // Full width when no sidebar or temporary
+        }
         container
         direction="column"
         spacing={2}
         padding={0.3}
+        border={'1px solid red'}
       >
+        {/* Grid 1{2{1}} */}
         {/* Header */}
-        <Grid size={12}>
+        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }} border={'1px solid pink'}>
           <Header
             title={'Assessor Onboarding'}
             user={{ name: 'viren', designation: 'SDE1', avatarUrl: 'https://avatar.iran.liara.run/public/19' }}
-            onMenuClick={() => setOpen(!open)}
+            onMenuClick={() => setOpenSideBar(!openSideBar)}
+            showMenuButton={!openSideBar || !isPermanentSidebar} // Show menu button when drawer is closed or not permanent
           />
         </Grid>
 
         {/* Content and InfoBox wrapper */}
-
+        {/* Grid 1{2{2}} */}
         <Grid
           size={12}
           container
@@ -69,6 +94,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           }}
         >
           {/* Main content */}
+          {/* Grid 1{2{2}{1}} */}
           <Grid
             size={!isMobile && !isTablet && showInfoBox ? { xs: 12, sm: 12, md: 8, lg: 8, xl: 9 } : 12}
             border={'5px solid gray'}
@@ -76,6 +102,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             {children}
           </Grid>
 
+          {/* Grid 1{2{2}{2}} */}
           {/* InfoBox */}
           {!isMobile && !isTablet && showInfoBox && (
             <Grid size={{ md: 4, lg: 3, xl: 3 }} border={'1px solid orange'}>
@@ -83,6 +110,36 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </Grid>
           )}
         </Grid>
+
+        {/* Additional Quick Access Button in Content Area */}
+        {!openSideBar && (
+          <Grid
+            size={12}
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              position: 'absolute',
+              top: 80, // Below header
+              left: 16,
+              zIndex: 1000,
+            }}
+          >
+            <Fab
+              size="small"
+              color="secondary"
+              onClick={() => setOpenSideBar(true)}
+              sx={{
+                boxShadow: 2,
+                opacity: 0.8,
+                '&:hover': {
+                  opacity: 1,
+                },
+              }}
+            >
+              <MenuIcon fontSize="small" />
+            </Fab>
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

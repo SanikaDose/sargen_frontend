@@ -17,6 +17,7 @@ import React, { useState } from 'react';
 export interface HeaderProps {
   title: string;
   onMenuClick?: () => void;
+  showMenuButton?: boolean;
   user?: {
     name: string;
     designation: string;
@@ -24,7 +25,8 @@ export interface HeaderProps {
   };
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, onMenuClick, user }) => {
+export const Header: React.FC<HeaderProps> = ({ title, onMenuClick, showMenuButton, user }) => {
+  console.log('showmenu', showMenuButton);
   const theme = useTheme();
   const isMobile = useMediaQuery('(max-width:600px)');
   const isTablet = useMediaQuery('(min-width:600px) and (max-width:900px)');
@@ -55,15 +57,12 @@ export const Header: React.FC<HeaderProps> = ({ title, onMenuClick, user }) => {
         }}
       >
         <Box display="flex" alignItems="center">
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={onMenuClick}
-            sx={{ mr: 2, display: { xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {/* Only show the menu icon if showMenuButton is true */}
+          {showMenuButton && (
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={onMenuClick} sx={{ mr: 2 }}>
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography variant="h6" component="div" color={theme.palette.text.primary}>
             {title}
           </Typography>
@@ -71,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({ title, onMenuClick, user }) => {
 
         {user && (
           <Box display="flex" alignItems="center">
-            {/* Shown only on non-mobile */}
+            {/* Shown only on non-mobile/tablet */}
             {!isMobile && !isTablet && (
               <Stack direction="column" alignItems="flex-end" spacing={0} mr={2}>
                 <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
