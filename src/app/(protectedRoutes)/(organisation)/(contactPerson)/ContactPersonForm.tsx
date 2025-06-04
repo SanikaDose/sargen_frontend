@@ -15,6 +15,7 @@ import {
 } from './ContactPersonApi';
 import styles from './ContactPerson.module.css';
 import { CountryOptions } from '@/app/utils/CountryOptions';
+import { useRouter } from 'next/navigation';
 
 const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProps) => {
   const [formData, setFormData] = useState<PocPayload>({
@@ -28,6 +29,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     jobRole: '',
   });
 
+  const router = useRouter();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
@@ -113,7 +115,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     { label: 'Email', name: 'email' },
     { label: 'Country', name: 'country' },
     { label: 'Designation', name: 'designation' },
-    { label: 'Contact Number', name: 'contactNumber' },
+    { label: 'Contact', name: 'contactNumber' },
     { label: 'Job Role', name: 'jobRole' },
   ];
 
@@ -277,7 +279,12 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton variant="contained" icon="left" color="#10557C">
+        <CustomButton
+          variant="contained"
+          icon="left"
+          color="#10557C"
+          onClick={() => router.push('/OrganizationOnboarding')}
+        >
           Back
         </CustomButton>
         <CustomButton

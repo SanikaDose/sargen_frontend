@@ -12,7 +12,6 @@ import styles from './AddPlant.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
-import { plantFormInputs } from './FormConfig/formInputStep';
 
 const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
 const plantId = '8c28e6c8-8b17-4edc-b4f2-6e2a5585b1ea';
