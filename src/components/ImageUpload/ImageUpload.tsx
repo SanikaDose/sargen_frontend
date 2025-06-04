@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, IconButton } from '@mui/material';
 import Edit from '@mui/icons-material/Edit';
 import styles from './style.module.css';
-
+import { usePathname } from 'next/navigation';
 interface ImageUploaderProps {
   imageProp?: string;
   onUpload?: (file: File) => void;
@@ -10,7 +10,7 @@ interface ImageUploaderProps {
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) => {
   const [image, setImage] = useState<string | null>(null);
-
+  const pathname = usePathname();
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -22,7 +22,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) =>
   };
 
   const avatarSrc = image || imageProp || '/images/default-logo-image.png';
-
+  const isPlantOverview = pathname?.includes('/PlantOverview');
   return (
     <div className={styles.avatarStack}>
       <div className={styles.avatarWrapper}>
@@ -35,9 +35,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) =>
             onChange={handleImageChange}
             className={styles.hiddenInput}
           />
-          <IconButton component="span" className={styles.editButton} aria-label="edit avatar">
-            <Edit fontSize="inherit" />
-          </IconButton>
+          {!isPlantOverview && (
+            <IconButton component="span" className={styles.editButton} aria-label="edit avatar">
+              <Edit fontSize="inherit" />
+            </IconButton>
+          )}
         </label>
       </div>
     </div>
