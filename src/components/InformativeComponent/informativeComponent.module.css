@@ -1,0 +1,19 @@
+.outerContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.content {
+  height: auto;
+  width: 70%;
+  padding: 2%;
+  /* border: 1px solid red; */
+  text-align: center;
+  align-content: center;
+}

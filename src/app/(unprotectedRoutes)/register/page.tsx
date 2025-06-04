@@ -29,6 +29,7 @@ const RegisterPage = () => {
     control,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     defaultValues: {
@@ -54,8 +55,6 @@ const RegisterPage = () => {
   );
 
   async function handleRegister(data: RegisterFormInputs) {
-    console.log('Form submitted with data:', data);
-
     const preDefinedBody = {
       ...data,
       applications: ['SARGEN'],
@@ -101,9 +100,19 @@ const RegisterPage = () => {
                   {...field}
                   value={field.value || 'PLATFORMUSER'}
                   onChange={(e) => {
-                    field.onChange(e);
-                    const value = e.target.value;
+                    const value = e.target.value as 'PLATFORMUSER' | 'ASSESSOR';
+                    field.onChange(value);
                     setTypeOfUser(value === 'PLATFORMUSER' ? 'organisation' : 'PLATFORMUSER');
+
+                    reset({
+                      user_type: value,
+                      firstName: '',
+                      lastName: '',
+                      organisationName: '',
+                      email: '',
+                      password: '',
+                      rePassword: '',
+                    });
                   }}
                 >
                   <FormControlLabel value="PLATFORMUSER" control={<Radio />} label="Organisation" />
