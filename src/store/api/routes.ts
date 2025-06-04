@@ -33,8 +33,8 @@ export const apiControllerPath = {
     root: '/onboarding',
     addOrganizationsInformation: '/add-organization-information',
     getOrganizationsInformation: '/:tenantId/get-organization-information',
-    addPointOfContact: '/add-point-of-contact',
-    getPointOfContact: '/get-point-of-contact',
+    addPointOfContact: '/:tenantId/add-point-of-contact',
+    getPointOfContact: '/:tenantId/get-point-of-contact',
   },
   plantInfo: {
     root: 'plantInfo',

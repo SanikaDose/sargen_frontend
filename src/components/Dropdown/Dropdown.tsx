@@ -9,6 +9,7 @@ type MultiSelectPlaceholderProps = {
   options?: string[];
   placeholder?: string;
   width?: number;
+  multiSelect: boolean;
 };
 
 const ITEM_HEIGHT = 48;
@@ -39,15 +40,21 @@ export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
   options = defaultOptions,
   placeholder = 'Placeholder',
   width = 300,
+  multiSelect = false,
 }) => {
   const theme = useTheme();
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
+  const handleChange = (event: SelectChangeEvent<any>) => {
     const {
       target: { value },
     } = event;
-    setSelectedItems(typeof value === 'string' ? value.split(',') : value);
+
+    if (multiSelect) {
+      setSelectedItems(typeof value === 'string' ? value.split(',') : value);
+    } else {
+      setSelectedItems([value]);
+    }
   };
 
   const getStyles = (name: string, selected: readonly string[], theme: Theme) => ({
@@ -55,21 +62,25 @@ export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
   });
 
   return (
-    <FormControl sx={{ m: 1, width, mt: 3 }}>
+    <FormControl sx={{ m: 0, mt: 3, width: '100%' }}>
       <Select
-        multiple
+        multiple={multiSelect}
         displayEmpty
-        value={selectedItems}
+        value={multiSelect ? selectedItems : selectedItems[0] || ''}
         onChange={handleChange}
         input={<OutlinedInput />}
         renderValue={(selected) => {
-          if (selected.length === 0) {
+          if (!multiSelect && typeof selected === 'string') {
+            return selected || <em>{placeholder}</em>;
+          }
+          if (multiSelect && (selected as string[]).length === 0) {
             return <em>{placeholder}</em>;
           }
-          return selected.join(', ');
+          return (selected as string[]).join(', ');
         }}
         MenuProps={MenuProps}
         inputProps={{ 'aria-label': 'Without label' }}
+        sx={{ width: '100%' }}
       >
         <MenuItem disabled value="">
           <em>{placeholder}</em>

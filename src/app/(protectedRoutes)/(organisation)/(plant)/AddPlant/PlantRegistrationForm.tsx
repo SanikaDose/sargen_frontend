@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { Box, Typography } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import { plantFormInputs } from './FormConfig/formInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
