@@ -1,0 +1,15 @@
+.outerContainer {
+  padding: 12px 16px;
+  /* border-style: outset; */
+  border-radius: 8px;
+  border: 2px outset rgb(255, 255, 255);
+  width: 60%;
+  display: flex;
+  align-items: center;
+}
+
+.questionText {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
