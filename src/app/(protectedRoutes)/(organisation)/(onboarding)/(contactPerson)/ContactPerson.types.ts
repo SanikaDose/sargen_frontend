@@ -7,6 +7,7 @@ export type PocPayload = {
   designation: string;
   contactNumber: string;
   jobRole?: string;
+  profilePicUrl?: string;
 };
 
 export interface ContactPersonFormProps {

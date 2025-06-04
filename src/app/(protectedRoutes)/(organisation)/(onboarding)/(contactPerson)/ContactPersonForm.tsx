@@ -74,9 +74,9 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     });
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFocus = (e: { target: { name: string } }) => {
     const { name } = e.target;
-    const index = steps.findIndex((s) => s.label.toLowerCase().replace(/ /g, '') === name.toLowerCase());
+    const index = steps.findIndex((s) => s.name === name);
     setActiveStep(index);
   };
 
@@ -93,16 +93,29 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     '& .MuiOutlinedInput-root': { borderRadius: '8px' },
   };
 
+  const isFormValid = () => {
+    return (
+      formData.firstName.trim() &&
+      formData.lastName.trim() &&
+      formData.employeeId.trim() &&
+      formData.email.trim() &&
+      formData.country.trim() &&
+      formData.designation.trim() &&
+      formData.contactNumber.trim() &&
+      (formData.jobRole ?? '').trim()
+    );
+  };
+
   const steps = [
-    'First Name',
-    'Last Name',
-    'Employee ID',
-    'Email',
-    'Country',
-    'Designation',
-    'Contact',
-    'Job Role',
-  ].map((label) => ({ label }));
+    { label: 'First Name', name: 'firstName' },
+    { label: 'Last Name', name: 'lastName' },
+    { label: 'Employee ID', name: 'employeeId' },
+    { label: 'Email', name: 'email' },
+    { label: 'Country', name: 'country' },
+    { label: 'Designation', name: 'designation' },
+    { label: 'Contact Number', name: 'contactNumber' },
+    { label: 'Job Role', name: 'jobRole' },
+  ];
 
   if (editMode && isFetching) {
     return (
@@ -136,6 +149,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
                   onChange={handleChange}
                   onFocus={handleFocus}
                   sx={textFieldStyles}
+                  required
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -147,6 +161,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
                   onChange={handleChange}
                   onFocus={handleFocus}
                   sx={textFieldStyles}
+                  required
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -158,6 +173,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
                   onChange={handleChange}
                   onFocus={handleFocus}
                   sx={textFieldStyles}
+                  required
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -169,23 +185,34 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
                   onChange={handleChange}
                   onFocus={handleFocus}
                   sx={textFieldStyles}
+                  required
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth sx={{ mt: 2 }}>
-                  <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
+                  <Typography sx={{ fontWeight: 500, color: '#000000' }}>
+                    Country <span style={{ color: 'red' }}>*</span>
+                  </Typography>
                   <Select
                     displayEmpty
                     value={formData.country}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const name = 'country';
+                      const fieldIndex = steps.findIndex((s) => s.name === name);
                       setFormData((prev) => ({
                         ...prev,
-                        country: e.target.value,
-                      }))
-                    }
-                    onFocus={handleFocus}
-                    inputProps={{ 'aria-label': 'Select Country' }}
+                        [name]: value,
+                      }));
+                      if (value.trim() && !completedSteps.includes(fieldIndex)) {
+                        setCompletedSteps((prev) => [...prev, fieldIndex]);
+                      } else if (!value.trim() && completedSteps.includes(fieldIndex)) {
+                        setCompletedSteps((prev) => prev.filter((step) => step !== fieldIndex));
+                      }
+                    }}
+                    inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
                     sx={{ borderRadius: '8px' }}
+                    onOpen={() => handleFocus({ target: { name: 'country' } } as { target: { name: string } })}
                   >
                     <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
                       <em>Select Country</em>
@@ -207,6 +234,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
                   onChange={handleChange}
                   onFocus={handleFocus}
                   sx={textFieldStyles}
+                  required
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -218,6 +246,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
                   onChange={handleChange}
                   onFocus={handleFocus}
                   sx={textFieldStyles}
+                  required
                 />
               </Grid>
             </Grid>
@@ -234,6 +263,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
             onChange={handleChange}
             onFocus={handleFocus}
             sx={textFieldStyles}
+            required
           />
         </Grid>
       </Grid>
@@ -250,7 +280,13 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
         <CustomButton variant="contained" icon="left" color="#10557C">
           Back
         </CustomButton>
-        <CustomButton variant="contained" icon="save" color="#10557C" onClick={handleSubmit} disabled={isLoading}>
+        <CustomButton
+          variant="contained"
+          icon="save"
+          color="#10557C"
+          onClick={handleSubmit}
+          disabled={!isFormValid() || isLoading}
+        >
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>
