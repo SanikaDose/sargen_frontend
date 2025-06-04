@@ -23,7 +23,8 @@ export const apiControllerPath = {
     uploadPlantLogo: '/upload-plant-logo',
     getPlantLogo: '/get-plant-logo',
     uploadPlantPointOfContactLogo: '/upload-plant-point-of-contact-logo',
-    getPlantPointOfContactLogo: '/get-plant-point-of-contact-logo',
+    getPlantPointOfContactLogo: '/get-plant-point-of-contact-logo'
+
   },
   onboardingStatus: {
     root: 'onboarding-status',
