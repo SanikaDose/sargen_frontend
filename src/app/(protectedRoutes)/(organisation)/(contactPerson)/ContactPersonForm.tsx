@@ -283,7 +283,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
           variant="contained"
           icon="left"
           color="#10557C"
-          onClick={() => router.push('/OrganisationOnboarding')}
+          onClick={() => router.push('/organisationOnboarding')}
         >
           Back
         </CustomButton>
