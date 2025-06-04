@@ -3,7 +3,7 @@
 import { Box, Grid, Typography, FormControl, Select, MenuItem } from '@mui/material';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import defaultUserLogo from '../../../../../../public/images/default-logo-image.png';
+import defaultUserLogo from './../../../../../public/images/default-logo-image.png';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { useState, useEffect } from 'react';

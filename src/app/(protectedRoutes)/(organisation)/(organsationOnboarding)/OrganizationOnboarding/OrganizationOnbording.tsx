@@ -8,13 +8,14 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { Dropdown } from '@/components/Dropdown/Dropdown';
 import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganizationOnbordingAPi';
 import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select} from '@mui/material';
+import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 function OrganizationOnbording() {
-    const router=useRouter()
-    const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
-    const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
-      const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-    const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
+  const router = useRouter();
+  const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+  const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
+  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
+  const tenantId = 'Elansol-Technologies-Pvt-Ltd-f65980e8-b4dd-4f83-8db1-7ee4afbb';
   const {
     control,
     handleSubmit,
@@ -32,8 +33,8 @@ function OrganizationOnbording() {
     },
   });
 
-//hnadle organization logo
-const handleUpload = async (file: File) => {
+  //hnadle organization logo
+  const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
@@ -47,15 +48,15 @@ const handleUpload = async (file: File) => {
 
   //on form submit
   const onSubmit = async (data: any) => {
-    console.log('country value', data.country)
-     console.log('Form Data:', data);
-  try {
-        await submitOrganizationInfo({tenantId, body:data}).unwrap()
-        console.log('Organization info submitted');//use toster 
-        router.push('/AddContactPerson')
-      } catch (error) {
-        console.log('api submition failed',error) 
-      }
+    console.log('country value', data.country);
+    console.log('Form Data:', data);
+    try {
+      await submitOrganizationInfo({ tenantId, body: data }).unwrap();
+      console.log('Organization info submitted'); //use toster
+      router.push('/AddContactPerson');
+    } catch (error) {
+      console.log('api submition failed', error);
+    }
   };
 
   const onError = (errors: any) => {
@@ -128,45 +129,45 @@ const handleUpload = async (file: File) => {
               />
             </Grid>
 
-           <Grid size={{ xs: 12, md: 6 }}>
-  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '13px', mb: '1px', mt: 2, ml: '5px' }}>
-    Country
-  </Typography>
-  <FormControl fullWidth sx={{ mt: 0 }}>
-    <Controller
-      name="country"
-      control={control}
-      rules={{ required: 'Country is required' }}
-      render={({ field }) => (
-        <Select
-          {...field}
-          displayEmpty
-          input={<OutlinedInput />}
-          value={field.value || ''}
-          onChange={(e) => field.onChange(e.target.value)}
-          sx={{
-            height: '40px',
-            color: '#888',
-            width: '100%',
-          }}
-          renderValue={(selected) => {
-            if (!selected) return <em style={{ color: '#888' }}>Select From Dropdown</em>;
-            return selected;
-          }}
-        >
-          <MenuItem disabled value="">
-            <em>Select From Dropdown</em>
-          </MenuItem>
-          {['India', 'United States', 'Canada', 'Germany'].map((country) => (
-            <MenuItem key={country} value={country}>
-              {country}
-            </MenuItem>
-          ))}
-        </Select>
-      )}
-    />
-  </FormControl>
-</Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '13px', mb: '1px', mt: 2, ml: '5px' }}>
+                Country
+              </Typography>
+              <FormControl fullWidth sx={{ mt: 0 }}>
+                <Controller
+                  name="country"
+                  control={control}
+                  rules={{ required: 'Country is required' }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      displayEmpty
+                      input={<OutlinedInput />}
+                      value={field.value || ''}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      sx={{
+                        height: '40px',
+                        color: '#888',
+                        width: '100%',
+                      }}
+                      renderValue={(selected) => {
+                        if (!selected) return <em style={{ color: '#888' }}>Select From Dropdown</em>;
+                        return selected;
+                      }}
+                    >
+                      <MenuItem disabled value="">
+                        <em>Select From Dropdown</em>
+                      </MenuItem>
+                      {['India', 'United States', 'Canada', 'Germany'].map((country) => (
+                        <MenuItem key={country} value={country}>
+                          {country}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Grid>
           </Grid>
         </Grid>
       </Box>
