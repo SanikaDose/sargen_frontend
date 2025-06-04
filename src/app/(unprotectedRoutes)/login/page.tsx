@@ -1,110 +1,148 @@
 'use client';
 
-import { yupResolver } from '@hookform/resolvers/yup';
-import { LockOutlined } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  Paper,
-  TextField,
-  Typography,
-} from '@mui/material';
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useRef, useState } from 'react';
+import { Box, Button, Container, Typography, Paper } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import { PasswordTextField } from '@/components/Password/Password';
+import styles from './style.module.css';
+import { FormValues, LoginFormInputs, Token } from './login.types';
+import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
+import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setDecodedToken } from './loginSlice';
+import { useRouter } from 'next/navigation';
 
-import * as yup from 'yup';
+const LoginPage = () => {
+  const { control, handleSubmit } = useForm<LoginFormInputs>();
+  const [loading, setLoading] = useState(false);
+  const hasNavigatedRef = useRef(false);
+  const [loginUser] = useLoginUserMutation();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
-// Define FormData type first
-type FormData = {
-  email: string;
-  password: string;
-  remember: boolean;
-};
+  const handleLogin = async (data: LoginFormInputs) => {
+    if (loading || hasNavigatedRef.current) return;
 
-// Create schema with proper typing
-const schema = yup
-  .object({
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-    remember: yup.boolean().default(false),
-  })
-  .required();
+    setLoading(true);
+    try {
+      const result = await loginUser(data).unwrap();
 
-// Explicitly type the schema to match FormData
-type SchemaType = yup.InferType<typeof schema>;
+      if (!result.success) throw new Error('Login unsuccessful');
 
-interface LoginFormProps {
-  onSubmit: (data: FormData) => void;
-  loading?: boolean;
-}
+      const token = result.accessToken;
+      const decoded = jwtDecode<Token>(token);
+      const { tenantId, userType } = decoded;
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading = false }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      remember: false,
-    },
-  });
+      localStorage.setItem('accessToken', result.accessToken);
+      localStorage.setItem('Authorization', token);
+      localStorage.setItem('tenantId', tenantId);
+      dispatch(setDecodedToken(decoded));
+
+      if (userType[0] === 'ASSESSOR') {
+        hasNavigatedRef.current = true;
+        //TODO:route hard code change
+        router.push('/assessorOnboardingForm');
+        return;
+      }
+
+      // 🛠 Correct way to call lazy query and handle its response
+      const response = await getOnboardingStatus(tenantId);
+      const onboardingData = response.data;
+      const error = response.error;
+
+      if (error || !onboardingData) {
+        throw new Error('Failed to fetch onboarding status');
+      }
+
+      const { onboardingStatus } = onboardingData;
+      console.log('onboarding status', onboardingStatus);
+
+      // ✅ Navigate based on onboarding status
+      hasNavigatedRef.current = true;
+      switch (onboardingStatus) {
+        case 'NOT_STARTED':
+          router.push('/organisationsOnborading/createOrganizationsInformation');
+          break;
+        case 'STARTED':
+          console.log('Push to onboarding');
+          router.push('/organisationsOnborading/createPointOfConnect');
+          break;
+        case 'COMPLETED':
+          console.log('Push to preview');
+          router.push('/organisationPreview');
+          break;
+        default:
+          console.warn('Unhandled onboarding status:', onboardingStatus);
+          break;
+      }
+    } catch (error) {
+      console.error('Login or onboarding check failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Box
-      component={Paper}
-      elevation={3}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        p: 4,
-        maxWidth: 400,
-        mx: 'auto',
-        mt: 8,
-      }}
-    >
-      <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-        <LockOutlined />
-      </Avatar>
-      <Typography component="h1" variant="h5">
-        Sign in
-      </Typography>
+    <Container maxWidth="sm" className={styles.container}>
+      <Box className={styles.paper}>
+        <section className={styles.textContainer}>
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
+            Welcome Back
+          </Typography>
+          <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
+            Sign in to access your industry roadmap
+          </Typography>
+        </section>
 
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
-        <TextField
-          margin="normal"
-          fullWidth
-          id="email"
-          label="Email Address"
-          autoComplete="email"
-          autoFocus
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register('email')}
-        />
-        <TextField
-          margin="normal"
-          fullWidth
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register('password')}
-        />
-        <FormControlLabel control={<Checkbox color="primary" {...register('remember')} />} label="Remember me" />
-        <Button type="submit" fullWidth variant="contained" disabled={loading} sx={{ mt: 3, mb: 2 }}>
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
-        </Button>
+        <Box component="form" onSubmit={handleSubmit(handleLogin)} noValidate className={styles.form}>
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Email is required' }}
+            render={({ field }) => (
+              <InputWithLabel
+                {...field}
+                label="Email Address"
+                name="email"
+                placeholder="Enter your email"
+                type="email"
+              />
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Password is required' }}
+            render={({ field }) => (
+              <PasswordTextField
+                {...field}
+                autoComplete="new-password"
+                fullWidth={true}
+                label="Password"
+                placeholder="Enter your password"
+                showLockIcon={false}
+                showPasswordToggle
+                showStrengthIndicator
+              />
+            )}
+          />
+
+          <Button type="submit" fullWidth variant="contained" className={styles.button}>
+            Sign In
+          </Button>
+
+          <Typography variant="body2" className={styles.forgotPassword}>
+            Forgot password?
+          </Typography>
+        </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
-export default LoginForm;
+export default LoginPage;
