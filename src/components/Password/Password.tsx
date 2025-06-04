@@ -1,29 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  TextField,
-  TextFieldProps,
-  FormControl,
-  FormLabel,
-  InputAdornment,
-  IconButton,
-  Box,
-  FormHelperText,
-} from '@mui/material';
+import { TextField, FormControl, FormLabel, InputAdornment, IconButton, Box, FormHelperText } from '@mui/material';
 import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 import styles from './password.module.css';
-
-export interface PasswordTextFieldProps extends Omit<TextFieldProps, 'type'> {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  showStrengthIndicator?: boolean;
-  showPasswordToggle?: boolean;
-  showLockIcon?: boolean;
-  required?: boolean;
-}
+import { PasswordTextFieldProps } from './Password.types';
 
 export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
   label,
@@ -39,8 +20,14 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
   ...rest
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [hasTyped, setHasTyped] = useState(false);
 
   const handleToggleVisibility = () => setShowPassword((prev) => !prev);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!hasTyped) setHasTyped(true);
+    onChange?.(e);
+  };
 
   const calculateStrength = (password: string) => {
     const checks = [
@@ -71,12 +58,11 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
         name={name}
         type={showPassword ? 'text' : 'password'}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         fullWidth
         required={required}
         variant="outlined"
-        error={error}
-        helperText={helperText}
+        error={error || (hasTyped && score < 5)}
         InputProps={{
           startAdornment: showLockIcon ? (
             <InputAdornment position="start">
@@ -99,7 +85,14 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
         }}
       />
 
-      {showStrengthIndicator && value && (
+      {hasTyped && score < 5 && (
+        <FormHelperText error>
+          Password must contain at least 8 characters, including an uppercase letter, lowercase letter, number, and
+          symbol.
+        </FormHelperText>
+      )}
+
+      {showStrengthIndicator && hasTyped && value && (
         <Box>
           <Box className={styles.strengthBarContainer}>
             {[...Array(5)].map((_, idx) => (
