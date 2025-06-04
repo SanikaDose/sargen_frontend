@@ -17,7 +17,7 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = (
 ) => {
   return (
     <FormControl fullWidth margin="normal">
-      <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000', fontSize: '13px' }}>
+      <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000' }}>
         {label}
         {required && <span style={{ color: 'red' }}> *</span>}
       </FormLabel>
@@ -25,7 +25,7 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = (
         id={name}
         name={name}
         variant="outlined"
-        size="small"
+        size="medium"
         required={required}
         fullWidth
         sx={{

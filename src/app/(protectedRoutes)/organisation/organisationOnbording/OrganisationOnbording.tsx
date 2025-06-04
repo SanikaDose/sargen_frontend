@@ -15,6 +15,7 @@ function OrganizationOnbording() {
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
+  // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
   const {
     control,
     handleSubmit,
