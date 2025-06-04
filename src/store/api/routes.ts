@@ -18,10 +18,13 @@ export const apiControllerPath = {
     uploadLogo: '/upload-user-logo',
     getLogo: '/get-user-logo',
     deleteLogo: '/get-user-logo',
+    uploadPocProfilePic: '/upload-poc-profilePic',
+    getPocProfilePic: '/get-poc-profilePic',
     uploadPlantLogo: '/upload-plant-logo',
     getPlantLogo: '/get-plant-logo',
     uploadPlantPointOfContactLogo: '/upload-plant-point-of-contact-logo',
-    getPlantPointOfContactLogo: '/get-plant-point-of-contact-logo',
+    getPlantPointOfContactLogo: '/get-plant-point-of-contact-logo'
+
   },
   onboardingStatus: {
     root: 'onboarding-status',
@@ -38,7 +41,7 @@ export const apiControllerPath = {
     root: 'plantInfo',
     addPlantInfo: '/add-plant-info',
     updatePlantInfo: '/edit-plant-info',
-    getAllPlantsInfo: '/:tenantId/get-all-plant-info',
+    getAllPlantsInfo: '/get-all-plant-info',
     getPlantInfo: '/:tenantId/:plantId/get-plant-info',
   },
 

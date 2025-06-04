@@ -97,7 +97,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           {/* Grid 1{2{2}{1}} */}
           <Grid
             size={!isMobile && !isTablet && showInfoBox ? { xs: 12, sm: 12, md: 8, lg: 8, xl: 9 } : 12}
-            border={'5px solid gray'}
+            border={'3px solid gray'}
           >
             {children}
           </Grid>
