@@ -12,7 +12,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { useEditPlantInfoMutation, useUploadPlantPointOfContactLogoMutation } from './PlantPointOfContactApi';
-import { CountryOptions } from '../../(onboarding)/(contactPerson)/ContactPerson.types';
+import { CountryOptions } from '@/app/utils/CountryOptions';
 
 export default function PlantPointOfContact() {
   const { control, handleSubmit, reset, setFocus } = useForm<PlantPointOfContactType>();
