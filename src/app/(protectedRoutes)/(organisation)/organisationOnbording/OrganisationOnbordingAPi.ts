@@ -84,7 +84,7 @@ export const onboardingApi = protectedApi.injectEndpoints({
       // 📤 Upload Plant Logo
     uploadOrganizationLogo: builder.mutation<void, { tenantId: string;  formData: FormData }>({
       query: ({ tenantId, formData }) => ({
-        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadLogo}${tenantId}`,
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadLogo}/${tenantId}`,
         method: 'POST',
         body: formData,
       }),

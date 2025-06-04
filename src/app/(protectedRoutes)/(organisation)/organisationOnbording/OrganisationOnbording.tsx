@@ -9,6 +9,7 @@ import { Dropdown } from '@/components/Dropdown/Dropdown';
 import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnbordingAPi';
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
+import {CountryOptions} from '@/app/utils/CountryOptions';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
@@ -129,8 +130,8 @@ function OrganizationOnbording() {
               />
             </Grid>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '13px', mb: '1px', mt: 2, ml: '5px' }}>
+             <Grid size={{ xs: 12, md: 6 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
                 Country
               </Typography>
               <FormControl fullWidth sx={{ mt: 0 }}>
@@ -146,7 +147,8 @@ function OrganizationOnbording() {
                       value={field.value || ''}
                       onChange={(e) => field.onChange(e.target.value)}
                       sx={{
-                        height: '40px',
+                        
+                        height: '55px',
                         color: '#888',
                         width: '100%',
                       }}
@@ -155,14 +157,20 @@ function OrganizationOnbording() {
                         return selected;
                       }}
                     >
-                      <MenuItem disabled value="">
+                      <MenuItem disabled value="" >
                         <em>Select From Dropdown</em>
                       </MenuItem>
-                      {['India', 'United States', 'Canada', 'Germany'].map((country) => (
+                      {/* {['India', 'United States', 'Canada', 'Germany'].map((country) => (
                         <MenuItem key={country} value={country}>
                           {country}
                         </MenuItem>
-                      ))}
+                      ))} */}
+
+                        {CountryOptions.map((country) => (
+                      <MenuItem key={country.code} value={country.name}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
                     </Select>
                   )}
                 />
