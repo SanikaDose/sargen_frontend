@@ -6,7 +6,7 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { Dropdown } from '@/components/Dropdown/Dropdown';
-import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnbordingAPi';
+import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import {CountryOptions} from '@/app/utils/CountryOptions';

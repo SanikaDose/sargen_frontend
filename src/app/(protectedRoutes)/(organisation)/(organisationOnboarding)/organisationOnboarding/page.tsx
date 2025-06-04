@@ -1,7 +1,7 @@
 // src/app/(protectedRoutes)/(organization)/page.tsx
 
 'use client';
-import OrganizationOnbording from './OrganisationOnbording';
+import OrganizationOnbording from './OrganisationOnboarding';
 const OrganizationPage = () => {
   return (
     <>
