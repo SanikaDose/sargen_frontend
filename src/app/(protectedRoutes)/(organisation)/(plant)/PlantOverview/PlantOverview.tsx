@@ -1,11 +1,15 @@
 'use client';
 
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 import styles from './PlantOverview.module.css';
 import AddPlantCard from '@/components/AddPlantCard/AddPlantCard';
 import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
 import { useGetAllPlantInfoQuery } from './PlantOverviewApi';
+import { Search } from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import SearchAppBar from '@/components/SearchInput/SearchInput';
 
 export default function PlantOverview() {
   const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
@@ -14,13 +18,16 @@ export default function PlantOverview() {
 
   return (
     <div className={styles.wrapper}>
-      <Typography variant="h6" className={styles.heading}>
-        Plant Registration
+      <Typography sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box className={styles.heading}>Plant Registration</Box>
+        <Box>
+          <SearchAppBar />
+        </Box>
       </Typography>
 
       <Grid
         container
-        spacing={{ xs: 1, md: 1 }}
+        spacing={{ xs: 1.5, md: 1.5 }}
         columns={{ xs: 12, sm: 12, md: 12, xl: 12, lg: 12 }}
         className={styles.gridContainer}
       >

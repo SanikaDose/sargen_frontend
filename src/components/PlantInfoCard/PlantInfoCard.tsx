@@ -31,28 +31,37 @@ const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
             Location: <b>{plantData?.location}</b>
           </Typography>
           <Typography className={styles.textLabel}>
-            Registration No.: <b>{plantData?.registrationNo}</b>
+            Reg No.: <b>{plantData?.registrationNo}</b>
           </Typography>
           <Typography className={styles.textLabel}>
-            GST IN: <b>{plantData?.gstin}</b>
+            GSTIN: <b>{plantData?.gstin}</b>
           </Typography>
           <Typography className={styles.textLabel}>
             Plant Age: <b>{plantData?.age} years</b>
           </Typography>
+          <Typography className={styles.textLabel}>
+            Revenue: <b>₹{+(plantData?.revenue ?? 0)}</b>
+          </Typography>
+          <Typography className={styles.textLabel}>
+            Employees: <b>{plantData?.numberOfEmployees}</b>
+          </Typography>
+          <Typography className={styles.textLabel}>
+            Lines: <b>{plantData?.numberOfLines}</b>
+          </Typography>
         </Box>
       </Box>
-      <Divider sx={{ marginBottom: 1 }} />
+      {/* <Divider sx={{ marginBottom: 1 }} />
       <Box sx={{ display: 'flex', mt: 1 }} className={styles.infoBox}>
         <Typography className={styles.textLabel}>
           Revenue: <b>₹{+(plantData?.revenue ?? 0)}</b>
         </Typography>
         <Typography className={styles.textLabel}>
-          Total Employees: <b>{plantData?.numberOfEmployees}</b>
+          Employees: <b>{plantData?.numberOfEmployees}</b>
         </Typography>
         <Typography className={styles.textLabel}>
-          Total Lines: <b>{plantData?.numberOfLines}</b>
+          Lines: <b>{plantData?.numberOfLines}</b>
         </Typography>
-      </Box>
+      </Box> */}
 
       {/* Dates */}
       <Box className={styles.dates}>

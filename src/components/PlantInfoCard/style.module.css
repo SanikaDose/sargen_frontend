@@ -34,13 +34,17 @@
 
 .content {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 50px;
 }
 
 .plantImage {
-  width: 40%;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .infoGrid {
@@ -50,11 +54,13 @@
   gap: 8px;
 }
 
-/* .textLabel {
-  color: gray;
+.textLabel {
+  /* color: gray; */
   font-weight: bold;
   font-size: 12px !important;
-} */
+  display: flex;
+  justify-content: space-between;
+}
 
 .textLabel,
 .textLabelSm,
@@ -139,13 +145,63 @@
   .startButton {
     font-size: 12px !important;
   }
+  .content {
+    gap: 30px;
+  }
 
   .editButton {
     font-size: 12px !important;
   }
 }
 
-@media (min-width: 900px) and (max-width: 1300px) {
+@media (min-width: 900px) and (max-width: 1000px) {
+  .title {
+    font-size: 2vw;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 12px !important;
+  }
+  .content {
+    gap: 30px;
+  }
+
+  .editButton {
+    font-size: 12px !important;
+  }
+}
+@media (min-width: 1000px) and (max-width: 1650px) {
+  .title {
+    font-size: 2vw;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 10px !important;
+  }
+  .content {
+    gap: 30px;
+  }
+  .editButton {
+    font-size: 10px !important;
+  }
+}
+/* @media (min-width: 1250px) and (max-width: 1500px) {
   .title {
     font-size: 2vw;
   }
@@ -165,25 +221,4 @@
   .editButton {
     font-size: 12px !important;
   }
-}
-@media (min-width: 1300px) and (max-width: 1500px) {
-  .title {
-    font-size: 2vw;
-  }
-
-  .titleSm,
-  .titleMd,
-  .textLabel,
-  .textLabelSm,
-  .textLabelMd,
-  .textLabelLg,
-  .statusLabel,
-  .datesTitle,
-  .startButton {
-    font-size: 12px !important;
-  }
-
-  .editButton {
-    font-size: 12px !important;
-  }
-}
+} */
