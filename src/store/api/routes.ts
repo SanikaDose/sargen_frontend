@@ -18,6 +18,8 @@ export const apiControllerPath = {
     uploadLogo: '/upload-user-logo',
     getLogo: '/get-user-logo',
     deleteLogo: '/get-user-logo',
+    uploadPocProfilePic: '/upload-poc-profilePic',
+    getPocProfilePic: '/get-poc-profilePic',
     uploadPlantLogo: '/upload-plant-logo',
     getPlantLogo: '/get-plant-logo',
     uploadPlantPointOfContactLogo: '/upload-plant-point-of-contact-logo',
@@ -34,7 +36,6 @@ export const apiControllerPath = {
     getOrganizationsInformation: '/:tenantId/get-organization-information',
     addPointOfContact: '/:tenantId/add-point-of-contact',
     getPointOfContact: '/:tenantId/get-point-of-contact',
-   
   },
   plantInfo: {
     root: 'plantInfo',

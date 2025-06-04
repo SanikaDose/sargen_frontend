@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, TextFieldProps, FormControl, FormLabel, Box } from '@mui/material';
+import { TextField, TextFieldProps, FormControl, FormLabel } from '@mui/material';
 
 export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
   label: string;
@@ -19,7 +19,7 @@ export const InputWithLabel: React.FC<InputWithLabelProps> = (
     <FormControl fullWidth margin="normal">
       <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000', fontSize: '13px' }}>
         {label}
-        {required ? ' *' : ''}
+        {required && <span style={{ color: 'red' }}> *</span>}
       </FormLabel>
       <TextField
         id={name}

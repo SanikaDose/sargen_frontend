@@ -4,6 +4,7 @@ import { FaChevronRight, FaChevronLeft } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
+
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
 export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
 
@@ -16,6 +17,7 @@ type CustomButtonProps = {
   icon?: ButtonIcon;
   height?: number | string;
   width?: number | string;
+  disabled?: boolean;
 } & Omit<ButtonProps, 'variant' | 'color'>;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -27,6 +29,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   icon,
   height = 64,
   width = 100,
+  disabled = false,
   ...rest
 }) => {
   const renderIcon = () => {
@@ -51,14 +54,16 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       variant={variant}
       onClick={onClick}
       className={className}
+      disabled={disabled}
       {...rest}
       style={{
         borderRadius: 12,
         padding: 12,
-        backgroundColor: color,
+        backgroundColor: disabled ? '#ccc' : color,
         height,
         width,
         textTransform: 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
       }}
     >
       <span
