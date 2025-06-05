@@ -78,8 +78,6 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
         contactNumber: contact.contactNumber || '',
         jobRole: contact.jobRole || '',
       });
-
-      // Optional: update profile picture if it's a usable URL
       if (contact.profilePicUrl && contact.profilePicUrl.startsWith('http')) {
         setProfilePicUrl(contact.profilePicUrl);
       }
