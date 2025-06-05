@@ -49,5 +49,11 @@ export const pageRoutes = {
       edit: (plantId: string) => ` /(protectedRoute)/(organization)/plantInformation/editPlant/${plantId}`,
     },
   },
+
+  plant: {
+    root: '',
+    addPlant: '/AddPlant',
+    editPlant: 'tenantId/plantId/EditPlant',
+  },
   plantAssessment: (params: string[]) => `/(protectedRoute)/${params.join('/')}`,
 };

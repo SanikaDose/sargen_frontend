@@ -1,12 +1,12 @@
 'use client';
 
-import { Box, Grid, Typography, FormControl, Select, MenuItem } from '@mui/material';
-import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import { Box, Grid, Typography, FormControl, MenuItem, Select } from '@mui/material';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import defaultUserLogo from './../../../../../public/images/default-logo-image.png';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
 import {
   useAddPointOfContactMutation,
@@ -15,20 +15,10 @@ import {
 } from './ContactPersonApi';
 import styles from './ContactPerson.module.css';
 import { CountryOptions } from '@/app/utils/CountryOptions';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { useRouter } from 'next/navigation';
 
 const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProps) => {
-  const [formData, setFormData] = useState<PocPayload>({
-    firstName: '',
-    lastName: '',
-    employeeId: '',
-    email: '',
-    country: '',
-    designation: '',
-    contactNumber: '',
-    jobRole: '',
-  });
-
   const router = useRouter();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
@@ -36,17 +26,65 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
   const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
     skip: !editMode,
   });
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<PocPayload>({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      employeeId: '',
+      email: '',
+      country: '',
+      designation: '',
+      contactNumber: '',
+      jobRole: '',
+    },
+    mode: 'onChange',
+  });
+
+  const watchedValues = useWatch({ control });
+
   const [activeStep, setActiveStep] = useState<number>(-1);
-  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+  const steps = useMemo(
+    () => [
+      { label: 'First Name', name: 'firstName' },
+      { label: 'Last Name', name: 'lastName' },
+      { label: 'Employee ID', name: 'employeeId' },
+      { label: 'Email', name: 'email' },
+      { label: 'Country', name: 'country' },
+      { label: 'Designation', name: 'designation' },
+      { label: 'Contact', name: 'contactNumber' },
+      { label: 'Job Role', name: 'jobRole' },
+    ],
+    [],
+  );
 
   useEffect(() => {
-    if (editMode && existingData) {
-      setFormData((prev) => ({
-        ...prev,
-        ...existingData,
-      }));
+    if (editMode && existingData?.data && !isFetching) {
+      const contact = existingData.data;
+
+      reset({
+        firstName: contact.firstName || '',
+        lastName: contact.lastName || '',
+        employeeId: contact.employeeId || '',
+        email: contact.email || '',
+        country: contact.country || '',
+        designation: contact.designation || '',
+        contactNumber: contact.contactNumber || '',
+        jobRole: contact.jobRole || '',
+      });
+      if (contact.profilePicUrl && contact.profilePicUrl.startsWith('http')) {
+        setProfilePicUrl(contact.profilePicUrl);
+      }
     }
-  }, [editMode, existingData]);
+  }, [editMode, existingData, isFetching, reset]);
+
+  console.log('Fetched POC:', existingData);
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -60,31 +98,24 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    const fieldIndex = steps.findIndex((s) => s.label.toLowerCase().replace(/ /g, '') === name.toLowerCase());
-    setFormData((prev) => {
-      const newData = { ...prev, [name]: value };
-
-      if (value.trim() && !completedSteps.includes(fieldIndex)) {
-        setCompletedSteps((prev) => [...prev, fieldIndex]);
-      } else if (!value.trim() && completedSteps.includes(fieldIndex)) {
-        setCompletedSteps((prev) => prev.filter((step) => step !== fieldIndex));
-      }
-
-      return newData;
-    });
-  };
-
   const handleFocus = (e: { target: { name: string } }) => {
-    const { name } = e.target;
-    const index = steps.findIndex((s) => s.name === name);
+    const index = steps.findIndex((s) => s.name === e.target.name);
     setActiveStep(index);
   };
 
-  const handleSubmit = async () => {
+  const completedSteps = useMemo(() => {
+    return steps.reduce<number[]>((acc, step, idx) => {
+      const val = watchedValues?.[step.name as keyof PocPayload];
+      if (val && typeof val === 'string' && val.trim().length > 0) {
+        acc.push(idx);
+      }
+      return acc;
+    }, []);
+  }, [watchedValues, steps]);
+
+  const onSubmit = async (data: PocPayload) => {
     try {
-      await submitPointOfContact({ tenantId, body: formData }).unwrap();
+      await submitPointOfContact({ tenantId, body: data }).unwrap();
       console.log('Form submitted successfully');
     } catch (err) {
       console.error('Error submitting form', err);
@@ -95,30 +126,6 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     '& .MuiOutlinedInput-root': { borderRadius: '8px' },
   };
 
-  const isFormValid = () => {
-    return (
-      formData.firstName.trim() &&
-      formData.lastName.trim() &&
-      formData.employeeId.trim() &&
-      formData.email.trim() &&
-      formData.country.trim() &&
-      formData.designation.trim() &&
-      formData.contactNumber.trim() &&
-      (formData.jobRole ?? '').trim()
-    );
-  };
-
-  const steps = [
-    { label: 'First Name', name: 'firstName' },
-    { label: 'Last Name', name: 'lastName' },
-    { label: 'Employee ID', name: 'employeeId' },
-    { label: 'Email', name: 'email' },
-    { label: 'Country', name: 'country' },
-    { label: 'Designation', name: 'designation' },
-    { label: 'Contact', name: 'contactNumber' },
-    { label: 'Job Role', name: 'jobRole' },
-  ];
-
   if (editMode && isFetching) {
     return (
       <Typography ml={2} mt={2}>
@@ -128,146 +135,94 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
   }
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Grid className={styles.stepperContainer}>
         <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
       </Grid>
-      <Grid>
-        <Typography variant="h5" fontSize={20} component="h5" fontWeight="bold" ml={2}>
-          User Profile
-        </Typography>
-        <Grid className={styles.formContainer}>
-          <Box className={styles.imageBox}>
-            <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
-          </Box>
-          <Box className={styles.formFieldsBox}>
-            <Grid container spacing={1}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <InputWithLabel
-                  label="First name"
-                  name="firstName"
-                  placeholder="Enter First Name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  sx={textFieldStyles}
-                  required
+      <Typography variant="h6" fontWeight={500} className={styles.heading}>
+        User Profile
+      </Typography>
+      <Grid className={styles.formContainer}>
+        <Box className={styles.imageBox}>
+          <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
+        </Box>
+        <Box className={styles.formFieldsBox}>
+          <Grid container spacing={1}>
+            {(
+              ['firstName', 'lastName', 'employeeId', 'email', 'designation', 'contactNumber'] as (keyof PocPayload)[]
+            ).map((fieldName) => (
+              <Grid key={fieldName} size={{ xs: 12, sm: 6 }}>
+                <Controller
+                  name={fieldName}
+                  control={control}
+                  render={({ field }) => (
+                    <InputWithLabel
+                      {...field}
+                      label={fieldName
+                        .replace(/([A-Z])/g, ' $1')
+                        .replace(/^./, (str) => str.toUpperCase())
+                        .replace('Id', 'ID')}
+                      placeholder={`Enter ${fieldName
+                        .replace(/([A-Z])/g, ' $1')
+                        .replace(/^./, (str) => str.toUpperCase())
+                        .replace('Id', 'ID')}`}
+                      onFocus={handleFocus}
+                      sx={textFieldStyles}
+                      required
+                    />
+                  )}
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <InputWithLabel
-                  label="Last Name"
-                  name="lastName"
-                  placeholder="Enter Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  sx={textFieldStyles}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <InputWithLabel
-                  label="Employee ID"
-                  name="employeeId"
-                  placeholder="Enter Employee ID"
-                  value={formData.employeeId}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  sx={textFieldStyles}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <InputWithLabel
-                  label="E-mail"
-                  name="email"
-                  placeholder="Enter Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  sx={textFieldStyles}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                  <Typography sx={{ fontWeight: 500, color: '#000000' }}>
-                    Country <span style={{ color: 'red' }}>*</span>
-                  </Typography>
-                  <Select
-                    displayEmpty
-                    value={formData.country}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const name = 'country';
-                      const fieldIndex = steps.findIndex((s) => s.name === name);
-                      setFormData((prev) => ({
-                        ...prev,
-                        [name]: value,
-                      }));
-                      if (value.trim() && !completedSteps.includes(fieldIndex)) {
-                        setCompletedSteps((prev) => [...prev, fieldIndex]);
-                      } else if (!value.trim() && completedSteps.includes(fieldIndex)) {
-                        setCompletedSteps((prev) => prev.filter((step) => step !== fieldIndex));
-                      }
-                    }}
-                    inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
-                    sx={{ borderRadius: '8px' }}
-                    onOpen={() => handleFocus({ target: { name: 'country' } } as { target: { name: string } })}
-                  >
-                    <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                      <em>Select Country</em>
-                    </MenuItem>
-                    {CountryOptions.map((country) => (
-                      <MenuItem key={country.code} value={country.name}>
-                        {country.name}
+            ))}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <Typography sx={{ fontWeight: 500, color: '#000000' }}>
+                  Country <span style={{ color: 'red' }}>*</span>
+                </Typography>
+                <Controller
+                  name="country"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      displayEmpty
+                      sx={{ borderRadius: '8px' }}
+                      onOpen={() => handleFocus({ target: { name: 'country' } })}
+                      inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
+                    >
+                      <MenuItem value="">
+                        <em>Select Country</em>
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <InputWithLabel
-                  label="Designation"
-                  name="designation"
-                  placeholder="Enter Designation"
-                  value={formData.designation}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  sx={textFieldStyles}
-                  required
+                      {CountryOptions.map((country) => (
+                        <MenuItem key={country.code} value={country.name}>
+                          {country.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
                 />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <InputWithLabel
-                  label="Contact Number"
-                  name="contactNumber"
-                  placeholder="Enter Contact Number"
-                  value={formData.contactNumber}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  sx={textFieldStyles}
-                  required
-                />
-              </Grid>
+              </FormControl>
             </Grid>
-          </Box>
-        </Grid>
-        <Grid ml={5} mr={5}>
-          <InputWithLabel
-            label="Job Role"
-            name="jobRole"
-            placeholder="Specify Job Role"
-            multiline
-            rows={4}
-            value={formData.jobRole}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            sx={textFieldStyles}
-            required
-          />
-        </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+      <Grid ml={5} mr={5}>
+        <Controller
+          name="jobRole"
+          control={control}
+          render={({ field }) => (
+            <InputWithLabel
+              {...field}
+              label="Job Role"
+              placeholder="Specify Job Role"
+              multiline
+              rows={4}
+              sx={textFieldStyles}
+              required
+              onFocus={handleFocus}
+            />
+          )}
+        />
       </Grid>
       <Box
         display="flex"
@@ -287,13 +242,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
         >
           Back
         </CustomButton>
-        <CustomButton
-          variant="contained"
-          icon="save"
-          color="#10557C"
-          onClick={handleSubmit}
-          disabled={!isFormValid() || isLoading}
-        >
+        <CustomButton type="submit" variant="contained" icon="save" color="#10557C" disabled={!isValid || isLoading}>
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>

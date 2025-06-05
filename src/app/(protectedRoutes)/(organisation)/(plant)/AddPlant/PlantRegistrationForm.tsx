@@ -2,9 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { Box, Typography } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import { plantFormInputs } from './FormConfig/FormInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -12,6 +11,8 @@ import styles from './AddPlant.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
+import { plantFormInputs } from './FormConfig/formInputStep';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
 
 const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
 const plantId = '8c28e6c8-8b17-4edc-b4f2-6e2a5585b1ea';
@@ -22,8 +23,9 @@ const steps = [
   'Reg No.',
   'GSTIN',
   'Type',
-  'Revenue',
   'Age',
+  'Revenue',
+  'Currency',
   'Employees',
   'Lines',
   'Assessment',
@@ -98,27 +100,52 @@ const PlantRegistrationForm = () => {
         </Box>
 
         <Box className={styles.formFieldsBox}>
-          <Grid container spacing={1}>
-            {plantFormInputs.map((input) => (
-              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
-                <Controller
-                  name={input.name as keyof PlantFormType}
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: input.required }}
-                  render={({ field }) => (
-                    <InputWithLabel
-                      {...field}
-                      label={input.label}
-                      placeholder={input.placeholder}
-                      required={input.required}
-                      type={input.type || 'text'}
-                      onFocus={() => setFocusedField(input.name)} // Track focus
-                    />
-                  )}
-                />
-              </Grid>
-            ))}
+          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+            <Grid container spacing={1}>
+              {plantFormInputs.map((input) => (
+                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                  <Controller
+                    name={input.name as keyof PlantFormType}
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: input.required }}
+                    render={({ field }) =>
+                      input.isCurrency ? (
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                          <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
+                          <Select
+                            {...field}
+                            displayEmpty
+                            value={field.value || ''}
+                            inputProps={{ 'aria-label': 'Select Currency' }}
+                            sx={{ borderRadius: '8px' }}
+                            onFocus={() => setFocusedField('currencyType')}
+                          >
+                            <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                              <em>Select Currency</em>
+                            </MenuItem>
+                            {currencyOptions.map((currency) => (
+                              <MenuItem key={currency.code} value={currency.name}>
+                                {currency.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      ) : (
+                        <InputWithLabel
+                          {...field}
+                          label={input.label}
+                          placeholder={input.placeholder}
+                          required={input.required}
+                          type={input.type || 'text'}
+                          onFocus={() => setFocusedField(input.name)}
+                        />
+                      )
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         </Box>
       </Box>

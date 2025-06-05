@@ -3,6 +3,6 @@ import React from 'react';
 export interface SideBarProps {
   onCloseTrigger: (toTrigger: boolean) => void;
   open?: boolean;
-  drawerList?: React.ReactNode[];
+  drawerList?: { label?: string; toNavigate?: string }[];
   drawerType?: DrawerProps['variant'];
 }

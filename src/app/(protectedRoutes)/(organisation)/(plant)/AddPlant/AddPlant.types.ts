@@ -10,6 +10,8 @@ export type PlantFormType = {
   assessmentStartDate: string;
   debriefDate: string;
   about?: string;
+  currencyType: string;
+  gstin: string;
 };
 
 export interface AddPlantApi {
@@ -23,4 +25,7 @@ export interface AddPlantApi {
   numberOfLines: number;
   assessmentStartDate: string;
   debriefDate: string;
+  about?: string;
+  currencyType: string;
+  gstin: string;
 }

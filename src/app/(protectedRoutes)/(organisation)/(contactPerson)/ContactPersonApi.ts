@@ -1,5 +1,5 @@
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
-import { PocPayload } from './ContactPerson.types';
+import { ContactPersonApiResponse, PocPayload } from './ContactPerson.types';
 import { apiRoutes } from '@/constants/apiRoutes';
 import { apiControllerPath } from '@/store/api/routes';
 
@@ -14,7 +14,7 @@ export const onboardingApi = protectedApi.injectEndpoints({
       invalidatesTags: ['Poc'],
     }),
 
-    getPointOfContact: builder.query<PocPayload, string>({
+    getPointOfContact: builder.query<ContactPersonApiResponse<PocPayload>, string>({
       query: (tenantId) => ({
         url: `${apiRoutes.onboarding.root}/${tenantId}${apiRoutes.onboarding.getPointOfContact}`,
         method: 'GET',

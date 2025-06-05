@@ -1,0 +1,92 @@
+.h1 {
+  margin: 0px;
+  padding: 0px;
+  border: 1px solid red;
+  text-align: center;
+  color: red;
+}
+.main_div {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent;
+}
+.sidebar {
+  height: 100%;
+  width: 20%;
+  background-color: bisque;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+  backdrop-filter: blur(7px) saturate(200%);
+  -webkit-backdrop-filter: blur(7px) saturate(200%);
+  background-color: rgba(17, 25, 40, 0.42);
+  /* border: 1px solid red; */
+}
+.main_article {
+  height: 100%;
+  width: 80%;
+  background-color: brown;
+  background-color: transparent;
+}
+.home_button_section {
+  height: 10%;
+  width: 100%;
+  padding: 0px 1vw;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  backdrop-filter: blur(7px) saturate(200%);
+  -webkit-backdrop-filter: blur(7px) saturate(200%);
+  background-color: rgba(17, 25, 40, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+.home_button_section_h1 {
+  width: auto;
+  text-align: center;
+  color: white;
+  font-size: 1vw;
+  letter-spacing: 0.1vw;
+  /* border: 1px solid red; */
+}
+.home_button_section_h2 {
+  width: auto;
+  padding-inline: 1vw;
+  text-align: center;
+  color: white;
+  font-size: 2.5vw;
+  letter-spacing: 0.1vw;
+}
+.questions_section {
+  height: 90%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  color: white;
+  font-size: 5vw;
+}
+
+/* Below css is for plant assessment accordion*/
+
+.scrollableDropdown {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.scrollableDropdown-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableDropdown::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.scrollableDropdown::-webkit-scrollbar-track {
+  background-color: transparent;
+}

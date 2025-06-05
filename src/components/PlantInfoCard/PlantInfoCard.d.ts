@@ -17,5 +17,6 @@ export interface PlantData {
 
 export interface PlantInfoCardProps {
   data?: PlantData;
+  editPlantOnClick?: () => void;
   onClick?: () => void;
 }

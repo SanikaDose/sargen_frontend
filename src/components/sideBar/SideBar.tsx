@@ -14,8 +14,10 @@ import {
   ListItemText,
 } from '@mui/material';
 import { SideBarProps } from './SideBar.types';
+import { useRouter } from 'next/navigation';
 
 const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], drawerType = 'persistent', open }) => {
+  const router = useRouter;
   return (
     <Drawer
       variant={drawerType}
@@ -62,33 +64,34 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
 
         {/* Main Content Section */}
         <Grid sx={{ overflow: 'auto', flexGrow: 1 }}>
-          {drawerList.length > 0 ? (
-            drawerList
-          ) : (
-            <Box>
-              <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                      <ListItemText primary={text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-              <Divider />
-              <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                      <ListItemText primary={text} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          )}
+          <Box>
+            <List>
+              {drawerList.map((obj, index) => (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                    <ListItemText
+                      primary={obj.label}
+                      onClick={() => {
+                        router(obj.toNavigate);
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+            <Divider />
+            <List>
+              {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                <ListItem key={text} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </Grid>
 
         {/* Footer Section */}
@@ -104,7 +107,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
               alt="Elansol Logo"
               sx={{
                 width: {
-                  xs: drawerType === 'temporary' ? 80 : 40, // Larger for full-screen temporary
+                  xs: drawerType === 'temporary' ? 80 : 40,
                   sm: drawerType === 'temporary' ? 120 : 60,
                   md: 60,
                   lg: 80,

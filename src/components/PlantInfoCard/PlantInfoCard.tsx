@@ -7,14 +7,14 @@ import ImageUploader from '../ImageUpload/ImageUpload';
 import styles from './style.module.css';
 import { PlantInfoCardProps, PlantData } from './PlantInfoCard.d';
 
-const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
+const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
 
   return (
     <Box className={styles.card}>
       <Box className={styles.header}>
         <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
-        <Typography className={styles.editButton} onClick={() => alert('Edit Plant Info')}>
+        <Typography className={styles.editButton} onClick={editPlantOnClick}>
           <Edit />
         </Typography>
       </Box>
@@ -50,18 +50,6 @@ const PlantInfoCard = ({ data, onClick }: PlantInfoCardProps) => {
           </Typography>
         </Box>
       </Box>
-      {/* <Divider sx={{ marginBottom: 1 }} />
-      <Box sx={{ display: 'flex', mt: 1 }} className={styles.infoBox}>
-        <Typography className={styles.textLabel}>
-          Revenue: <b>₹{+(plantData?.revenue ?? 0)}</b>
-        </Typography>
-        <Typography className={styles.textLabel}>
-          Employees: <b>{plantData?.numberOfEmployees}</b>
-        </Typography>
-        <Typography className={styles.textLabel}>
-          Lines: <b>{plantData?.numberOfLines}</b>
-        </Typography>
-      </Box> */}
 
       {/* Dates */}
       <Box className={styles.dates}>
