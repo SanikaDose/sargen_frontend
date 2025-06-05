@@ -1,0 +1,32 @@
+.formContainer {
+  height: 90%;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f9f9f9;
+  padding: 2%;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.innerConatiner {
+  height: 90%;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.individualInput {
+  height: 20%;
+  width: auto;
+  /* border: 1px solid red; */
+  padding: 2%;
+}
+.labels {
+  color: black;
+}
+.inputField {
+  width: 100%;
+  /* border: 1px solid white; */
+}

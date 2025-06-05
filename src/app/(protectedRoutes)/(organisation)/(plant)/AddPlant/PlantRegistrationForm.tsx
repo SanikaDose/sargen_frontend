@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import { plantFormInputs } from './FormConfig/FormInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -12,6 +11,7 @@ import styles from './AddPlant.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
+import { plantFormInputs } from './FormConfig/formInputStep';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 
 const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';

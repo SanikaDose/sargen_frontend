@@ -47,7 +47,6 @@ const LoginPage = () => {
         return;
       }
 
-      // 🛠 Correct way to call lazy query and handle its response
       const response = await getOnboardingStatus(tenantId);
       const onboardingData = response.data;
       const error = response.error;
@@ -59,7 +58,6 @@ const LoginPage = () => {
       const { onboardingStatus } = onboardingData;
       console.log('onboarding status', onboardingStatus);
 
-      // ✅ Navigate based on onboarding status
       hasNavigatedRef.current = true;
       switch (onboardingStatus) {
         case 'NOT_STARTED':

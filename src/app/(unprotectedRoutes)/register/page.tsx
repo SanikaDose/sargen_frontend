@@ -20,7 +20,6 @@ import styles from './style.module.css';
 import { FormValues, RegisterFormInputs } from './register.types';
 import { useRegisterUserMutation } from './registerApi';
 import { useRouter } from 'next/navigation';
-import { apiControllerPath } from '@/store/api/routes';
 
 const RegisterPage = () => {
   const router = useRouter();

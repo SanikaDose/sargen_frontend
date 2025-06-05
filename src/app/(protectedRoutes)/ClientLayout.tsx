@@ -18,7 +18,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Check if sidebar should be permanent
   const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
 
-  const [showInfoBox, setShowInfoBox] = useState(false);
+  const [showInfoBox, setShowInfoBox] = useState(true);
 
   useEffect(() => {
     console.log('width:', window.innerWidth);
@@ -50,7 +50,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Grid 1{1} */}
       {openSideBar && isPermanentSidebar && (
         <Grid size={{ lg: 2, xl: 2 }}>
-          <SideBar onCloseTrigger={() => setOpenSideBar(false)} drawerType="permanent" />
+          <SideBar
+            onCloseTrigger={() => setOpenSideBar(false)}
+            drawerType="permanent"
+            drawerList={[
+              { label: 'Orangization Information', toNavigate: '/' },
+              { label: 'Point Of Contact', toNavigate: '/plantAssement' },
+              { label: 'Plant', toNavigate: '/' },
+              { label: 'Preview', toNavigate: '/' },
+            ]}
+          />
         </Grid>
       )}
 
