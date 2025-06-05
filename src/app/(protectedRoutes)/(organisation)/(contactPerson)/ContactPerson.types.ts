@@ -22,3 +22,9 @@ export interface ContactPersonFormProps {
   tenantId: string;
   editMode?: boolean;
 }
+
+export interface ContactPersonApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
