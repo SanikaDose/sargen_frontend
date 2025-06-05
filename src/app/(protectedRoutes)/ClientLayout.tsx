@@ -53,7 +53,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <SideBar
             onCloseTrigger={() => setOpenSideBar(false)}
             drawerType="permanent"
-            drawerList={['Orangization Information', 'Point Of Contact', 'Plant', 'Result']}
+            drawerList={[
+              { label: 'Orangization Information', toNavigate: '/' },
+              { label: 'Point Of Contact', toNavigate: '/plantAssement' },
+              { label: 'Plant', toNavigate: '/' },
+              { label: 'Preview', toNavigate: '/' },
+            ]}
           />
         </Grid>
       )}
