@@ -8,14 +8,12 @@ import { plantFormInputs } from './FormConfig/FormInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import styles from './AddPlant.module.css';
+import styles from './EditPlant.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { PlantFormType } from './AddPlant.types';
-import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
+import { PlantFormType } from './EditPlant.types';
+import { useEditPlantInfoMutation, useGetPlantByIdQuery, useUploadPlantLogoMutation } from './EditPlantApis';
+import { useParams } from 'next/navigation';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
-
-const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
-const plantId = '8c28e6c8-8b17-4edc-b4f2-6e2a5585b1ea';
 
 const steps = [
   'Name',
@@ -33,12 +31,58 @@ const steps = [
   'About',
 ].map((label) => ({ label }));
 
-const PlantRegistrationForm = () => {
-  const { control, handleSubmit, reset, setFocus } = useForm<PlantFormType>();
-  const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
+const EditPlantRegistrationForm = () => {
+  // const params = useParams();
+
+  const params = useParams();
+
+  const organisationId = params.OrganisationId as string;
+  const plantId = params.PlantId as string;
+
+  const {
+    register,
+    reset,
+    trigger,
+    getValues,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PlantFormType>();
+
+  const [editPlantInfo, { isLoading }] = useEditPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  const { data: getPlantData, isLoading: isFetching } = useGetPlantByIdQuery({
+    tenantId: organisationId,
+    plantId: plantId,
+  });
+
+  useEffect(() => {
+    if (getPlantData?.data) {
+      const plant = getPlantData.data;
+
+      reset({
+        name: plant.name || '',
+        location: plant.location || '',
+        registrationNo: plant.registrationNo || '',
+        gstin: plant.gstin || '',
+        type: plant.type || '',
+        revenue: plant.revenue || '',
+        age: plant.age?.toString() || '',
+        numberOfEmployees: plant.numberOfEmployees?.toString() || '',
+        numberOfLines: plant.numberOfLines?.toString() || '',
+        assessmentStartDate: plant.assessmentStartDate || '',
+        debriefDate: plant.debriefDate || '',
+        about: plant.about || '', // if you have an 'about' field, adjust accordingly
+      });
+
+      if (plant.plantLogo) {
+        setLogoUrl(plant.plantLogo);
+      }
+    }
+  }, [getPlantData, reset]);
 
   const watchedValues = useWatch({ control });
 
@@ -46,7 +90,7 @@ const PlantRegistrationForm = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPlantLogo({ tenantId, plantId, formData }).unwrap();
+      // await uploadPlantLogo({ organisationId, plantId, formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
@@ -57,7 +101,7 @@ const PlantRegistrationForm = () => {
   const onSubmit = async (data: PlantFormType) => {
     try {
       const { about, ...body } = data;
-      await addPlantInfo({ tenantId, body }).unwrap();
+      await editPlantInfo({ tenantId: organisationId, plantId, body }).unwrap();
       reset();
     } catch (error) {
       console.error('Failed to add plant info:', error);
@@ -100,52 +144,50 @@ const PlantRegistrationForm = () => {
         </Box>
 
         <Box className={styles.formFieldsBox}>
-          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
-            <Grid container spacing={1}>
-              {plantFormInputs.map((input) => (
-                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
-                  <Controller
-                    name={input.name as keyof PlantFormType}
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: input.required }}
-                    render={({ field }) =>
-                      input.isCurrency ? (
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
-                          <Select
-                            {...field}
-                            displayEmpty
-                            value={field.value || ''}
-                            inputProps={{ 'aria-label': 'Select Currency' }}
-                            sx={{ borderRadius: '8px' }}
-                            onFocus={() => setFocusedField('currencyType')}
-                          >
-                            <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                              <em>Select Currency</em>
-                            </MenuItem>
-                            {currencyOptions.map((currency) => (
-                              <MenuItem key={currency.code} value={currency.name}>
-                                {currency.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      ) : (
-                        <InputWithLabel
+          <Grid container spacing={1}>
+            {plantFormInputs.map((input) => (
+              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                <Controller
+                  name={input.name as keyof PlantFormType}
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: input.required }}
+                  render={({ field }) =>
+                    input.isCurrency ? (
+                      <FormControl fullWidth sx={{ mt: 2 }}>
+                        <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
+                        <Select
                           {...field}
-                          label={input.label}
-                          placeholder={input.placeholder}
-                          required={input.required}
-                          type={input.type || 'text'}
-                          onFocus={() => setFocusedField(input.name)}
-                        />
-                      )
-                    }
-                  />
-                </Grid>
-              ))}
-            </Grid>
+                          displayEmpty
+                          value={field.value || ''}
+                          inputProps={{ 'aria-label': 'Select Currency' }}
+                          sx={{ borderRadius: '8px' }}
+                          onFocus={() => setFocusedField('currencyType')}
+                        >
+                          <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                            <em>Select Currency</em>
+                          </MenuItem>
+                          {currencyOptions.map((currency) => (
+                            <MenuItem key={currency.code} value={currency.name}>
+                              {currency.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      <InputWithLabel
+                        {...field}
+                        label={input.label}
+                        placeholder={input.placeholder}
+                        required={input.required}
+                        type={input.type || 'text'}
+                        onFocus={() => setFocusedField(input.name)}
+                      />
+                    )
+                  }
+                />
+              </Grid>
+            ))}
           </Grid>
         </Box>
       </Box>
@@ -164,6 +206,7 @@ const PlantRegistrationForm = () => {
               rows={3}
               type="text"
               onFocus={() => setFocusedField('about')}
+              // defaultValue={getPlantData.about}
             />
           )}
         />
@@ -183,4 +226,4 @@ const PlantRegistrationForm = () => {
   );
 };
 
-export default PlantRegistrationForm;
+export default EditPlantRegistrationForm;

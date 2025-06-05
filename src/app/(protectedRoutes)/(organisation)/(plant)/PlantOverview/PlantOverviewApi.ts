@@ -5,12 +5,17 @@ import { PlantInfoResponse } from './PlantOverview.type';
 export const plantInfoApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
     // Query to get plant info
-    getAllPlantInfo: builder.query<PlantInfoResponse, string>({
-      query: (tenantId) => ({
-        url: `${apiControllerPath.plantInfo.root}/${tenantId}${apiControllerPath.plantInfo.getAllPlantsInfo}`,
-        method: 'GET',
-      }),
-      providesTags: (result, error, tenantId) => [{ type: 'Plant', id: tenantId }],
+    getAllPlantInfo: builder.query<PlantInfoResponse, { tenantId: string; search?: string }>({
+      query: ({ tenantId, search }) => {
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+
+        return {
+          url: `${apiControllerPath.plantInfo.root}/${tenantId}${apiControllerPath.plantInfo.getAllPlantsInfo}?${params.toString()}`,
+          method: 'GET',
+        };
+      },
+      providesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
 
     // 📥 Get Plant Logo

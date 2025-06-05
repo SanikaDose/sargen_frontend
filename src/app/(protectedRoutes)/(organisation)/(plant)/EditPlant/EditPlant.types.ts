@@ -14,7 +14,7 @@ export type PlantFormType = {
   gstin: string;
 };
 
-export interface AddPlantApi {
+export interface EditPlantApi {
   name: string;
   location: string;
   registrationNo: string;
