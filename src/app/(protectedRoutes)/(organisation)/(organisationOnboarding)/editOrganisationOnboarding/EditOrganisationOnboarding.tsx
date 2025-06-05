@@ -5,25 +5,28 @@ import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
 import {
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
   useGetOrganizationInfoQuery,
-} from './OrganisationOnboardingAPi';
+} from './EditOrganisationOnboardingApi';
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
-
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
   // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
 
-  const [editData, setEditData] = useState(null);
+  // ✅ Fetch organization info
+  const { data } = useGetOrganizationInfoQuery(tenantId, {
+    skip: !tenantId,
+  });
+
+  console.log('if we have tenentid the we get this data', data);
   const {
     control,
     handleSubmit,
@@ -41,17 +44,27 @@ function OrganizationOnbording() {
       about: '',
     },
   });
-  const { data } = useGetOrganizationInfoQuery(tenantId || '', {
-  skip: !tenantId,
-});
- console.log('if we have tenentid the we get this data',data)
-  //useeffect for checking that we have an tenetid
+
+  // ✅ Pre-fill form once data is loaded
   useEffect(() => {
-    if (tenantId) {
-      
-    
+  if (data?.data) {
+    const org = data.data;
+    reset({
+      companyName: org.name || '',
+      website: org.website || '',
+      gstin: org.gstin || '',
+      country: org.country || '',
+      revenue: org.revenue || '',
+      uom: org.uom || '',
+      numberOfEmployees: org.numberOfEmployees || '',
+      about: org.about || '',
+    });
+    // Set logo if available
+    if (org.userLogo) {
+      setLogoUrl(org.userLogo);
     }
-  }, [tenantId]);
+  }
+}, [data, reset]);
 
   //hnadle organization logo
   const handleUpload = async (file: File) => {
