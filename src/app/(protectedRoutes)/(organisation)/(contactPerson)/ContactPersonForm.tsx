@@ -30,7 +30,7 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
   const {
     control,
     handleSubmit,
-    setValue,
+    reset,
     formState: { isValid },
   } = useForm<PocPayload>({
     defaultValues: {
@@ -46,12 +46,10 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     mode: 'onChange',
   });
 
-  // Watch all fields at once
   const watchedValues = useWatch({ control });
 
   const [activeStep, setActiveStep] = useState<number>(-1);
 
-  // Steps metadata with index mapping
   const steps = useMemo(
     () => [
       { label: 'First Name', name: 'firstName' },
@@ -63,17 +61,32 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
       { label: 'Contact', name: 'contactNumber' },
       { label: 'Job Role', name: 'jobRole' },
     ],
-    []
+    [],
   );
 
-  // Load existing data in edit mode
   useEffect(() => {
-    if (editMode && existingData) {
-      (Object.keys(existingData) as (keyof PocPayload)[]).forEach((key) => {
-        setValue(key, existingData[key] as PocPayload[typeof key]);
+    if (editMode && existingData?.data && !isFetching) {
+      const contact = existingData.data;
+
+      reset({
+        firstName: contact.firstName || '',
+        lastName: contact.lastName || '',
+        employeeId: contact.employeeId || '',
+        email: contact.email || '',
+        country: contact.country || '',
+        designation: contact.designation || '',
+        contactNumber: contact.contactNumber || '',
+        jobRole: contact.jobRole || '',
       });
+
+      // Optional: update profile picture if it's a usable URL
+      if (contact.profilePicUrl && contact.profilePicUrl.startsWith('http')) {
+        setProfilePicUrl(contact.profilePicUrl);
+      }
     }
-  }, [editMode, existingData, setValue]);
+  }, [editMode, existingData, isFetching, reset]);
+
+  console.log('Fetched POC:', existingData);
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -92,7 +105,6 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
     setActiveStep(index);
   };
 
-  // Calculate completed steps from watched values
   const completedSteps = useMemo(() => {
     return steps.reduce<number[]>((acc, step, idx) => {
       const val = watchedValues?.[step.name as keyof PocPayload];
