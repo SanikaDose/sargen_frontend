@@ -42,7 +42,7 @@ export const apiControllerPath = {
     addPlantInfo: '/add-plant-info',
     updatePlantInfo: '/edit-plant-info',
     getAllPlantsInfo: '/get-all-plant-info',
-    getPlantInfo: '/:tenantId/:plantId/get-plant-info',
+    getPlantInfoById: '/get-plant-info',
   },
 
   plantAssessment: {
