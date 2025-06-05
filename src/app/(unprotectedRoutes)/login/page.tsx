@@ -61,15 +61,15 @@ const LoginPage = () => {
       hasNavigatedRef.current = true;
       switch (onboardingStatus) {
         case 'NOT_STARTED':
-          router.push('/organisationsOnborading/createOrganizationsInformation');
+          router.push('/organisationOnboarding');
           break;
         case 'STARTED':
           console.log('Push to onboarding');
-          router.push('/organisationsOnborading/createPointOfConnect');
+          router.push('/AddContactPerson');
           break;
         case 'COMPLETED':
           console.log('Push to preview');
-          router.push('/organisationPreview');
+          router.push('/PlantOverview');
           break;
         default:
           console.warn('Unhandled onboarding status:', onboardingStatus);

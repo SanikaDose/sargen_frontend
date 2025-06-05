@@ -54,9 +54,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             onCloseTrigger={() => setOpenSideBar(false)}
             drawerType="permanent"
             drawerList={[
-              { label: 'Orangization Information', toNavigate: '/' },
-              { label: 'Point Of Contact', toNavigate: '/plantAssement' },
-              { label: 'Plant', toNavigate: '/' },
+              { label: 'Orangization Information', toNavigate: '/organisationOnboarding' },
+              { label: 'Point Of Contact', toNavigate: '/AddContactPerson' },
+              { label: 'Plant', toNavigate: '/PlantOverview' },
               { label: 'Preview', toNavigate: '/' },
             ]}
           />
