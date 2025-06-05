@@ -16,6 +16,7 @@
   align-items: center;
   flex-direction: column;
   gap: 1rem; /* Default for small screens */
+  border: 1px solid red;
 }
 
 @media (min-width: 1200px) {
@@ -54,6 +55,7 @@
   }
 
   .stepperContainer {
+    border: 1pxm solid red;
     display: none;
   }
 }

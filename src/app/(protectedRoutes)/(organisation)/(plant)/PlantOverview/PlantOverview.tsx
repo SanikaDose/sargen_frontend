@@ -12,9 +12,11 @@ import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { GridMenuIcon } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 export default function PlantOverview() {
-  const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
+  const tenantId = getValueLocalStorage('tenantId');
+
   const [searchValue, setSearchValue] = useState('');
   const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({ tenantId, search: searchValue });
   const router = useRouter();
@@ -90,7 +92,9 @@ export default function PlantOverview() {
 
                   router.push(`EditPlant/${tenantId}/${plant.id}`);
                 }}
-                onClick={() => {}}
+                onClick={() => {
+                  router.push(`plantAssement/${tenantId}/${plant.id}`);
+                }}
               />
             </Grid>
           ))}

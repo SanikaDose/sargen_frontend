@@ -13,8 +13,11 @@ import { PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { useRouter } from 'next/navigation';
 
-const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
+const tenantId = getValueLocalStorage('tenantId');
+
 const plantId = '8c28e6c8-8b17-4edc-b4f2-6e2a5585b1ea';
 
 const steps = [
@@ -39,6 +42,7 @@ const PlantRegistrationForm = () => {
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const router = useRouter();
 
   const watchedValues = useWatch({ control });
 
@@ -177,6 +181,9 @@ const PlantRegistrationForm = () => {
           color="primary"
           icon="save"
           type="submit"
+          onClick={() => {
+            router.push('/PlantOverview');
+          }}
         />
       </Box>
     </form>
