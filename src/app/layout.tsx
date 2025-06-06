@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ThemeProvider from './ThemeProvider';
 
+import I18nProvider from '@/providers/I18nProvider';
+import LanguageInitializer from '@/components/LanguageInitializer';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -27,9 +29,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+
+ <I18nProvider>
+
         <ThemeProvider>
-          <GlobalReduxProvider>{children}</GlobalReduxProvider>
+          <GlobalReduxProvider>
+
+              <LanguageInitializer /> 
+            {children}
+
+            
+            </GlobalReduxProvider>
         </ThemeProvider>
+
+ </I18nProvider>       
       </body>
     </html>
   );
