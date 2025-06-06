@@ -68,14 +68,9 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
             <List>
               {drawerList.map((obj, index) => (
                 <ListItem key={index} disablePadding>
-                  <ListItemButton>
+                  <ListItemButton onClick={() => obj.toNavigate && router.push(obj.toNavigate)}>
                     <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                    <ListItemText
-                      primary={obj.label}
-                      onClick={() => {
-                        router.push(obj.toNavigate);
-                      }}
-                    />
+                    <ListItemText primary={obj.label} />
                   </ListItemButton>
                 </ListItem>
               ))}
