@@ -8,13 +8,13 @@ import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
 import { useGetAllPlantInfoQuery } from './PlantOverviewApi';
 import { Search } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
-import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { GridMenuIcon } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 export default function PlantOverview() {
-  const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
+  const tenantId = getValueLocalStorage('tenantId');
+
   const [searchValue, setSearchValue] = useState('');
   const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({ tenantId, search: searchValue });
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function PlantOverview() {
   return (
     <div className={styles.wrapper}>
       <Typography className={styles.headingSection}>
-        <Box className={styles.heading}>Plant Registration</Box>
+        <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
           <Paper component="form" sx={{ display: 'flex', alignItems: 'center' }} className={styles.searchInput}>
             <InputBase
@@ -90,7 +90,9 @@ export default function PlantOverview() {
 
                   router.push(`EditPlant/${tenantId}/${plant.id}`);
                 }}
-                onClick={() => {}}
+                onClick={() => {
+                  router.push(`plantAssement/${tenantId}/${plant.id}`);
+                }}
               />
             </Grid>
           ))}

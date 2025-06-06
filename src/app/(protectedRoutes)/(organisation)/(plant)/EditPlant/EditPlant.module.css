@@ -1,24 +1,33 @@
+.mostOuterConatiner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1px;
+}
+
 .heading {
   font-weight: 600;
-  padding: 00 1rem 0 1rem;
+  padding: 0 1rem;
 }
 
 .stepperContainer {
   display: flex;
   justify-content: center;
-  margin: 10px 0px 10px 0px;
+  margin: 10px 0;
 }
 
 .formContainer {
   display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  padding: 0 1%;
   flex-direction: column;
-  gap: 1rem; /* Default for small screens */
+  gap: 1rem;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 800px) {
   .formContainer {
     flex-direction: row;
     gap: 2.5rem;
@@ -27,27 +36,31 @@
 
 .imageBox {
   display: flex;
-  width: 27%;
-  height: 70%;
+  width: 15vw;
   justify-content: center;
   align-items: center;
 }
 
 .formFieldsBox {
-  width: 60%;
-  height: 70%;
+  width: 70%;
+}
+
+.formFieldsInner {
+  width: 100%;
 }
 
 .aboutSection {
-  padding: 0 2rem 0 2rem;
+  height: 20%;
+  padding: 1% 2%;
 }
 
 .buttonSection {
-  padding: 0 2rem 0 2rem;
+  padding: 2% 2%;
   display: flex;
   justify-content: space-between;
 }
 
+/* Optional: Hide stepper on small devices if needed */
 @media (min-width: 280px) and (max-width: 768px) {
   .formContainer {
     gap: 1.5rem;
@@ -58,9 +71,9 @@
   }
 }
 
+/* Optional: Fine-tuned responsiveness */
 @media (min-width: 1024px) {
   .formContainer {
-    flex-direction: row;
     gap: 2rem;
   }
 }

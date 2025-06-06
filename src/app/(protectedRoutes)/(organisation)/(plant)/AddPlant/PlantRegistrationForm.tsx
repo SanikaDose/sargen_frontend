@@ -13,8 +13,11 @@ import { PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { useRouter } from 'next/navigation';
 
-const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
+const tenantId = getValueLocalStorage('tenantId');
+
 const plantId = '8c28e6c8-8b17-4edc-b4f2-6e2a5585b1ea';
 
 const steps = [
@@ -39,6 +42,7 @@ const PlantRegistrationForm = () => {
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const router = useRouter();
 
   const watchedValues = useWatch({ control });
 
@@ -57,7 +61,7 @@ const PlantRegistrationForm = () => {
   const onSubmit = async (data: PlantFormType) => {
     try {
       const { about, ...body } = data;
-      await addPlantInfo({ tenantId, body }).unwrap();
+      await addPlantInfo({ tenantId, body: data }).unwrap();
       reset();
     } catch (error) {
       console.error('Failed to add plant info:', error);
@@ -85,7 +89,7 @@ const PlantRegistrationForm = () => {
   }, [watchedValues]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
       </Box>
@@ -93,14 +97,14 @@ const PlantRegistrationForm = () => {
       <Typography variant="h6" className={styles.heading}>
         Plant Registration
       </Typography>
-
-      <Box className={styles.formContainer}>
-        <Box className={styles.imageBox}>
-          <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
-        </Box>
+      <Box className={styles.form}>
+        <Box className={styles.formContainer}>
+          <Box className={styles.imageBox}>
+            <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+          </Box>
 
         <Box className={styles.formFieldsBox}>
-          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+          <section className={styles.formFieldsInner}>
             <Grid container spacing={1}>
               {plantFormInputs.map((input) => (
                 <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
@@ -146,28 +150,28 @@ const PlantRegistrationForm = () => {
                 </Grid>
               ))}
             </Grid>
-          </Grid>
+          </section>
         </Box>
       </Box>
 
-      <Box className={styles.aboutSection}>
-        <Controller
-          name="about"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <InputWithLabel
-              {...field}
-              label="About Us"
-              placeholder="Enter About Plant"
-              multiline
-              rows={3}
-              type="text"
-              onFocus={() => setFocusedField('about')}
-            />
-          )}
-        />
-      </Box>
+        <Box className={styles.aboutSection}>
+          <Controller
+            name="about"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <InputWithLabel
+                {...field}
+                label="About Us"
+                placeholder="Enter About Plant"
+                multiline
+                rows={3}
+                type="text"
+                onFocus={() => setFocusedField('about')}
+              />
+            )}
+          />
+        </Box>
 
       <Box className={styles.buttonSection}>
         <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
@@ -177,6 +181,9 @@ const PlantRegistrationForm = () => {
           color="primary"
           icon="save"
           type="submit"
+          onClick={() => {
+            router.push('/PlantOverview');
+          }}
         />
       </Box>
     </form>

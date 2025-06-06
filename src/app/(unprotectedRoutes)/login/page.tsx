@@ -38,6 +38,7 @@ const LoginPage = () => {
       localStorage.setItem('accessToken', result.accessToken);
       localStorage.setItem('Authorization', token);
       localStorage.setItem('tenantId', tenantId);
+
       dispatch(setDecodedToken(decoded));
 
       if (userType[0] === 'ASSESSOR') {
@@ -135,7 +136,13 @@ const LoginPage = () => {
           </Button>
 
           <Typography variant="body2" className={styles.forgotPassword}>
-            Forgot password?
+            <Button
+              onClick={() => {
+                router.push('/forgotPassword');
+              }}
+            >
+              Forgot password?
+            </Button>
           </Typography>
         </Box>
       </Box>

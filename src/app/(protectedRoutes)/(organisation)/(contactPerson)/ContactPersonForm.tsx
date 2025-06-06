@@ -17,8 +17,11 @@ import styles from './ContactPerson.module.css';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { useRouter } from 'next/navigation';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
-const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProps) => {
+const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
+  const tenantId = getValueLocalStorage('tenantId');
+  console.log('tenantId ', tenantId);
   const router = useRouter();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();

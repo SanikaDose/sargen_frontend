@@ -17,7 +17,7 @@ import { SideBarProps } from './SideBar.types';
 import { useRouter } from 'next/navigation';
 
 const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], drawerType = 'persistent', open }) => {
-  const router = useRouter;
+  const router = useRouter();
   return (
     <Drawer
       variant={drawerType}
@@ -73,7 +73,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
                     <ListItemText
                       primary={obj.label}
                       onClick={() => {
-                        router(obj.toNavigate);
+                        router.push(obj.toNavigate);
                       }}
                     />
                   </ListItemButton>
@@ -81,7 +81,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
               ))}
             </List>
             <Divider />
-            <List>
+            {/* <List>
               {['All mail', 'Trash', 'Spam'].map((text, index) => (
                 <ListItem key={text} disablePadding>
                   <ListItemButton>
@@ -90,7 +90,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
                   </ListItemButton>
                 </ListItem>
               ))}
-            </List>
+            </List> */}
           </Box>
         </Grid>
 

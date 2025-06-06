@@ -15,6 +15,7 @@ export interface Plant {
   updatedAt: string;
   createdBy: string | null;
   updatedBy: string | null;
+  tenantId: string;
 }
 
 export interface PlantInfoResponse {

@@ -9,14 +9,15 @@ import { Dropdown } from '@/components/Dropdown/Dropdown';
 import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
-import {CountryOptions} from '@/app/utils/CountryOptions';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-  const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
-  // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
+  const tenantId = getValueLocalStorage('tenantId');
+
   const {
     control,
     handleSubmit,
@@ -130,7 +131,7 @@ function OrganizationOnbording() {
               />
             </Grid>
 
-             <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
                 Country
               </Typography>
@@ -147,7 +148,6 @@ function OrganizationOnbording() {
                       value={field.value || ''}
                       onChange={(e) => field.onChange(e.target.value)}
                       sx={{
-                        
                         height: '55px',
                         color: '#888',
                         width: '100%',
@@ -157,7 +157,7 @@ function OrganizationOnbording() {
                         return selected;
                       }}
                     >
-                      <MenuItem disabled value="" >
+                      <MenuItem disabled value="">
                         <em>Select From Dropdown</em>
                       </MenuItem>
                       {/* {['India', 'United States', 'Canada', 'Germany'].map((country) => (
@@ -166,11 +166,11 @@ function OrganizationOnbording() {
                         </MenuItem>
                       ))} */}
 
-                        {CountryOptions.map((country) => (
-                      <MenuItem key={country.code} value={country.name}>
-                        {country.name}
-                      </MenuItem>
-                    ))}
+                      {CountryOptions.map((country) => (
+                        <MenuItem key={country.code} value={country.name}>
+                          {country.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                   )}
                 />
