@@ -25,7 +25,7 @@ export default function PlantOverview() {
   return (
     <div className={styles.wrapper}>
       <Typography className={styles.headingSection}>
-        <Box className={styles.heading}>Plant Registration</Box>
+        <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
           <Paper component="form" sx={{ display: 'flex', alignItems: 'center' }} className={styles.searchInput}>
             <InputBase

@@ -70,6 +70,7 @@ const EditPlantRegistrationForm = () => {
         gstin: plant.gstin || '',
         type: plant.type || '',
         revenue: plant.revenue || '',
+        currencyType: plant.currencyType,
         age: plant.age?.toString() || '',
         numberOfEmployees: plant.numberOfEmployees?.toString() || '',
         numberOfLines: plant.numberOfLines?.toString() || '',
@@ -101,7 +102,7 @@ const EditPlantRegistrationForm = () => {
   const onSubmit = async (data: PlantFormType) => {
     try {
       const { about, ...body } = data;
-      await editPlantInfo({ tenantId: organisationId, plantId, body }).unwrap();
+      await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
       reset();
     } catch (error) {
       console.error('Failed to add plant info:', error);
@@ -135,7 +136,7 @@ const EditPlantRegistrationForm = () => {
       </Box>
 
       <Typography variant="h6" className={styles.heading}>
-        Plant Registration
+        Edit Plant
       </Typography>
 
       <Box className={styles.formContainer}>

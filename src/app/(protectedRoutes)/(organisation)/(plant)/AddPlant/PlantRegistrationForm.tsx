@@ -61,7 +61,7 @@ const PlantRegistrationForm = () => {
   const onSubmit = async (data: PlantFormType) => {
     try {
       const { about, ...body } = data;
-      await addPlantInfo({ tenantId, body }).unwrap();
+      await addPlantInfo({ tenantId, body: data }).unwrap();
       reset();
     } catch (error) {
       console.error('Failed to add plant info:', error);
@@ -97,11 +97,11 @@ const PlantRegistrationForm = () => {
       <Typography variant="h6" className={styles.heading}>
         Plant Registration
       </Typography>
-
-      <Box className={styles.formContainer}>
-        <Box className={styles.imageBox}>
-          <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
-        </Box>
+      <Box className={styles.form}>
+        <Box className={styles.formContainer}>
+          <Box className={styles.imageBox}>
+            <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+          </Box>
 
         <Box className={styles.formFieldsBox}>
           <section className={styles.formFieldsInner}>
@@ -154,24 +154,24 @@ const PlantRegistrationForm = () => {
         </Box>
       </Box>
 
-      <Box className={styles.aboutSection}>
-        <Controller
-          name="about"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <InputWithLabel
-              {...field}
-              label="About Us"
-              placeholder="Enter About Plant"
-              multiline
-              rows={3}
-              type="text"
-              onFocus={() => setFocusedField('about')}
-            />
-          )}
-        />
-      </Box>
+        <Box className={styles.aboutSection}>
+          <Controller
+            name="about"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <InputWithLabel
+                {...field}
+                label="About Us"
+                placeholder="Enter About Plant"
+                multiline
+                rows={3}
+                type="text"
+                onFocus={() => setFocusedField('about')}
+              />
+            )}
+          />
+        </Box>
 
       <Box className={styles.buttonSection}>
         <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
