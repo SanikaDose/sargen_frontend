@@ -32,11 +32,9 @@ i18n
   .use(LanguageDetector) // detects browser language
   .use(initReactI18next)
   .init({
-    fallbackLng: 'en',
-    supportedLngs: ['en', 'hi', 'mr'],
-    interpolation: {
-      escapeValue: false,
-    },
+      fallbackLng: 'en',
+  supportedLngs: ['en', 'hi', 'mr'],
+  interpolation: { escapeValue: false },
     detection: {
       order: ['querystring', 'cookie', 'localStorage', 'navigator'],
       caches: ['cookie'],

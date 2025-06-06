@@ -31,7 +31,7 @@ const ButtonWithLoader: React.FC<ButtonWithLoaderProps> = ({
           <CircularProgress
   size={loaderSize}
   thickness={loaderThickness}
-  sx={{ color: loaderColor }} // ← now accepts any color value
+  sx={{ color: loaderColor }} 
 />
         )}
         {!loading && label}
