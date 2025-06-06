@@ -91,7 +91,7 @@ const EditPlantRegistrationForm = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      // await uploadPlantLogo({ organisationId, plantId, formData }).unwrap();
+      await uploadPlantLogo({ organisationId, plantId, formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
