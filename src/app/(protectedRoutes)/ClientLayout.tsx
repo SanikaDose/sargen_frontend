@@ -18,7 +18,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Check if sidebar should be permanent
   const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
 
-  const [showInfoBox, setShowInfoBox] = useState(true);
+  const [showInfoBox, setShowInfoBox] = useState(false);
 
   useEffect(() => {
     console.log('width:', window.innerWidth);

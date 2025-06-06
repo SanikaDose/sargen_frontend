@@ -242,7 +242,14 @@ const ContactPersonForm = ({ tenantId, editMode = false }: ContactPersonFormProp
         >
           Back
         </CustomButton>
-        <CustomButton type="submit" variant="contained" icon="save" color="#10557C" disabled={!isValid || isLoading}>
+        <CustomButton
+          type="submit"
+          variant="contained"
+          icon="save"
+          color="#10557C"
+          disabled={!isValid || isLoading}
+          onClick={() => router.push('/PlantOverview')}
+        >
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>
