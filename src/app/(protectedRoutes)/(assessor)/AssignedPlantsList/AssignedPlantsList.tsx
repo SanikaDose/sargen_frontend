@@ -9,9 +9,10 @@ import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
 import { useGetAllPlantInfoQuery } from '../../(organisation)/(plant)/PlantOverview/PlantOverviewApi';
 import AssessorPlantInfoCard from './AssessorPlantInfoCard';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 export default function AssignedPlantsList() {
-  const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
+  const tenantId = getValueLocalStorage('tenantId');
   const [searchValue, setSearchValue] = useState('');
   const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({ tenantId, search: searchValue });
   const router = useRouter();
@@ -82,9 +83,9 @@ export default function AssignedPlantsList() {
                   revenue: plant.revenue,
                   updatedAt: plant.debriefDate,
                 }}
-                editPlantOnClick={() => {
+                viewPlantOnClick={() => {
                   console.log('plant id', plant.id);
-                  router.push(`EditPlant/${tenantId}/${plant.id}`);
+                  router.push(`ViewPlant/${tenantId}/${plant.id}`);
                 }}
                 onClick={() => {}}
               />

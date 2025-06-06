@@ -1,7 +1,11 @@
 import ContactPersonForm from '../ContactPersonForm';
 
 const AddContactPersonPage = () => {
-  return <ContactPersonForm />;
+  return (
+    <>
+      <ContactPersonForm />;
+    </>
+  );
 };
 
 export default AddContactPersonPage;

@@ -6,14 +6,14 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import ProgressCircle from '@/components/ProgressCircle/ProgressCircle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-const AssessorPlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
+const AssessorPlantInfoCard = ({ data, viewPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
 
   return (
     <Box className={styles.card}>
       <Box className={styles.header}>
         <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
-        <Typography className={styles.editButton} onClick={editPlantOnClick}>
+        <Typography className={styles.editButton} onClick={viewPlantOnClick}>
           <VisibilityIcon />
         </Typography>
       </Box>
