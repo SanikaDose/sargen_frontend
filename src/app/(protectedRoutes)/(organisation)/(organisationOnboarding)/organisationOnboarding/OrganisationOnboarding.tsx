@@ -14,6 +14,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
@@ -23,7 +24,6 @@ function OrganizationOnbording() {
   const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
   // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
 
-  const [editData, setEditData] = useState(null);
   const {
     control,
     handleSubmit,
@@ -45,13 +45,7 @@ function OrganizationOnbording() {
   skip: !tenantId,
 });
  console.log('if we have tenentid the we get this data',data)
-  //useeffect for checking that we have an tenetid
-  useEffect(() => {
-    if (tenantId) {
-      
-    
-    }
-  }, [tenantId]);
+
 
   //hnadle organization logo
   const handleUpload = async (file: File) => {
@@ -210,13 +204,56 @@ function OrganizationOnbording() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 2 }}>
+        {/* <Grid size={{ xs: 12, md: 2 }}>
           <Controller
             name="uom"
             control={control}
             render={({ field }) => <InputWithLabel label="UOM" placeholder="UOM" {...field} />}
           />
-        </Grid>
+        </Grid> */}
+
+        <Grid size={{ xs: 12, md: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
+               
+Currency Type
+              </Typography>
+              <FormControl fullWidth sx={{ mt: 0 }}>
+                <Controller
+                  name="uom"
+                  control={control}
+                  rules={{ required: 'Currency type is required' }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      displayEmpty
+                      input={<OutlinedInput />}
+                      value={field.value || ''}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      sx={{
+                        height: '55px',
+                        color: '#888',
+                        width: '100%',
+                      }}
+                      renderValue={(selected) => {
+                        if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
+                        return selected;
+                      }}
+                    >
+                      <MenuItem disabled value="">
+                        <em>Select From Dropdown</em>
+                      </MenuItem>
+                    
+
+                      {currencyOptions.map((country) => (
+                        <MenuItem key={country.code} value={country.name}>
+                          {country.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Grid>
 
         <Grid size={{ xs: 12, md: 5 }}>
           <Controller
