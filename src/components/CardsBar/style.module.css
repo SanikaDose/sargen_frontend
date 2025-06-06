@@ -7,7 +7,10 @@
 }
 
 .card {
-  padding: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-radius: 16px;
 }
 

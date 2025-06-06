@@ -1,18 +1,7 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box } from '@mui/material'; // ✅ named import
 import styles from './style.module.css';
-
-export type CardsBarCard = {
-  title: string;
-  value: string | number;
-  color?: string;
-  description?: string;
-};
-
-type CardsBarProps = {
-  heading?: string;
-  cards: CardsBarCard[];
-};
+import { CardsBarProps } from './CardsBar.types';
 
 const CardsBar: React.FC<CardsBarProps> = ({ heading = 'Overview', cards }) => {
   return (

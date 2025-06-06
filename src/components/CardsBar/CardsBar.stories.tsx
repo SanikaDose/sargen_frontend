@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import CardsBar, { CardsBarCard } from './CardsBar';
+import CardsBar from './CardsBar';
+import { CardsBarCard } from './CardsBar.types';
 
 const meta: Meta<typeof CardsBar> = {
   title: 'Dashboard/CardsBar',
@@ -13,57 +14,57 @@ type Story = StoryObj<typeof CardsBar>;
 
 const sampleCards: CardsBarCard[] = [
   {
-    title: 'Pending Assessments',
+    title: 'Pending',
     value: 8,
     color: 'primary.main',
   },
   {
-    title: 'Upcoming Meetings',
+    title: 'Upcoming',
     value: 2,
     color: 'secondary.main',
   },
   {
-    title: 'Completed Reviews',
+    title: 'Ongoing',
     value: 14,
     color: 'success.main',
   },
   {
-    title: 'Average Score',
+    title: 'Average',
     value: '87%',
     color: 'info.main',
   },
+  //   {
+  //     title: 'Recent Feedback',
+  //     value: '“Great attention to detail.”',
+  //     description: '— Manager',
+  //     color: 'text.primary',
+  //   },
   {
-    title: 'Recent Feedback',
-    value: '“Great attention to detail.”',
-    description: '— Manager',
-    color: 'text.primary',
-  },
-  {
-    title: 'Pending Assessments',
+    title: 'Pending',
     value: 8,
     color: 'primary.main',
   },
   {
-    title: 'Upcoming Meetings',
+    title: 'Upcoming',
     value: 2,
     color: 'secondary.main',
   },
   {
-    title: 'Completed Reviews',
+    title: 'Ongoing',
     value: 14,
     color: 'success.main',
   },
   {
-    title: 'Average Score',
+    title: 'Average',
     value: '87%',
     color: 'info.main',
   },
-  {
-    title: 'Recent Feedback',
-    value: '“Great attention to detail.”',
-    description: '— Manager',
-    color: 'text.primary',
-  },
+  //   {
+  //     title: 'Recent Feedback',
+  //     value: '“Great attention to detail.”',
+  //     description: '— Manager',
+  //     color: 'text.primary',
+  //   },
 ];
 
 export const Default: Story = {
