@@ -20,7 +20,6 @@ function OrganizationOnbording() {
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
-  // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
 
   // ✅ Fetch organization info
   const { data } = useGetOrganizationInfoQuery(tenantId, {
@@ -48,24 +47,24 @@ function OrganizationOnbording() {
 
   // ✅ Pre-fill form once data is loaded
   useEffect(() => {
-  if (data?.data) {
-    const org = data.data;
-    reset({
-      companyName: org.name || '',
-      website: org.website || '',
-      gstin: org.gstin || '',
-      country: org.country || '',
-      revenue: org.revenue || '',
-      uom: org.uom || '',
-      numberOfEmployees: org.numberOfEmployees || '',
-      about: org.about || '',
-    });
-    // Set logo if available
-    if (org.userLogo) {
-      setLogoUrl(org.userLogo);
+    if (data?.data) {
+      const org = data.data;
+      reset({
+        companyName: org.name || '',
+        website: org.website || '',
+        gstin: org.gstin || '',
+        country: org.country || '',
+        revenue: org.revenue || '',
+        uom: org.uom || '',
+        numberOfEmployees: org.numberOfEmployees || '',
+        about: org.about || '',
+      });
+      // Set logo if available
+      if (org.userLogo) {
+        setLogoUrl(org.userLogo);
+      }
     }
-  }
-}, [data, reset]);
+  }, [data, reset]);
 
   //hnadle organization logo
   const handleUpload = async (file: File) => {
@@ -82,8 +81,6 @@ function OrganizationOnbording() {
 
   //on form submit
   const onSubmit = async (data: any) => {
-    console.log('country value', data.country);
-    console.log('Form Data:', data);
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
       console.log('Organization info submitted'); //use toster
@@ -192,12 +189,6 @@ function OrganizationOnbording() {
                       <MenuItem disabled value="">
                         <em>Select From Dropdown</em>
                       </MenuItem>
-                      {/* {['India', 'United States', 'Canada', 'Germany'].map((country) => (
-                        <MenuItem key={country} value={country}>
-                          {country}
-                        </MenuItem>
-                      ))} */}
-
                       {CountryOptions.map((country) => (
                         <MenuItem key={country.code} value={country.name}>
                           {country.name}
@@ -225,45 +216,45 @@ function OrganizationOnbording() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 2 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
-                    Currency Type
-                  </Typography>
-                  <FormControl fullWidth sx={{ mt: 0 }}>
-                    <Controller
-                      name="uom"
-                      control={control}
-                      rules={{ required: 'Currency type is required' }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          displayEmpty
-                          input={<OutlinedInput />}
-                          value={field.value || ''}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          sx={{
-                            height: '55px',
-                            color: '#888',
-                            width: '100%',
-                          }}
-                          renderValue={(selected) => {
-                            if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
-                            return selected;
-                          }}
-                        >
-                          <MenuItem disabled value="">
-                            <em>Select From Dropdown</em>
-                          </MenuItem>
-        
-                          {currencyOptions.map((country) => (
-                            <MenuItem key={country.code} value={country.name}>
-                              {country.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      )}
-                    />
-                  </FormControl>
-                </Grid>
+          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
+            Currency Type
+          </Typography>
+          <FormControl fullWidth sx={{ mt: 0 }}>
+            <Controller
+              name="uom"
+              control={control}
+              rules={{ required: 'Currency type is required' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  displayEmpty
+                  input={<OutlinedInput />}
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  sx={{
+                    height: '55px',
+                    color: '#888',
+                    width: '100%',
+                  }}
+                  renderValue={(selected) => {
+                    if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
+                    return selected;
+                  }}
+                >
+                  <MenuItem disabled value="">
+                    <em>Select From Dropdown</em>
+                  </MenuItem>
+
+                  {currencyOptions.map((country) => (
+                    <MenuItem key={country.code} value={country.name}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
+        </Grid>
 
         <Grid size={{ xs: 12, md: 5 }}>
           <Controller
