@@ -129,7 +129,7 @@ const EditPlantRegistrationForm = () => {
   }, [watchedValues]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
       </Box>
@@ -144,51 +144,53 @@ const EditPlantRegistrationForm = () => {
         </Box>
 
         <Box className={styles.formFieldsBox}>
-          <Grid container spacing={1}>
-            {plantFormInputs.map((input) => (
-              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
-                <Controller
-                  name={input.name as keyof PlantFormType}
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: input.required }}
-                  render={({ field }) =>
-                    input.isCurrency ? (
-                      <FormControl fullWidth sx={{ mt: 2 }}>
-                        <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
-                        <Select
-                          {...field}
-                          displayEmpty
-                          value={field.value || ''}
-                          inputProps={{ 'aria-label': 'Select Currency' }}
-                          sx={{ borderRadius: '8px' }}
-                          onFocus={() => setFocusedField('currencyType')}
-                        >
-                          <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                            <em>Select Currency</em>
-                          </MenuItem>
-                          {currencyOptions.map((currency) => (
-                            <MenuItem key={currency.code} value={currency.name}>
-                              {currency.name}
+          <section className={styles.formFieldsInner}>
+            <Grid container spacing={1}>
+              {plantFormInputs.map((input) => (
+                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                  <Controller
+                    name={input.name as keyof PlantFormType}
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: input.required }}
+                    render={({ field }) =>
+                      input.isCurrency ? (
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                          <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
+                          <Select
+                            {...field}
+                            displayEmpty
+                            value={field.value || ''}
+                            inputProps={{ 'aria-label': 'Select Currency' }}
+                            sx={{ borderRadius: '8px' }}
+                            onFocus={() => setFocusedField('currencyType')}
+                          >
+                            <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                              <em>Select Currency</em>
                             </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    ) : (
-                      <InputWithLabel
-                        {...field}
-                        label={input.label}
-                        placeholder={input.placeholder}
-                        required={input.required}
-                        type={input.type || 'text'}
-                        onFocus={() => setFocusedField(input.name)}
-                      />
-                    )
-                  }
-                />
-              </Grid>
-            ))}
-          </Grid>
+                            {currencyOptions.map((currency) => (
+                              <MenuItem key={currency.code} value={currency.name}>
+                                {currency.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      ) : (
+                        <InputWithLabel
+                          {...field}
+                          label={input.label}
+                          placeholder={input.placeholder}
+                          required={input.required}
+                          type={input.type || 'text'}
+                          onFocus={() => setFocusedField(input.name)}
+                        />
+                      )
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </section>
         </Box>
       </Box>
 
@@ -206,7 +208,6 @@ const EditPlantRegistrationForm = () => {
               rows={3}
               type="text"
               onFocus={() => setFocusedField('about')}
-              // defaultValue={getPlantData.about}
             />
           )}
         />

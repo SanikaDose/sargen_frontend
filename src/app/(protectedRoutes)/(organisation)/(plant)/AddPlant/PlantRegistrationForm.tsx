@@ -89,7 +89,7 @@ const PlantRegistrationForm = () => {
   }, [watchedValues]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
       </Box>
@@ -104,7 +104,7 @@ const PlantRegistrationForm = () => {
         </Box>
 
         <Box className={styles.formFieldsBox}>
-          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}>
+          <section className={styles.formFieldsInner}>
             <Grid container spacing={1}>
               {plantFormInputs.map((input) => (
                 <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
@@ -150,7 +150,7 @@ const PlantRegistrationForm = () => {
                 </Grid>
               ))}
             </Grid>
-          </Grid>
+          </section>
         </Box>
       </Box>
 

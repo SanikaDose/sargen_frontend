@@ -136,7 +136,13 @@ const LoginPage = () => {
           </Button>
 
           <Typography variant="body2" className={styles.forgotPassword}>
-            Forgot password?
+            <Button
+              onClick={() => {
+                router.push('/forgotPassword');
+              }}
+            >
+              Forgot password?
+            </Button>
           </Typography>
         </Box>
       </Box>

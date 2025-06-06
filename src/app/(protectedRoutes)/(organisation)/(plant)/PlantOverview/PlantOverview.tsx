@@ -8,8 +8,6 @@ import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
 import { useGetAllPlantInfoQuery } from './PlantOverviewApi';
 import { Search } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
-import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { GridMenuIcon } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
