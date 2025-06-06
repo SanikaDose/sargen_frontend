@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
     i18n: i18nConfig.i18n,
   allowedDevOrigins: ['*'],
   devIndicators: false,
-  allowedDevOrigins: ['*'],
 };
 
 export default nextConfig;

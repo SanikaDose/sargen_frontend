@@ -1,5 +1,5 @@
-import { Typography } from "@mui/material";
-import styles from "./forgotPasswordInitialMessage.module.css";
+import { Typography } from '@mui/material';
+import styles from './forgotPasswordInitialMessage.module.css';
 
 const page = () => {
   return (

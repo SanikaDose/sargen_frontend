@@ -14,15 +14,14 @@ import {
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-  const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
-  // const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
+  const tenantId = getValueLocalStorage('tenantId');
 
   const {
     control,

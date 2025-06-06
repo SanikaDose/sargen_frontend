@@ -17,7 +17,7 @@ import { SideBarProps } from './SideBar.types';
 import { useRouter } from 'next/navigation';
 
 const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], drawerType = 'persistent', open }) => {
-  const router = useRouter;
+  const router = useRouter();
   return (
     <Drawer
       variant={drawerType}
@@ -68,20 +68,15 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
             <List>
               {drawerList.map((obj, index) => (
                 <ListItem key={index} disablePadding>
-                  <ListItemButton>
+                  <ListItemButton onClick={() => obj.toNavigate && router.push(obj.toNavigate)}>
                     <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                    <ListItemText
-                      primary={obj.label}
-                      onClick={() => {
-                        router(obj.toNavigate);
-                      }}
-                    />
+                    <ListItemText primary={obj.label} />
                   </ListItemButton>
                 </ListItem>
               ))}
             </List>
             <Divider />
-            <List>
+            {/* <List>
               {['All mail', 'Trash', 'Spam'].map((text, index) => (
                 <ListItem key={text} disablePadding>
                   <ListItemButton>
@@ -90,7 +85,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
                   </ListItemButton>
                 </ListItem>
               ))}
-            </List>
+            </List> */}
           </Box>
         </Grid>
 
