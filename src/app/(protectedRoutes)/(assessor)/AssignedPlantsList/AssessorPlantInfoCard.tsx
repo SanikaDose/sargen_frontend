@@ -1,86 +1,45 @@
 import React from 'react';
-import { Typography, Box, Divider, Button } from '@mui/material';
-import styles from './../../../../components/PlantInfoCard/style.module.css';
-import { PlantInfoCardProps } from '@/components/PlantInfoCard/PlantInfoCard.d';
-import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import ProgressCircle from '@/components/ProgressCircle/ProgressCircle';
+import { Typography, Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { AssessorPlantDataProps } from './AssessorPlantDetails.types';
+import styles from './AssessorPlantInfoCard.module.css';
 
-const AssessorPlantInfoCard = ({ data, viewPlantOnClick, onClick }: PlantInfoCardProps) => {
-  const plantData = data;
+const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProps) => {
+  const plantName = data?.plantName ?? '';
+  const organisationName = data?.organisationName ?? '';
+  const assesorCompletionStage = data?.assesorCompletionStage ?? '';
+  const createdAt = data?.createdAt ?? '';
+  const updatedAt = data?.updatedAt ?? '';
 
   return (
-    <Box className={styles.card}>
-      <Box className={styles.header}>
-        <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
-        <Typography className={styles.editButton} onClick={viewPlantOnClick}>
-          <VisibilityIcon />
+    <Box className={styles.cardContainer}>
+      {/* Top-Right Icon */}
+      <Box className={styles.iconCorner} onClick={viewPlantOnClick}>
+        <VisibilityIcon fontSize="small" />
+      </Box>
+
+      {/* Main Content */}
+      <Box className={styles.contentSection}>
+        <Typography className={styles.label}>
+          Plant Name: <span className={styles.value}>{plantName}</span>
+        </Typography>
+        <Typography className={styles.label}>
+          Organisation: <span className={styles.value}>{organisationName}</span>
+        </Typography>
+        <Typography className={styles.label}>
+          Stage: <span className={styles.value}>{assesorCompletionStage}</span>
         </Typography>
       </Box>
 
-      {/* Content */}
-      <Box className={styles.content}>
-        <Box className={styles.plantImage}>
-          <ImageUploader imageProp={plantData?.plantLogo} />
-        </Box>
-
-        {/* Info Grid */}
-        <Box className={styles.infoGrid}>
-          <Typography className={styles.textLabel}>
-            Location: <b>{plantData?.location}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Reg No.: <b>{plantData?.registrationNo}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            GSTIN: <b>{plantData?.gstin}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Plant Age: <b>{plantData?.age} years</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Revenue: <b>₹{+(plantData?.revenue ?? 0)}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Employees: <b>{plantData?.numberOfEmployees}</b>
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Lines: <b>{plantData?.numberOfLines}</b>
-          </Typography>
-        </Box>
-      </Box>
-
       {/* Dates */}
-      <Box className={styles.dates}>
-        <Typography className={styles.datesTitle}>Dates</Typography>
-        <Divider sx={{ marginBottom: 1 }} />
-        <Box>
-          <Typography className={styles.textLabel}>
-            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString()}
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString()}
-          </Typography>
-        </Box>
+      <Box className={styles.dateSection}>
+        <Typography className={styles.dateTitle}>Dates</Typography>
+        <Typography className={styles.dateText}>Created: {new Date(createdAt ?? '').toLocaleDateString()}</Typography>
+        <Typography className={styles.dateText}>Updated: {new Date(updatedAt ?? '').toLocaleDateString()}</Typography>
       </Box>
 
-      {/* Status */}
-      <Box className={styles.status}>
-        <Box>
-          <Typography className={styles.statusLabel}>Status</Typography>
-          <Divider sx={{ marginBottom: 1 }} />
-          <Button
-            children={'Start Assesment'}
-            color={'secondary'}
-            variant={'text'}
-            sx={{ bgcolor: '#10557C33' }}
-            onClick={onClick}
-          />
-        </Box>
-        <Box className={styles.progressCircle}>
-          <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
-        </Box>
-      </Box>
+      {/* Bottom Badge */}
+      <Box className={styles.statusBadge}>{assesorCompletionStage}</Box>
     </Box>
   );
 };

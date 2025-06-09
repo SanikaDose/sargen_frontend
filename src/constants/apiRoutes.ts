@@ -71,9 +71,9 @@ export const apiRoutes = {
   },
   assessorFlow: {
     root: 'assessor-flow',
-    getAssignedPlants: '/get-assigned-plants/:tenantId',
-    getAllAssignedPlants: '/get-all-assigned-plants/:assessorId',
-    getAssignedPlantinfo: '/assigned-plants-info/:tenantId/:plantId',
+    getAssignedPlants: '/get-assigned-plants',
+    getAllAssignedPlants: '/get-all-assigned-plants',
+    getAssignedPlantinfo: '/assigned-plants-info',
     getAllMetaData: '/get-all-metadata/:tenantId',
     assignMetadata: '/assign-metadata',
     getImpactValues: '/get-impact-values',

@@ -3,7 +3,7 @@ import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 
 export const assessorAsignPlantApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllAssignPlant: builder.query({
+    getAllAssignPlant: builder.query<any, string>({
       query: (tenantId) => ({
         url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.getAllAssignedPlants}/${tenantId}`,
         method: 'GET',
