@@ -31,6 +31,7 @@ export const registerApi = publicApi.injectEndpoints({
         url: `${apiControllerPath.authentication.root}${apiControllerPath.authentication.signup}`,
         method: 'POST',
         body: credentials,
+        credentials: 'include',
       }),
       //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
       //     await rtkAPIToast(queryFulfilled, dispatch, {
