@@ -13,7 +13,7 @@ import { pageRoutes } from '@/constants/pagesRoutes';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 export default function PlantOverview() {
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = getValueLocalStorage('tenantId') ?? '';
 
   const [searchValue, setSearchValue] = useState('');
   const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({ tenantId, search: searchValue });

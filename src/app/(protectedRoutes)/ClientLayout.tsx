@@ -4,6 +4,8 @@ import { Header } from '@/components/Header/Header';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import SideBar from '@/components/SideBar/SideBar';
 import theme from '@/theme/theme';
+import { sideBarDrawerList } from '../../app/utils/allRoutes';
+import { usePathname } from 'next/navigation';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import { Fab, Grid, useMediaQuery } from '@mui/material';
@@ -18,7 +20,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Check if sidebar should be permanent
   const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
 
-  const [showInfoBox, setShowInfoBox] = useState(true);
+  const [showInfoBox, setShowInfoBox] = useState(false);
 
   useEffect(() => {
     console.log('width:', window.innerWidth);
@@ -50,16 +52,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Grid 1{1} */}
       {openSideBar && isPermanentSidebar && (
         <Grid size={{ lg: 2, xl: 2 }}>
-          <SideBar
-            onCloseTrigger={() => setOpenSideBar(false)}
-            drawerType="permanent"
-            drawerList={[
-              { label: 'Orangization Information', toNavigate: '/organisationOnboarding' },
-              { label: 'Point Of Contact', toNavigate: '/AddContactPerson' },
-              { label: 'Plant', toNavigate: '/PlantOverview' },
-              { label: 'Preview', toNavigate: '/' },
-            ]}
-          />
+          <SideBar onCloseTrigger={() => setOpenSideBar(false)} drawerType="permanent" drawerList={sideBarDrawerList} />
         </Grid>
       )}
 

@@ -59,7 +59,7 @@ export default function PlantPointOfContact() {
     'Designation',
     'Country',
     'Employee Id',
-    'jobRole',
+    'Job Role',
   ].map((label) => ({ label }));
 
   const allInputs = [
@@ -87,7 +87,7 @@ export default function PlantPointOfContact() {
   }, [watchedValues]);
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form className={styles.mostOuterContainer} onSubmit={handleSubmit(onSubmit)}>
         <Box className={styles.stepperContainer}>
           <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
         </Box>
@@ -95,113 +95,118 @@ export default function PlantPointOfContact() {
         <Typography variant="h6" className={styles.heading}>
           Plant Point of Contact
         </Typography>
-        <Box className={styles.formContainer}>
-          <Box className={styles.imageBox}>
-            <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
-          </Box>
+        <section className={styles.section}>
+          <Box className={styles.formContainer}>
+            <Box className={styles.imageBox}>
+              <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+            </Box>
 
-          <Box className={styles.formFieldsBox}>
-            <Grid container spacing={1}>
-              {plantPointOfContactFormInputs.map((input, index) => (
+            <Box className={styles.formFieldsBox}>
+              <Grid container spacing={1}>
+                {plantPointOfContactFormInputs.map((input, index) => (
+                  <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                    <Controller
+                      name={input.name as keyof PlantPointOfContactType}
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: input.required }}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          {...field}
+                          label={input.label}
+                          name={input.name}
+                          placeholder={input.placeholder}
+                          required={input.required}
+                          onFocus={() => setFocusedField(input.name)}
+                        />
+                      )}
+                    />
+                  </Grid>
+                ))}
+
                 <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
                   <Controller
-                    name={input.name as keyof PlantPointOfContactType}
+                    name="pocCountry"
                     control={control}
                     defaultValue=""
-                    rules={{ required: input.required }}
                     render={({ field }) => (
-                      <InputWithLabel
-                        {...field}
-                        label={input.label}
-                        name={input.name}
-                        placeholder={input.placeholder}
-                        required={input.required}
-                        onFocus={() => setFocusedField(input.name)}
-                      />
+                      <FormControl fullWidth sx={{ mt: 2 }}>
+                        <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
+                        <Select
+                          {...field}
+                          displayEmpty
+                          value={field.value || ''}
+                          inputProps={{ 'aria-label': 'Select Country' }}
+                          sx={{ borderRadius: '8px' }}
+                          onFocus={() => setFocusedField('pocCountry')}
+                        >
+                          <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
+                            <em>Select Country</em>
+                          </MenuItem>
+                          {CountryOptions.map((country) => (
+                            <MenuItem key={country.code} value={country.name}>
+                              {country.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     )}
                   />
                 </Grid>
-              ))}
+              </Grid>
 
-              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+              <Box>
                 <Controller
-                  name="pocCountry"
+                  name="pocEmployeeId"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <FormControl fullWidth sx={{ mt: 2 }}>
-                      <Typography sx={{ fontWeight: 500, color: '#000000' }}>Country</Typography>
-                      <Select
-                        {...field}
-                        displayEmpty
-                        value={field.value || ''}
-                        inputProps={{ 'aria-label': 'Select Country' }}
-                        sx={{ borderRadius: '8px' }}
-                        onFocus={() => setFocusedField('pocCountry')}
-                      >
-                        <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                          <em>Select Country</em>
-                        </MenuItem>
-                        {CountryOptions.map((country) => (
-                          <MenuItem key={country.code} value={country.name}>
-                            {country.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <InputWithLabel
+                      {...field}
+                      label="Employee Id"
+                      name="pocEmployeeId"
+                      placeholder="Enter EmployeeId"
+                      onFocus={() => setFocusedField('pocEmployeeId')}
+                    />
+                  )}
+                />
+              </Box>
+            </Box>
+          </Box>
+
+          <section className={styles.bottomSection}>
+            <Box className={styles.aboutSection}>
+              <Grid>
+                <Controller
+                  name="pocJobRole"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <InputWithLabel
+                      {...field}
+                      label="Job Role"
+                      name="pocJobRole"
+                      placeholder="Specify Job Role"
+                      multiline
+                      rows={4}
+                      onFocus={() => setFocusedField('pocJobRole')}
+                    />
                   )}
                 />
               </Grid>
-            </Grid>
-
-            <Box>
-              <Controller
-                name="pocEmployeeId"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <InputWithLabel
-                    {...field}
-                    label="Employee Id"
-                    name="pocEmployeeId"
-                    placeholder="Enter EmployeeId"
-                    onFocus={() => setFocusedField('pocEmployeeId')}
-                  />
-                )}
+            </Box>
+            <Box className={styles.buttonSection}>
+              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
+              <CustomButton
+                children={isLoading ? 'Saving...' : 'Save'}
+                variant="contained"
+                color="primary"
+                icon="save"
+                type="submit"
               />
             </Box>
-          </Box>
-        </Box>
-        <Box className={styles.aboutSection}>
-          <Grid>
-            <Controller
-              name="pocJobRole"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <InputWithLabel
-                  {...field}
-                  label="Job Role"
-                  name="pocJobRole"
-                  placeholder="Specify Job Role"
-                  multiline
-                  rows={4}
-                  onFocus={() => setFocusedField('jobRole')}
-                />
-              )}
-            />
-          </Grid>
-        </Box>
-        <Box className={styles.buttonSection}>
-          <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
-          <CustomButton
-            children={isLoading ? 'Saving...' : 'Save'}
-            variant="contained"
-            color="primary"
-            icon="save"
-            type="submit"
-          />
-        </Box>
+          </section>
+        </section>
       </form>
     </div>
   );

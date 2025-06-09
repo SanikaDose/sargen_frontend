@@ -39,8 +39,14 @@
   width: 15vw;
   justify-content: center;
   align-items: center;
+  border: 1px solid rgb(0, 17, 255);
+  margin: auto;
 }
 
+.formFieldsInner {
+  width: 100%;
+  /* border: 1px solid rgb(78, 47, 255); */
+}
 .formFieldsBox {
   width: 70%;
 }
@@ -63,11 +69,7 @@
 /* Optional: Hide stepper on small devices if needed */
 @media (min-width: 280px) and (max-width: 768px) {
   .formContainer {
-    gap: 1.5rem;
-  }
-
-  .stepperContainer {
-    display: none;
+    flex-direction: column;
   }
 }
 

@@ -31,19 +31,19 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
 
   const calculateStrength = (password: string) => {
     const checks = [
-      password.length >= 8,
+      password.length >= 1,
       /[a-z]/.test(password),
-      /[A-Z]/.test(password),
-      /\d/.test(password),
-      /[^A-Za-z0-9]/.test(password),
+      // /[A-Z]/.test(password),
+      // /\d/.test(password),
+      // /[^A-Za-z0-9]/.test(password),
     ];
-    const score = checks.filter(Boolean).length;
-    const strength = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-    const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50', '#2e7d32'];
-    return { label: strength[score - 1] || '', color: colors[score - 1] || 'transparent', score };
+    // const score = checks.filter(Boolean).length;
+    // const strength = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+    // const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50', '#2e7d32'];
+    // return { label: strength[score - 1] || '', color: colors[score - 1] || 'transparent', score };
   };
 
-  const { label: strengthLabel, color: strengthColor, score } = calculateStrength(value || '');
+  // const { label: strengthLabel, color: strengthColor, score } = calculateStrength(value || '');
 
   return (
     <FormControl fullWidth margin="normal">
@@ -62,7 +62,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
         fullWidth
         required={required}
         variant="outlined"
-        error={error || (hasTyped && score < 5)}
+        error={error}
         InputProps={{
           startAdornment: showLockIcon ? (
             <InputAdornment position="start">
@@ -85,14 +85,14 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
         }}
       />
 
-      {hasTyped && score < 5 && (
+      {/* {hasTyped && score < 5 && (
         <FormHelperText error>
           Password must contain at least 8 characters, including an uppercase letter, lowercase letter, number, and
           symbol.
         </FormHelperText>
-      )}
+      )} */}
 
-      {showStrengthIndicator && hasTyped && value && (
+      {/* {showStrengthIndicator && hasTyped && value && (
         <Box>
           <Box className={styles.strengthBarContainer}>
             {[...Array(5)].map((_, idx) => (
@@ -107,7 +107,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
             {strengthLabel}
           </FormHelperText>
         </Box>
-      )}
+      )} */}
     </FormControl>
   );
 };

@@ -68,8 +68,8 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
       {/* Status */}
       <Box className={styles.status}>
         <Box>
-          <Typography className={styles.statusLabel}>Status</Typography>
           <Divider sx={{ marginBottom: 1 }} />
+          <Typography className={styles.statusLabel}>Status</Typography>
           <Button
             children={'Start Assesment'}
             color={'secondary'}

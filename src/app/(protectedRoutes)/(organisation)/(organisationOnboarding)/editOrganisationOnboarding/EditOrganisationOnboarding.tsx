@@ -5,25 +5,28 @@ import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
 import {
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
   useGetOrganizationInfoQuery,
-} from './OrganisationOnboardingAPi';
+} from './EditOrganisationOnboardingApi';
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
-
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
 
+  // ✅ Fetch organization info
+  const { data } = useGetOrganizationInfoQuery(tenantId, {
+    skip: !tenantId,
+  });
+
+  console.log('if we have tenentid the we get this data', data);
   const {
     control,
     handleSubmit,
@@ -41,10 +44,27 @@ function OrganizationOnbording() {
       about: '',
     },
   });
-  const { data } = useGetOrganizationInfoQuery(tenantId || '', {
-    skip: !tenantId,
-  });
-  console.log('if we have tenentid the we get this data', data);
+
+  // ✅ Pre-fill form once data is loaded
+  useEffect(() => {
+    if (data?.data) {
+      const org = data.data;
+      reset({
+        companyName: org.name || '',
+        website: org.website || '',
+        gstin: org.gstin || '',
+        country: org.country || '',
+        revenue: org.revenue || '',
+        uom: org.uom || '',
+        numberOfEmployees: org.numberOfEmployees || '',
+        about: org.about || '',
+      });
+      // Set logo if available
+      if (org.userLogo) {
+        setLogoUrl(org.userLogo);
+      }
+    }
+  }, [data, reset]);
 
   //hnadle organization logo
   const handleUpload = async (file: File) => {
@@ -61,8 +81,6 @@ function OrganizationOnbording() {
 
   //on form submit
   const onSubmit = async (data: any) => {
-    console.log('country value', data.country);
-    console.log('Form Data:', data);
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
       console.log('Organization info submitted'); //use toster
@@ -171,12 +189,6 @@ function OrganizationOnbording() {
                       <MenuItem disabled value="">
                         <em>Select From Dropdown</em>
                       </MenuItem>
-                      {/* {['India', 'United States', 'Canada', 'Germany'].map((country) => (
-                        <MenuItem key={country} value={country}>
-                          {country}
-                        </MenuItem>
-                      ))} */}
-
                       {CountryOptions.map((country) => (
                         <MenuItem key={country.code} value={country.name}>
                           {country.name}
@@ -202,14 +214,6 @@ function OrganizationOnbording() {
             )}
           />
         </Grid>
-
-        {/* <Grid size={{ xs: 12, md: 2 }}>
-          <Controller
-            name="uom"
-            control={control}
-            render={({ field }) => <InputWithLabel label="UOM" placeholder="UOM" {...field} />}
-          />
-        </Grid> */}
 
         <Grid size={{ xs: 12, md: 2 }}>
           <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
