@@ -6,7 +6,6 @@ import styles from './PlantOverview.module.css';
 import AddPlantCard from '@/components/AddPlantCard/AddPlantCard';
 import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
 import { useGetAllPlantInfoQuery } from './PlantOverviewApi';
-import { Search } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';

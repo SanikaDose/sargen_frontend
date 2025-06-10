@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Grid, Avatar, Box, Divider, Button, CircularProgress } from '@mui/material';
 import defaulImage from '../../../public/images/default-logo-image.png';
-import Edit from '@mui/icons-material/Edit';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import ImageUploader from '../ImageUpload/ImageUpload';
 import styles from './style.module.css';
@@ -15,7 +15,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
       <Box className={styles.header}>
         <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
         <Typography className={styles.editButton} onClick={editPlantOnClick}>
-          <Edit />
+          <EditOutlinedIcon />
         </Typography>
       </Box>
 

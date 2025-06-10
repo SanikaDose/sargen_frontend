@@ -11,7 +11,7 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   const dispatch = useDispatch();
-  const path = useParams() as { plantAssesment?: string[] };
+  const path = useParams() as { plantAssessment?: string[] };
   const [getKPIDefinition] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition] = useSelectKPIDefinitionMutation();
   const tenantId = getValueLocalStorage('tenantId');
@@ -25,11 +25,11 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   const watchKpis = watch('kpis');
   const selectedCount = watchKpis.filter((k) => k.isselected).length;
 
-  const buildPayload = (plantAssesment: string[] | undefined, data: Kpi[]) => {
-    if (plantAssesment && plantAssesment.length > 1) {
+  const buildPayload = (plantAssessment: string[] | undefined, data: Kpi[]) => {
+    if (plantAssessment && plantAssessment.length > 1) {
       return {
         tenantId,
-        plantId: plantAssesment[2],
+        plantId: plantAssessment[2],
         kpiDefinitions: data.map((item) => ({
           id: item.id,
           kpi: item.kpi,
@@ -43,7 +43,7 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   async function apiCall() {
     const obj2 = {
       tenantId,
-      plantId: path.plantAssesment?.[2] || '',
+      plantId: path.plantAssessment?.[2] || '',
     };
     const result = await getKPIDefinition(obj2).unwrap();
     const initialData = result.map((item: Kpi) => ({
@@ -66,7 +66,7 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   const onSubmit = async (data: { kpis: { isselected: boolean }[] }) => {
     const selectedCount = data.kpis.filter((kpi) => kpi.isselected).length;
     const payload = buildPayload(
-      path.plantAssesment,
+      path.plantAssessment,
       data.kpis.map((item, i) => ({
         ...item,
         id: kpiData[i].id,
@@ -135,10 +135,10 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
             </Grid>
           ))}
       </Grid>
-
+      {/* 
       <Button variant="contained" type="submit" sx={{ marginTop: 2 }}>
         Submit
-      </Button>
+      </Button> */}
     </Box>
   );
 };

@@ -1,131 +1,146 @@
 import { useEffect, useState } from 'react';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../../plantAssementApi';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { CostInputPercentage, FormValues, MultipleSections, RawCostCategory } from '../../plantAssement.model';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { Box, Button, Grid, Typography } from '@mui/material';
+import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import styles from './costProfile.module.css';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProfileCard';
+import InfoBox from '@/components/InfoBox/InfoBox';
 
 const CostProfile = ({ handleOptionSelected }: MultipleSections) => {
-  const router = useRouter();
-  const path = useParams() as { plantAssement?: string[] };
+  const path = useParams() as { plantAssessment?: string[] };
 
+  console.log('plantAssessment', path);
+
+  const tenantId = getValueLocalStorage('tenantId');
   const [getCostCategories] = useGetCostCategoriesMutation();
   const [addCostCategories] = useAddCostCategoriesMutation();
-  const tenantId = getValueLocalStorage('tenantId');
-  const [costProfileData, setCostProfileData] = useState<any[]>([]);
 
-  const { handleSubmit, control, reset } = useForm<FormValues>({
-    defaultValues: {
-      costs: [],
-    },
+  const { control, handleSubmit, reset } = useForm<FormValues>({
+    defaultValues: { costs: [] },
   });
 
-  const buildBasicPayload = (plantAssement: string[] | undefined) => {
-    if (plantAssement && plantAssement.length > 1) {
-      return {
-        tenantId: tenantId,
-        plantId: plantAssement[2],
-      };
-    } else {
-      return null;
+  const formValues = useWatch({
+    control,
+    name: 'costs',
+  });
+
+  // Calculate average percentage
+  const averagePercentage =
+    formValues && formValues.length > 0
+      ? (
+          formValues.reduce((acc, item) => acc + parseFloat(String(item.costAsAPercentageOfRevenue || 0)), 0) /
+          formValues.length
+        ).toFixed(2)
+      : '0.00';
+
+  const { fields, replace } = useFieldArray({
+    control,
+    name: 'costs',
+  });
+
+  const fetchCostProfileData = async () => {
+    if (!path.plantAssessment || path.plantAssessment.length < 3) return;
+
+    const payload = {
+      tenantId,
+      plantId: path.plantAssessment[2],
+    };
+
+    try {
+      const result = await getCostCategories(payload).unwrap();
+
+      const formattedData = result.map((item: RawCostCategory) => ({
+        id: item.id,
+        costCategory: item.costCategory.trim(),
+        costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
+      }));
+
+      replace(formattedData);
+    } catch (error) {
+      console.error('Failed to fetch cost categories', error);
     }
   };
 
-  const buildCostProfilePayload = (plantAssement: string[] | undefined, costs: any[]) => {
-    if (costs.length && plantAssement && plantAssement.length > 1) {
-      return {
-        tenantId: tenantId,
-        plantId: plantAssement[2],
-        costProfileData: costs.map((item) => ({
-          id: item.id,
-          costCategory: item.costCategory,
-          costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue),
-        })),
-      };
-    } else {
-      return null;
-    }
-  };
+  const handleFormSubmit = async (data: FormValues) => {
+    if (!path.plantAssessment || path.plantAssessment.length < 3) return;
 
-  async function apiCall() {
-    const payload = buildBasicPayload(path.plantAssement);
-    if (!payload) return;
-
-    const result = await getCostCategories(payload).unwrap();
-
-    const initialData = result.map((item: RawCostCategory) => ({
-      id: item.id,
-      costCategory: item.costCategory.trim(),
-      costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
-    }));
-
-    setCostProfileData(initialData);
-    reset({ costs: initialData });
-  }
-
-  useEffect(() => {
-    apiCall();
-  }, []);
-
-  const onSubmit = async (data: { costs: CostInputPercentage[] }) => {
-    const payload = buildCostProfilePayload(
-      path.plantAssement,
-      data.costs.map((item, i) => ({
-        ...item,
-        id: costProfileData[i].id,
-        costCategory: costProfileData[i].costCategory,
+    const payload = {
+      tenantId,
+      plantId: path.plantAssessment[2],
+      costProfileData: data.costs.map((cost) => ({
+        id: cost.id,
+        costCategory: cost.costCategory,
+        costAsAPercentageOfRevenue: parseFloat(String(cost.costAsAPercentageOfRevenue)),
       })),
-    );
-    if (!payload) return;
+    };
+
     await addCostCategories(payload).unwrap();
     handleOptionSelected('KPI Selection');
   };
 
-  return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} gap={2} className={styles.formContainer}>
-      <section className={styles.innerConatiner}>
-        {costProfileData.map((field, index) => (
-          <Controller
-            key={field.id}
-            name={`costs.${index}.costAsAPercentageOfRevenue`}
-            control={control}
-            rules={{
-              required: 'This field is required',
-              min: { value: 0, message: 'Minimum value is 0' },
-              max: { value: 100, message: 'Maximum value is 100' },
-            }}
-            render={({ field: controllerField, fieldState }) => (
-              <div className={styles.individualInput}>
-                <Typography
-                  className={styles.labels}
-                  variant="h6"
-                >{`${index + 1}. ${field.costCategory} (%)`}</Typography>
-                <TextField
-                  className={styles.inputField}
-                  {...controllerField}
-                  type="number"
-                  slotProps={{
-                    htmlInput: {
-                      step: 1,
-                      min: 0,
-                      max: 100,
-                    },
-                  }}
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message || ''}
-                />
-              </div>
-            )}
-          />
-        ))}
-      </section>
+  useEffect(() => {
+    fetchCostProfileData();
+  }, [path.plantAssessment]);
 
-      <Button variant="contained" type="submit">
-        Submit
-      </Button>
-    </Box>
+  return (
+    <>
+      <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} className={styles.formContainer}>
+        <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
+          Cost Profile
+        </Typography>
+
+        <Grid
+          container
+          spacing={2}
+          sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', display: 'flex' }}
+        >
+          {fields.length > 0
+            ? fields.map((field, index) => (
+                <Grid size={{ xs: 8, sm: 8, md: 6, lg: 5, xl: 5 }} key={field.id} sx={{ height: '12%' }}>
+                  <Controller
+                    name={`costs.${index}.costAsAPercentageOfRevenue`}
+                    control={control}
+                    render={({ field: controllerField }) => (
+                      <OverallCostProfileCard
+                        fieldName={field.costCategory}
+                        costValue={controllerField.value}
+                        onChange={(val) => controllerField.onChange(val)}
+                        readonly={false}
+                      />
+                    )}
+                  />
+                </Grid>
+              ))
+            : 'No cost Profile'}
+        </Grid>
+
+        <Box sx={{ height: '15%', width: '35%' }}>
+          <OverallCostProfileCard
+            fieldName="Overall Cost Profile"
+            costValue={averagePercentage}
+            onChange={() => {}}
+            readonly
+            boxBackgroundColor="#10557C"
+          />
+        </Box>
+
+        {/* <Box mt={4} display="flex" justifyContent="center">
+        <Button variant="contained" type="submit">
+          Submit
+        </Button>
+      </Box> */}
+      </Box>
+
+      <Box className={styles.aboutSection}>
+        <InfoBox
+          content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id vulputate semper, felis augue scelerisque ipsum, a tincidunt sapien lacus at leo. Etiam fringilla elit velit, nec mattis orci fermentum ut. In ut sapien ut ipsum posuere faucibus sit amet malesuada metus. Donec volutpat magna sed molestie placerat."
+          heading="About Industry"
+        />
+      </Box>
+    </>
   );
 };
 

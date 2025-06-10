@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Avatar, IconButton } from '@mui/material';
-import Edit from '@mui/icons-material/Edit';
+import { Avatar, IconButton, Typography } from '@mui/material';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import styles from './style.module.css';
 import { usePathname } from 'next/navigation';
 interface ImageUploaderProps {
@@ -36,9 +36,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) =>
             className={styles.hiddenInput}
           />
           {!isPlantOverview && (
-            <IconButton component="span" className={styles.editButton} aria-label="edit avatar">
-              <Edit fontSize="inherit" />
-            </IconButton>
+            <Typography className={styles.editButton}>
+              <EditOutlinedIcon />
+            </Typography>
           )}
         </label>
       </div>

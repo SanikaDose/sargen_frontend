@@ -1,5 +1,5 @@
 .mostOuterConatiner {
-  height: 100%;
+  height: 87vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
