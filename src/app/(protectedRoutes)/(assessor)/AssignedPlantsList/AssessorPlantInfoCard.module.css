@@ -13,6 +13,13 @@
   overflow: hidden;
 }
 
+.divider {
+  margin: 16px 0;
+  background-color: #ccc;
+  height: 1px;
+  border: none;
+}
+
 .iconCorner {
   position: absolute;
   top: 12px;

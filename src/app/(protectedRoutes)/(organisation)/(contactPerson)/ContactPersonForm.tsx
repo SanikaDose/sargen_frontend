@@ -139,9 +139,11 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid className={styles.stepperContainer}>
-        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-      </Grid>
+      <Box sx={{}}>
+        <Grid className={styles.stepperContainer}>
+          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+        </Grid>
+      </Box>
       <Typography variant="h6" fontWeight={600} className={styles.heading}>
         User Profile
       </Typography>
