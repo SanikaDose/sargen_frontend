@@ -1,0 +1,122 @@
+.mostOuterConatiner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* align-items: center; */
+  padding: 1px;
+}
+
+.heading {
+  font-weight: 600;
+  padding: 00 1rem 0 1rem;
+}
+
+.stepperContainer {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0px 10px 0px;
+}
+
+.formContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20;
+  /* border: 1px solid red; */
+  padding: 0% 1%;
+}
+
+.imageBox {
+  display: flex;
+  width: 20vw;
+  /* height: 70%; */
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid rgb(0, 17, 255); */
+}
+
+.formFieldsInner {
+  width: 100%;
+  /* border: 1px solid rgb(78, 47, 255); */
+ 
+}
+.formFieldsBox {
+  width: 100%;
+  /* border: 1px solid rgb(255, 47, 203); */
+}
+
+
+.btnContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  /* border: 1px solid brown; */
+  width: 20vw;
+  /* padding-bottom: 20px;
+   padding-top: 20px; */
+  
+}
+.secondContainer{
+  display: flex;
+  /* justify-content: space-evenly; */
+  gap: 25;
+  width: 100%;
+padding:0% 1%;
+}
+.tableContainer{
+  width: 100%;
+    /* border: 1px solid rgb(20, 133, 209);
+    background-color:antiquewhite;
+    padding: 10; */
+    
+}
+.fileUploadContainer{
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  height: 45%;
+  width: 100%;
+}
+.buttonSection {
+  /* border: 1px solid yellowgreen; */
+  padding: 2% 2%;
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(145, 227, 233);
+  border-radius: 10px;
+  /* margin-top: 20; */
+}
+.actionBtnContainer{
+  display: flex;
+  justify-content: center;
+  align-items: start;
+/* gap: 50px; */
+border: 1px solid red;
+padding: 0px;
+align-content: center;
+margin: 0px;
+    
+}
+@media (max-width: 640px) {
+  /* .formContainer {
+    flex-direction: column;
+  } */
+     .secondContainer{
+    flex-direction: column;
+  }
+}
+@media (max-width: 800px) {
+  .formContainer {
+    flex-direction: column;
+  }
+  .secondContainer{
+    flex-direction: column;
+  }
+  .btnContainer{
+    width: 100%;
+      justify-content: space-between;
+    
+  }
+}
