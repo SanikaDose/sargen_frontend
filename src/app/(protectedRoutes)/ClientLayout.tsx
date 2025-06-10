@@ -1,155 +1,472 @@
 'use client';
 
-import { Header } from '@/components/Header/Header';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import SideBar from '@/components/SideBar/SideBar';
-import theme from '@/theme/theme';
+// import { Header } from '@/components/Header/Header';
+// import InfoBox from '@/components/InfoBox/InfoBox';
 
+// import theme from '@/theme/theme';
+// import { AssessorOnboardingSideBarList } from '../../app/utils/allRoutes';
+
+// import SideBar from '@/components/sideBar/SideBar';
+// import MenuIcon from '@mui/icons-material/Menu';
+// import { Fab, Grid, useMediaQuery } from '@mui/material';
+// import { useEffect, useState } from 'react';
+
+// export default function ClientLayout({ children }: { children: React.ReactNode }) {
+//   const [openSideBar, setOpenSideBar] = useState(false);
+//   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600
+//   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899
+//   const isCompactDesktop = useMediaQuery('(min-width:901px) and (max-width:1045px)');
+//   console.log(openSideBar);
+//   // Check if sidebar should be permanent
+//   const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
+
+//   const [showInfoBox, setShowInfoBox] = useState(false);
+
+//   useEffect(() => {
+//     console.log('width:', window.innerWidth);
+//   }, []);
+
+//   // Auto-close drawer on mobile/tablet for better UX
+//   useEffect(() => {
+//     if (isMobile || isTablet) {
+//       setOpenSideBar(false);
+//     } else if (isPermanentSidebar) {
+//       setOpenSideBar(true);
+//     }
+//   }, [isMobile, isTablet, isPermanentSidebar]);
+
+//   return (
+
+//   );
+// }
+
+// import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+// import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+// import MailIcon from '@mui/icons-material/Mail';
+// import MenuIcon from '@mui/icons-material/Menu';
+// import InboxIcon from '@mui/icons-material/MoveToInbox';
+// import { Avatar, Button, useMediaQuery } from '@mui/material';
+// import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+// import Box from '@mui/material/Box';
+// import CssBaseline from '@mui/material/CssBaseline';
+// import Divider from '@mui/material/Divider';
+// import Drawer from '@mui/material/Drawer';
+// import IconButton from '@mui/material/IconButton';
+// import List from '@mui/material/List';
+// import ListItem from '@mui/material/ListItem';
+// import ListItemButton from '@mui/material/ListItemButton';
+// import ListItemIcon from '@mui/material/ListItemIcon';
+// import ListItemText from '@mui/material/ListItemText';
+// import { styled, useTheme } from '@mui/material/styles';
+// import Toolbar from '@mui/material/Toolbar';
+// import Typography from '@mui/material/Typography';
+// import * as React from 'react';
+
+// const drawerWidth = 240;
+
+// const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+//   open?: boolean;
+// }>(({ theme }) => ({
+//   flexGrow: 1,
+//   padding: theme.spacing(3),
+//   transition: theme.transitions.create('margin', {
+//     easing: theme.transitions.easing.sharp,
+//     duration: theme.transitions.duration.leavingScreen,
+//   }),
+//   marginLeft: `-${drawerWidth}px`,
+//   variants: [
+//     {
+//       props: ({ open }) => open,
+//       style: {
+//         transition: theme.transitions.create('margin', {
+//           easing: theme.transitions.easing.easeOut,
+//           duration: theme.transitions.duration.enteringScreen,
+//         }),
+//         marginLeft: 0,
+//       },
+//     },
+//   ],
+// }));
+
+// interface AppBarProps extends MuiAppBarProps {
+//   open?: boolean;
+// }
+
+// const AppBar = styled(MuiAppBar, {
+//   shouldForwardProp: (prop) => prop !== 'open',
+// })<AppBarProps>(({ theme }) => ({
+//   transition: theme.transitions.create(['margin', 'width'], {
+//     easing: theme.transitions.easing.sharp,
+//     duration: theme.transitions.duration.leavingScreen,
+//   }),
+//   variants: [
+//     {
+//       props: ({ open }) => open,
+//       style: {
+//         width: `calc(100% - ${drawerWidth}px)`,
+//         marginLeft: `${drawerWidth}px`,
+//         transition: theme.transitions.create(['margin', 'width'], {
+//           easing: theme.transitions.easing.easeOut,
+//           duration: theme.transitions.duration.enteringScreen,
+//         }),
+//       },
+//     },
+//   ],
+// }));
+
+// const DrawerHeader = styled('div')(({ theme }) => ({
+//   display: 'flex',
+//   alignItems: 'center',
+//   padding: theme.spacing(0, 1),
+//   // necessary for content to be below app bar
+//   ...theme.mixins.toolbar,
+//   justifyContent: 'flex-end',
+// }));
+
+// export default function ClientLayout({ children }: { children: React.ReactNode }) {
+//   const theme = useTheme();
+//   // Media queries to detect device type
+//   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
+//   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-960px
+//   const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >=960px
+
+//   const [mobileOpen, setMobileOpen] = React.useState(false);
+//   const open = isDesktop ? true : mobileOpen;
+
+//   const handleDrawerOpen = () => {
+//     if (!isDesktop) {
+//       setMobileOpen(true);
+//     }
+//   };
+
+//   const handleDrawerClose = () => {
+//     if (!isDesktop) {
+//       setMobileOpen(false);
+//     }
+//   };
+
+//   return (
+//     <Box sx={{ display: 'flex' }}>
+//       <CssBaseline />
+//       <AppBar
+//         position="fixed"
+//         open={open}
+//         sx={{
+//           background: `${theme.palette.background.paper} !important`,
+//           boxShadow: 0,
+//         }}
+//       >
+//         <Toolbar>
+//           {!isDesktop && (
+//             <IconButton
+//               color="inherit"
+//               aria-label="open drawer"
+//               onClick={handleDrawerOpen}
+//               edge="start"
+//               sx={[
+//                 {
+//                   mr: 2,
+//                 },
+//                 (open || isDesktop) && { display: 'none' },
+//               ]}
+//             >
+//               <MenuIcon />
+//             </IconButton>
+//           )}
+//           <Typography sx={{ color: theme.palette.text.primary }} variant="h6" noWrap component="div">
+//             Change it to the page name from global state
+//           </Typography>
+
+//           <Box display="flex" flexDirection="column" alignItems="flex-end" sx={{ marginLeft: 'auto' }}>
+//             <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
+//               Viren Patil
+//             </Typography>
+//             <Typography variant="body2" sx={{ color: `${theme.palette.text.disabled} !important` }}>
+//               Software Engineer
+//             </Typography>
+//           </Box>
+//           <Button variant="text">
+//             <Avatar src="https://avatar.iran.liara.run/public/19" />
+//           </Button>
+//         </Toolbar>
+//       </AppBar>
+//       <Drawer
+//         sx={{
+//           width: drawerWidth,
+//           flexShrink: 0,
+//           '& .MuiDrawer-paper': {
+//             width: drawerWidth,
+//             boxSizing: 'border-box',
+//           },
+//         }}
+//         variant="persistent"
+//         anchor="left"
+//         open={open}
+//       >
+//         <DrawerHeader>
+//           <IconButton onClick={handleDrawerClose}>
+//             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+//           </IconButton>
+//         </DrawerHeader>
+//         <Divider />
+//         <List>
+//           {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+//             <ListItem key={text} disablePadding>
+//               <ListItemButton>
+//                 <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+//                 <ListItemText primary={text} />
+//               </ListItemButton>
+//             </ListItem>
+//           ))}
+//         </List>
+
+//         <Box sx={{ flexGrow: 1 }} />
+//         <Box
+//           sx={{
+//             alignSelf: 'flex-start',
+//             mb: 2,
+//             display: 'flex',
+//             alignItems: 'center',
+//             gap: 1,
+//           }}
+//         >
+//           <Box
+//             component="img"
+//             src="/elansolLogo.png"
+//             alt="Elansol Logo"
+//             sx={{
+//               maxWidth: '120px', // Adjust based on your logo size
+//               height: 'auto',
+//             }}
+//           />
+//           <Typography variant="caption" color="text.secondary">
+//             v1.0.0
+//           </Typography>
+//         </Box>
+//       </Drawer>
+//       <Main open={open}>
+//         <DrawerHeader />
+//         {children}
+//       </Main>
+//     </Box>
+//   );
+// }
+
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Fab, Grid, useMediaQuery } from '@mui/material';
-import { useEffect, useState } from 'react';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import { Avatar, Button, useMediaQuery } from '@mui/material';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { styled, useTheme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
+
+const drawerWidth = 240;
+
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+  open?: boolean;
+}>(({ theme }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+  transition: theme.transitions.create('margin', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  marginLeft: `-${drawerWidth}px`,
+  variants: [
+    {
+      props: ({ open }) => open,
+      style: {
+        transition: theme.transitions.create('margin', {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+        marginLeft: 0,
+      },
+    },
+  ],
+}));
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme }) => ({
+  transition: theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  variants: [
+    {
+      props: ({ open }) => open,
+      style: {
+        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: `${drawerWidth}px`,
+        transition: theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+    },
+  ],
+}));
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end',
+}));
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const [openSideBar, setOpenSideBar] = useState(false);
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899
-  const isCompactDesktop = useMediaQuery('(min-width:901px) and (max-width:1045px)');
-  console.log(openSideBar);
-  // Check if sidebar should be permanent
-  const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
+  const theme = useTheme();
 
-  const [showInfoBox, setShowInfoBox] = useState(true);
+  // Media queries to detect device type
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-960px
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >=960px
 
-  useEffect(() => {
-    console.log('width:', window.innerWidth);
-  }, []);
+  // For desktop/laptop, sidebar is always open; for mobile/tablet, it's controlled by state
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const open = isDesktop ? true : mobileOpen;
 
-  // Auto-close drawer on mobile/tablet for better UX
-  useEffect(() => {
-    if (isMobile || isTablet) {
-      setOpenSideBar(false);
-    } else if (isPermanentSidebar) {
-      setOpenSideBar(true);
+  const handleDrawerOpen = () => {
+    if (!isDesktop) {
+      setMobileOpen(true);
     }
-  }, [isMobile, isTablet, isPermanentSidebar]);
+  };
+
+  const handleDrawerClose = () => {
+    if (!isDesktop) {
+      setMobileOpen(false);
+    }
+  };
 
   return (
-    // Grid 1
-    <Grid
-      container
-      sx={{
-        minHeight: '100vh',
-        margin: 0,
-        width: '100%',
-        position: 'relative', // For FAB positioning
-      }}
-      padding={0.5}
-      size={12}
-    >
-      {/* Sidebar */}
-      {/* Grid 1{1} */}
-      {openSideBar && isPermanentSidebar && (
-        <Grid size={{ lg: 2, xl: 2 }}>
-          <SideBar
-            onCloseTrigger={() => setOpenSideBar(false)}
-            drawerType="permanent"
-            drawerList={[
-              { label: 'Orangization Information', toNavigate: '/organisationOnboarding' },
-              { label: 'Point Of Contact', toNavigate: '/AddContactPerson' },
-              { label: 'Plant', toNavigate: '/PlantOverview' },
-              { label: 'Preview', toNavigate: '/' },
-            ]}
-          />
-        </Grid>
-      )}
-
-      {/* Temporary Sidebar (Mobile/Tablet/Compact) - Outside Grid System */}
-      {openSideBar && !isPermanentSidebar && (
-        <SideBar onCloseTrigger={() => setOpenSideBar(false)} open={openSideBar} drawerType="temporary" />
-      )}
-
-      {/* Main content wrapper */}
-      {/* Grid 1{2} */}
-      <Grid
-        size={
-          openSideBar && isPermanentSidebar
-            ? { xs: 12, sm: 12, md: 12, lg: 10, xl: 10 } // Adjust for sidebar space
-            : { xs: 12, sm: 12, md: 12, lg: 12, xl: 12 } // Full width when no sidebar or temporary
-        }
-        container
-        direction="column"
-        spacing={2}
-        padding={0.3}
-        // border={'1px solid red'}
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        open={open}
+        sx={{
+          background: `${theme.palette.background.paper} !important`,
+          boxShadow: 0,
+        }}
       >
-        {/* Grid 1{2{1}} */}
-        {/* Header */}
-        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }} border={'1px solid pink'}>
-          <Header
-            title={'Assessor Onboarding'}
-            user={{ name: 'viren', designation: 'SDE1', avatarUrl: 'https://avatar.iran.liara.run/public/19' }}
-            onMenuClick={() => setOpenSideBar(!openSideBar)}
-            showMenuButton={!openSideBar || !isPermanentSidebar} // Show menu button when drawer is closed or not permanent
-          />
-        </Grid>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={[
+              {
+                mr: 2,
+              },
+              // Hide menu icon when sidebar is open OR when on desktop
+              (open || isDesktop) && { display: 'none' },
+            ]}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography sx={{ color: theme.palette.text.primary }} variant="h6" noWrap component="div">
+            Change it to the page name from global state
+          </Typography>
 
-        {/* Content and InfoBox wrapper */}
-        {/* Grid 1{2{2}} */}
-        <Grid
-          size={12}
-          container
+          <Box display="flex" flexDirection="column" alignItems="flex-end" sx={{ marginLeft: 'auto' }}>
+            <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
+              Viren Patil
+            </Typography>
+            <Typography variant="body2" sx={{ color: `${theme.palette.text.disabled} !important` }}>
+              Software Engineer
+            </Typography>
+          </Box>
+          <Button variant="text">
+            <Avatar src="https://avatar.iran.liara.run/public/19" />
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+          },
+        }}
+        variant={isDesktop ? 'permanent' : 'persistent'}
+        anchor="left"
+        open={open}
+      >
+        <DrawerHeader>
+          {/* Hide close icon on desktop */}
+          {!isDesktop && (
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          )}
+        </DrawerHeader>
+        <Divider />
+        <List>
+          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+
+        <Box sx={{ flexGrow: 1 }} />
+        <Box
           sx={{
-            flexGrow: 1,
+            alignSelf: 'flex-start',
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            ml: 2,
           }}
         >
-          {/* Main content */}
-          {/* Grid 1{2{2}{1}} */}
-          <Grid
-            size={!isMobile && !isTablet && showInfoBox ? { xs: 12, sm: 12, md: 8, lg: 8, xl: 9 } : 12}
-            // border={'3px solid gray'}
-          >
-            {children}
-          </Grid>
-
-          {/* Grid 1{2{2}{2}} */}
-          {/* InfoBox */}
-          {!isMobile && !isTablet && showInfoBox && (
-            <Grid size={{ md: 4, lg: 3, xl: 3 }} border={'1px solid orange'}>
-              <InfoBox sx={{ height: '100%' }} />
-            </Grid>
-          )}
-        </Grid>
-
-        {/* Additional Quick Access Button in Content Area */}
-        {!openSideBar && (
-          <Grid
-            size={12}
+          <Box
+            component="img"
+            src="/elansolLogo.png"
+            alt="Elansol Logo"
             sx={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              position: 'absolute',
-              top: 80, // Below header
-              left: 16,
-              zIndex: 1000,
+              maxWidth: '120px',
+              height: 'auto',
             }}
-          >
-            <Fab
-              size="small"
-              color="secondary"
-              onClick={() => setOpenSideBar(true)}
-              sx={{
-                boxShadow: 2,
-                opacity: 0.8,
-                '&:hover': {
-                  opacity: 1,
-                },
-              }}
-            >
-              <MenuIcon fontSize="small" />
-            </Fab>
-          </Grid>
-        )}
-      </Grid>
-    </Grid>
+          />
+          <Typography variant="caption" color="text.secondary">
+            v1.0.0
+          </Typography>
+        </Box>
+      </Drawer>
+      <Main open={open}>
+        <DrawerHeader />
+        {children}
+      </Main>
+    </Box>
   );
 }

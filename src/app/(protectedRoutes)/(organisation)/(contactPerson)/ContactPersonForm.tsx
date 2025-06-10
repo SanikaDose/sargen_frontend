@@ -18,17 +18,25 @@ import { CountryOptions } from '@/app/utils/CountryOptions';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { useRouter } from 'next/navigation';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { setPageName } from '@/store/globalSlice';
+import { useDispatch } from 'react-redux';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
-  console.log('tenantId ', tenantId);
   const router = useRouter();
+  const dispatch = useDispatch();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
-  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
+  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
     skip: !editMode,
   });
+  useEffect(() => {
+    dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
+    return () => {
+      dispatch(setPageName(''));
+    };
+  }, [dispatch, editMode]);
 
   const {
     control,
@@ -87,13 +95,11 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     }
   }, [editMode, existingData, isFetching, reset]);
 
-  console.log('Fetched POC:', existingData);
-
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPocProfilePic({ tenantId, formData }).unwrap();
+      await uploadPocProfilePic({ tenantId: tenantId ?? '', formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setProfilePicUrl(localUrl);
     } catch (error) {
@@ -118,7 +124,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   const onSubmit = async (data: PocPayload) => {
     try {
-      await submitPointOfContact({ tenantId, body: data }).unwrap();
+      await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
       console.log('Form submitted successfully');
     } catch (err) {
       console.error('Error submitting form', err);
@@ -191,9 +197,9 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                     <Select
                       {...field}
                       displayEmpty
-                      sx={{ borderRadius: '8px', height: 41 }}
+                      sx={{ borderRadius: '8px', height: 38 }}
                       onOpen={() => handleFocus({ target: { name: 'country' } })}
-                      inputProps={{ name: 'country', ' roboto': 'Select Country' }}
+                      inputProps={{ name: 'country', ' arial-label': 'Select Country' }}
                     >
                       <MenuItem value="">
                         <em>Select Country</em>
@@ -221,7 +227,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
               label="Job Role"
               placeholder="Specify Job Role"
               multiline
-              rows={4}
               sx={textFieldStyles}
               required
               onFocus={handleFocus}
@@ -242,7 +247,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         <CustomButton
           variant="contained"
           icon="left"
-          color="#2D7FF9"
           onClick={() => router.push('/organisationOnboarding')}
         >
           Back
@@ -251,7 +255,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
           type="submit"
           variant="contained"
           icon="save"
-          color="#2D7FF9"
           disabled={!isValid || isLoading}
           onClick={() => router.push('/PlantOverview')}
         >

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
@@ -6,14 +6,20 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { Dropdown } from '@/components/Dropdown/Dropdown';
-import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
+import {
+  useSubmitOrganizationInfoMutation,
+  useUploadOrganizationLogoMutation,
+  useGetOrganizationInfoQuery,
+} from './OrganisationOnboardingAPi';
 import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const tenantId = getValueLocalStorage('tenantId');
@@ -21,6 +27,7 @@ function OrganizationOnbording() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -34,6 +41,10 @@ function OrganizationOnbording() {
       about: '',
     },
   });
+  const { data } = useGetOrganizationInfoQuery(tenantId || '', {
+    skip: !tenantId,
+  });
+  console.log('if we have tenentid the we get this data', data);
 
   //hnadle organization logo
   const handleUpload = async (file: File) => {
@@ -192,12 +203,53 @@ function OrganizationOnbording() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 2 }}>
+        {/* <Grid size={{ xs: 12, md: 2 }}>
           <Controller
             name="uom"
             control={control}
             render={({ field }) => <InputWithLabel label="UOM" placeholder="UOM" {...field} />}
           />
+        </Grid> */}
+
+        <Grid size={{ xs: 12, md: 2 }}>
+          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
+            Currency Type
+          </Typography>
+          <FormControl fullWidth sx={{ mt: 0 }}>
+            <Controller
+              name="uom"
+              control={control}
+              rules={{ required: 'Currency type is required' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  displayEmpty
+                  input={<OutlinedInput />}
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  sx={{
+                    height: '55px',
+                    color: '#888',
+                    width: '100%',
+                  }}
+                  renderValue={(selected) => {
+                    if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
+                    return selected;
+                  }}
+                >
+                  <MenuItem disabled value="">
+                    <em>Select From Dropdown</em>
+                  </MenuItem>
+
+                  {currencyOptions.map((country) => (
+                    <MenuItem key={country.code} value={country.name}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
         </Grid>
 
         <Grid size={{ xs: 12, md: 5 }}>

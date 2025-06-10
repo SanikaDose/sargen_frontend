@@ -58,9 +58,9 @@
   justify-content: space-between;
 }
 @media (max-width: 640px) {
-  .formContainer {
-    /* flex-direction: column; */
-  }
+  /* .formContainer {
+    flex-direction: column;
+  } */
 }
 @media (max-width: 800px) {
   .formContainer {

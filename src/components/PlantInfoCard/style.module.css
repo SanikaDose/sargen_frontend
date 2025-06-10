@@ -40,8 +40,8 @@
 }
 
 .plantImage {
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -52,6 +52,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  /* border: 1px solid; */
 }
 
 .textLabel {
@@ -66,35 +67,39 @@
 .textLabelSm,
 .textLabelMd,
 .textLabelLg {
-  font-size: 14px !important;
+  font-size: 13px !important;
 }
+/* .dates {
+  border: 1px solid;
+} */
 
 .datesTitle {
   color: gray;
   font-weight: bold;
-  font-size: 1.1vw;
 }
 
 .status {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* border: 1px solid; */
 }
 
 .statusLabel {
   color: gray;
   font-weight: bold;
-  font-size: 1.2vw;
+  /* font-size: 1.2vw; */
 }
 
-.startButton {
+/* .statusLabel {
   margin-top: 8px;
   background-color: #10557c33;
   padding: 6px 24px;
   font-weight: 500;
   text-transform: none;
   font-size: 1.2vw;
-}
+  border: 1px solid;
+} */
 
 .progressCircle {
   position: relative;

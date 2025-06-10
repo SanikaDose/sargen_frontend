@@ -1,6 +1,8 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import InboxIcon from '@mui/icons-material/Inbox';
 import MailIcon from '@mui/icons-material/Mail';
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+
 import {
   Box,
   Divider,
@@ -15,6 +17,14 @@ import {
 } from '@mui/material';
 import { SideBarProps } from './SideBar.types';
 import { useRouter } from 'next/navigation';
+
+import { SvgIconComponent } from '@mui/icons-material';
+
+export type SideBarDrawerItem = {
+  label?: string;
+  toNavigate?: string;
+  Icon?: SvgIconComponent;
+};
 
 const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], drawerType = 'persistent', open }) => {
   const router = useRouter();
@@ -68,18 +78,14 @@ const SideBar: React.FC<SideBarProps> = ({ onCloseTrigger, drawerList = [], draw
             <List>
               {drawerList.map((obj, index) => (
                 <ListItem key={index} disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                    <ListItemText
-                      primary={obj.label}
-                      onClick={() => {
-                        router.push(obj.toNavigate);
-                      }}
-                    />
+                  <ListItemButton onClick={() => obj.toNavigate && router.push(obj.toNavigate)}>
+                    <ListItemIcon>{obj.Icon && <obj.Icon />}</ListItemIcon>
+                    <ListItemText primary={obj.label} />
                   </ListItemButton>
                 </ListItem>
               ))}
             </List>
+
             <Divider />
             {/* <List>
               {['All mail', 'Trash', 'Spam'].map((text, index) => (
