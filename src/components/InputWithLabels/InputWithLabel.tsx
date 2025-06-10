@@ -15,7 +15,7 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
   ({ label, name, required = false, ...textFieldProps }, ref) => {
     return (
       <FormControl fullWidth margin="normal">
-        <FormLabel htmlFor={name} sx={{ fontWeight: 500, mb: 0, color: '#000000' }}>
+        <FormLabel htmlFor={name} sx={{ fontWeight: 600, mb: 0, color: '#313131' }}>
           {label}
           {required && <span style={{ color: 'red' }}> *</span>}
         </FormLabel>
@@ -23,7 +23,7 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
           id={name}
           name={name}
           variant="outlined"
-          size="medium"
+          size="small"
           required={required}
           fullWidth
           sx={{

@@ -32,7 +32,7 @@ const page = () => {
 
     <Grid container size={12}>
       <Grid size={{ md: 12 }} border={'1px solid black'}>
-        <Stepper></Stepper>
+        <Stepper steps={[]}></Stepper>
       </Grid>
       <Grid size={12}>
         <Grid size={{ md: 4, lg: 8, xl: 8 }}>

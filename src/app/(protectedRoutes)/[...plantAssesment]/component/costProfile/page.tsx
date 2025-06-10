@@ -7,7 +7,7 @@ function CostProfilePage() {
     setSelectedOption(label);
   }
 
-  return <CostProfile handleOptionSelected={handleOptionSelected('Cost Profile')} />;
+  return <CostProfile handleOptionSelected={handleOptionSelected} />;
 }
 
 export default CostProfilePage;

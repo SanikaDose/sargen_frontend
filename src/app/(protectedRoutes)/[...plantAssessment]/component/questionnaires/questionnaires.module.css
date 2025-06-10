@@ -1,0 +1,57 @@
+.formContainer {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  height: 70vh;
+  max-height: 600px;
+  padding-right: 15px;
+}
+
+.questionContainer {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 20px;
+}
+
+.questionText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.MuiFormControlLabel-root {
+  margin: 5px 0;
+}
+
+.MuiRadio-root {
+  color: #0288d1;
+}
+
+.anwsers {
+  color: black !important;
+}
+
+.submitButton {
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+  background-color: #1976d2;
+  color: #fff;
+  font-weight: bold;
+}
+
+.submitButton:hover {
+  background-color: #1565c0;
+}
+
+@media (max-width: 768px) {
+  .formContainer {
+    height: 80vh;
+  }
+}

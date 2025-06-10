@@ -142,7 +142,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       <Grid className={styles.stepperContainer}>
         <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
       </Grid>
-      <Typography variant="h6" fontWeight={500} className={styles.heading}>
+      <Typography variant="h6" fontWeight={600} className={styles.heading}>
         User Profile
       </Typography>
       <Grid className={styles.formContainer}>
@@ -179,7 +179,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
             ))}
             <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth sx={{ mt: 2 }}>
-                <Typography sx={{ fontWeight: 500, color: '#000000' }}>
+                <Typography sx={{ fontWeight: 600, color: '#313131' }}>
                   Country <span style={{ color: 'red' }}>*</span>
                 </Typography>
                 <Controller
@@ -189,9 +189,9 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                     <Select
                       {...field}
                       displayEmpty
-                      sx={{ borderRadius: '8px' }}
+                      sx={{ borderRadius: '8px', height: 41 }}
                       onOpen={() => handleFocus({ target: { name: 'country' } })}
-                      inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
+                      inputProps={{ name: 'country', ' roboto': 'Select Country' }}
                     >
                       <MenuItem value="">
                         <em>Select Country</em>
@@ -240,7 +240,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         <CustomButton
           variant="contained"
           icon="left"
-          color="#10557C"
+          color="#2D7FF9"
           onClick={() => router.push('/organisationOnboarding')}
         >
           Back
@@ -249,7 +249,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
           type="submit"
           variant="contained"
           icon="save"
-          color="#10557C"
+          color="#2D7FF9"
           disabled={!isValid || isLoading}
           onClick={() => router.push('/PlantOverview')}
         >

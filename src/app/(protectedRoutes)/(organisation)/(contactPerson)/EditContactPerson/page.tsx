@@ -1,7 +1,12 @@
+import React from 'react';
 import ContactPersonForm from '../ContactPersonForm';
 
-const Page = () => {
-  return <ContactPersonForm tenantId="Elansol-Technologies-Pvt-Ltd-f65980e8-b4dd-4f83-8db1-7ee4afbb" editMode={true} />;
+const EditContactPersonPage = () => {
+  return (
+    <>
+      <ContactPersonForm editMode={true} />;
+    </>
+  );
 };
 
-export default Page;
+export default EditContactPersonPage;

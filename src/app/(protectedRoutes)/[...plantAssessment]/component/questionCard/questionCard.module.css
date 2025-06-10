@@ -1,0 +1,50 @@
+.container {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px auto;
+  max-width: 600px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.questionText {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.labels {
+  color: black;
+}
+
+.submitButton {
+  margin-top: 20px;
+  align-self: flex-end;
+  background-color: #1976d2;
+  color: white;
+  font-weight: 500;
+}
+
+.submitButton:hover {
+  background-color: #115293;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.backButton {
+  margin-right: 10px;
+}

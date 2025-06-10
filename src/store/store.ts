@@ -1,7 +1,7 @@
+import plantAssessmentReducer from '@/app/(protectedRoutes)/[...plantAssessment]/plantAssementSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { protectedApi } from './api/protectedApis/baseProtectedApi';
 import { publicApi } from './api/publicApis/basePublicApi';
-import plantAssessmentReducer from '@/app/(protectedRoutes)/[...plantAssesment]/plantAssementSlice';
 
 import languageReducer from './languageSlice';
 export const store = configureStore({

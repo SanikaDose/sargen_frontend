@@ -1,0 +1,60 @@
+.outerContainer {
+  width: 90%;
+  max-width: 600px;
+  margin: 2% auto;
+  padding: 2%;
+  display: flex;
+  flex-direction: column;
+  gap: 2%;
+  background-color: #f9f9f9;
+  border-radius: 2%;
+  box-shadow: 0 0.5% 2% rgba(0, 0, 0, 0.1);
+}
+
+.formContainer {
+  width: 100%;
+}
+
+.labels {
+  font-size: 90%;
+  font-weight: 500;
+  color: #333;
+}
+
+.individualRadioButtonDiv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2%;
+  border: 1% solid #ddd;
+  padding: 1%;
+  border-radius: 1%;
+  margin-bottom: 2%;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.termStartText,
+.termEndText {
+  font-size: 80%;
+  color: #444;
+  width: 30%;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .individualRadioButtonDiv {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .termStartText,
+  .termEndText {
+    width: 100%;
+    text-align: left;
+  }
+
+  .labels {
+    font-size: 100%;
+  }
+}

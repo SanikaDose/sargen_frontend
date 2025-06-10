@@ -1,0 +1,39 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.innerConatiner {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.kpiTitle {
+  color: black;
+  text-align: center;
+}
+
+.iconTextWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2%;
+}
+
+.icon {
+  padding: 0.5%;
+}
+
+.labels {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}

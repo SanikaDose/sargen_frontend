@@ -17,7 +17,7 @@ const Page = () => {
 
   const steps = ['Cost Profile', 'Planning', 'Industry', 'Kpis'].map((label) => ({ label }));
 
-  export function handleOptionSelected(label: string) {
+  function handleOptionSelected(label: string) {
     setSelectedOption(label);
   }
 
