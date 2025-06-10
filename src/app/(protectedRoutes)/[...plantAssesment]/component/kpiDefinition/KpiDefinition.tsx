@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../../plantAssementApi';
 import { useParams } from 'next/navigation';
-import { Box, Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Checkbox, FormControlLabel, Grid, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './kpiDefinition.module.css';
 import { Kpi, KpiFormValues, MultipleSections, RawCostCategory } from '../../plantAssement.model';
@@ -11,7 +11,7 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   const dispatch = useDispatch();
-  const path = useParams() as { plantAssement?: string[] };
+  const path = useParams() as { plantAssesment?: string[] };
   const [getKPIDefinition] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition] = useSelectKPIDefinitionMutation();
   const tenantId = getValueLocalStorage('tenantId');
@@ -25,11 +25,11 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   const watchKpis = watch('kpis');
   const selectedCount = watchKpis.filter((k) => k.isselected).length;
 
-  const buildPayload = (plantAssement: string[] | undefined, data: Kpi[]) => {
-    if (plantAssement && plantAssement.length > 1) {
+  const buildPayload = (plantAssesment: string[] | undefined, data: Kpi[]) => {
+    if (plantAssesment && plantAssesment.length > 1) {
       return {
         tenantId,
-        plantId: plantAssement[2],
+        plantId: plantAssesment[2],
         kpiDefinitions: data.map((item) => ({
           id: item.id,
           kpi: item.kpi,
@@ -43,7 +43,7 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   async function apiCall() {
     const obj2 = {
       tenantId,
-      plantId: path.plantAssement?.[2] || '',
+      plantId: path.plantAssesment?.[2] || '',
     };
     const result = await getKPIDefinition(obj2).unwrap();
     const initialData = result.map((item: Kpi) => ({
@@ -66,7 +66,7 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
   const onSubmit = async (data: { kpis: { isselected: boolean }[] }) => {
     const selectedCount = data.kpis.filter((kpi) => kpi.isselected).length;
     const payload = buildPayload(
-      path.plantAssement,
+      path.plantAssesment,
       data.kpis.map((item, i) => ({
         ...item,
         id: kpiData[i].id,
@@ -81,33 +81,62 @@ const KpiDefinition = ({ handleOptionSelected }: MultipleSections) => {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
-      <Typography variant="subtitle1" className={styles.kpiTitle}>
-        <span className={styles.iconTextWrapper}>
-          <TipsAndUpdatesIcon className={styles.icon} />
-          Minimum 5 KPIs should be selected.
-        </span>
+      <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
+        KPIs Defination
       </Typography>
 
-      <article className={styles.innerConatiner}>
+      <Grid container spacing={2} sx={{ width: '70%', margin: '0 auto' }}>
         {watchKpis.length > 0 &&
           kpiData.map((field, index) => (
-            <Controller
-              key={field.id}
-              name={`kpis.${index}.isselected`}
-              control={control}
-              render={({ field: controllerField }) => {
-                const isDisabled = !controllerField.value && selectedCount >= 5;
-                return (
-                  <FormControlLabel
-                    control={<Checkbox {...controllerField} checked={controllerField.value} disabled={isDisabled} />}
-                    label={<Typography className={styles.labels}>{field.kpi}</Typography>}
-                  />
-                );
-              }}
-            />
+            <Grid size={6} key={field.id}>
+              <Controller
+                name={`kpis.${index}.isselected`}
+                control={control}
+                render={({ field: controllerField }) => {
+                  const isSelected = controllerField.value;
+                  const isDisabled = !isSelected && selectedCount >= 5;
+
+                  return (
+                    <Card
+                      onClick={() => !isDisabled && controllerField.onChange(!isSelected)}
+                      sx={{
+                        cursor: isDisabled ? 'not-allowed' : 'pointer',
+                        background: isSelected ? '#10557C' : '#fff',
+                        border: '0.4px solid #CCCCCC',
+                        boxShadow: '0px 4px 4px 0px #00000040',
+                        borderRadius: 2,
+                        minHeight: 60,
+                        display: 'flex',
+                        alignItems: 'center',
+                        paddingX: 2,
+                        transition: 'background 0.3s ease',
+                        color: isSelected ? '#fff' : '#000',
+                      }}
+                    >
+                      <Checkbox
+                        checked={isSelected}
+                        disabled={isDisabled}
+                        sx={{ color: '#fff', padding: 0, marginRight: 1 }}
+                      />
+                      <Typography
+                        sx={{
+                          textTransform: 'capitalize',
+                          fontWeight: 500,
+                          fontSize: 14,
+                          color: isSelected ? '#fff' : '#000',
+                        }}
+                      >
+                        {field.kpi}
+                      </Typography>
+                    </Card>
+                  );
+                }}
+              />
+            </Grid>
           ))}
-      </article>
-      <Button variant="contained" type="submit">
+      </Grid>
+
+      <Button variant="contained" type="submit" sx={{ marginTop: 2 }}>
         Submit
       </Button>
     </Box>

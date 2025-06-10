@@ -11,12 +11,12 @@ export const sideBarDrawerList = [
   },
   {
     label: 'Point Of Contact',
-    toNavigate: '/addContactPerson',
+    toNavigate: '/AddContactPerson',
     Icon: ContactPageOutlinedIcon,
   },
   {
     label: 'Plant',
-    toNavigate: '/plantOverview',
+    toNavigate: '/PlantOverview',
     Icon: ApartmentOutlinedIcon,
   },
   {

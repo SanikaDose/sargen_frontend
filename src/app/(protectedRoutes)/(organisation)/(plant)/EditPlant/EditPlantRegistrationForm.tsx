@@ -184,6 +184,7 @@ const EditPlantRegistrationForm = () => {
                           required={input.required}
                           type={input.type || 'text'}
                           onFocus={() => setFocusedField(input.name)}
+                          size="small"
                         />
                       )
                     }

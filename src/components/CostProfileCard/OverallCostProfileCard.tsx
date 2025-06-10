@@ -1,78 +1,65 @@
-import React, { useState } from 'react';
-import { Box, Typography, Grid, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, TextField } from '@mui/material';
 import { OverallCostProfileCardProps } from './OverallCostProfileCard.types';
 import styles from './style.module.css';
 
-const OverallCostProfileCard: React.FC<OverallCostProfileCardProps> = ({
+const OverallCostProfileCard: React.FC<OverallCostProfileCardProps & { onChange: (val: string) => void }> = ({
   fieldName,
-  boxBackgroundColor = '#f5f5f5',
+  boxBackgroundColor = '#FFFFFF',
   textColor = '#000',
+  costValue,
+  onChange,
+  readonly,
 }) => {
-  const [value, setValue] = useState('10');
+  const [value, setValue] = useState(String(costValue));
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
+    const input = event.target.value.replace('%', '');
     if (input === '' || /^-?\d*\.?\d{0,2}$/.test(input)) {
       setValue(input);
+      onChange(input); // push to react-hook-form
     }
   };
 
+  useEffect(() => {
+    setValue(String(costValue));
+  }, [costValue]);
+
   return (
     <Box
-      className={styles.container}
       sx={{
         bgcolor: boxBackgroundColor,
         color: textColor,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderRadius: '8px',
+        boxShadow: ' 0px 4px 4px 0px #00000040',
+        height: '100%',
+        padding: 2,
       }}
     >
-      <Grid container alignItems="center" justifyContent="space-between">
-        <Grid>
-          <Typography
-            variant="body2"
-            className={styles.label}
-            sx={{ color: textColor }}
-          >
-            {fieldName}
-          </Typography>
-        </Grid>
-
-        <Grid>
-          <Grid container alignItems="center" spacing={1} wrap="nowrap">
-            <Grid>
-              <TextField
-                value={value}
-                onChange={handleInputChange}
-                type="text"
-             
-                inputProps={{
-                  inputMode: 'decimal',
-                  className: styles.input,
-                  style:{
-                    color:textColor
-                  }
-                }}
-                InputProps={{
-                  classes: {
-                    root: styles.inputRoot,
-                    notchedOutline: styles.inputOutline,
-                  },
-                }}
-                size="small"
-              />
-            </Grid>
-
-            <Grid>
-              <Typography
-                variant="caption"
-                className={styles.label}
-                sx={{ color: textColor }}
-              >
-                %
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+      <Typography variant="body2" className={styles.label} sx={{ color: textColor }}>
+        {fieldName}
+      </Typography>
+      <TextField
+        value={value + '%'}
+        onChange={handleInputChange}
+        type="text"
+        inputProps={{
+          readOnly: readonly,
+          inputMode: 'decimal',
+          className: styles.input,
+          style: { color: textColor },
+        }}
+        InputProps={{
+          classes: {
+            root: styles.inputRoot,
+            notchedOutline: styles.inputOutline,
+          },
+        }}
+        size="small"
+      />
     </Box>
   );
 };
