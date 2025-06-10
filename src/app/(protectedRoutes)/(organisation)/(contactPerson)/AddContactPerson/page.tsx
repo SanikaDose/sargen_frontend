@@ -1,8 +1,11 @@
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import ContactPersonForm from '../ContactPersonForm';
 
-const Page = () => {
-  return <ContactPersonForm />;
+const AddContactPersonPage = () => {
+  return (
+    <>
+      <ContactPersonForm />;
+    </>
+  );
 };
 
-export default Page;
+export default AddContactPersonPage;

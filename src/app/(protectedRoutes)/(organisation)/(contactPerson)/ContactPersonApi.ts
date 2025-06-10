@@ -1,7 +1,6 @@
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { ContactPersonApiResponse, PocPayload } from './ContactPerson.types';
 import { apiRoutes } from '@/constants/apiRoutes';
-import { apiControllerPath } from '@/store/api/routes';
 
 export const onboardingApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -24,7 +23,7 @@ export const onboardingApi = protectedApi.injectEndpoints({
 
     uploadPocProfilePic: builder.mutation<void, { tenantId: string; formData: FormData }>({
       query: ({ tenantId, formData }) => ({
-        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadPocProfilePic}/${tenantId}`,
+        url: `${apiRoutes.userLogos.root}${apiRoutes.userLogos.uploadPocProfilePic}/${tenantId}`,
         method: 'POST',
         body: formData,
       }),
@@ -34,7 +33,7 @@ export const onboardingApi = protectedApi.injectEndpoints({
 
     getPocProfilePic: builder.query<string, { tenantId: string }>({
       query: ({ tenantId }) => ({
-        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.getPocProfilePic}/${tenantId}`,
+        url: `${apiRoutes.userLogos.root}${apiRoutes.userLogos.getPocProfilePic}/${tenantId}`,
         method: 'GET',
       }),
       providesTags: (result, error, { tenantId }) => [{ type: 'ProfilePic', id: tenantId }],
