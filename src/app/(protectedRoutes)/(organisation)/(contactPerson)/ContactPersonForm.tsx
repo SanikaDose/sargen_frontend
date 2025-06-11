@@ -31,6 +31,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
     skip: !editMode,
   });
+
   useEffect(() => {
     dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
     return () => {
@@ -42,7 +43,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     control,
     handleSubmit,
     reset,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<PocPayload>({
     defaultValues: {
       firstName: '',
@@ -78,7 +79,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   useEffect(() => {
     if (editMode && existingData?.data && !isFetching) {
       const contact = existingData.data;
-
       reset({
         firstName: contact.firstName || '',
         lastName: contact.lastName || '',
@@ -123,9 +123,21 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   }, [watchedValues, steps]);
 
   const onSubmit = async (data: PocPayload) => {
+    // Check if all required fields are filled
+    const allFieldsFilled = Object.keys(data).every((key) => {
+      const value = data[key as keyof PocPayload];
+      return typeof value === 'string' && value.trim().length > 0;
+    });
+
+    if (!allFieldsFilled) {
+      console.error('All fields must be filled');
+      return;
+    }
+
     try {
       await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
       console.log('Form submitted successfully');
+      router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -180,6 +192,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                       onFocus={handleFocus}
                       sx={textFieldStyles}
                       required
+                      error={!!errors[fieldName]}
+                      helperText={errors[fieldName]?.message}
                     />
                   )}
                 />
@@ -199,7 +213,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                       displayEmpty
                       sx={{ borderRadius: '8px', height: 38 }}
                       onOpen={() => handleFocus({ target: { name: 'country' } })}
-                      inputProps={{ name: 'country', ' arial-label': 'Select Country' }}
+                      inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
+                      error={!!errors.country}
                     >
                       <MenuItem value="">
                         <em>Select Country</em>
@@ -230,6 +245,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
               sx={textFieldStyles}
               required
               onFocus={handleFocus}
+              error={!!errors.jobRole}
+              helperText={errors.jobRole?.message}
             />
           )}
         />
@@ -244,20 +261,10 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton
-          variant="contained"
-          icon="left"
-          onClick={() => router.push('/organisationOnboarding')}
-        >
+        <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
           Back
         </CustomButton>
-        <CustomButton
-          type="submit"
-          variant="contained"
-          icon="save"
-          disabled={!isValid || isLoading}
-          onClick={() => router.push('/PlantOverview')}
-        >
+        <CustomButton type="submit" variant="contained" icon="save" disabled={!isValid || isLoading}>
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>
