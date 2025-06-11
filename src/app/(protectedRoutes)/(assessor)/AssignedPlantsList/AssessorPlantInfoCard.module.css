@@ -60,18 +60,6 @@
   color: #666;
 }
 
-.statusBadge {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  background-color: #43a047;
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
 .iconCorner {
   position: absolute;
   top: 12px;
@@ -120,5 +108,5 @@
   font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 16px;
 }
