@@ -14,7 +14,7 @@ export default function OnboardingSuccess() {
 
     const timeout = setTimeout(() => {
       router.push('/AddContactPerson');
-    }, 5000);
+    }, 3000);
 
     return () => clearTimeout(timeout);
   }, [router]);

@@ -16,8 +16,7 @@ import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import { useDispatch } from 'react-redux';
-import { showToast } from '@/components/toaster/toasterSlice';
+import { triggerToast } from '@/app/utils/toast';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
@@ -67,8 +66,8 @@ function OrganizationOnbording() {
     console.log('Form Data:', data);
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
-      console.log('Organization info submitted'); //use toster
-      dispatch(showToast({ message: 'Organization info submitted successfully', severity: 'success' }));
+      console.log('Organization info submitted'); 
+      
       router.push('/onboardingSuccess');
     } catch (error) {
       console.log('api submition failed', error);
@@ -94,7 +93,7 @@ function OrganizationOnbording() {
           ]}
         />
       </Grid>
-
+<Button variant="contained" color="primary" onClick={() => triggerToast('This is a test toast message!')}>hlw</Button>
       <Grid sx={{ height: '3%' }}>
         <Typography variant="h6">Organization Details</Typography>
       </Grid>
@@ -114,7 +113,6 @@ function OrganizationOnbording() {
         <Box sx={{ display: 'flex', width: '27%', justifyContent: 'center', alignItems: 'center' }}>
           <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
         </Box>
-
         {/* Inputs */}
         <Grid size={{ md: 7, xs: 12, lg: 8 }}>
           <Controller
@@ -299,7 +297,6 @@ function OrganizationOnbording() {
           <CustomButton
             children="Next"
             variant="contained"
-            color="#10557C"
             icon="right"
             height="55px"
             width="80px"

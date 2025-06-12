@@ -43,8 +43,11 @@ export default function Toaster() {
               : {}
           }
         >
+          
           <Alert
             severity={severity}
+              color={severity} // ✅ Force MUI to use the right color
+
             variant="filled"
             sx={{
               fontSize: '0.690rem !important',

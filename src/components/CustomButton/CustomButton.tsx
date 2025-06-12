@@ -7,7 +7,6 @@ import { MdOutlineAddAlert } from 'react-icons/md';
 
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
 export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
-type MuiPaletteColor = 'primary' | 'secondary' | 'error' | 'success' | 'info' | 'warning';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
@@ -49,14 +48,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return null;
     }
   };
-  const theme = useTheme();
-  const paletteColor = theme.palette[color];
 
   return (
     <Button
       variant={variant}
       onClick={onClick}
-      color={color}
       className={className}
       disabled={disabled}
       {...rest}
@@ -70,7 +66,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 0.5,
-        color: 'white',
+        color: 'primary',
         backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].main} !important`,
         '&:hover': {
           backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].dark} !important`,
