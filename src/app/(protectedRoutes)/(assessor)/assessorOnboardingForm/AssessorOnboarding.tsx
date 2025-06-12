@@ -1,3 +1,4 @@
+
 //import React from 'react'
 'use client';
 
@@ -33,9 +34,9 @@ import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
 import { certificateData } from './FormConfig/fileInput';
 import FileActionButton from '@/components/FileActionButton/FileActionButton';
 import { CountryOptions } from '@/app/utils/CountryOptions';
-import { useAddAssessorInformationMutation, useUploadAssessorLogoMutation , useGetMetadataFileTemplateMutation} from './AssessorOnboarding.Api';
+import { useAddAssessorInformationMutation, useUploadAssessorLogoMutation , useGetMetadataFileTemplateMutation , useUploadAllMetadataFilesMutation} from './AssessorOnboarding.Api';
 
-import { fileUploadKeyMap, fileTypes, fileValues } from './FormConfig/fileInput';
+import { fileUploadKeyMap, fileTypes, fileValues , allowedExtensions} from './FormConfig/fileInput';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -61,11 +62,6 @@ function AssessorOnboarding() {
 
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
- 
-  //upload data
-const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File | null }>({});
-const [selectedMetaFile, setSelectedMetaFile] = useState<File | null>(null);
-const [popupLabel, setPopupLabel] = useState("");
 
   let tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
 
@@ -397,10 +393,10 @@ const handleDownloadClick = async (fileName: string) => {
                              onClick={() => handleDownloadClick(backendKey)}
                           />
                         </TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>
+                        <TableCell sx={{ textAlign: 'center', padding: 1 }}>
                           <FileActionButton icon="upload" label="Upload" showLabel showIcon />
                         </TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>
+                        <TableCell sx={{ textAlign: 'center', padding: 1 }}>
                           <FileActionButton icon="view" label="View" showLabel showIcon />
                         </TableCell>
                       </TableRow>
@@ -417,3 +413,4 @@ const handleDownloadClick = async (fileName: string) => {
 }
 
 export default AssessorOnboarding;
+

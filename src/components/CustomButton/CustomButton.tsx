@@ -5,7 +5,7 @@ import { Button, ButtonProps } from '@mui/material';
 import React from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
-import { useTheme } from '@mui/material';
+
 import CancelIcon from '@mui/icons-material/Cancel';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
 export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
