@@ -66,6 +66,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         width,
         textTransform: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
+       
       }}
     >
       <span

@@ -1,5 +1,6 @@
+
 .mostOuterConatiner {
-  height: 100%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -39,7 +40,7 @@
 
 .formFieldsInner {
   width: 100%;
-  /* border: 1px solid rgb(78, 47, 255); */
+  border: 1px solid rgb(78, 47, 255);
  
 }
 .formFieldsBox {
@@ -52,12 +53,15 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  /* flex-wrap: wrap; */
   /* border: 1px solid brown; */
   width: 20vw;
+
   /* padding-bottom: 20px;
    padding-top: 20px; */
   
 }
+
 .secondContainer{
   display: flex;
   /* justify-content: space-evenly; */
@@ -83,6 +87,7 @@ padding:0% 1%;
   /* border: 1px solid yellowgreen; */
   padding: 2% 2%;
   display: flex;
+  /* flex-wrap: wrap; */
   justify-content: space-between;
   background-color: rgb(145, 227, 233);
   border-radius: 10px;
@@ -99,10 +104,12 @@ align-content: center;
 margin: 0px;
     
 }
+
+
+
+/* 
 @media (max-width: 640px) {
-  /* .formContainer {
-    flex-direction: column;
-  } */
+
      .secondContainer{
     flex-direction: column;
   }
@@ -119,4 +126,31 @@ margin: 0px;
       justify-content: space-between;
     
   }
+} */
+
+@media (min-width: 300px) and (max-width: 640px) {
+  .secondContainer {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btnContainer{
+    width: 100%;
+  }
+  .fileUploadContainer{
+    width: 100%;
+  }
+}
+@media (max-width: 800px) {
+  .formContainer {
+    flex-direction: column;
+  }
+  .secondContainer{
+    flex-direction: column;
+  }
+  .btnContainer{
+    width: 100%;
+      justify-content: space-between;
+    
+  }
+
 }

@@ -7,7 +7,7 @@ const meta: Meta<typeof FileActionButton> = {
   argTypes: {
     icon: {
       control: 'select',
-      options: ['upload', 'download'],
+      options: ['upload', 'download', 'view'],
     },
     showIcon: {
       control: 'boolean',
@@ -62,5 +62,14 @@ export const IconOnly: Story = {
     icon: 'upload',
     width: '48px',
     height: '48px',
+  },
+};
+
+export const View: Story = {
+  args: {
+    icon: 'view',
+    label: 'view File',
+    width: '200px',
+    height: '50px',
   },
 };

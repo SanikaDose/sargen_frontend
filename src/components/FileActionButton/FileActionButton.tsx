@@ -5,7 +5,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import styles from './style.module.css';
 import { FileActionButtonProps } from './FileActionButton.types';
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
 const FileActionButton = ({
   icon,
   label,
@@ -20,6 +20,7 @@ const FileActionButton = ({
   const getIcon = () => {
     if (icon === 'upload') return <CloudUploadIcon />;
     if (icon === 'download') return <DownloadIcon />;
+      if (icon === 'view') return <VisibilityIcon />;
     return null;
   };
 

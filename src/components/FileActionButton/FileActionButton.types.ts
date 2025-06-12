@@ -1,6 +1,6 @@
 // FileActionButton.types.ts
 export interface FileActionButtonProps {
-  icon?: 'upload' | 'download';
+  icon?: 'upload' | 'download' | 'view';
   label?: string;
   showIcon?: boolean;
   showLabel?: boolean;

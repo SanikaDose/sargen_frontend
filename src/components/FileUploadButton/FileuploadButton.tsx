@@ -22,6 +22,11 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+     if (file && onFileSelect) {
+    onFileSelect(file); // ✅ Ensure this line exists
+  }
+
+  console.log('File input changed:', e.target.files);
   };
 
   return (
