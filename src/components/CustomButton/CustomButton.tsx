@@ -1,4 +1,3 @@
-import { useTheme } from '@mui/material/styles';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { Button, ButtonProps } from '@mui/material';
@@ -8,7 +7,6 @@ import { MdOutlineAddAlert } from 'react-icons/md';
 
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
 export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
-type MuiPaletteColor = 'primary' | 'secondary' | 'error' | 'success' | 'info' | 'warning';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
@@ -50,14 +48,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return null;
     }
   };
-  const theme = useTheme();
-  // const paletteColor = theme.palette[color]; // Not needed unless used elsewhere
 
   return (
     <Button
       variant={variant}
       onClick={onClick}
-      color={color}
       className={className}
       disabled={disabled}
       {...rest}
