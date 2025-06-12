@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Grid, Typography, FormControl, MenuItem, Select } from '@mui/material';
+import { Box, Grid, Typography, FormControl, MenuItem, Select, Paper } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import defaultUserLogo from './../../../../../public/images/default-logo-image.png';
@@ -20,17 +20,23 @@ import { useRouter } from 'next/navigation';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { setPageName } from '@/store/globalSlice';
 import { useDispatch } from 'react-redux';
+import { useStepper } from '@/store/useStepper';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
+  console.log('tenantId ', tenantId);
   const router = useRouter();
-  const dispatch = useDispatch();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
-  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
+  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
     skip: !editMode,
   });
+  const { goTo } = useStepper();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    goTo(1);
+  }, [goTo]);
 
   useEffect(() => {
     dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
@@ -79,6 +85,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   useEffect(() => {
     if (editMode && existingData?.data && !isFetching) {
       const contact = existingData.data;
+
       reset({
         firstName: contact.firstName || '',
         lastName: contact.lastName || '',
@@ -95,11 +102,13 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     }
   }, [editMode, existingData, isFetching, reset]);
 
+  console.log('Fetched POC:', existingData);
+
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPocProfilePic({ tenantId: tenantId ?? '', formData }).unwrap();
+      await uploadPocProfilePic({ tenantId, formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setProfilePicUrl(localUrl);
     } catch (error) {
@@ -123,21 +132,9 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   }, [watchedValues, steps]);
 
   const onSubmit = async (data: PocPayload) => {
-    // Check if all required fields are filled
-    const allFieldsFilled = Object.keys(data).every((key) => {
-      const value = data[key as keyof PocPayload];
-      return typeof value === 'string' && value.trim().length > 0;
-    });
-
-    if (!allFieldsFilled) {
-      console.error('All fields must be filled');
-      return;
-    }
-
     try {
-      await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
+      await submitPointOfContact({ tenantId, body: data }).unwrap();
       console.log('Form submitted successfully');
-      router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -157,114 +154,122 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Box sx={{}}>
-        <Grid className={styles.stepperContainer}>
-          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-        </Grid>
-      </Box>
-      <Typography variant="h6" fontWeight={600} className={styles.heading}>
-        User Profile
-      </Typography>
-      <Grid className={styles.formContainer}>
-        <Box className={styles.imageBox}>
-          <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
-        </Box>
-        <Box className={styles.formFieldsBox}>
-          <Grid container spacing={1}>
-            {(
-              ['firstName', 'lastName', 'employeeId', 'email', 'designation', 'contactNumber'] as (keyof PocPayload)[]
-            ).map((fieldName) => (
-              <Grid key={fieldName} size={{ xs: 12, sm: 6 }}>
-                <Controller
-                  name={fieldName}
-                  control={control}
-                  render={({ field }) => (
-                    <InputWithLabel
-                      {...field}
-                      label={fieldName
-                        .replace(/([A-Z])/g, ' $1')
-                        .replace(/^./, (str) => str.toUpperCase())
-                        .replace('Id', 'ID')}
-                      placeholder={`Enter ${fieldName
-                        .replace(/([A-Z])/g, ' $1')
-                        .replace(/^./, (str) => str.toUpperCase())
-                        .replace('Id', 'ID')}`}
-                      onFocus={handleFocus}
-                      sx={textFieldStyles}
-                      required
-                      error={!!errors[fieldName]}
-                      helperText={errors[fieldName]?.message}
-                    />
-                  )}
-                />
-              </Grid>
-            ))}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <FormControl fullWidth sx={{ mt: 2 }}>
-                <Typography sx={{ fontWeight: 600, color: '#313131' }}>
-                  Country <span style={{ color: 'red' }}>*</span>
-                </Typography>
-                <Controller
-                  name="country"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      displayEmpty
-                      sx={{ borderRadius: '8px', height: 38 }}
-                      onOpen={() => handleFocus({ target: { name: 'country' } })}
-                      inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
-                      error={!!errors.country}
-                    >
-                      <MenuItem value="">
-                        <em>Select Country</em>
-                      </MenuItem>
-                      {CountryOptions.map((country) => (
-                        <MenuItem key={country.code} value={country.name}>
-                          {country.name}
+      <Grid className={styles.stepperContainer}>
+        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+      </Grid>
+      <Paper
+        elevation={2}
+        sx={{
+          borderRadius: '16px',
+          p: 2,
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+          backgroundColor: 'white',
+          border: '1px solid rgb(216, 216, 216)',
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} className={styles.heading}>
+          User Profile
+        </Typography>
+        <Grid className={styles.formContainer}>
+          <Box className={styles.imageBox}>
+            <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
+          </Box>
+          <Box className={styles.formFieldsBox}>
+            <Grid container spacing={1}>
+              {(
+                [
+                  'firstName',
+                  'lastName',
+                  'employeeId',
+                  'email',
+                  'designation',
+                  'jobRole',
+                  'contactNumber',
+                ] as (keyof PocPayload)[]
+              ).map((fieldName) => (
+                <Grid key={fieldName} size={{ xs: 12, sm: 6 }}>
+                  <Controller
+                    name={fieldName}
+                    control={control}
+                    render={({ field }) => (
+                      <InputWithLabel
+                        {...field}
+                        label={fieldName
+                          .replace(/([A-Z])/g, ' $1')
+                          .replace(/^./, (str) => str.toUpperCase())
+                          .replace('Id', 'ID')}
+                        placeholder={`Enter ${fieldName
+                          .replace(/([A-Z])/g, ' $1')
+                          .replace(/^./, (str) => str.toUpperCase())
+                          .replace('Id', 'ID')}`}
+                        onFocus={handleFocus}
+                        sx={textFieldStyles}
+                        required
+                        error={!!errors[fieldName]}
+                        helperText={errors[fieldName]?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <Typography sx={{ fontWeight: 600, color: '#313131' }}>
+                    Country <span style={{ color: 'red' }}>*</span>
+                  </Typography>
+                  <Controller
+                    name="country"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        displayEmpty
+                        sx={{ borderRadius: '8px', height: 38 }}
+                        onOpen={() => handleFocus({ target: { name: 'country' } })}
+                        inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
+                        error={!!errors.country}
+                      >
+                        <MenuItem value="">
+                          <em>Select Country</em>
                         </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
+                        {CountryOptions.map((country) => (
+                          <MenuItem key={country.code} value={country.name}>
+                            {country.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                </FormControl>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </Grid>
-      <Grid ml={5} mr={5}>
-        <Controller
-          name="jobRole"
-          control={control}
-          render={({ field }) => (
-            <InputWithLabel
-              {...field}
-              label="Job Role"
-              placeholder="Specify Job Role"
-              multiline
-              sx={textFieldStyles}
-              required
-              onFocus={handleFocus}
-              error={!!errors.jobRole}
-              helperText={errors.jobRole?.message}
-            />
-          )}
-        />
-      </Grid>
+          </Box>
+        </Grid>
+      </Paper>
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         p={1}
-        mt={1}
+        mt={5}
         ml={5}
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
+        <CustomButton
+          variant="contained"
+          icon="left"
+          onClick={() => router.push('/organisationOnboarding')}
+        >
           Back
         </CustomButton>
-        <CustomButton type="submit" variant="contained" icon="save" disabled={!isValid || isLoading}>
+        <CustomButton
+          type="submit"
+          variant="contained"
+          icon="save"
+          disabled={!isValid || isLoading}
+          onClick={() => router.push('/PlantOverview')}
+        >
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>

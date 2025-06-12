@@ -7,7 +7,7 @@ export const feedbackCustomizations: Components<Theme> = {
     styleOverrides: {
       root: ({ theme }) => ({
         borderRadius: 10,
-        backgroundColor: orange[100],
+        // backgroundColor: orange[100], NOTE:toaster color gets orange thats why commented it for now
         color: (theme.vars || theme).palette.text.primary,
         border: `1px solid ${alpha(orange[300], 0.5)}`,
         '& .MuiAlert-icon': {

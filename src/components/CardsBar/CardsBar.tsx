@@ -9,7 +9,6 @@ const CardsBar: React.FC<CardsBarProps> = ({ heading = 'Overview', cards }) => {
       <Typography variant="h4" gutterBottom className={styles.heading}>
         {heading}
       </Typography>
-
       <Grid container spacing={3}>
         {cards.map((card, index) => (
           <Grid key={index} item xs={12} sm={6} md={cards.length <= 3 ? 12 / cards.length : 4}>
@@ -18,7 +17,7 @@ const CardsBar: React.FC<CardsBarProps> = ({ heading = 'Overview', cards }) => {
                 {card.title}
               </Typography>
               <Typography variant="h4" className={styles.cardValue} sx={{ color: card.color || 'text.primary' }}>
-                {card.value}
+                {card.value}  
               </Typography>
               {card.description && <Typography className={styles.cardDescription}>{card.description}</Typography>}
             </Paper>
