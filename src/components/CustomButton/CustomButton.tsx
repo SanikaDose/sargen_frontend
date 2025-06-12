@@ -1,6 +1,6 @@
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
-import { Button, ButtonProps, useTheme } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import React from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
@@ -12,15 +12,14 @@ type MuiPaletteColor = 'primary' | 'secondary' | 'error' | 'success' | 'info' | 
 type CustomButtonProps = {
   children?: React.ReactNode;
   variant?: ButtonVariant;
-  color?: MuiPaletteColor;
-
+  color?: 'primary' | 'secondary' | 'error' | 'success';
   onClick?: () => void;
   className?: string;
   icon?: ButtonIcon;
   height?: number | string;
   width?: number | string;
   disabled?: boolean;
-} & Omit<ButtonProps, 'variant' | 'color'>;
+} & Omit<ButtonProps, 'variant'>;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   children,
@@ -71,17 +70,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 0.5,
-        ...(variant === 'outlined' && {
-          borderColor: paletteColor?.main,
-          color: paletteColor?.main,
-          '&:hover': {
-            borderColor: paletteColor?.dark,
-          },
-        }),
-        ...(variant === 'text' && {
-          color: paletteColor?.main,
-          '&:hover': {},
-        }),
+        color: 'white',
+        backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].main} !important`,
+        '&:hover': {
+          backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].dark} !important`,
+        },
       }}
     >
       {renderIcon()}

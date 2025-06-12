@@ -30,7 +30,7 @@ export default function PlantOverview() {
           <Paper component="form" sx={{ display: 'flex', alignItems: 'center' }} className={styles.searchInput}>
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Search PLant...."
+              placeholder="Search Plant..."
               inputProps={{ 'aria-label': 'search google maps' }}
               onChange={(e) => {
                 handleSearch(e.target.value);

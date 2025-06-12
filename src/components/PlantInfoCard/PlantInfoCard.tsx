@@ -1,6 +1,5 @@
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import { Box, Button, Divider, Typography } from '@mui/material';
-import ImageUploader from '../ImageUpload/ImageUpload';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
@@ -69,7 +68,8 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
           <Divider sx={{ marginBottom: 1 }} />
           <Typography className={styles.statusLabel}>Status</Typography>
           <Button
-            children={'Start Assesment'}
+            startIcon={<OndemandVideoIcon />}
+            children={'Start Assessment'}
             color={'secondary'}
             variant={'text'}
             sx={{ bgcolor: '#10557C33' }}

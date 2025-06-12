@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Divider } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { AssessorPlantDataProps } from './AssessorPlantDetails.types';
 import styles from './AssessorPlantInfoCard.module.css';
@@ -30,6 +30,9 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
           Stage: <span className={styles.value}>{assesorCompletionStage}</span>
         </Typography>
       </Box>
+
+      {/* Divider */}
+      <Divider className={styles.divider} />
 
       {/* Dates */}
       <Box className={styles.dateSection}>

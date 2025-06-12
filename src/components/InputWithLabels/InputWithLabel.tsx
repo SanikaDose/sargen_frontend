@@ -40,3 +40,5 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
     );
   },
 );
+
+InputWithLabel.displayName = 'InputWithLabel';
