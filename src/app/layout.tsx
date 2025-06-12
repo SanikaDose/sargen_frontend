@@ -33,6 +33,7 @@ export default function RootLayout({
         <I18nProvider>
           <ThemeProvider>
             <GlobalReduxProvider>
+              <Toaster/>
               <LanguageInitializer />
               {children}
             </GlobalReduxProvider>

@@ -11,5 +11,7 @@ export function triggerToast(
   message: string,
   severity: 'success' | 'info' | 'warning' | 'error' = 'success'
 ): void {
+      console.log('Dispatching toast...');
+
   store.dispatch(showToast({ message, severity }));
 }

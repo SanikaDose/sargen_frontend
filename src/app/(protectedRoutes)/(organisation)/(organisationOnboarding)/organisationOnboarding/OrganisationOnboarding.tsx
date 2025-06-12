@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -73,6 +73,7 @@ function OrganizationOnbording() {
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
       console.log('Organization info submitted'); //use toster
+
       router.push('/AddContactPerson');
     } catch (error) {
       console.log('api submition failed', error);
@@ -98,7 +99,9 @@ function OrganizationOnbording() {
           ]}
         />
       </Grid>
-<Button variant="contained" color="primary" onClick={() => triggerToast('This is a test toast message!')}>hlw</Button>
+
+
+      
       <Grid sx={{ height: '3%' }}>
         <Typography variant="h6">Organization Details</Typography>
       </Grid>
