@@ -1,12 +1,16 @@
-import { Stepper as MuiStepper, Step, StepLabel } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import { StepperProps } from './Stepper.types';
+'use client';
 
-const Stepper: React.FC<StepperProps> = ({ steps = [], activeStep = 0, completedSteps = [] }) => {
+import { Grid, Step, StepLabel, Stepper as MuiStepper, Paper } from '@mui/material';
+import { useStepper } from '@/store/useStepper';
+
+export const GlobalStepper = () => {
+  const { steps, activeStep, completedSteps, visible } = useStepper();
+
+  if (!visible) return null;
+
   return (
     <Grid container justifyContent="center" width="100%">
-      <Grid size={{ xs: 4, md: 12 }}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Paper
           elevation={2}
           sx={{
@@ -29,5 +33,3 @@ const Stepper: React.FC<StepperProps> = ({ steps = [], activeStep = 0, completed
     </Grid>
   );
 };
-
-export default Stepper;

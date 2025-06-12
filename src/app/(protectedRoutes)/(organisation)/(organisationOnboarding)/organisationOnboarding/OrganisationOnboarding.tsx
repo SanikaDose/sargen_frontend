@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Grid, Typography,Button } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -16,6 +16,7 @@ import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { useStepper } from '@/store/useStepper';
 import { triggerToast } from '@/app/utils/toast';
 function OrganizationOnbording() {
   const router = useRouter();
@@ -24,6 +25,11 @@ function OrganizationOnbording() {
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const tenantId = getValueLocalStorage('tenantId');
+  const { goTo } = useStepper();
+
+  useEffect(() => {
+    goTo(0);
+  }, []);
 
   const {
     control,
@@ -66,9 +72,8 @@ function OrganizationOnbording() {
     console.log('Form Data:', data);
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
-      console.log('Organization info submitted'); 
-      
-      router.push('/onboardingSuccess');
+      console.log('Organization info submitted'); //use toster
+      router.push('/AddContactPerson');
     } catch (error) {
       console.log('api submition failed', error);
     }
@@ -147,7 +152,6 @@ function OrganizationOnbording() {
               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '16px', mt: 2, ml: '5px' }}>
                 Country
               </Typography>
-              
               <FormControl fullWidth sx={{ mt: 0 }}>
                 <Controller
                   name="country"
@@ -170,7 +174,6 @@ function OrganizationOnbording() {
                         return selected;
                       }}
                     >
-                      
                       <MenuItem disabled value="">
                         <em>Select From Dropdown</em>
                       </MenuItem>

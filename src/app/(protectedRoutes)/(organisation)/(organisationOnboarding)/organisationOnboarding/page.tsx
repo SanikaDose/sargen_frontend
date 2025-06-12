@@ -1,12 +1,13 @@
 // src/app/(protectedRoutes)/(organization)/page.tsx
 
 'use client';
-import OrganizationOnbording from './OrganisationOnboarding';
+import OnboardingLayout from '@/components/Layout/onboardingLayout';
+import OrganisationOnboarding from './OrganisationOnboarding';
 const OrganizationPage = () => {
   return (
-    <>
-      <OrganizationOnbording />
-    </>
+    <OnboardingLayout>
+      <OrganisationOnboarding />
+    </OnboardingLayout>
   );
 };
 
