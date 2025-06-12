@@ -175,10 +175,10 @@ const PlantRegistrationForm = () => {
       </Box>
 
       <Box className={styles.buttonSection}>
-        <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
+        <CustomButton children="Back" variant="outlined" color="primary" icon="left" type="button" />
         <CustomButton
           children={isLoading ? 'Saving...' : 'Save'}
-          variant="contained"
+          variant="outlined"
           color="primary"
           icon="save"
           type="submit"
