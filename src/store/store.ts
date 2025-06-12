@@ -5,7 +5,6 @@ import { protectedApi } from './api/protectedApis/baseProtectedApi';
 import { publicApi } from './api/publicApis/basePublicApi';
 import globalReducer from './globalSlice';
 import stepperReducer from './Slices/StepperSlice';
-
 import toasterReducer from '../components/toaster/toasterSlice';
 
 import languageReducer from './languageSlice';
