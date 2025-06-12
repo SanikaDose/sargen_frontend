@@ -42,8 +42,6 @@ const Questionnaires = () => {
     const questions = result?.questionsToSend || [];
 
     const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
-      // console.log("acc ", acc);
-      // console.log("curr ", curr);
       if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
       acc[curr.question_uid].push(curr);
       return acc;

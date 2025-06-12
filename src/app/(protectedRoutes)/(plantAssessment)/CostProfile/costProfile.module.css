@@ -1,0 +1,109 @@
+.formSection {
+  display: flex;
+  width: 100%;
+  height: 90%;
+  /* border: 1px solid blue; */
+}
+
+.stepperContainer {
+  /* height: 10%; */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  /* border: 1px solid; */
+}
+
+.formContainer {
+  height: 100%;
+  width: 70%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid red; */
+  position: relative;
+}
+
+.costProfile {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.OverallCostProfileCard {
+  width: 40%;
+}
+
+.rightSection {
+  height: 100%;
+  width: 30%;
+  padding: 20px;
+  display: flex;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 12;
+}
+
+.aboutSection {
+  height: 90%;
+}
+
+.buttonSection {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.costInputCards {
+  height: 12%;
+  width: 40%;
+  display: 'flex';
+  gap: 2;
+}
+
+@media (min-width: 300px) and (max-width: 915px) {
+  .stepperContainer {
+    display: none;
+  }
+  .formContainer {
+    width: 100%;
+    border: 2px solid red;
+    height: auto;
+  }
+  .overallCostCard {
+    width: 100%;
+  }
+  .rightSection {
+    width: 100%;
+    border: 2px solid red;
+  }
+  .aboutSection {
+    display: none;
+  }
+  .bothSections {
+    width: '100%';
+    display: flex;
+    flex-direction: column;
+    /* height: auto; */
+  }
+  .costProfile {
+    width: '100%';
+    border: '1px solid';
+    /* height: auto; */
+  }
+  .costInputCards {
+    height: 7%;
+    width: 70%;
+    border: 1px solid;
+  }
+  .OverallCostProfileCard {
+    width: 100%;
+    display: flex;
+  }
+}

@@ -26,7 +26,7 @@
 .editButton {
   position: absolute;
   background-color: white;
-  color: #67666b;
+  color: #2505a8;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -46,10 +46,19 @@
 }
 
 /* 🔽 RESPONSIVE MEDIA QUERIES */
+
+@media ((min-width: 1500px) and  (max-width: 2000px)) {
+  .avatarWrapper {
+    height: 100%;
+    width: 100%;
+    margin: auto;
+  }
+}
 @media (max-width: 768px) {
   .avatarWrapper {
     width: 100px;
     height: 100px;
+    margin: auto;
   }
 
   .editButton {

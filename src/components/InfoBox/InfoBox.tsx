@@ -13,6 +13,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
     <Box
       className={className}
       sx={{
+        height: '100%',
         borderRadius: '8px',
         bgcolor: '#F5FAFD',
         p: 2,
@@ -27,6 +28,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
           sx={{
             mb: 2,
             fontWeight: 600,
+            color: 'darkgrey',
           }}
         >
           {heading}
@@ -39,6 +41,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
           flexGrow: 1,
           p: 2,
           textAlign: 'justify',
+          fontSize: 'small',
         }}
       >
         {content || 'Please Enter the About us in Organization Entry Portal'}
