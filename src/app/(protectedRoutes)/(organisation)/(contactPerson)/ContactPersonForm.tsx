@@ -20,7 +20,6 @@ import { useRouter } from 'next/navigation';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { setPageName } from '@/store/globalSlice';
 import { useDispatch } from 'react-redux';
-import { useStepper } from '@/store/useStepper';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -29,14 +28,10 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
-  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
+  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
     skip: !editMode,
   });
-  const { goTo } = useStepper();
   const dispatch = useDispatch();
-  useEffect(() => {
-    goTo(1);
-  }, [goTo]);
 
   useEffect(() => {
     dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
@@ -108,7 +103,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPocProfilePic({ tenantId, formData }).unwrap();
+      await uploadPocProfilePic({ tenantId: tenantId ?? '', formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setProfilePicUrl(localUrl);
     } catch (error) {
@@ -133,7 +128,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   const onSubmit = async (data: PocPayload) => {
     try {
-      await submitPointOfContact({ tenantId, body: data }).unwrap();
+      await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
       console.log('Form submitted successfully');
     } catch (err) {
       console.error('Error submitting form', err);
@@ -256,11 +251,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton
-          variant="contained"
-          icon="left"
-          onClick={() => router.push('/organisationOnboarding')}
-        >
+        <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
           Back
         </CustomButton>
         <CustomButton
