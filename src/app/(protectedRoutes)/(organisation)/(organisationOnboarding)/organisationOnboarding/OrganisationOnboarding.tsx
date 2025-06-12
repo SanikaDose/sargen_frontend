@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -17,6 +17,7 @@ import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { useStepper } from '@/store/useStepper';
+import { triggerToast } from '@/app/utils/toast';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
@@ -72,6 +73,7 @@ function OrganizationOnbording() {
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
       console.log('Organization info submitted'); //use toster
+
       router.push('/AddContactPerson');
     } catch (error) {
       console.log('api submition failed', error);
@@ -98,6 +100,8 @@ function OrganizationOnbording() {
         />
       </Grid>
 
+
+      
       <Grid sx={{ height: '3%' }}>
         <Typography variant="h6">Organization Details</Typography>
       </Grid>
@@ -117,7 +121,6 @@ function OrganizationOnbording() {
         <Box sx={{ display: 'flex', width: '27%', justifyContent: 'center', alignItems: 'center' }}>
           <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
         </Box>
-
         {/* Inputs */}
         <Grid size={{ md: 7, xs: 12, lg: 8 }}>
           <Controller

@@ -24,16 +24,16 @@ import { useStepper } from '@/store/useStepper';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
+  console.log('tenantId ', tenantId);
   const router = useRouter();
-  const dispatch = useDispatch();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
-  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
+  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
     skip: !editMode,
   });
   const { goTo } = useStepper();
-
+  const dispatch = useDispatch();
   useEffect(() => {
     goTo(1);
   }, [goTo]);
@@ -85,6 +85,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   useEffect(() => {
     if (editMode && existingData?.data && !isFetching) {
       const contact = existingData.data;
+
       reset({
         firstName: contact.firstName || '',
         lastName: contact.lastName || '',
@@ -101,11 +102,13 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     }
   }, [editMode, existingData, isFetching, reset]);
 
+  console.log('Fetched POC:', existingData);
+
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPocProfilePic({ tenantId: tenantId ?? '', formData }).unwrap();
+      await uploadPocProfilePic({ tenantId, formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setProfilePicUrl(localUrl);
     } catch (error) {
@@ -129,21 +132,9 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   }, [watchedValues, steps]);
 
   const onSubmit = async (data: PocPayload) => {
-    // Check if all required fields are filled
-    const allFieldsFilled = Object.keys(data).every((key) => {
-      const value = data[key as keyof PocPayload];
-      return typeof value === 'string' && value.trim().length > 0;
-    });
-
-    if (!allFieldsFilled) {
-      console.error('All fields must be filled');
-      return;
-    }
-
     try {
-      await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
+      await submitPointOfContact({ tenantId, body: data }).unwrap();
       console.log('Form submitted successfully');
-      router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -265,10 +256,20 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
+        <CustomButton
+          variant="contained"
+          icon="left"
+          onClick={() => router.push('/organisationOnboarding')}
+        >
           Back
         </CustomButton>
-        <CustomButton type="submit" variant="contained" icon="save" disabled={!isValid || isLoading}>
+        <CustomButton
+          type="submit"
+          variant="contained"
+          icon="save"
+          disabled={!isValid || isLoading}
+          onClick={() => router.push('/PlantOverview')}
+        >
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>
