@@ -1,63 +1,79 @@
-// theme/sargenTheme.ts
-import { createTheme } from '@mui/material/styles';
+// theme/customizations/sargenTheme.ts
+import { Theme } from '@mui/material/styles';
 
-const sargenTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#2D7FF9', // blue
-    },
-    secondary: {
-      main: '#D6E9FF', // lightBlue
-    },
-    error: {
-      main: '#F44336', // red
-    },
-    success: {
-      main: '#4CAF50', // green
-    },
-    background: {
-      default: '#FAFAFA', // offWhite
-      paper: '#FFFFFF', // white
-    },
-    text: {
-      primary: '#212121',
-      secondary: '#757575',
-      disabled: '#acacac',
-    },
-    grey: {
-      100: '#F5F5F7', // gray
-      800: '#6E7275', // darkGray
-    },
+export const sargenPalette = {
+  primary: {
+    main: '#047af2',
+    dark: '#0356b0', // darker, richer version for hover
+    contrastText: '#ffffff',
   },
-  breakpoints: {
-    values: {
-      xs: 0, // iPhone, Pixel 2 XL
-      sm: 600, // Pixel 3, iPad Portrait
-      md: 768, // iPad Landscape, iPad Pro Portrait
-      lg: 1024, // iPad Pro Landscape
-      xl: 1280, // MacBook Air 13", Full HD
-    },
+  secondary: {
+    main: '#D6E9FF',
+    dark: '#aacdf7', // slightly darker for hover
+    contrastText: '#212121',
   },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: (theme) => ({
-        'html,body': {
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
-          margin: 0,
-          padding: 0,
-        },
-      }),
-    },
-    MuiToolbar: {
-      styleOverrides: {
-        root: {
-          height: '56px',
-          minHeight: '56px',
-        },
+  error: {
+    main: '#F44336',
+    dark: '#d32f2f', // MUI default
+    contrastText: '#ffffff',
+  },
+  success: {
+    main: '#4CAF50',
+    dark: '#388e3c', // MUI default
+    contrastText: '#ffffff',
+  },
+  background: {
+    default: '#FAFAFA',
+    paper: '#FFFFFF',
+  },
+  text: {
+    primary: '#212121',
+    secondary: '#757575',
+    disabled: '#acacac',
+  },
+  grey: {
+    100: '#F5F5F7',
+    800: '#6E7275',
+  },
+};
+
+export const sargenComponents = {
+  MuiCssBaseline: {
+    styleOverrides: (theme: Theme) => ({
+      'html,body': {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        margin: 0,
+        padding: 0,
+      },
+    }),
+  },
+  MuiToolbar: {
+    styleOverrides: {
+      root: {
+        height: '56px',
+        minHeight: '56px',
       },
     },
   },
-});
-
-export default sargenTheme;
+  MuiPaper: {
+    variants: [
+      {
+        props: { variant: 'outlined' as const },
+        style: {
+          border: '1px solid #e0e0e0',
+          borderRadius: 8,
+        },
+      },
+    ],
+  },
+  MuiAppBar: {
+    styleOverrides: {
+      root: {
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #e0e0e0',
+        boxShadow: 'none',
+      },
+    },
+  },
+};

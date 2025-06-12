@@ -140,7 +140,7 @@ export const assessorApi = protectedApi.injectEndpoints({
 
     getMetadataFileTemplate: builder.mutation<Response, { userType: string; fileName: string }>({
       query: ({ userType, fileName }) => ({
-        url: ` ${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
+        url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
         method: 'POST',
         body: { userType, fileName },
         responseHandler: (response) => Promise.resolve(response),

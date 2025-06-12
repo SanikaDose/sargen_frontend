@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import Grid from '@mui/material/Grid';
-import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
+import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import styles from './AddPlant.module.css';
-import { useForm, Controller, useWatch } from 'react-hook-form';
 import { PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useRouter } from 'next/navigation';
 
 const tenantId = getValueLocalStorage('tenantId');
 
@@ -175,10 +175,10 @@ const PlantRegistrationForm = () => {
       </Box>
 
       <Box className={styles.buttonSection}>
-        <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
+        <CustomButton children="Back" variant="outlined" color="error" icon="left" type="button" />
         <CustomButton
           children={isLoading ? 'Saving...' : 'Save'}
-          variant="contained"
+          variant="outlined"
           color="primary"
           icon="save"
           type="submit"

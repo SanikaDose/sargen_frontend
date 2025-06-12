@@ -33,10 +33,10 @@ import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
 import { certificateData } from './FormConfig/fileInput';
 import FileActionButton from '@/components/FileActionButton/FileActionButton';
 import { CountryOptions } from '@/app/utils/CountryOptions';
-import { useAddAssessorInformationMutation  , useUploadAssessorLogoMutation} from './AssessorOnboarding.Api'
-import {fileUploadKeyMap, fileTypes, fileValues } from './FormConfig/fileInput'
-const tenantId = getValueLocalStorage('tenantId');
+import { useAddAssessorInformationMutation, useUploadAssessorLogoMutation , useGetMetadataFileTemplateMutation} from './AssessorOnboarding.Api';
 
+import { fileUploadKeyMap, fileTypes, fileValues } from './FormConfig/fileInput';
+const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
   'FirstName',
@@ -53,14 +53,21 @@ function AssessorOnboarding() {
   const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
   //const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
+   const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
+  const [getMetadataFileTemplate]=useGetMetadataFileTemplateMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
 
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
-let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
+ 
+  //upload data
+const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File | null }>({});
+const [selectedMetaFile, setSelectedMetaFile] = useState<File | null>(null);
+const [popupLabel, setPopupLabel] = useState("");
+
+  let tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -74,28 +81,26 @@ let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
     }
   };
 
- const onSubmit = async (formValues: AssessorFormType) => {
-  try {
-    const formData = new FormData();
+  const onSubmit = async (formValues: AssessorFormType) => {
+    try {
+      const formData = new FormData();
 
-    formData.append('data', JSON.stringify(formValues));
-    if (selectedFile) {
-      formData.append('siriCertificate', selectedFile); // ✅ actual file object
+      formData.append('data', JSON.stringify(formValues));
+      if (selectedFile) {
+        formData.append('siriCertificate', selectedFile); // ✅ actual file object
+      }
+      await addAssessorInformation({
+        tenantId: tenantId ?? '',
+        data: formValues, // not used in request directly, just for clarity
+        siriCertificate: selectedFile,
+      }).unwrap();
+
+      console.log('✅ Assessor information submitted successfully!');
+      // router.push('/some-path'); // Optional redirect
+    } catch (error) {
+      console.error('❌ Failed to submit assessor information:', error);
     }
-    await addAssessorInformation({
-      tenantId: tenantId ?? '',
-      data: formValues, // not used in request directly, just for clarity
-      siriCertificate: selectedFile,
-    }).unwrap();
-
-    console.log('✅ Assessor information submitted successfully!');
-    // router.push('/some-path'); // Optional redirect
-
-  } catch (error) {
-    console.error('❌ Failed to submit assessor information:', error);
-  }
-};
-
+  };
 
   // this is an spread operator to get the values of the form inputs (mainly for about section)
   const allInputs = [...AssessorFormInputs];
@@ -117,6 +122,39 @@ let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
     }, []);
   }, [watchedValues]);
 
+
+
+const handleDownloadClick = async (fileName: string) => {
+  // if (!fileName) {
+  //   showToast("Invalid file name.", "warning");
+  //   return;
+  // }
+
+  try {
+    const response = await getMetadataFileTemplate({
+      userType: "ASSESSOR",
+      fileName,
+    }).unwrap();
+
+    const blob = await response.blob();
+    const suggestedFileName = `${fileName}.xlsx`;
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", suggestedFileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    console.log('downloaded sucessfully',url)
+  } catch (err) {
+    console.error("Error downloading file:", err);
+    //showToast("Failed to download file", "error");
+  }
+};
+
+
   return (
     <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
@@ -130,7 +168,6 @@ let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
       <Box className={styles.form}>
         <Box className={styles.formContainer}>
           <Box className={styles.imageBox}>
-            
             <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
           </Box>
 
@@ -195,7 +232,6 @@ let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
                         {...field}
                         required={true}
                         onFocus={() => setFocusedField('contactNumber')}
-                      
                       />
                     )}
                   />
@@ -293,7 +329,6 @@ let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
           <Grid className={styles.btnContainer}>
             <Box className={styles.fileUploadContainer}>
               <FileUploadButton
-                
                 label="Certificate"
                 size="large"
                 iconSize="100"
@@ -341,42 +376,37 @@ let tenantId='ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8'
                     <TableCell sx={{ padding: 1, textAlign: 'center' }}>View</TableCell>
                   </TableRow>
                 </TableHead>
-               <TableBody>
-  {fileTypes.map((label, index) => {
-    const backendKey = fileUploadKeyMap[label];
-    const cert = certificateData[index]; // safely pull from data if exists
+                <TableBody>
+                  {fileTypes.map((label, index) => {
+                    const backendKey = fileUploadKeyMap[label];
+                    const cert = certificateData[index]; // safely pull from data if exists
 
-    return (
-      <TableRow key={index}>
-        <TableCell>{index + 1}</TableCell>
-        <TableCell>{label}</TableCell>
-        <TableCell>{cert?.version ?? '-'}</TableCell>
-        <TableCell>{cert?.createdAt ?? '-'}</TableCell>
-        <TableCell>{cert?.updatedAt ?? '-'}</TableCell>
-        <TableCell>
-          <FileActionButton
-            icon="download"
-            label="Download"
-            showLabel
-            showIcon
-            onClick={() => {
-              console.log("Downloading backend key:", backendKey);
-              // Optional: trigger actual download here
-              // downloadFile(backendKey);
-            }}
-          />
-        </TableCell>
-        <TableCell>
-          <FileActionButton icon="upload" label="Upload" showLabel showIcon />
-        </TableCell>
-        <TableCell>
-          <FileActionButton icon="view" label="View" showLabel showIcon />
-        </TableCell>
-      </TableRow>
-    );
-  })}
-</TableBody>
-
+                    return (
+                      <TableRow key={index}>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{index + 1}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{label}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.version ?? '-'}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.createdAt ?? '-'}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.updatedAt ?? '-'}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 1 }}>
+                          <FileActionButton
+                            icon="download"
+                            label="Download"
+                            showLabel
+                            showIcon
+                             onClick={() => handleDownloadClick(backendKey)}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>
+                          <FileActionButton icon="upload" label="Upload" showLabel showIcon />
+                        </TableCell>
+                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>
+                          <FileActionButton icon="view" label="View" showLabel showIcon />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
               </Table>
             </TableContainer>
           </Box>

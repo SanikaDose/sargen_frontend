@@ -1,21 +1,11 @@
-// src/theme/theme.ts
 import { createTheme } from '@mui/material/styles';
-
 import { dataDisplayCustomizations } from './customizations/dataDisplay';
 import { feedbackCustomizations } from './customizations/feedback';
-import { inputsCustomizations } from './customizations/inputs';
 import { navigationCustomizations } from './customizations/navigation';
-import sargenTheme from './customizations/sargenTheme';
+import { sargenComponents, sargenPalette } from './customizations/sargenTheme';
 import { surfacesCustomizations } from './customizations/surfaces';
 import { colorSchemes, shadows, shape, typography } from './themePrimitives';
 
-/**
- * Add the custom or overrided properties of the material ui components
- *
- *
- *
- *
- */
 const theme = createTheme({
   breakpoints: {
     values: {
@@ -30,22 +20,32 @@ const theme = createTheme({
     colorSchemeSelector: 'data-mui-color-scheme',
     cssVarPrefix: 'template',
   },
+
+  palette: sargenPalette,
+
   colorSchemes,
-  typography: {
-    ...typography,
-  },
+  typography,
   shadows,
   shape,
+
   components: {
+    ...sargenComponents,
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: 'none',
+          '&.MuiButton-contained': {
+            backgroundColor: sargenPalette.primary.main,
+            color: sargenPalette.primary.contrastText,
+            '&:hover': {
+              backgroundColor: sargenPalette.primary.dark,
+            },
+          },
         },
       },
     },
-    ...sargenTheme,
-    ...inputsCustomizations,
+
+    // ...inputsCustomizations,
     ...dataDisplayCustomizations,
     ...feedbackCustomizations,
     ...navigationCustomizations,

@@ -2,9 +2,16 @@ import ContactPersonForm from '../ContactPersonForm';
 
 const AddContactPersonPage = () => {
   return (
-    <>
-      <ContactPersonForm />;
-    </>
+    <ContactPersonForm
+      firstName={''}
+      lastName={''}
+      employeeId={''}
+      email={''}
+      country={''}
+      designation={''}
+      contactNumber={''}
+      tenantId={''}
+    />
   );
 };
 

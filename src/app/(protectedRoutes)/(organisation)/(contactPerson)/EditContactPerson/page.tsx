@@ -3,9 +3,17 @@ import ContactPersonForm from '../ContactPersonForm';
 
 const EditContactPersonPage = () => {
   return (
-    <>
-      <ContactPersonForm editMode={true} />;
-    </>
+    <ContactPersonForm
+      editMode={true}
+      firstName={''}
+      lastName={''}
+      employeeId={''}
+      email={''}
+      country={''}
+      designation={''}
+      contactNumber={''}
+      tenantId={''}
+    />
   );
 };
 

@@ -18,23 +18,32 @@ import { CountryOptions } from '@/app/utils/CountryOptions';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { useRouter } from 'next/navigation';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { setPageName } from '@/store/globalSlice';
+import { useDispatch } from 'react-redux';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
-  console.log('tenantId ', tenantId);
   const router = useRouter();
+  const dispatch = useDispatch();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
-  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId, {
+  const { data: existingData, isLoading: isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
     skip: !editMode,
   });
+
+  useEffect(() => {
+    dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
+    return () => {
+      dispatch(setPageName(''));
+    };
+  }, [dispatch, editMode]);
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<PocPayload>({
     defaultValues: {
       firstName: '',
@@ -70,7 +79,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   useEffect(() => {
     if (editMode && existingData?.data && !isFetching) {
       const contact = existingData.data;
-
       reset({
         firstName: contact.firstName || '',
         lastName: contact.lastName || '',
@@ -87,13 +95,11 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     }
   }, [editMode, existingData, isFetching, reset]);
 
-  console.log('Fetched POC:', existingData);
-
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPocProfilePic({ tenantId, formData }).unwrap();
+      await uploadPocProfilePic({ tenantId: tenantId ?? '', formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setProfilePicUrl(localUrl);
     } catch (error) {
@@ -117,9 +123,21 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   }, [watchedValues, steps]);
 
   const onSubmit = async (data: PocPayload) => {
+    // Check if all required fields are filled
+    const allFieldsFilled = Object.keys(data).every((key) => {
+      const value = data[key as keyof PocPayload];
+      return typeof value === 'string' && value.trim().length > 0;
+    });
+
+    if (!allFieldsFilled) {
+      console.error('All fields must be filled');
+      return;
+    }
+
     try {
-      await submitPointOfContact({ tenantId, body: data }).unwrap();
+      await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
       console.log('Form submitted successfully');
+      router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -139,9 +157,11 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid className={styles.stepperContainer}>
-        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-      </Grid>
+      <Box sx={{}}>
+        <Grid className={styles.stepperContainer}>
+          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+        </Grid>
+      </Box>
       <Typography variant="h6" fontWeight={600} className={styles.heading}>
         User Profile
       </Typography>
@@ -172,6 +192,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                       onFocus={handleFocus}
                       sx={textFieldStyles}
                       required
+                      error={!!errors[fieldName]}
+                      helperText={errors[fieldName]?.message}
                     />
                   )}
                 />
@@ -189,9 +211,10 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                     <Select
                       {...field}
                       displayEmpty
-                      sx={{ borderRadius: '8px', height: 41 }}
+                      sx={{ borderRadius: '8px', height: 38 }}
                       onOpen={() => handleFocus({ target: { name: 'country' } })}
-                      inputProps={{ name: 'country', ' roboto': 'Select Country' }}
+                      inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
+                      error={!!errors.country}
                     >
                       <MenuItem value="">
                         <em>Select Country</em>
@@ -219,10 +242,11 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
               label="Job Role"
               placeholder="Specify Job Role"
               multiline
-              rows={4}
               sx={textFieldStyles}
               required
               onFocus={handleFocus}
+              error={!!errors.jobRole}
+              helperText={errors.jobRole?.message}
             />
           )}
         />
@@ -237,22 +261,10 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton
-          variant="contained"
-          icon="left"
-          color="#2D7FF9"
-          onClick={() => router.push('/organisationOnboarding')}
-        >
+        <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
           Back
         </CustomButton>
-        <CustomButton
-          type="submit"
-          variant="contained"
-          icon="save"
-          color="#2D7FF9"
-          disabled={!isValid || isLoading}
-          onClick={() => router.push('/PlantOverview')}
-        >
+        <CustomButton type="submit" variant="contained" icon="save" disabled={!isValid || isLoading}>
           {isLoading ? 'Saving...' : 'Save'}
         </CustomButton>
       </Box>

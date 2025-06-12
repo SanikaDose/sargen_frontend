@@ -1,28 +1,30 @@
-import React from 'react';
-import { Button, ButtonProps } from '@mui/material';
-import { FaChevronRight, FaChevronLeft } from 'react-icons/fa6';
-import { MdOutlineAddAlert } from 'react-icons/md';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
+import { Button, ButtonProps } from '@mui/material';
+import React from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
+import { MdOutlineAddAlert } from 'react-icons/md';
+import { useTheme } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
-export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success' | 'cancel';
+export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
+type MuiPaletteColor = 'primary' | 'secondary' | 'error' | 'success' | 'info' | 'warning';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
   variant?: ButtonVariant;
-  color?: string;
+  color?: 'primary' | 'secondary' | 'error' | 'success' | 'cancel';
   onClick?: () => void;
   className?: string;
   icon?: ButtonIcon;
   height?: number | string;
   width?: number | string;
   disabled?: boolean;
-} & Omit<ButtonProps, 'variant' | 'color'>;
+} & Omit<ButtonProps, 'variant'>;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   children,
-  variant = 'text',
+  variant = 'contained',
   color = 'primary',
   onClick,
   className = '',
@@ -50,39 +52,36 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return null;
     }
   };
+  const theme = useTheme();
+  const paletteColor = theme.palette[color];
 
   return (
     <Button
       variant={variant}
       onClick={onClick}
+      color={color}
       className={className}
       disabled={disabled}
       {...rest}
-      style={{
-        borderRadius: 12,
-        padding: 12,
-        backgroundColor: disabled ? '#ccc' : color,
+      sx={{
+        borderRadius: 2,
+        padding: 1.5,
         height,
         width,
         textTransform: 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-       
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0.5,
+        color: 'white',
+        backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].main} !important`,
+        '&:hover': {
+          backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].dark} !important`,
+        },
       }}
     >
-      <span
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 4,
-          color: 'white',
-          textAlign: 'center',
-        }}
-      >
-        {renderIcon()}
-        {children}
-      </span>
+      {renderIcon()}
+      {children}
     </Button>
   );
 };

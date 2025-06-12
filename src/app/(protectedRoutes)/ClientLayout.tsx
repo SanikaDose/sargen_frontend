@@ -419,6 +419,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         open={open}
       >
         <DrawerHeader>
+          <Box
+            component="img"
+            src="/sargen-png-logo.png"
+            alt="Sargen Logo"
+            sx={{
+              maxWidth: isDesktop ? '100%' : '80%',
+              height: 'auto',
+              padding: isDesktop ? 0 : 1,
+              display: 'block',
+              margin: '0 auto',
+            }}
+          />
           {/* Hide close icon on desktop */}
           {!isDesktop && (
             <IconButton onClick={handleDrawerClose}>
@@ -463,10 +475,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </Typography>
         </Box>
       </Drawer>
-      <Main open={open}>
-        <DrawerHeader />
-        {children}
-      </Main>
+      <Main open={open}>{children}</Main>
     </Box>
   );
 }
