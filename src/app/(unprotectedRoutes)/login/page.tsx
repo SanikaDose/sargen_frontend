@@ -1,17 +1,18 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import { Box, Button, Container, Typography, Paper } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
-import styles from './style.module.css';
-import { FormValues, LoginFormInputs, Token } from './login.types';
-import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
+import { RootState } from '@/store/store';
+import { Box, Button, Container, Typography } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
-import { useDispatch } from 'react-redux';
-import { setDecodedToken } from './loginSlice';
 import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { LoginFormInputs, Token } from './login.types';
+import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
+import { setDecodedToken, setOnboardingStatus } from './loginSlice';
+import styles from './style.module.css';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
@@ -19,6 +20,8 @@ const LoginPage = () => {
   const hasNavigatedRef = useRef(false);
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch();
+
+  const onboardingStatus = useSelector((state: RootState) => state.tokenDecode.onboardingStatus);
   const router = useRouter();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
@@ -49,15 +52,14 @@ const LoginPage = () => {
       }
 
       const response = await getOnboardingStatus(tenantId);
-      const onboardingData = response.data;
-      const error = response.error;
 
+      const onboardingData = response.data;
+
+      const error = response.error;
+      if (!error) dispatch(setOnboardingStatus(response.data?.onboardingStatus || 'NOT_STARTED'));
       if (error || !onboardingData) {
         throw new Error('Failed to fetch onboarding status');
       }
-
-      const { onboardingStatus } = onboardingData;
-      console.log('onboarding status', onboardingStatus);
 
       hasNavigatedRef.current = true;
       switch (onboardingStatus) {
