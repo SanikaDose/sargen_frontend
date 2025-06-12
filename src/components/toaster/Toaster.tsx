@@ -32,7 +32,7 @@ export default function Toaster() {
             horizontal: isSmallScreen ? 'right' : 'left',
           }}
           open={open}
-          autoHideDuration={3000000}
+          autoHideDuration={3000}
           onClose={handleClose}
           sx={
             !isSmallScreen
