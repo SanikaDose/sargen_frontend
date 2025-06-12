@@ -17,7 +17,7 @@ pipeline {
       steps {
         dir('repo') {
           withSonarQubeEnv('SonarQubeServer') {
-            sh 'sonar-scanner -Dsonar.projectKey=$SONAR_PROJECT_KEY'
+            sh 'sonar-scanner -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.branch.name=development'
           }
         }
       }
