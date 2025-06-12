@@ -2,10 +2,12 @@ import plantAssessmentReducer from '@/app/(protectedRoutes)/[...plantAssessment]
 import { configureStore } from '@reduxjs/toolkit';
 import { protectedApi } from './api/protectedApis/baseProtectedApi';
 import { publicApi } from './api/publicApis/basePublicApi';
+import toasterReducer from "../components/toaster/toasterSlice"
 
 import languageReducer from './languageSlice';
 export const store = configureStore({
   reducer: {
+    toasterGlobal: toasterReducer,
     [protectedApi.reducerPath]: protectedApi.reducer,
     [publicApi.reducerPath]: publicApi.reducer,
     plantAssessmentGlobal: plantAssessmentReducer,

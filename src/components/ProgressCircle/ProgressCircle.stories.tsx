@@ -1,5 +1,4 @@
 // ProgressCircle.stories.tsx
-import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import ProgressCircle from './ProgressCircle';
 

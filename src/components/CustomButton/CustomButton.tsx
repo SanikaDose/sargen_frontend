@@ -7,7 +7,6 @@ import SaveIcon from '@mui/icons-material/Save';
 
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
 export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
-
 type CustomButtonProps = {
   children?: React.ReactNode;
   variant?: ButtonVariant;

@@ -6,6 +6,7 @@ import ThemeProvider from './ThemeProvider';
 
 import I18nProvider from '@/providers/I18nProvider';
 import LanguageInitializer from '@/components/LanguageInitializer';
+import Toaster from '@/components/toaster/Toaster';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -29,20 +30,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-
- <I18nProvider>
-
-        <ThemeProvider>
-          <GlobalReduxProvider>
-
-              <LanguageInitializer /> 
-            {children}
-
-            
+        <I18nProvider>
+          <ThemeProvider>
+            <GlobalReduxProvider>
+              <LanguageInitializer />
+              <Toaster/>
+              {children}
             </GlobalReduxProvider>
-        </ThemeProvider>
-
- </I18nProvider>       
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );
