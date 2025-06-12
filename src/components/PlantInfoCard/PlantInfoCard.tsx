@@ -13,6 +13,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
         <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
         <Typography className={styles.editButton} onClick={editPlantOnClick}>
           <EditOutlinedIcon />
+          <EditOutlinedIcon />
         </Typography>
       </Box>
 

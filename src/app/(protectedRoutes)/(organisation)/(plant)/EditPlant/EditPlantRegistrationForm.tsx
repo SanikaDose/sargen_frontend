@@ -156,14 +156,14 @@ const EditPlantRegistrationForm = () => {
                     rules={{ required: input.required }}
                     render={({ field }) =>
                       input.isCurrency ? (
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
+                        <FormControl fullWidth sx={{ mt: 1.9 }}>
+                          <Typography sx={{ fontWeight: 600, color: '#000000' }}>Currency Type</Typography>
                           <Select
                             {...field}
                             displayEmpty
                             value={field.value || ''}
                             inputProps={{ 'aria-label': 'Select Currency' }}
-                            sx={{ borderRadius: '8px' }}
+                            sx={{ borderRadius: '8px', height: 36 }}
                             onFocus={() => setFocusedField('currencyType')}
                           >
                             <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
@@ -184,6 +184,7 @@ const EditPlantRegistrationForm = () => {
                           required={input.required}
                           type={input.type || 'text'}
                           onFocus={() => setFocusedField(input.name)}
+                          size="small"
                         />
                       )
                     }
@@ -206,7 +207,7 @@ const EditPlantRegistrationForm = () => {
               label="About Us"
               placeholder="Enter About Plant"
               multiline
-              rows={3}
+              // rows={3}
               type="text"
               onFocus={() => setFocusedField('about')}
             />
