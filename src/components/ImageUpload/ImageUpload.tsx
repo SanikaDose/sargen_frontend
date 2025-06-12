@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Avatar, IconButton } from '@mui/material';
-import Edit from '@mui/icons-material/Edit';
-import styles from './style.module.css';
 import { usePathname } from 'next/navigation';
+import React, { useState } from 'react';
+import styles from './style.module.css';
 interface ImageUploaderProps {
   imageProp?: string;
   onUpload?: (file: File) => void;
@@ -37,7 +37,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) =>
           />
           {!isPlantOverview && (
             <IconButton component="span" className={styles.editButton} aria-label="edit avatar">
-              <Edit fontSize="inherit" />
+              <EditOutlinedIcon fontSize="inherit" />
             </IconButton>
           )}
         </label>

@@ -1,12 +1,8 @@
-import React from 'react';
-import { Card, CardContent, Typography, Grid, Avatar, Box, Divider, Button, CircularProgress } from '@mui/material';
-import defaulImage from '../../../public/images/default-logo-image.png';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import Edit from '@mui/icons-material/Edit';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
-import ImageUploader from '../ImageUpload/ImageUpload';
+import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
-import { PlantInfoCardProps, PlantData } from './PlantInfoCard.d';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
@@ -16,7 +12,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
       <Box className={styles.header}>
         <Typography className={`${styles.title} ${styles.titleSm} ${styles.titleMd}`}>{plantData?.name}</Typography>
         <Typography className={styles.editButton} onClick={editPlantOnClick}>
-          <Edit />
+          <EditOutlinedIcon />
         </Typography>
       </Box>
 

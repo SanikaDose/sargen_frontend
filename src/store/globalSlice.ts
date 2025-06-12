@@ -6,6 +6,7 @@ const initialState = {
   personDetails: {},
   InfoBoxToShow: false,
   organizationId: '',
+  sideBarDrawerList: [],
 };
 
 const globalSlice = createSlice({

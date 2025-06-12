@@ -22,10 +22,12 @@ type Token = {
 
 type LoginState = {
   decodedToken: Token | null;
+  onboardingStatus: string;
 };
 
 const initialState: LoginState = {
   decodedToken: null,
+  onboardingStatus: '',
 };
 
 /**
@@ -41,8 +43,11 @@ const LoginSlice = createSlice({
     setDecodedToken: (state, actions: PayloadAction<Token>) => {
       state.decodedToken = actions.payload;
     },
+    setOnboardingStatus: (state, actions: PayloadAction<string>) => {
+      state.onboardingStatus = actions.payload;
+    },
   },
 });
 
-export const { setDecodedToken } = LoginSlice.actions;
+export const { setDecodedToken, setOnboardingStatus } = LoginSlice.actions;
 export default LoginSlice.reducer;

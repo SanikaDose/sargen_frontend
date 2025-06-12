@@ -36,7 +36,7 @@ export const Default: Story = {
   args: {
     children: 'Click Me',
     variant: 'contained',
-    color: '#10557C',
+    color: 'primary',
     icon: 'right',
     height: '48px',
     width: '160px',
@@ -47,7 +47,7 @@ export const IconOnly: Story = {
   args: {
     icon: 'success',
     variant: 'outlined',
-    color: '#28a745',
+    color: 'primary',
     height: '48px',
     width: '48px',
   },
