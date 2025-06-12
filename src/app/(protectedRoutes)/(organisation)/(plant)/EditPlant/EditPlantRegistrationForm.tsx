@@ -12,7 +12,7 @@ import styles from './EditPlant.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { PlantFormType } from './EditPlant.types';
 import { useEditPlantInfoMutation, useGetPlantByIdQuery, useUploadPlantLogoMutation } from './EditPlantApis';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 
 const steps = [
@@ -32,8 +32,7 @@ const steps = [
 ].map((label) => ({ label }));
 
 const EditPlantRegistrationForm = () => {
-  // const params = useParams();
-
+  const router = useRouter();
   const params = useParams();
 
   const organisationId = params.OrganisationId as string;
@@ -103,7 +102,8 @@ const EditPlantRegistrationForm = () => {
     try {
       const { about, ...body } = data;
       await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
-      reset();
+      // reset();
+      router.back();
     } catch (error) {
       console.error('Failed to add plant info:', error);
     }
@@ -216,7 +216,14 @@ const EditPlantRegistrationForm = () => {
       </Box>
 
       <Box className={styles.buttonSection}>
-        <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
+        <CustomButton
+          children="Back"
+          variant="contained"
+          color="primary"
+          icon="left"
+          type="button"
+          onClick={() => router.back()}
+        />
         <CustomButton
           children={isLoading ? 'Saving...' : 'Save'}
           variant="contained"

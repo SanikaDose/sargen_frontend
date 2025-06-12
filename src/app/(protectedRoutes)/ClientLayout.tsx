@@ -475,7 +475,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </Typography>
         </Box>
       </Drawer>
-      <Main open={open}>{children}</Main>
+      <Main open={open}>
+        <DrawerHeader />
+        {children}
+      </Main>
     </Box>
   );
 }

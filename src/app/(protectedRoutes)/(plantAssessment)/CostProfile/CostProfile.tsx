@@ -167,6 +167,7 @@ const CostProfile = () => {
                   onChange={() => {}}
                   readonly
                   boxBackgroundColor="#10557C"
+                  textColor="#FFFFFF"
                 />
               </Box>
             </Box>
