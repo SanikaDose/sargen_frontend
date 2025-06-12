@@ -37,6 +37,7 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps & { onChange:
         boxShadow: ' 0px 4px 4px 0px #00000040',
         height: '100%',
         padding: 2,
+        width: '100%',
       }}
     >
       <Typography variant="body2" className={styles.label} sx={{ color: textColor }}>

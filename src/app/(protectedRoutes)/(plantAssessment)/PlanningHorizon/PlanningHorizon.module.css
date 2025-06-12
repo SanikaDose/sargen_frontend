@@ -1,0 +1,95 @@
+.formSection {
+  display: flex;
+  width: 100%;
+  height: 90%;
+  /* border: 1px solid blue; */
+}
+
+.stepperContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  /* border: 1px solid; */
+}
+
+.formContainer {
+  height: 100%;
+  width: 70%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  /* border: 2px solid red; */
+  position: relative;
+}
+
+.radioGroup {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+.rightSection {
+  height: 100%;
+  width: 30%;
+  padding: 20px;
+  display: flex;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.aboutSection {
+  height: 90%;
+}
+
+.buttonSection {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (min-width: 300px) and (max-width: 915px) {
+  .radioGroup {
+    height: 100%;
+    width: 100%;
+  }
+
+  .stepperContainer {
+    display: none;
+  }
+  .formSection {
+    width: 100%;
+    height: 90%;
+    flex-direction: column;
+  }
+  .bothSections {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .aboutSection {
+    display: none;
+  }
+  .rightSection {
+    width: 100%;
+    height: auto;
+  }
+  .buttonSection {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .formContainer {
+    width: 100%;
+  }
+}
+@media (min-width: 915px) and (max-width: 1100px) {
+  .stepperContainer {
+    display: none;
+  }
+}

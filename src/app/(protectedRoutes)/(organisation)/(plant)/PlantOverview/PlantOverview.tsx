@@ -90,7 +90,7 @@ export default function PlantOverview() {
                   router.push(`EditPlant/${tenantId}/${plant.id}`);
                 }}
                 onClick={() => {
-                  router.push(`plantAssement/${tenantId}/${plant.id}`);
+                  router.push(`CostProfile/${tenantId}/${plant.id}`);
                 }}
               />
             </Grid>

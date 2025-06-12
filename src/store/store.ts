@@ -1,4 +1,5 @@
-import plantAssessmentReducer from '@/app/(protectedRoutes)/[...plantAssessment]/plantAssementSlice';
+// import plantAssessmentReducer from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementSlice';
+import plantAssessmentReducer from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { protectedApi } from './api/protectedApis/baseProtectedApi';
 import { publicApi } from './api/publicApis/basePublicApi';
