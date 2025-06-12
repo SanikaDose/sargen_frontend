@@ -2,6 +2,7 @@ import plantAssessmentReducer from '@/app/(protectedRoutes)/[...plantAssessment]
 import { configureStore } from '@reduxjs/toolkit';
 import { protectedApi } from './api/protectedApis/baseProtectedApi';
 import { publicApi } from './api/publicApis/basePublicApi';
+import stepperReducer from './stepperSlice';
 
 import languageReducer from './languageSlice';
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     [publicApi.reducerPath]: publicApi.reducer,
     plantAssessmentGlobal: plantAssessmentReducer,
     language: languageReducer,
+    stepper: stepperReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(protectedApi.middleware).concat(publicApi.middleware),
