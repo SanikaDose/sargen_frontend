@@ -12,7 +12,7 @@ import styles from './EditPlant.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { PlantFormType } from './EditPlant.types';
 import { useEditPlantInfoMutation, useGetPlantByIdQuery, useUploadPlantLogoMutation } from './EditPlantApis';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 
 const steps = [
@@ -32,8 +32,7 @@ const steps = [
 ].map((label) => ({ label }));
 
 const EditPlantRegistrationForm = () => {
-  // const params = useParams();
-
+  const router = useRouter();
   const params = useParams();
 
   const organisationId = params.OrganisationId as string;
@@ -103,7 +102,8 @@ const EditPlantRegistrationForm = () => {
     try {
       const { about, ...body } = data;
       await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
-      reset();
+      // reset();
+      router.back();
     } catch (error) {
       console.error('Failed to add plant info:', error);
     }
@@ -156,14 +156,14 @@ const EditPlantRegistrationForm = () => {
                     rules={{ required: input.required }}
                     render={({ field }) =>
                       input.isCurrency ? (
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
+                        <FormControl fullWidth sx={{ mt: 1.9 }}>
+                          <Typography sx={{ fontWeight: 600, color: '#000000' }}>Currency Type</Typography>
                           <Select
                             {...field}
                             displayEmpty
                             value={field.value || ''}
                             inputProps={{ 'aria-label': 'Select Currency' }}
-                            sx={{ borderRadius: '8px' }}
+                            sx={{ borderRadius: '8px', height: 36 }}
                             onFocus={() => setFocusedField('currencyType')}
                           >
                             <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
@@ -184,6 +184,7 @@ const EditPlantRegistrationForm = () => {
                           required={input.required}
                           type={input.type || 'text'}
                           onFocus={() => setFocusedField(input.name)}
+                          size="small"
                         />
                       )
                     }
@@ -206,7 +207,7 @@ const EditPlantRegistrationForm = () => {
               label="About Us"
               placeholder="Enter About Plant"
               multiline
-              rows={3}
+              // rows={3}
               type="text"
               onFocus={() => setFocusedField('about')}
             />
@@ -215,7 +216,14 @@ const EditPlantRegistrationForm = () => {
       </Box>
 
       <Box className={styles.buttonSection}>
-        <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
+        <CustomButton
+          children="Back"
+          variant="contained"
+          color="primary"
+          icon="left"
+          type="button"
+          onClick={() => router.back()}
+        />
         <CustomButton
           children={isLoading ? 'Saving...' : 'Save'}
           variant="contained"

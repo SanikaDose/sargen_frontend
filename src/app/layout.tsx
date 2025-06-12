@@ -34,7 +34,6 @@ export default function RootLayout({
           <ThemeProvider>
             <GlobalReduxProvider>
               <LanguageInitializer />
-              <Toaster/>
               {children}
             </GlobalReduxProvider>
           </ThemeProvider>

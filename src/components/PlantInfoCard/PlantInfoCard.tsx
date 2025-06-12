@@ -1,8 +1,10 @@
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
+import ImageUploader from '../ImageUpload/ImageUpload';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;

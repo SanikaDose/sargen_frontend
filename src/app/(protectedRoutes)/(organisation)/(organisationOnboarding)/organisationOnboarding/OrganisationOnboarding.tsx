@@ -291,12 +291,13 @@ function OrganizationOnbording() {
         sx={{ p: 0.5, borderRadius: 4, backgroundColor: '#B0E0E6', border: '1px solid purple' }}
       >
         <Grid>
-          <CustomButton children="Back" variant="contained" color="#10557C" icon="left" height="55px" width="80px" />
+          <CustomButton children="Back" variant="contained" color="primary" icon="left" height="55px" width="80px" />
         </Grid>
         <Grid>
           <CustomButton
             children="Next"
             variant="contained"
+            color="primary"
             icon="right"
             height="55px"
             width="80px"
