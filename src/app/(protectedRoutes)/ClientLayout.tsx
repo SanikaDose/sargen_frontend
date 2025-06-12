@@ -360,7 +360,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', height: '95%' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -475,7 +475,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </Typography>
         </Box>
       </Drawer>
-      <Main open={open}>{children}</Main>
+      <Main open={open}>
+        <DrawerHeader />
+        {children}
+      </Main>
     </Box>
   );
 }

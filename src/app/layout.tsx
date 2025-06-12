@@ -29,20 +29,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-
- <I18nProvider>
-
-        <ThemeProvider>
-          <GlobalReduxProvider>
-
-              <LanguageInitializer /> 
-            {children}
-
-            
+        <I18nProvider>
+          <ThemeProvider>
+            <GlobalReduxProvider>
+              <LanguageInitializer />
+              {children}
             </GlobalReduxProvider>
-        </ThemeProvider>
-
- </I18nProvider>       
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

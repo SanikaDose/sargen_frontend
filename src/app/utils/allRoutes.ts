@@ -80,12 +80,12 @@ export const AssessorSideBarList = [
   },
   {
     label: 'Point Of Contact',
-    toNavigate: '/addContactPerson',
+    toNavigate: '/AddContactPerson',
     Icon: ContactPageOutlinedIcon,
   },
   {
     label: 'Plant',
-    toNavigate: '/plantOverview',
+    toNavigate: '/PlantOverview',
     Icon: ApartmentOutlinedIcon,
   },
   {

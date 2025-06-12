@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material/styles';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import SaveIcon from '@mui/icons-material/Save';
 import { Button, ButtonProps } from '@mui/material';
@@ -53,7 +54,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     }
   };
   const theme = useTheme();
-  const paletteColor = theme.palette[color];
+  // const paletteColor = theme.palette[color]; // Not needed unless used elsewhere
 
   return (
     <Button
