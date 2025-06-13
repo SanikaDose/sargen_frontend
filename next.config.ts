@@ -7,4 +7,4 @@ const config: NextConfig = {
   devIndicators: false,
 };
 
-// export default nextConfig;
+export default config;
