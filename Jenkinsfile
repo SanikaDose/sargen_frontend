@@ -37,7 +37,7 @@ pipeline {
         dir('repo') {
           withSonarQubeEnv('SonarQubeServer') {
             script {
-              def scannerHome = tool 'SonarLocal'
+              def scannerHome = tool name: 'SonarLocal'
               sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sargen_frontend"
             }
           }
