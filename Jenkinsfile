@@ -36,10 +36,13 @@ pipeline {
       steps {
         dir('repo') {
           withSonarQubeEnv('SonarQubeServer') {
-            script {
-              def scannerHome = tool name: 'SonarLocal'
-              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sargen_frontend"
-            }
+            sh '''
+              sonar-scanner \
+                -Dsonar.projectKey=sargen_frontend \
+                -Dsonar.projectName=sargen_frontend \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=https://cicd.elansoltech.in/sonar
+            '''
           }
         }
       }
