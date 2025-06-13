@@ -98,7 +98,7 @@ const IndustrySelection = () => {
     dispatch(markStepCompleted(2));
   }, [dispatch]);
   return (
-    <Box sx={{ height: '100%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
+    <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper
           steps={stepperState.steps}
@@ -139,7 +139,7 @@ const IndustrySelection = () => {
                       const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
 
                       return (
-                        <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '12%' }}>
+                        <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
                           <Card
                             kpi={industry.industry_name}
                             isSelected={isSelected}

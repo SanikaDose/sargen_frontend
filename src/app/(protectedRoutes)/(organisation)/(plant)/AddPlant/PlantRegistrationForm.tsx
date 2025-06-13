@@ -82,7 +82,7 @@ const PlantRegistrationForm = () => {
   const completedSteps = useMemo(() => {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
-      if (typeof value === 'string' && value.length > 1) {
+      if (typeof value === 'string' && value.length >= 1) {
         acc.push(index);
       }
       return acc;
@@ -172,7 +172,7 @@ const PlantRegistrationForm = () => {
             render={({ field }) => (
               <InputWithLabel
                 {...field}
-                label="About Us"
+                label="About Plant"
                 placeholder="Enter About Plant"
                 multiline
                 rows={3}

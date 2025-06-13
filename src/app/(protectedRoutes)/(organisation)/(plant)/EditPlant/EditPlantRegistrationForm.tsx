@@ -23,8 +23,8 @@ const steps = [
   'GSTIN',
   'Type',
   'Age',
-  'Revenue',
   'Currency',
+  'Revenue',
   'Employees',
   'Lines',
   'Assessment',
@@ -123,7 +123,7 @@ const EditPlantRegistrationForm = () => {
   const completedSteps = useMemo(() => {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
-      if (typeof value === 'string' && value.length > 1) {
+      if (typeof value === 'string' && value.length >= 1) {
         acc.push(index);
       }
       return acc;

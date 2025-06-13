@@ -160,7 +160,7 @@ const PlanningHorizon = () => {
                       const isSelected = field.value === option.id;
 
                       return (
-                        <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '12%' }}>
+                        <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
                           <Card
                             kpi={option.planningHorizon}
                             isSelected={isSelected}

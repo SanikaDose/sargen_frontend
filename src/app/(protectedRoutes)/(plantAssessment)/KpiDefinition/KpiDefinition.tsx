@@ -111,7 +111,7 @@ const KpiDefinition = () => {
     dispatch(markStepIncomplete(2)); // If coming back from Planning
   }, [dispatch]);
   return (
-    <Box sx={{ height: '100%' }} component="form" onSubmit={handleSubmit(handleSave)}>
+    <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
       <Box className={styles.stepperContainer}>
         <Stepper
           steps={stepperState.steps}
@@ -135,7 +135,7 @@ const KpiDefinition = () => {
 
             <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
               {kpiList.map((field, index) => (
-                <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '12%' }}>
+                <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '10%' }}>
                   <Controller
                     name={`kpis.${index}.isselected`}
                     control={control}

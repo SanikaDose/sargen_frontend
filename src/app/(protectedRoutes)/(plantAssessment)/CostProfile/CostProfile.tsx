@@ -118,7 +118,7 @@ const CostProfile = () => {
   }, [dispatch]);
 
   return (
-    <Box component="form" sx={{ height: '100%' }} onSubmit={handleSubmit(handleFormSubmit)}>
+    <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper
           steps={stepperState.steps}
