@@ -1,42 +1,33 @@
 pipeline {
   agent any
 
-  options {
-    skipDefaultCheckout() // ✅ allowed here
-    // ❌ cleanWs() not allowed here
-  }
-
   environment {
-    SONARQUBE_SCANNER = 'SonarLocal' // Must match what you set in Jenkins
-    SONARQUBE_SERVER  = 'SonarQubeServer'    // Must match the server name in Jenkins
-    GITEA_REPO = 'git@gitea:tarjan-1/sargen_frontend.git'
-    GITHUB_REPO = 'git@github.com:elansol/sargen_frontend.git'
-    SONAR_PROJECT_KEY = 'sargen_frontend'
+    GIT_SSH_COMMAND = "ssh -o StrictHostKeyChecking=no"
+    PROJECT_KEY = 'sargen_frontend'
   }
 
   stages {
+
     stage('Clean Workspace') {
       steps {
-        cleanWs() // ✅ allowed here
+        cleanWs()
       }
     }
 
     stage('Checkout') {
       steps {
-        sshagent(credentials: ['gitea-ssh']) {
-          sh '''
-            rm -rf repo
-            git clone --depth 1 ${GITEA_REPO} repo
-          '''
+        sshagent(credentials: ['git']) {
+          checkout scm
         }
       }
     }
 
-    stage('SonarQube Analysis') {
+    stage('SonarQube Scan') {
       steps {
-        dir('repo') {
-          withSonarQubeEnv('SonarQubeServer') {
-            sh 'sonar-scanner -Dsonar.projectKey=$SONAR_PROJECT_KEY'
+        withSonarQubeEnv('SonarQubeServer') {
+          script {
+            def scannerHome = tool name: 'SonarLocal'
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${env.PROJECT_KEY}"
           }
         }
       }
@@ -44,7 +35,7 @@ pipeline {
 
     stage('Quality Gate') {
       steps {
-        timeout(time: 10, unit: 'MINUTES') {
+        timeout(time: 5, unit: 'MINUTES') {
           waitForQualityGate abortPipeline: true
         }
       }
@@ -54,9 +45,8 @@ pipeline {
       steps {
         sshagent(credentials: ['github-ssh']) {
           sh '''
-            cd repo
-            git remote add github $GITHUB_REPO || true
-            git push --mirror github
+            git remote add github git@github.com:your-username/sargen_frontend.git || true
+            git push github HEAD:development --force
           '''
         }
       }
@@ -64,11 +54,11 @@ pipeline {
   }
 
   post {
-    success {
-      echo '✅ Pipeline completed successfully.'
-    }
     failure {
-      echo '❌ Pipeline failed.'
+      echo '❌ Build failed.'
+    }
+    success {
+      echo '✅ Build succeeded.'
     }
   }
 }
