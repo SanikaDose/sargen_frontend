@@ -35,8 +35,8 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         dir('repo') {
-           withSonarQubeEnv('SonarQubeServer') {
-            sh './gradlew sonarqube' // or use sonar-scanner if JS
+          withSonarQubeEnv('SonarQubeServer') {
+            sh 'sonar-scanner -Dsonar.projectKey=$SONAR_PROJECT_KEY'
           }
         }
       }
