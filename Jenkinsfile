@@ -36,7 +36,7 @@ pipeline {
       steps {
         dir('repo') {
           withSonarQubeEnv('SonarQubeServer') {
-            sh '$SONARQUBE_SCANNER -Dsonar.projectKey=$SONAR_PROJECT_KEY'
+            sh 'sonar-scanner -Dsonar.projectKey=$SONAR_PROJECT_KEY'
           }
         }
       }
