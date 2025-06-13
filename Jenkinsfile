@@ -26,8 +26,8 @@ pipeline {
       steps {
         withSonarQubeEnv('SonarQubeServer') {
           script {
-            def scannerHome = tool name: 'SonarLocal'
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${env.PROJECT_KEY}"
+            def scannerHome = tool 'SonarScanner'
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sargen_frontend"
           }
         }
       }
