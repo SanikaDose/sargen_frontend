@@ -4,22 +4,22 @@ import { Theme } from '@mui/material/styles';
 export const sargenPalette = {
   primary: {
     main: '#047af2',
-    dark: '#0356b0', // darker, richer version for hover
+    dark: '#0356b0',
     contrastText: '#ffffff',
   },
   secondary: {
     main: '#D6E9FF',
-    dark: '#aacdf7', // slightly darker for hover
+    dark: '#aacdf7',
     contrastText: '#212121',
   },
   error: {
     main: '#F44336',
-    dark: '#d32f2f', // MUI default
+    dark: '#d32f2f',
     contrastText: '#ffffff',
   },
   success: {
     main: '#4CAF50',
-    dark: '#388e3c', // MUI default
+    dark: '#388e3c',
     contrastText: '#ffffff',
   },
   background: {
@@ -73,6 +73,14 @@ export const sargenComponents = {
         backgroundColor: '#ffffff',
         borderBottom: '1px solid #e0e0e0',
         boxShadow: 'none',
+      },
+    },
+  },
+  // Fix stepper alignment by styling both icon and connector
+  MuiStepIcon: {
+    styleOverrides: {
+      root: {
+        '& .MuiStepIcon-active': { color: 'red' },
       },
     },
   },

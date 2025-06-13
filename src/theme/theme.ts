@@ -1,7 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { dataDisplayCustomizations } from './customizations/dataDisplay';
 import { feedbackCustomizations } from './customizations/feedback';
-import { navigationCustomizations } from './customizations/navigation';
 import { sargenComponents, sargenPalette } from './customizations/sargenTheme';
 import { surfacesCustomizations } from './customizations/surfaces';
 import { colorSchemes, shadows, shape, typography } from './themePrimitives';
@@ -48,7 +47,7 @@ const theme = createTheme({
     // ...inputsCustomizations,
     ...dataDisplayCustomizations,
     ...feedbackCustomizations,
-    ...navigationCustomizations,
+
     ...surfacesCustomizations,
   },
 });
