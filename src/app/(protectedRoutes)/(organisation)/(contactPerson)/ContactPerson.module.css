@@ -28,8 +28,8 @@
 
 .imageBox {
   display: flex;
-  width: 27%;
-  height: 70%;
+  width: 25%;
+  height: 60%;
   justify-content: center;
   align-items: center;
 }

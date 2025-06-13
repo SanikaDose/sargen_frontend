@@ -57,7 +57,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled}
       {...rest}
       sx={{
-        borderRadius: 2,
+        borderRadius: '16px',
         padding: 1.5,
         height,
         width,
