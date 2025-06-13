@@ -27,7 +27,7 @@ pipeline {
       steps {
         sshagent(credentials: ['github-ssh']) {
           sh '''
-            git remote add github git@github.com:your-username/sargen_frontend.git || true
+            git remote add github git@github.com:elansol/sargen_frontend.git || true
             git push github HEAD:development --force
           '''
         }
