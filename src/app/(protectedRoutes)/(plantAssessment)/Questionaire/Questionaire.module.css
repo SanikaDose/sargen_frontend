@@ -6,7 +6,6 @@
 }
 
 .stepperContainer {
-  /* height: 10%; */
   width: 100%;
   display: flex;
   justify-content: center;
@@ -19,23 +18,15 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   /* border: 2px solid red; */
   position: relative;
 }
 
-.costProfile {
+.questionAnsweresSection {
   height: 100%;
-  width: 100%;
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  align-items: center;
-}
-
-.OverallCostProfileCard {
-  width: 40%;
+  gap: 10;
 }
 
 .rightSection {
@@ -60,50 +51,49 @@
   display: flex;
   justify-content: space-between;
 }
-.costInputCards {
-  height: 12%;
-  width: 40%;
-  display: 'flex';
-  gap: 2;
-}
-
-@media (min-width: 300px) and (max-width: 915px) {
+@media (min-width: 300px) and (max-width: 900px) {
   .stepperContainer {
     display: none;
   }
-  .formContainer {
+}
+@media (min-width: 300px) and (max-width: 700px) {
+  .formSection {
     width: 100%;
-    border: 2px solid red;
-    height: auto;
+    min-width: 0;
+    height: 'auto';
+    flex-direction: column;
   }
-  .overallCostCard {
+  .bothSections {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-  }
-  .rightSection {
-    width: 100%;
-    /* border: 2px solid red; */
   }
   .aboutSection {
     display: none;
   }
-  .bothSections {
-    width: '100%';
-    display: flex;
-    flex-direction: column;
-    /* height: auto; */
-  }
-  .costProfile {
-    width: '100%';
-    border: '1px solid';
-    /* height: auto; */
-  }
-  .costInputCards {
-    height: 7%;
-    width: 70%;
-    border: 1px solid;
-  }
-  .OverallCostProfileCard {
+  .rightSection {
     width: 100%;
+    height: auto;
+  }
+  .buttonSection {
     display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .formContainer {
+    height: auto;
+    width: 100%;
+  }
+}
+@media (min-width: 700px) and (max-width: 1300px) {
+  .stepperContainer {
+    display: none;
+  }
+  .cards {
+    width: 45%;
+    height: 100;
+    min-width: 0;
+    display: inline-flex;
   }
 }

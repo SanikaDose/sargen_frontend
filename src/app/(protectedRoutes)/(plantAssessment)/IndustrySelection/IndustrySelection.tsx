@@ -85,6 +85,7 @@ const IndustrySelection = () => {
 
     const industrySaveSuccesfully = await selectIndustrySelectionList(payload).unwrap();
     if (industrySaveSuccesfully) {
+      router.push(`/Questionaire/${organisationId}/${plantId}`);
     }
   };
 
