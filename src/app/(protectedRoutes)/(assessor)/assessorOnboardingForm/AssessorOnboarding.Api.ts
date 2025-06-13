@@ -124,7 +124,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         }
 
         return {
-          url: ` ${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.filestoCSV}${tenantId}`,
+          url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.filestoCSV}${tenantId}`,
           method: 'POST',
           body: formData,
         };
