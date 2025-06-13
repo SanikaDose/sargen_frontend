@@ -2,21 +2,23 @@ pipeline {
   agent any
 
   options {
-    skipDefaultCheckout()
-    cleanWs() // Clean workspace before starting the pipeline
+    skipDefaultCheckout() // ✅ allowed here
+    // ❌ cleanWs() not allowed here
   }
-  
+
   environment {
     GITEA_REPO = 'git@gitea:tarjan-1/sargen_frontend.git'
     GITHUB_REPO = 'git@github.com:elansol/sargen_frontend.git'
     SONAR_PROJECT_KEY = 'sargen_frontend'
   }
+
   stages {
     stage('Clean Workspace') {
       steps {
-        cleanWs()
+        cleanWs() // ✅ allowed here
       }
     }
+
     stage('Checkout') {
       steps {
         sshagent(credentials: ['gitea-ssh']) {
@@ -27,6 +29,7 @@ pipeline {
         }
       }
     }
+
     stage('SonarQube Analysis') {
       steps {
         dir('repo') {
@@ -36,13 +39,15 @@ pipeline {
         }
       }
     }
+
     stage('Quality Gate') {
       steps {
-        timeout(time: 120, unit: 'MINUTES') {
+        timeout(time: 10, unit: 'MINUTES') {
           waitForQualityGate abortPipeline: true
         }
       }
     }
+
     stage('Mirror to GitHub') {
       steps {
         sshagent(credentials: ['github-ssh']) {
@@ -53,6 +58,15 @@ pipeline {
           '''
         }
       }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ Pipeline completed successfully.'
+    }
+    failure {
+      echo '❌ Pipeline failed.'
     }
   }
 }
