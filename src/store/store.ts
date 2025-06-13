@@ -4,15 +4,20 @@ import { configureStore } from '@reduxjs/toolkit';
 import { protectedApi } from './api/protectedApis/baseProtectedApi';
 import { publicApi } from './api/publicApis/basePublicApi';
 import globalReducer from './globalSlice';
+import stepperReducer from './Slices/StepperSlice';
+import toasterReducer from '../components/toaster/toasterSlice';
+
 import languageReducer from './languageSlice';
 export const store = configureStore({
   reducer: {
     global: globalReducer,
+    toasterGlobal: toasterReducer,
     [protectedApi.reducerPath]: protectedApi.reducer,
     [publicApi.reducerPath]: publicApi.reducer,
     plantAssessmentGlobal: plantAssessmentReducer,
     language: languageReducer,
     tokenDecode: LoginReducer,
+    stepper: stepperReducer,
   },
 
   middleware: (getDefaultMiddleware) =>

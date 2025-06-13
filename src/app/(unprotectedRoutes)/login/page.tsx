@@ -21,7 +21,9 @@ const LoginPage = () => {
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch();
 
-  const onboardingStatus = useSelector((state: RootState) => state.tokenDecode.onboardingStatus);
+  // const onboardingStatus = useSelector((state: RootState) => state.tokenDecode.onboardingStatus);
+  // console.log('onboardingStatus', onboardingStatus);
+
   const router = useRouter();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
@@ -56,13 +58,15 @@ const LoginPage = () => {
       const onboardingData = response.data;
 
       const error = response.error;
-      if (!error) dispatch(setOnboardingStatus(response.data?.onboardingStatus || 'NOT_STARTED'));
+      if (!error) await dispatch(setOnboardingStatus(response.data?.onboardingStatus || 'NOT_STARTED'));
       if (error || !onboardingData) {
+        console.log('eerror in getting onboarding status ');
+
         throw new Error('Failed to fetch onboarding status');
       }
 
       hasNavigatedRef.current = true;
-      switch (onboardingStatus) {
+      switch (response.data?.onboardingStatus) {
         case 'NOT_STARTED':
           router.push('/organisationOnboarding');
           break;
@@ -75,7 +79,7 @@ const LoginPage = () => {
           router.push('/PlantOverview');
           break;
         default:
-          console.warn('Unhandled onboarding status:', onboardingStatus);
+          console.warn('Unhandled onboarding status:', response.data?.onboardingStatus);
           break;
       }
     } catch (error) {

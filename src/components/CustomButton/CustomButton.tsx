@@ -66,7 +66,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 0.5,
-        color: 'white',
+        color: 'primary',
         backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].main} !important`,
         '&:hover': {
           backgroundColor: (theme) => `${disabled ? theme.palette.grey[400] : theme.palette[color].dark} !important`,
