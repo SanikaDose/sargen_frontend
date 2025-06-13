@@ -12,6 +12,10 @@ pipeline {
     SONAR_PROJECT_KEY = 'sargen_frontend'
   }
   stages {
+    stage('Clean Workspace') {
+      steps {
+        cleanWs()
+    }
     stage('Checkout') {
       steps {
         sshagent(credentials: ['gitea-ssh']) {
