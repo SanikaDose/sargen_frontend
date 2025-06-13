@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Card, Checkbox, Grid, Typography } from '@mui/material';
+import { Box, Checkbox, Grid, Typography } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './kpiDefinition.module.css';
 import { Kpi, KpiFormValues } from '../plantAssement.model';
@@ -14,7 +14,7 @@ import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
-
+import Card from '@/components/Card/Card';
 const KPI_TO_CATEGORY_MAP: Record<string, string> = {
   'Time to Delivery': 'Dilevery',
   'Utilities Efficiency': 'Utilities',
@@ -111,7 +111,7 @@ const KpiDefinition = () => {
     dispatch(markStepIncomplete(2)); // If coming back from Planning
   }, [dispatch]);
   return (
-    <Box sx={{ height: '100%' }} component="form" onSubmit={handleSubmit(handleSave)}>
+    <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
       <Box className={styles.stepperContainer}>
         <Stepper
           steps={stepperState.steps}
@@ -135,7 +135,7 @@ const KpiDefinition = () => {
 
             <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
               {kpiList.map((field, index) => (
-                <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '12%' }}>
+                <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '10%' }}>
                   <Controller
                     name={`kpis.${index}.isselected`}
                     control={control}
@@ -145,39 +145,12 @@ const KpiDefinition = () => {
 
                       return (
                         <Card
-                          onClick={() => !isDisabled && controllerField.onChange(!isSelected)}
-                          sx={{
-                            cursor: isDisabled ? 'not-allowed' : 'pointer',
-                            background: isSelected ? '#10557C' : '#fff',
-                            border: '0.4px solid #CCCCCC',
-                            boxShadow: '0px 4px 4px 0px #00000040',
-                            borderRadius: 2,
-                            minHeight: 60,
-                            display: 'flex',
-                            alignItems: 'center',
-                            paddingX: 2,
-                            transition: 'background 0.3s ease',
-                            color: isSelected ? '#fff' : '#000',
-                            width: '100%',
-                          }}
-                        >
-                          <Checkbox
-                            checked={isSelected}
-                            disabled={isDisabled}
-                            onChange={() => controllerField.onChange(!isSelected)}
-                            sx={{ color: '#fff', padding: 0, marginRight: 1 }}
-                          />
-                          <Typography
-                            sx={{
-                              textTransform: 'capitalize',
-                              fontWeight: 500,
-                              fontSize: 14,
-                              color: isSelected ? '#fff' : '#000',
-                            }}
-                          >
-                            {field.kpi}
-                          </Typography>
-                        </Card>
+                          key={field.id}
+                          kpi={field.kpi}
+                          isSelected={isSelected}
+                          isDisabled={isDisabled}
+                          onToggle={() => controllerField.onChange(!isSelected)}
+                        />
                       );
                     }}
                   />

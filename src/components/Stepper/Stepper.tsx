@@ -13,7 +13,7 @@ const Stepper: React.FC<StepperProps> = ({ steps = [], activeStep = 0, completed
           sx={{
             borderRadius: '16px',
             p: 2,
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+            // boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
             backgroundColor: 'white',
             border: '1px solid rgb(216, 216, 216)',
           }}

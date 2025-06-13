@@ -1,0 +1,19 @@
+/* components/KPICard/KPICard.module.css */
+.card {
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px #00000040;
+  display: flex;
+  align-items: center;
+  padding: 3% 0%;
+  width: 100%;
+  height: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.kpiText {
+  text-transform: capitalize;
+  font-weight: 500;
+  font-size: 14px;
+  color: #000;
+}

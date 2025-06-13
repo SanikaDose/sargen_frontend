@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { setPageName } from '@/store/globalSlice';
 import { useDispatch } from 'react-redux';
+import InfoBox from '@/components/InfoBox/InfoBox';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -157,7 +158,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         sx={{
           borderRadius: '16px',
           p: 2,
-          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+          // boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
           backgroundColor: 'white',
           border: '1px solid rgb(216, 216, 216)',
         }}
@@ -240,30 +241,30 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
             </Grid>
           </Box>
         </Grid>
-      </Paper>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        p={1}
-        mt={5}
-        ml={5}
-        mr={5}
-        sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
-      >
-        <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
-          Back
-        </CustomButton>
-        <CustomButton
-          type="submit"
-          variant="contained"
-          icon="save"
-          disabled={!isValid || isLoading}
-          onClick={() => router.push('/PlantOverview')}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          p={1}
+          mt={5}
+          ml={5}
+          mr={5}
+          sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
         >
-          {isLoading ? 'Saving...' : 'Save'}
-        </CustomButton>
-      </Box>
+          <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
+            Back
+          </CustomButton>
+          <CustomButton
+            type="submit"
+            variant="contained"
+            icon="save"
+            disabled={!isValid || isLoading}
+            onClick={() => router.push('/PlantOverview')}
+          >
+            {isLoading ? 'Saving...' : 'Save'}
+          </CustomButton>
+        </Box>
+      </Paper>
     </form>
   );
 };

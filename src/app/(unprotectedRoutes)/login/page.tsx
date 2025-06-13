@@ -2,7 +2,6 @@
 
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
-import { RootState } from '@/store/store';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
@@ -93,7 +92,7 @@ const LoginPage = () => {
     <Container maxWidth="sm" className={styles.container}>
       <Box className={styles.paper}>
         <section className={styles.textContainer}>
-          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
+          <Typography className={styles.welcomeBackText} variant="h3" fontWeight="bold">
             Welcome Back
           </Typography>
           <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
