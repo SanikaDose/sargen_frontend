@@ -1,5 +1,11 @@
 pipeline {
   agent any
+
+  options {
+    skipDefaultCheckout()
+    cleanWs() // Clean workspace before starting the pipeline
+  }
+  
   environment {
     GITEA_REPO = 'git@gitea:tarjan-1/sargen_frontend.git'
     GITHUB_REPO = 'git@github.com:elansol/sargen_frontend.git'
@@ -9,6 +15,7 @@ pipeline {
     stage('Checkout') {
       steps {
         sshagent(credentials: ['gitea-ssh']) {
+          rm -rf repo
           sh 'git clone --depth 1 $GITEA_REPO repo'
         }
       }
