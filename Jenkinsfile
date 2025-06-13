@@ -15,8 +15,10 @@ pipeline {
     stage('Checkout') {
       steps {
         sshagent(credentials: ['gitea-ssh']) {
-          rm -rf repo
-          sh 'git clone --depth 1 $GITEA_REPO repo'
+          sh '''
+            rm -rf repo
+            git clone --depth 1 ${GITEA_REPO} repo
+          '''
         }
       }
     }
