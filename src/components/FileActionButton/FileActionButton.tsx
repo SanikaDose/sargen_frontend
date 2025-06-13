@@ -5,6 +5,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import styles from './style.module.css';
 import { FileActionButtonProps } from './FileActionButton.types';
+
 import VisibilityIcon from '@mui/icons-material/Visibility';
 const FileActionButton = ({
   icon,
@@ -16,7 +17,6 @@ const FileActionButton = ({
   variant = 'contained',
   color = '#1976d2',
   onClick,
-  loading = false,
 }: FileActionButtonProps) => {
   const getIcon = () => {
     if (icon === 'upload') return <CloudUploadIcon />;

@@ -44,7 +44,7 @@ import { fileUploadKeyMap, fileTypes, fileValues, allowedExtensions } from './Fo
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import Loader from '@/components/Loader/Loader';
 const tenantId = getValueLocalStorage('tenantId');
-const [fileUploadLoader, setFileUploadLoader] = useState(false);
+// const [fileUploadLoader, setFileUploadLoader] = useState(false);
 const steps = [
   'FirstName',
   'LastName',
@@ -75,15 +75,12 @@ function AssessorOnboarding() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
-  const [isFinalUpload, setIsFinalUpload] = useState(false);
+  // const [isFinalUpload, setIsFinalUpload] = useState(false);
   const [uploadAllMetadataFiles] = useUploadAllMetadataFilesMutation();
-
-  const [loading, setLoading] = useState(false);
 
   const handleUploadFile = async (file: File, fileKey: string) => {
     try {
       setUploadedFiles((prev) => {
-        setLoading(true);
         const updated = { ...prev, [fileKey]: file };
         console.log('📦 Updated uploadedFiles:', updated);
 
@@ -105,7 +102,6 @@ function AssessorOnboarding() {
             .catch((err) => {
               console.error('❌ Upload failed:', err);
             });
-          setLoading(false);
         } else {
           console.log('🕐 Waiting for all files to be uploaded...');
         }
@@ -439,7 +435,6 @@ function AssessorOnboarding() {
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.updatedAt ?? '-'}</TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 1 }}>
                             <FileActionButton
-                              loading={false}
                               icon="download"
                               label="Download"
                               width="50px"
@@ -455,10 +450,9 @@ function AssessorOnboarding() {
                               showLabel={false}
                               width="50px"
                               showIcon
-                              loading={loading}
                               onClick={() => {
                                 setCurrentUploadKey(backendKey);
-                                // setIsFinalUpload(isLast); // add this state if not already present
+
                                 fileInputRef.current?.click();
                               }}
                             />
@@ -483,7 +477,7 @@ function AssessorOnboarding() {
                       }
 
                       // Reset
-                      setIsFinalUpload(false);
+                      //  setIsFinalUpload(false);
                       if (fileInputRef.current) fileInputRef.current.value = '';
                     }}
                   />

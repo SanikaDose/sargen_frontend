@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 // import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
 // import ImageUploader from '@/components/ImageUpload/ImageUpload';
 // import Stepper from '@/components/Stepper/Stepper';
@@ -61,12 +61,10 @@
 
 // export default page;
 
-
-import AssessorOnboarding from "./AssessorOnboarding";
+import AssessorOnboarding from './AssessorOnboarding';
 
 const Page = () => {
   return <AssessorOnboarding />;
 };
 
 export default Page;
-

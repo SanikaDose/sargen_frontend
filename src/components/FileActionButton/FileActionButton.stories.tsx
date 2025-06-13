@@ -38,7 +38,6 @@ const meta: Meta<typeof FileActionButton> = {
 export default meta;
 type Story = StoryObj<typeof FileActionButton>;
 
-
 export const Upload: Story = {
   args: {
     icon: 'upload',
