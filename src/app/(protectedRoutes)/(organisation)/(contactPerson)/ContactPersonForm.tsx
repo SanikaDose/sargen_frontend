@@ -208,7 +208,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                 </Grid>
               ))}
               <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth sx={{ mt: 2 }}>
+                <FormControl fullWidth sx={{ mt: 1.8 }}>
                   <Typography sx={{ fontWeight: 600, color: '#313131' }}>
                     Country <span style={{ color: 'red' }}>*</span>
                   </Typography>
@@ -219,7 +219,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                       <Select
                         {...field}
                         displayEmpty
-                        sx={{ borderRadius: '8px', height: 38 }}
+                        sx={{ borderRadius: '8px', height: 39 }}
                         onOpen={() => handleFocus({ target: { name: 'country' } })}
                         inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
                         error={!!errors.country}

@@ -16,7 +16,6 @@ import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import { useStepper } from '@/store/useStepper';
 import { triggerToast } from '@/app/utils/toast';
 function OrganizationOnbording() {
   const router = useRouter();
@@ -25,12 +24,6 @@ function OrganizationOnbording() {
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const tenantId = getValueLocalStorage('tenantId');
-  const { goTo } = useStepper();
-
-  useEffect(() => {
-    goTo(0);
-  }, []);
-
   const {
     control,
     handleSubmit,
@@ -100,8 +93,6 @@ function OrganizationOnbording() {
         />
       </Grid>
 
-
-      
       <Grid sx={{ height: '3%' }}>
         <Typography variant="h6">Organization Details</Typography>
       </Grid>
