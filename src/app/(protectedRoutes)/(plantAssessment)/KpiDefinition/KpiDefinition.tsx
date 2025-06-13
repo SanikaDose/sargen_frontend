@@ -11,6 +11,9 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 
 const KPI_TO_CATEGORY_MAP: Record<string, string> = {
   'Time to Delivery': 'Dilevery',
@@ -100,10 +103,21 @@ const KpiDefinition = () => {
     return steps.map((s, i) => (categories.has(s.label) ? i : -1)).filter((i) => i !== -1);
   }, [selectedKpis, kpiList]);
 
+  const dispatch = useDispatch();
+  const stepperState = useSelector((state: RootState) => state.stepper);
+  useEffect(() => {
+    dispatch(setActiveStep(1));
+    dispatch(markStepCompleted(0));
+    dispatch(markStepIncomplete(2)); // If coming back from Planning
+  }, [dispatch]);
   return (
     <Box sx={{ height: '100%' }} component="form" onSubmit={handleSubmit(handleSave)}>
       <Box className={styles.stepperContainer}>
-        <Stepper steps={steps} completedSteps={completedSteps} />
+        <Stepper
+          steps={stepperState.steps}
+          activeStep={stepperState.activeStep}
+          completedSteps={stepperState.completedSteps}
+        />
       </Box>
       <Box className={styles.formSection}>
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
@@ -180,7 +194,17 @@ const KpiDefinition = () => {
               />
             </Box>
 
-            <Box className={styles.buttonSection}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
+              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+              className={styles.buttonSection}
+            >
               <CustomButton
                 children="Back"
                 variant="contained"

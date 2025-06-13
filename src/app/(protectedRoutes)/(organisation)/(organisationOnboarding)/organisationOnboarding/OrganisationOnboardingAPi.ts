@@ -1,3 +1,4 @@
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
 
@@ -48,6 +49,15 @@ export const onboardingApi = protectedApi.injectEndpoints({
 
       // Invalidate the Organization tag when new data is submitted
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Organisation', id: tenantId }],
+
+      // Show toast on success/failure using reusable utility
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Organization Onboarded successfully!',
+          errorMessage: 'Organization Onboarding failed!',
+          duration: 4000,
+        });
+      },
     }),
 
     // Submit Point of Contact (invalidates the corresponding cache)
@@ -60,6 +70,8 @@ export const onboardingApi = protectedApi.injectEndpoints({
 
       // Invalidate the Point of Contact tag when new data is submitted
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Poc', id: tenantId }],
+
+      
     }),
 
     // Get Organization Info (provides a tag)
@@ -81,17 +93,16 @@ export const onboardingApi = protectedApi.injectEndpoints({
       // Provide a tag so that the cache can be updated later when necessary
       providesTags: (result, error, tenantId) => [{ type: 'Poc', id: tenantId }],
     }),
-      // 📤 Upload Plant Logo
-    uploadOrganizationLogo: builder.mutation<void, { tenantId: string;  formData: FormData }>({
+    // 📤 Upload Plant Logo
+    uploadOrganizationLogo: builder.mutation<void, { tenantId: string; formData: FormData }>({
       query: ({ tenantId, formData }) => ({
         url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadLogo}/${tenantId}`,
         method: 'POST',
         body: formData,
       }),
 
-      invalidatesTags: (result, error,{tenantId}) => [{ type: 'PlantLogo',id:tenantId }],
+      invalidatesTags: (result, error, { tenantId }) => [{ type: 'PlantLogo', id: tenantId }],
     }),
-
   }),
 });
 
@@ -100,5 +111,5 @@ export const {
   useSubmitPointOfContactMutation,
   useGetOrganizationInfoQuery,
   useGetPointOfConnectInfoQuery,
-  useUploadOrganizationLogoMutation
+  useUploadOrganizationLogoMutation,
 } = onboardingApi;

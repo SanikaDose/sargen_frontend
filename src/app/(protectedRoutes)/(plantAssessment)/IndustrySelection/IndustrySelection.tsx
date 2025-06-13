@@ -11,6 +11,9 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 
 const steps = [
   'Research',
@@ -85,10 +88,21 @@ const IndustrySelection = () => {
     }
   };
 
+  const dispatch = useDispatch();
+  const stepperState = useSelector((state: RootState) => state.stepper);
+
+  useEffect(() => {
+    dispatch(setActiveStep(3));
+    dispatch(markStepCompleted(2));
+  }, [dispatch]);
   return (
     <Box sx={{ height: '100%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
-        <Stepper steps={steps} />
+        <Stepper
+          steps={stepperState.steps}
+          activeStep={stepperState.activeStep}
+          completedSteps={stepperState.completedSteps}
+        />
       </Box>
       <Box className={styles.formSection}>
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
@@ -181,7 +195,17 @@ const IndustrySelection = () => {
               />
             </Box>
 
-            <Box className={styles.buttonSection}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
+              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+              className={styles.buttonSection}
+            >
               <CustomButton
                 children="Back"
                 variant="contained"

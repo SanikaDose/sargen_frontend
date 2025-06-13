@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller ,useWatch} from 'react-hook-form';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -30,6 +30,7 @@ const steps = [
       'About Organization',
 ].map((label) => ({ label }));
 
+import { triggerToast } from '@/app/utils/toast';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
@@ -38,7 +39,6 @@ function OrganizationOnbording() {
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
  
   const tenantId = getValueLocalStorage('tenantId');
-
   const {
     control,
     handleSubmit,
@@ -106,6 +106,7 @@ function OrganizationOnbording() {
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
       console.log('Organization info submitted'); //use toster
+
       router.push('/AddContactPerson');
     } catch (error) {
       console.log('api submition failed', error);
@@ -143,7 +144,6 @@ function OrganizationOnbording() {
         <Box sx={{ display: 'flex', width: '27%', justifyContent: 'center', alignItems: 'center' }}>
           <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
         </Box>
-
         {/* Inputs */}
 
         <Grid container spacing={2}>
@@ -308,13 +308,13 @@ function OrganizationOnbording() {
         sx={{ p: 0.5, borderRadius: 4, backgroundColor: '#B0E0E6', border: '1px solid purple' }}
       >
         <Grid>
-          <CustomButton children="Back" variant="contained" color="#10557C" icon="left" height="55px" width="80px"    disabled  />
+          <CustomButton children="Back" variant="contained" color="primary" icon="left" height="55px" width="80px"    disabled  />
         </Grid>
         <Grid>
           <CustomButton
             children="Next"
             variant="contained"
-            color="#10557C"
+            color="primary"
             icon="right"
             height="55px"
             width="80px"

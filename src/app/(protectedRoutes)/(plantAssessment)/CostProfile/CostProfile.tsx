@@ -11,6 +11,9 @@ import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProf
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 
 const CostProfile = () => {
   const params = useParams();
@@ -110,10 +113,21 @@ const CostProfile = () => {
     fetchCostProfileData();
   }, [params]);
 
+  const dispatch = useDispatch();
+  const stepperState = useSelector((state: RootState) => state.stepper);
+  useEffect(() => {
+    dispatch(setActiveStep(0));
+    dispatch(markStepIncomplete(1)); // Back navigation from step 1
+  }, [dispatch]);
+
   return (
     <Box component="form" sx={{ height: '100%' }} onSubmit={handleSubmit(handleFormSubmit)}>
       <Box className={styles.stepperContainer}>
-        <Stepper steps={steps} />
+        <Stepper
+          steps={stepperState.steps}
+          activeStep={stepperState.activeStep}
+          completedSteps={stepperState.completedSteps}
+        />
       </Box>
       <Box className={styles.formSection}>
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
@@ -181,7 +195,17 @@ const CostProfile = () => {
               />
             </Box>
 
-            <Box className={styles.buttonSection}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
+              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+              className={styles.buttonSection}
+            >
               <CustomButton
                 children="Back"
                 variant="contained"
