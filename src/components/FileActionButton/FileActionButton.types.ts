@@ -9,4 +9,5 @@ export interface FileActionButtonProps {
   variant?: 'text' | 'outlined' | 'contained';
   color?: string;
   onClick?: () => void;
+  loading: boolean;
 }

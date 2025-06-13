@@ -41,8 +41,10 @@ import {
 } from './AssessorOnboarding.Api';
 
 import { fileUploadKeyMap, fileTypes, fileValues, allowedExtensions } from './FormConfig/fileInput';
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
+import Loader from '@/components/Loader/Loader';
 const tenantId = getValueLocalStorage('tenantId');
-
+const [fileUploadLoader, setFileUploadLoader] = useState(false);
 const steps = [
   'FirstName',
   'LastName',
@@ -58,7 +60,7 @@ function AssessorOnboarding() {
   const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
   //const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
-  const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
+  const [addAssessorInformation] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -76,77 +78,46 @@ function AssessorOnboarding() {
   const [isFinalUpload, setIsFinalUpload] = useState(false);
   const [uploadAllMetadataFiles] = useUploadAllMetadataFilesMutation();
 
-  // const handleUploadFile = async (file: File, fileKey: string, isFinalUpload: boolean = false) => {
-  //   try {
-  //     console.log('files types', fileTypes);
-  //     // Update local state
-  //     setUploadedFiles((prev) => {
-  //       const updated = { ...prev, [fileKey]: file };
-  //       console.log('📦 Updated uploadedFiles:', updated);
-  //       console.log('fileKey we are using in the upadte', fileKey);
-  //       // If it's the final upload, trigger the API call here
-  //       if (isFinalUpload) {
-  //         uploadAllMetadataFiles({
-  //           tenantId,
-  //           files: updated,
-  //         })
-  //           .unwrap()
-  //           .then((res) => {
-  //             console.log('✅ Upload successful:', res);
-  //           })
-  //           .catch((err) => {
-  //             console.error('❌ Final upload failed:', err);
-  //           });
-  //       }
+  const [loading, setLoading] = useState(false);
 
-  //       return updated;
-  //     });
+  const handleUploadFile = async (file: File, fileKey: string) => {
+    try {
+      setUploadedFiles((prev) => {
+        setLoading(true);
+        const updated = { ...prev, [fileKey]: file };
+        console.log('📦 Updated uploadedFiles:', updated);
 
-  //     console.log(`📁 File stored for ${fileKey}`);
-  //   } catch (error) {
-  //     console.error(`❌ Error storing file for ${fileKey}:`, error);
-  //   }
-  // };
+        // All required keys
+        const uploadedKeys = Object.keys(updated);
 
+        const allUploaded = fileValues.every((key) => uploadedKeys.includes(key));
 
-const handleUploadFile = async (file: File, fileKey: string) => {
-  try {
-    setUploadedFiles((prev) => {
-      const updated = { ...prev, [fileKey]: file };
-      console.log('📦 Updated uploadedFiles:', updated);
-
-    // All required keys
-      const uploadedKeys = Object.keys(updated);
-
-      const allUploaded = fileValues.every((key) => uploadedKeys.includes(key));
-
-      if (allUploaded) {
-        // ✅ Trigger API only if ALL required files are uploaded
-        uploadAllMetadataFiles({
-          tenantId,
-          files: updated,
-        })
-          .unwrap()
-          .then((res) => {
-            console.log('✅ All files uploaded successfully:', res);
+        if (allUploaded) {
+          // ✅ Trigger API only if ALL required files are uploaded
+          uploadAllMetadataFiles({
+            tenantId,
+            files: updated,
           })
-          .catch((err) => {
-            console.error('❌ Upload failed:', err);
-          });
-      } else {
-        console.log('🕐 Waiting for all files to be uploaded...');
-      }
+            .unwrap()
+            .then((res) => {
+              console.log('✅ All files uploaded successfully:', res);
+            })
+            .catch((err) => {
+              console.error('❌ Upload failed:', err);
+            });
+          setLoading(false);
+        } else {
+          console.log('🕐 Waiting for all files to be uploaded...');
+        }
 
-      return updated;
-    });
+        return updated;
+      });
 
-    console.log(`📁 File stored for ${fileKey}`);
-  } catch (error) {
-    console.error(`❌ Error storing file for ${fileKey}:`, error);
-  }
-};
-
-
+      console.log(`📁 File stored for ${fileKey}`);
+    } catch (error) {
+      console.error(`❌ Error storing file for ${fileKey}:`, error);
+    }
+  };
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -232,292 +203,297 @@ const handleUploadFile = async (file: File, fileKey: string) => {
   };
 
   return (
-    <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
-      <Box className={styles.stepperContainer}>
-        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-      </Box>
+    <>
+      <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
+        <Box className={styles.stepperContainer}>
+          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+        </Box>
 
-      <Typography variant="h6" className={styles.heading}>
-        Assessor Profile
-      </Typography>
+        <Typography variant="h6" className={styles.heading}>
+          Assessor Profile
+        </Typography>
 
-      <Box className={styles.form}>
-        <Box className={styles.formContainer}>
-          <Box className={styles.imageBox}>
-            <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
-          </Box>
+        <Box className={styles.form}>
+          <Box className={styles.formContainer}>
+            <Box className={styles.imageBox}>
+              <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+            </Box>
 
-          <Box className={styles.formFieldsBox}>
-            <section className={styles.formFieldsInner}>
-              <Grid container spacing={1}>
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="firstName"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="First Name"
-                        placeholder="Enter First Name"
-                        {...field}
-                        required={true}
-                        onFocus={() => setFocusedField('firstName')}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="lastName"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="Last Name"
-                        placeholder="Enter Last Name"
-                        {...field}
-                        required={true}
-                        onFocus={() => setFocusedField('lastName')}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="email"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="e-Mail ID"
-                        placeholder="Enter Email ID"
-                        {...field}
-                        required={true}
-                        onFocus={() => setFocusedField('email')}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="contactNumber"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="Contact Number"
-                        placeholder="Enter Contact Number"
-                        {...field}
-                        required={true}
-                        onFocus={() => setFocusedField('contactNumber')}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="city"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="City"
-                        placeholder="Enter City"
-                        {...field}
-                        required={true}
-                        onFocus={() => setFocusedField('city')}
-                      />
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
-                    Country
-                  </Typography>
-                  <FormControl fullWidth>
+            <Box className={styles.formFieldsBox}>
+              <section className={styles.formFieldsInner}>
+                <Grid container spacing={1}>
+                  <Grid size={{ xs: 12, md: 3 }}>
                     <Controller
-                      name="country"
+                      name="firstName"
                       control={control}
-                      rules={{ required: 'Country is required' }}
                       render={({ field }) => (
-                        <Select
+                        <InputWithLabel
+                          label="First Name"
+                          placeholder="Enter First Name"
                           {...field}
-                          displayEmpty
-                          input={<OutlinedInput />}
-                          value={field.value || ''}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          onFocus={() => setFocusedField('country')}
-                          sx={{ height: '36px', color: '#888', width: '100%' }}
-                          renderValue={(selected) =>
-                            !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
-                          }
-                        >
-                          <MenuItem disabled value="">
-                            <em>Select From Dropdown</em>
-                          </MenuItem>
-                          {CountryOptions.map((country) => (
-                            <MenuItem key={country.code} value={country.name}>
-                              {country.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
+                          required={true}
+                          onFocus={() => setFocusedField('firstName')}
+                        />
                       )}
                     />
-                  </FormControl>
-                </Grid>
+                  </Grid>
 
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="yearOfExperience"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="Year Of Experience"
-                        placeholder="Enter Total Year Of Experience"
-                        {...field}
-                        required={true}
-                        onFocus={() => setFocusedField('yearOfExperience')}
-                      />
-                    )}
-                  />
-                </Grid>
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Controller
+                      name="lastName"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          label="Last Name"
+                          placeholder="Enter Last Name"
+                          {...field}
+                          required={true}
+                          onFocus={() => setFocusedField('lastName')}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          label="e-Mail ID"
+                          placeholder="Enter Email ID"
+                          {...field}
+                          required={true}
+                          onFocus={() => setFocusedField('email')}
+                        />
+                      )}
+                    />
+                  </Grid>
 
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <Controller
-                    name="certificationYear"
-                    control={control}
-                    render={({ field }) => (
-                      <InputWithLabel
-                        label="Certification Year"
-                        placeholder="Enter Certification Year"
-                        {...field}
-                        //    required={true}
-                        onFocus={() => setFocusedField('certificationYear')}
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Controller
+                      name="contactNumber"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          label="Contact Number"
+                          placeholder="Enter Contact Number"
+                          {...field}
+                          required={true}
+                          onFocus={() => setFocusedField('contactNumber')}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Controller
+                      name="city"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          label="City"
+                          placeholder="Enter City"
+                          {...field}
+                          required={true}
+                          onFocus={() => setFocusedField('city')}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
+                      Country
+                    </Typography>
+                    <FormControl fullWidth>
+                      <Controller
+                        name="country"
+                        control={control}
+                        rules={{ required: 'Country is required' }}
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+                            displayEmpty
+                            input={<OutlinedInput />}
+                            value={field.value || ''}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            onFocus={() => setFocusedField('country')}
+                            sx={{ height: '36px', color: '#888', width: '100%' }}
+                            renderValue={(selected) =>
+                              !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
+                            }
+                          >
+                            <MenuItem disabled value="">
+                              <em>Select From Dropdown</em>
+                            </MenuItem>
+                            {CountryOptions.map((country) => (
+                              <MenuItem key={country.code} value={country.name}>
+                                {country.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        )}
                       />
-                    )}
-                  />
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Controller
+                      name="yearOfExperience"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          label="Year Of Experience"
+                          placeholder="Enter Total Year Of Experience"
+                          {...field}
+                          required={true}
+                          onFocus={() => setFocusedField('yearOfExperience')}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Controller
+                      name="certificationYear"
+                      control={control}
+                      render={({ field }) => (
+                        <InputWithLabel
+                          label="Certification Year"
+                          placeholder="Enter Certification Year"
+                          {...field}
+                          //    required={true}
+                          onFocus={() => setFocusedField('certificationYear')}
+                        />
+                      )}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-            </section>
+              </section>
+            </Box>
           </Box>
-        </Box>
 
-        <Box className={styles.secondContainer}>
-          <Grid className={styles.btnContainer}>
-            <Box className={styles.fileUploadContainer}>
-              <FileUploadButton
-                label="Certificate"
-                size="large"
-                iconSize="100"
-                onFileSelect={(file) => {
-                  console.log('Selected file:', file);
-                  setSelectedFile(file);
-                }}
-              />
-            </Box>
-
-            <Box className={styles.buttonSection}>
-              {/* icon="cancel" */}
-              <CustomButton children="Cancel" variant="contained" color="primary" type="button" />
-              <CustomButton
-                children={'Save'}
-                variant="contained"
-                color="primary"
-                icon="save"
-                type="submit"
-                // onClick={() => {
-                //   router.push('/PlantOverview');
-                // }}
-              />
-            </Box>
-          </Grid>
-          <Box className={styles.tableContainer}>
-            <TableContainer
-              component={Paper}
-              sx={{
-                maxHeight: 420,
-                overflowX: 'auto',
-                // boxShadow: 'none',
-              }}
-            >
-              <Table stickyHeader size="small" sx={{ minWidth: 650 }}>
-                <TableHead>
-                  <TableRow sx={{ padding: 0, textAlign: 'center' }}>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>No.</TableCell>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>File Name</TableCell>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>Version</TableCell>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>First Uploaded</TableCell>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>Last Uploaded </TableCell>
-                    {/* <TableCell sx={{padding:1, textAlign:'center'}}></TableCell> */}
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>Download</TableCell>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>Upload</TableCell>
-                    <TableCell sx={{ padding: 1, textAlign: 'center' }}>View</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {fileTypes.map((label, index) => {
-                    const backendKey = fileUploadKeyMap[label];
-                    const cert = certificateData[index]; // safely pull from data if exists
-
-                    return (
-                      <TableRow key={index}>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{index + 1}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{label}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.version ?? '-'}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.createdAt ?? '-'}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.updatedAt ?? '-'}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                          <FileActionButton
-                            icon="download"
-                            label="Download"
-                            showLabel
-                            showIcon
-                            onClick={() => handleDownloadClick(backendKey)}
-                          />
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                          <FileActionButton
-                            icon="upload"
-                            label="Upload"
-                            showLabel
-                            showIcon
-                            onClick={() => {
-                            
-                              setCurrentUploadKey(backendKey);
-                             // setIsFinalUpload(isLast); // add this state if not already present
-                              fileInputRef.current?.click();
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                          <FileActionButton icon="view" label="View" showLabel showIcon />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  accept=".pdf,.doc,.docx,.jpg,.png,.xlsx"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const file = e.target.files?.[0];
-                    if (file && currentUploadKey) {
-                      handleUploadFile(file, currentUploadKey);
-                    }
-
-                    // Reset
-                    setIsFinalUpload(false);
-                    if (fileInputRef.current) fileInputRef.current.value = '';
+          <Box className={styles.secondContainer}>
+            <Grid className={styles.btnContainer}>
+              <Box className={styles.fileUploadContainer}>
+                <FileUploadButton
+                  label="Certificate"
+                  size="large"
+                  iconSize="100"
+                  onFileSelect={(file) => {
+                    console.log('Selected file:', file);
+                    setSelectedFile(file);
                   }}
                 />
-              </Table>
-            </TableContainer>
+              </Box>
+
+              <Box className={styles.buttonSection}>
+                {/* icon="cancel" */}
+                <CustomButton children="Cancel" variant="contained" color="primary" type="button" />
+                <CustomButton
+                  children={'Save'}
+                  variant="contained"
+                  color="primary"
+                  icon="save"
+                  type="submit"
+                  // onClick={() => {
+                  //   router.push('/PlantOverview');
+                  // }}
+                />
+              </Box>
+            </Grid>
+            <Box className={styles.tableContainer}>
+              <TableContainer
+                component={Paper}
+                sx={{
+                  maxHeight: 420,
+                  overflowX: 'auto',
+                  // boxShadow: 'none',
+                }}
+              >
+                <Table stickyHeader size="small" sx={{ minWidth: 650 }}>
+                  <TableHead>
+                    <TableRow sx={{ padding: 0, textAlign: 'center' }}>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>No.</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>File Name</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>Version</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>First Uploaded</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>Last Uploaded </TableCell>
+                      {/* <TableCell sx={{padding:1, textAlign:'center'}}></TableCell> */}
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>Download</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>Upload</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>View</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {fileTypes.map((label, index) => {
+                      const backendKey = fileUploadKeyMap[label];
+                      const cert = certificateData[index]; // safely pull from data if exists
+
+                      return (
+                        <TableRow key={index}>
+                          <TableCell sx={{ textAlign: 'center', padding: 0 }}>{index + 1}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 0 }}>{label}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.version ?? '-'}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.createdAt ?? '-'}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.updatedAt ?? '-'}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
+                            <FileActionButton
+                              loading={false}
+                              icon="download"
+                              label="Download"
+                              width="50px"
+                              showLabel={false}
+                              showIcon
+                              onClick={() => handleDownloadClick(backendKey)}
+                            />
+                          </TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
+                            <FileActionButton
+                              icon="upload"
+                              label="Upload"
+                              showLabel={false}
+                              width="50px"
+                              showIcon
+                              loading={loading}
+                              onClick={() => {
+                                setCurrentUploadKey(backendKey);
+                                // setIsFinalUpload(isLast); // add this state if not already present
+                                fileInputRef.current?.click();
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
+                            <FileActionButton icon="view" label="View" width="50px" showLabel={false} showIcon />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    accept=".pdf,.doc,.docx,.jpg,.png,.xlsx"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const file = e.target.files?.[0];
+                      if (file && currentUploadKey) {
+                        handleUploadFile(file, currentUploadKey);
+                      }
+
+                      // Reset
+                      setIsFinalUpload(false);
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}
+                  />
+                </Table>
+              </TableContainer>
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </form>
+      </form>
+    </>
   );
 }
 

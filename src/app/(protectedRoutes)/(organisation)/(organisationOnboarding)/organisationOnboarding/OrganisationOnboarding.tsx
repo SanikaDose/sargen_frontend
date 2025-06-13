@@ -336,7 +336,7 @@ function OrganizationOnbording() {
         <CustomButton
           variant="contained"
           icon="left"
-          color="#2D7FF9"
+          color="primary"
           disabled
         >
           Back
@@ -345,7 +345,7 @@ function OrganizationOnbording() {
           type="submit"
           variant="contained"
           icon="right"
-          color="#2D7FF9"
+          color="primary"
         //  disabled={!isValid || isLoading}
          
         >
