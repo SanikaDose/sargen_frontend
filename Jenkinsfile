@@ -36,8 +36,10 @@ pipeline {
       steps {
         dir('repo') {
           withSonarQubeEnv('SonarQubeServer') {
-            def scannerHome = tool 'SonarLocal'  // 'SonarLocal' is the name you set in Jenkins UI
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sargen_frontend"
+            script {
+              def scannerHome = tool 'SonarLocal'
+              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sargen_frontend"
+            }
           }
         }
       }
