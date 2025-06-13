@@ -7,6 +7,8 @@ pipeline {
   }
 
   environment {
+    SONARQUBE_SCANNER = 'SonarLocal' // Must match what you set in Jenkins
+    SONARQUBE_SERVER  = 'SonarQubeServer'    // Must match the server name in Jenkins
     GITEA_REPO = 'git@gitea:tarjan-1/sargen_frontend.git'
     GITHUB_REPO = 'git@github.com:elansol/sargen_frontend.git'
     SONAR_PROJECT_KEY = 'sargen_frontend'
@@ -34,7 +36,7 @@ pipeline {
       steps {
         dir('repo') {
           withSonarQubeEnv('SonarQubeServer') {
-            sh 'SonarLocal -Dsonar.projectKey=$SONAR_PROJECT_KEY'
+            sh '$SONARQUBE_SCANNER -Dsonar.projectKey=$SONAR_PROJECT_KEY'
           }
         }
       }
