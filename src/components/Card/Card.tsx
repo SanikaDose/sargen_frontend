@@ -1,4 +1,3 @@
-// components/KPICard/KPICard.tsx
 'use client';
 
 import React from 'react';
