@@ -35,11 +35,8 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         dir('repo') {
-          withSonarQubeEnv('SonarQubeServer') {
-            script {
-              def scannerHome = tool name: 'SonarLocal'
-              sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sargen_frontend"
-            }
+           withSonarQubeEnv('SonarQubeServer') {
+            sh './gradlew sonarqube' // or use sonar-scanner if JS
           }
         }
       }
@@ -48,7 +45,7 @@ pipeline {
     stage('Quality Gate') {
       steps {
         timeout(time: 10, unit: 'MINUTES') {
-          waitForQualityGate abortPipeline: false
+          waitForQualityGate abortPipeline: true
         }
       }
     }
