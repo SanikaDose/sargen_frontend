@@ -16,7 +16,7 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        sshagent(credentials: ['git']) {
+        sshagent(credentials: ['gitea-ssh']) {
           checkout scm
         }
       }
