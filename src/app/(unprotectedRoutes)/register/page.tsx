@@ -54,6 +54,7 @@ const RegisterPage = () => {
   );
 
   async function handleRegister(data: RegisterFormInputs) {
+    console.log('inside the handle register function')
     const preDefinedBody = {
       ...data,
       applications: ['SARGEN'],

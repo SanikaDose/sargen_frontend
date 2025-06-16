@@ -5,13 +5,14 @@ import React from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
 
+import CancelIcon from '@mui/icons-material/Cancel';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
 export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
   variant?: ButtonVariant;
-  color?: 'primary' | 'secondary' | 'error' | 'success';
+  color?: 'primary' | 'secondary' | 'error' | 'success' | 'cancel';
   onClick?: () => void;
   className?: string;
   icon?: ButtonIcon;
@@ -44,6 +45,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return <MdOutlineAddAlert size={24} />;
       case 'success':
         return <PlaylistAddCheckCircleIcon fontSize="medium" />;
+      case 'cancel':
+        return <CancelIcon/>
       default:
         return null;
     }
@@ -57,7 +60,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled}
       {...rest}
       sx={{
-        borderRadius: 2,
+        borderRadius: '16px',
         padding: 1.5,
         height,
         width,

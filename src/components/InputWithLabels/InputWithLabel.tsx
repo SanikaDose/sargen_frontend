@@ -27,6 +27,7 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
           required={required}
           fullWidth
           sx={{
+            '& .MuiOutlinedInput-root': { borderRadius: '16px' },
             '& input::placeholder': {
               fontWeight: 500, // Make placeholder bold
               color: '#888', // Optional: placeholder color

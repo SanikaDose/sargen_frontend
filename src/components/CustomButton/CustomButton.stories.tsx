@@ -14,7 +14,7 @@ const meta: Meta<typeof CustomButton> = {
     },
     icon: {
       control: 'select',
-      options: ['left', 'right', 'alert', 'save', 'success', undefined],
+      options: ['left', 'right', 'alert', 'save', 'success','cancel', undefined],
     },
     height: {
       control: { type: 'text' },
