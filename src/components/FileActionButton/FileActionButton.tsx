@@ -3,17 +3,13 @@ import React from 'react';
 import { Button } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
-import styles from './style.module.css';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { FileActionButtonProps } from './FileActionButton.types';
 
-import VisibilityIcon from '@mui/icons-material/Visibility';
 const FileActionButton = ({
   icon,
-  label,
-  showIcon = true,
-  showLabel = true,
-  width,
-  height,
+  width = '40px',
+  height = '40px',
   variant = 'contained',
   color = '#1976d2',
   onClick,
@@ -27,15 +23,21 @@ const FileActionButton = ({
 
   return (
     <Button
-      //  disabled={loading}
       variant={variant}
       onClick={onClick}
-      startIcon={showIcon ? getIcon() : null}
+      // sx={{
+      //   width,
+      //   height,
+      //   minWidth: 0,
+      //   padding: 0,
+      //   backgroundColor: color,
+      //   display: 'flex',
+      //   justifyContent: 'center',
+      //   alignItems: 'center',
+      // }}
       style={{ width, height, backgroundColor: color }}
-      className={styles.button}
     >
-      {/* {loading ? 'Loading...' : showLabel ? label : null} */}
-      {showLabel ? label : null}
+      {getIcon()}
     </Button>
   );
 };

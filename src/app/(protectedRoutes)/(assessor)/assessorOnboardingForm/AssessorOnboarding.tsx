@@ -44,7 +44,7 @@ import { fileUploadKeyMap, fileTypes, fileValues, allowedExtensions } from './Fo
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import Loader from '@/components/Loader/Loader';
 const tenantId = getValueLocalStorage('tenantId');
-// const [fileUploadLoader, setFileUploadLoader] = useState(false);
+
 const steps = [
   'FirstName',
   'LastName',
@@ -75,15 +75,19 @@ function AssessorOnboarding() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
-  // const [isFinalUpload, setIsFinalUpload] = useState(false);
+
+  //loading state is decreled
+  const [loadingKey, setLoadingKey] = useState<string | null>(null);
+
   const [uploadAllMetadataFiles] = useUploadAllMetadataFilesMutation();
 
   const handleUploadFile = async (file: File, fileKey: string) => {
     try {
+      setLoadingKey(fileKey);
       setUploadedFiles((prev) => {
         const updated = { ...prev, [fileKey]: file };
         console.log('📦 Updated uploadedFiles:', updated);
-
+        setLoadingKey(null);
         // All required keys
         const uploadedKeys = Object.keys(updated);
 
@@ -217,7 +221,7 @@ function AssessorOnboarding() {
 
             <Box className={styles.formFieldsBox}>
               <section className={styles.formFieldsInner}>
-                <Grid container spacing={1}>
+                <Grid container spacing={1} className={styles.FormContainer}>
                   <Grid size={{ xs: 12, md: 3 }}>
                     <Controller
                       name="firstName"
@@ -314,7 +318,7 @@ function AssessorOnboarding() {
                             value={field.value || ''}
                             onChange={(e) => field.onChange(e.target.value)}
                             onFocus={() => setFocusedField('country')}
-                            sx={{ height: '36px', color: '#888', width: '100%' }}
+                            sx={{ height: '36px', color: '#888', width: '100%', borderRadius: '15px' }}
                             renderValue={(selected) =>
                               !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
                             }
@@ -384,30 +388,22 @@ function AssessorOnboarding() {
               </Box>
 
               <Box className={styles.buttonSection}>
-                {/* icon="cancel" */}
-                <CustomButton children="Cancel" variant="contained" color="primary" type="button" />
-                <CustomButton
-                  children={'Save'}
-                  variant="contained"
-                  color="primary"
-                  icon="save"
-                  type="submit"
-                  // onClick={() => {
-                  //   router.push('/PlantOverview');
-                  // }}
-                />
+                <CustomButton children={'Save'} variant="contained" color="primary" icon="save" type="submit" />
               </Box>
             </Grid>
+            {/* sx={{ width: '100%', overflowX: 'auto' }} */}
             <Box className={styles.tableContainer}>
               <TableContainer
                 component={Paper}
                 sx={{
-                  maxHeight: 420,
+                  maxHeight: 400,
+                  // overflowX: 'auto',
+
                   overflowX: 'auto',
-                  // boxShadow: 'none',
+                  maxWidth: '100%',
                 }}
               >
-                <Table stickyHeader size="small" sx={{ minWidth: 650 }}>
+                <Table stickyHeader size="small" sx={{ width: '100%', minWidth: 300 }}>
                   <TableHead>
                     <TableRow sx={{ padding: 0, textAlign: 'center' }}>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>No.</TableCell>
@@ -433,32 +429,48 @@ function AssessorOnboarding() {
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.version ?? '-'}</TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.createdAt ?? '-'}</TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.updatedAt ?? '-'}</TableCell>
-                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
+                          <TableCell
+                            sx={{
+                              textAlign: 'center',
+
+                              padding: 1,
+                            }}
+                          >
                             <FileActionButton
                               icon="download"
                               label="Download"
                               width="50px"
-                              showLabel={false}
+                              // showLabel={false}
                               showIcon
                               onClick={() => handleDownloadClick(backendKey)}
                             />
                           </TableCell>
-                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                            <FileActionButton
-                              icon="upload"
-                              label="Upload"
-                              showLabel={false}
-                              width="50px"
-                              showIcon
-                              onClick={() => {
-                                setCurrentUploadKey(backendKey);
+                          <TableCell
+                            sx={{
+                              textAlign: 'center',
+                              padding: 1,
+                            }}
+                          >
+                            {loadingKey === backendKey ? (
+                              <ButtonWithLoader label="" loading={true} />
+                            ) : (
+                              <FileActionButton
+                                icon="upload"
+                                label="Upload"
+                                width="50px"
+                                //  showLabel={false}
+                                showIcon
+                                color={backendKey in uploadedFiles ? 'green' : '#1976d2'}
+                                onClick={() => {
+                                  setCurrentUploadKey(backendKey);
 
-                                fileInputRef.current?.click();
-                              }}
-                            />
+                                  fileInputRef.current?.click();
+                                }}
+                              />
+                            )}
                           </TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                            <FileActionButton icon="view" label="View" width="50px" showLabel={false} showIcon />
+                            <FileActionButton icon="view" label="View" width="50px" showIcon showLabel={false} />
                           </TableCell>
                         </TableRow>
                       );
