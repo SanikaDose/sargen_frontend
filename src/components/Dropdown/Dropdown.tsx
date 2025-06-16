@@ -80,7 +80,7 @@ export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
         }}
         MenuProps={MenuProps}
         inputProps={{ 'aria-label': 'Without label' }}
-        sx={{ width: '100%' }}
+        sx={{ width: '100%', borderRadius: '16px' }}
       >
         <MenuItem disabled value="">
           <em>{placeholder}</em>
