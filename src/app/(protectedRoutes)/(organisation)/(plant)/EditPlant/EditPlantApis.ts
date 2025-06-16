@@ -1,6 +1,7 @@
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
 import { EditPlantApi } from './EditPlant.types';
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
 export const plantInfoApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,6 +10,13 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         url: `${apiControllerPath.plantInfo.root}/${tenantId}/${plantId}${apiControllerPath.plantInfo.getPlantInfoById}`,
         method: 'GET',
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant Information Get successfully!',
+          errorMessage: 'Falied To Get Plant Information',
+          duration: 4000,
+        });
+      },
     }),
 
     editPlantInfo: builder.mutation<void, { tenantId: string; plantId: string; body: EditPlantApi }>({

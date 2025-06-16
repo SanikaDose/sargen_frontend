@@ -2,13 +2,25 @@
   /* height: 87vh; */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  /* gap: 10%; */
   padding: 1px;
+  width: 100%;
 }
 
+.paperContainer {
+  border-radius: 16px;
+  padding: 2;
+  background-color: white;
+  border: 1px solid rgb(216, 216, 216);
+  width: 100%;
+  display: flex;
+  gap: 3;
+  min-height: 87%;
+}
 .heading {
   font-weight: 600;
-  padding: 0 1rem;
+  padding: 1rem 0 0 1rem;
 }
 
 .stepperContainer {
@@ -28,7 +40,10 @@
   flex-direction: column;
   gap: 1rem;
 }
-
+.rightSection {
+  width: 30%;
+  padding: 20px;
+}
 @media (min-width: 800px) {
   .formContainer {
     flex-direction: row;
@@ -71,21 +86,62 @@
 
 /* Optional: Hide stepper on small devices if needed */
 @media (min-width: 280px) and (max-width: 768px) {
+  .mostOuterContainer {
+    width: 100%;
+    /* border: 1px solid blue; */
+  }
+  .formOuterContainer {
+    width: 100%;
+    /* border: 2px solid red; */
+  }
   .formContainer {
     flex-direction: column;
+    width: 100%;
+    /* border: 1px solid; */
+  }
+
+  .formFieldsBox {
+    width: 100%;
+    /* border: 1px solid; */
+  }
+  .stepperContainer {
+    display: none;
+  }
+  .rightSection {
+    display: none;
+  }
+  .paperContainer {
+    height: auto;
   }
 }
 
 /* Optional: Fine-tuned responsiveness */
-@media (min-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .formContainer {
     gap: 2rem;
   }
+  .formFieldsBox {
+    width: 100%;
+  }
+
+  .stepperContainer {
+    display: none;
+  }
+  .rightSection {
+    display: none;
+  }
+
+  .paperContainer {
+    height: auto;
+  }
 }
 
-@media (min-width: 1440px) {
+@media (min-width: 1024px) and (min-width: 1440px) {
   .formContainer {
     gap: 3rem;
+  }
+  .paperContainer {
+    height: auto;
   }
 }
 
