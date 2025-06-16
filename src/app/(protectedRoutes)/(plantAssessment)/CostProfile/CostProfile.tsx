@@ -47,13 +47,10 @@ const CostProfile = () => {
     name: 'costs',
   });
 
-  // Calculate average percentage
-  const averagePercentage =
+  // Calculate overall cost profile
+  const overAllCostProfile =
     formValues && formValues.length > 0
-      ? (
-          formValues.reduce((acc, item) => acc + parseFloat(String(item.costAsAPercentageOfRevenue || 0)), 0) /
-          formValues.length
-        ).toFixed(2)
+      ? formValues.reduce((acc, item) => acc + parseFloat(String(item.costAsAPercentageOfRevenue || 0)), 0).toFixed(2)
       : '0.00';
 
   const { fields, replace } = useFieldArray({
@@ -121,7 +118,7 @@ const CostProfile = () => {
   }, [dispatch]);
 
   return (
-    <Box component="form" sx={{ height: '100%' }} onSubmit={handleSubmit(handleFormSubmit)}>
+    <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper
           steps={stepperState.steps}
@@ -142,7 +139,7 @@ const CostProfile = () => {
             >
               Cost Profile
             </Typography>
-            <Box className={styles.costProfile} sx={{ width: '100%' }}>
+            {/* <Box className={styles.costProfile} sx={{ width: '100%' }}>
               <Grid
                 container
                 spacing={2}
@@ -184,6 +181,37 @@ const CostProfile = () => {
                   textColor="#FFFFFF"
                 />
               </Box>
+            </Box> */}
+
+            <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+              {fields.length > 0
+                ? fields.map((field, index) => (
+                    <Box key={field.id} className={styles.costInputCards}>
+                      <Controller
+                        name={`costs.${index}.costAsAPercentageOfRevenue`}
+                        control={control}
+                        render={({ field: controllerField }) => (
+                          <OverallCostProfileCard
+                            fieldName={field.costCategory}
+                            costValue={controllerField.value}
+                            onChange={(val) => controllerField.onChange(val)}
+                            readonly={false}
+                          />
+                        )}
+                      />
+                    </Box>
+                  ))
+                : 'No cost Profile'}
+            </Grid>
+            <Box className={styles.OverallCostProfileCard}>
+              <OverallCostProfileCard
+                fieldName="Overall Cost Profile"
+                costValue={overAllCostProfile}
+                onChange={() => {}}
+                readonly
+                boxBackgroundColor="#10557C"
+                textColor="#FFFFFF"
+              />
             </Box>
           </Box>
 
@@ -195,7 +223,17 @@ const CostProfile = () => {
               />
             </Box>
 
-            <Box className={styles.buttonSection}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
+              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+              className={styles.buttonSection}
+            >
               <CustomButton
                 children="Back"
                 variant="contained"

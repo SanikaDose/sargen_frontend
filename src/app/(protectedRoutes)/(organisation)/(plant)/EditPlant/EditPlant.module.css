@@ -1,5 +1,5 @@
 .mostOuterConatiner {
-  height: 87vh;
+  /* height: 87vh; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -60,7 +60,7 @@
 
 .aboutSection {
   height: 20%;
-  padding: 1% 2%;
+  padding: 0% 0% 2% 0;
 }
 
 .buttonSection {

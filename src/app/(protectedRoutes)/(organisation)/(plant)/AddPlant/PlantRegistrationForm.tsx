@@ -62,6 +62,7 @@ const PlantRegistrationForm = () => {
     try {
       const { about, ...body } = data;
       await addPlantInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
+      router.push('/PlantOverview');
       reset();
     } catch (error) {
       console.error('Failed to add plant info:', error);
@@ -81,7 +82,7 @@ const PlantRegistrationForm = () => {
   const completedSteps = useMemo(() => {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
-      if (typeof value === 'string' && value.length > 1) {
+      if (typeof value === 'string' && value.length >= 1) {
         acc.push(index);
       }
       return acc;
@@ -115,19 +116,28 @@ const PlantRegistrationForm = () => {
                       rules={{ required: input.required }}
                       render={({ field }) =>
                         input.isCurrency ? (
-                          <FormControl fullWidth sx={{ mt: 2 }}>
-                            <Typography sx={{ fontWeight: 500, color: '#000000' }}>Currency Type</Typography>
+                          <FormControl fullWidth sx={{ mt: 1.9 }}>
+                            <Typography sx={{ fontWeight: 600, color: '#000000' }}>Currency Type</Typography>
                             <Select
                               {...field}
                               displayEmpty
                               value={field.value || ''}
                               inputProps={{ 'aria-label': 'Select Currency' }}
-                              sx={{ borderRadius: '8px' }}
+                              sx={{ borderRadius: '8px', height: 36 }}
                               onFocus={() => setFocusedField('currencyType')}
                             >
-                              <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                                <em>Select Currency</em>
+                              <MenuItem
+                                value=""
+                                sx={{
+                                  '& input::placeholder': {
+                                    fontWeight: 500, // Make placeholder bold
+                                    color: '#888', // Optional: placeholder color
+                                  },
+                                }}
+                              >
+                                Select Currency
                               </MenuItem>
+
                               {currencyOptions.map((currency) => (
                                 <MenuItem key={currency.code} value={currency.name}>
                                   {currency.name}
@@ -162,7 +172,7 @@ const PlantRegistrationForm = () => {
             render={({ field }) => (
               <InputWithLabel
                 {...field}
-                label="About Us"
+                label="About Plant"
                 placeholder="Enter About Plant"
                 multiline
                 rows={3}
@@ -174,18 +184,23 @@ const PlantRegistrationForm = () => {
         </Box>
       </Box>
 
-      <Box className={styles.buttonSection}>
-        <CustomButton children="Back" variant="outlined" color="error" icon="left" type="button" />
-        <CustomButton
-          children={isLoading ? 'Saving...' : 'Save'}
-          variant="outlined"
-          color="primary"
-          icon="save"
-          type="submit"
-          onClick={() => {
-            router.push('/PlantOverview');
-          }}
-        />
+      <Box
+        // className={styles.buttonSection}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        p={1}
+        mt={5}
+        ml={5}
+        mr={5}
+        sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+      >
+        <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
+          Back
+        </CustomButton>
+        <CustomButton type="submit" variant="contained" icon="save">
+          {isLoading ? 'Saving...' : 'Save'}
+        </CustomButton>
       </Box>
     </form>
   );

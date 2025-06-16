@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Button, Card, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption, MultipleSections } from '../plantAssement.model';
@@ -14,7 +14,7 @@ import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
-
+import Card from '@/components/Card/Card';
 const steps = [
   'Research',
   'Selling',
@@ -119,7 +119,97 @@ const PlanningHorizon = () => {
     dispatch(markStepIncomplete(3)); // coming back from Industry
   }, [dispatch]);
   return (
-    <Box sx={{ height: '100%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
+    // <Box sx={{ height: '100%', width: '100%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
+    //   <Box className={styles.stepperContainer}>
+    //     <Stepper
+    //       steps={stepperState.steps}
+    //       activeStep={stepperState.activeStep}
+    //       completedSteps={stepperState.completedSteps}
+    //     />
+    //   </Box>
+    //   <Box className={styles.formSection}>
+    //     <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+    //       <Box component="form" className={styles.formContainer}>
+    //         <Typography
+    //           variant="h6"
+    //           sx={{
+    //             color: 'black',
+    //             textAlign: 'left',
+    //             width: '100%',
+    //           }}
+    //         >
+    //           Planning Horizon
+    //         </Typography>
+
+    //         <Grid
+    //           container
+    //           spacing={2}
+    //           sx={{
+    //             height: '100%',
+    //             justifyContent: 'center',
+    //             alignItems: 'center',
+    //             mt: 2,
+    //           }}
+    //         >
+    //           <Controller
+    //             name="selectedHorizonId"
+    //             control={control}
+    //             render={({ field }) => (
+    //               <>
+    //                 {horizonOptions.map((option) => {
+    //                   const isSelected = field.value === option.id;
+
+    //                   return (
+    //                     <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+    //                       <Card
+    //                         kpi={option.planningHorizon}
+    //                         isSelected={isSelected}
+    //                         onToggle={() => field.onChange(option.id)}
+    //                       />
+    //                     </Grid>
+    //                   );
+    //                 })}
+    //               </>
+    //             )}
+    //           />
+    //         </Grid>
+    //       </Box>
+
+    //       <Box className={styles.rightSection}>
+    //         <Box className={styles.aboutSection}>
+    //           <InfoBox
+    //             content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
+    //             heading="About Industry"
+    //           />
+    //         </Box>
+
+    //         <Box
+    //           display="flex"
+    //           justifyContent="space-between"
+    //           alignItems="center"
+    //           p={1}
+    //           mt={3}
+    //           ml={5}
+    //           mr={5}
+    //           sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+    //           className={styles.buttonSection}
+    //         >
+    //           <CustomButton
+    //             children="Back"
+    //             variant="contained"
+    //             color="primary"
+    //             icon="left"
+    //             type="button"
+    //             onClick={() => router.back()}
+    //           />
+    //           <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
+    //         </Box>
+    //       </Box>
+    //     </Box>
+    //   </Box>
+    // </Box>
+
+    <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
         <Stepper
           steps={stepperState.steps}
@@ -138,58 +228,37 @@ const PlanningHorizon = () => {
                 width: '100%',
               }}
             >
-              Planning Horizon
+              Industry Selection
             </Typography>
-
-            <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mt: 2,
+              }}
+            >
               <Controller
                 name="selectedHorizonId"
                 control={control}
                 render={({ field }) => (
-                  <RadioGroup {...field} className={styles.radioGroup}>
+                  <>
                     {horizonOptions.map((option) => {
                       const isSelected = field.value === option.id;
+
                       return (
-                        <Card
-                          key={option.id}
-                          onClick={() => field.onChange(option.id)}
-                          sx={{
-                            cursor: 'pointer',
-                            background: isSelected ? '#10557C' : '#fff',
-                            border: '0.4px solid #CCCCCC',
-                            boxShadow: '0px 4px 4px 0px #00000040',
-                            borderRadius: 2,
-                            display: 'flex',
-                            alignItems: 'center',
-                            paddingX: 2,
-                            transition: 'background 0.3s ease',
-                            color: isSelected ? '#fff' : '#000',
-                            width: '50%',
-                            height: '15%',
-                            margin: 'auto',
-                          }}
-                        >
-                          <svg
-                            width="17"
-                            height="17"
-                            viewBox="0 0 17 17"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            style={{ marginRight: 8 }}
-                          >
-                            <path
-                              d="M8.33337 16.1668V8.66683H0.833374L9.16671 0.333496H16.6667V7.8335L8.33337 16.1668ZM13.3334 8.81266L15 7.146V2.00016H9.85421L8.18754 3.66683H13.3334V8.81266ZM10 12.146L11.6667 10.4793V5.3335H6.52087L4.85421 7.00016H10V12.146Z"
-                              fill={isSelected ? 'white' : '#10557C'}
-                            />
-                          </svg>
-                          <Box>
-                            <Typography className={styles.labels}>{option.planningHorizon}</Typography>
-                            <Typography>{`${option.termEnd} to ${option.termStart} years`}</Typography>
-                          </Box>
-                        </Card>
+                        <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+                          <Card
+                            kpi={option.planningHorizon}
+                            isSelected={isSelected}
+                            onToggle={() => field.onChange(option.id)}
+                          />
+                        </Grid>
                       );
                     })}
-                  </RadioGroup>
+                  </>
                 )}
               />
             </Grid>
@@ -203,7 +272,17 @@ const PlanningHorizon = () => {
               />
             </Box>
 
-            <Box className={styles.buttonSection}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
+              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+              className={styles.buttonSection}
+            >
               <CustomButton
                 children="Back"
                 variant="contained"
