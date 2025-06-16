@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Grid, Typography, FormControl, MenuItem, Select, Paper } from '@mui/material';
+import { Box, Grid, Typography, FormControl, MenuItem, Select, Paper, useMediaQuery } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
@@ -33,6 +33,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     skip: !editMode,
   });
   const dispatch = useDispatch();
+  const isMobile = useMediaQuery('(max-width: 600px)');
+  const isTablet = useMediaQuery('(max-width: 900px)');
 
   useEffect(() => {
     dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
@@ -147,23 +149,25 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid className={styles.stepperContainer}>
-        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-      </Grid>
+      {!isMobile && !isTablet && (
+        <Grid className={styles.stepperContainer}>
+          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+        </Grid>
+      )}
       <Paper
         elevation={2}
         sx={{
           borderRadius: '16px',
           p: 2,
           backgroundColor: 'white',
-          border: '1px solid rgb(216, 216, 216)',
-          // height: '78vh',
+          border: '1px solid #D8D8D8',
+          height: isMobile || isTablet ? 'auto' : '78vh',
         }}
       >
         {/* Split into 2 columns and match their height */}
-        <Grid container spacing={2} alignItems="stretch" sx={{ height: '74vh' }}>
+        <Grid container spacing={2} alignItems="stretch" sx={{ height: isMobile || isTablet ? 'auto' : '74.5vh' }}>
           {/* Left side - form content (existing structure) */}
-          <Grid size={{ xs: 8 }}>
+          <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
             <Typography variant="h6" fontWeight={600} className={styles.heading}>
               User Profile
             </Typography>
@@ -223,7 +227,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                           >
                             <MenuItem value="">
                               {' '}
-                              <span style={{ color: '#cdcdcd' }}>Select Country</span>
+                              <span style={{ color: 'grey' }}>Select Country</span>
                             </MenuItem>
                             {CountryOptions.map((country) => (
                               <MenuItem key={country.code} value={country.name}>
@@ -259,12 +263,14 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
           </Grid>
 
           {/* Right side - InfoBox */}
-          <Grid size={{ xs: 4 }}>
-            <InfoBox
-              content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-              heading="About Industry"
-            />
-          </Grid>
+          {!isMobile && !isTablet && (
+            <Grid size={{ xs: 4 }}>
+              <InfoBox
+                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
+                heading="About Industry"
+              />
+            </Grid>
+          )}
         </Grid>
       </Paper>
     </form>

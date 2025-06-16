@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { CostInputPercentage, FormValues, MultipleSections, RawCostCategory } from '../plantAssement.model';
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import styles from './costProfile.module.css';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
@@ -126,7 +126,16 @@ const CostProfile = () => {
           completedSteps={stepperState.completedSteps}
         />
       </Box>
-      <Box className={styles.formSection}>
+      <Paper
+        className={styles.formSection}
+        elevation={2}
+        sx={{
+          mt: 2,
+          borderRadius: '16px',
+          backgroundColor: 'white',
+          border: '1px solid rgb(216, 216, 216)',
+        }}
+      >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
             <Typography
@@ -246,7 +255,7 @@ const CostProfile = () => {
             </Box>
           </Box>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 };

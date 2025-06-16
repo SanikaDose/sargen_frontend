@@ -1,7 +1,7 @@
 .formSection {
   display: flex;
   width: 100%;
-  height: 90%;
+  height: 87%;
   /* border: 1px solid blue; */
 }
 
@@ -74,6 +74,9 @@
   .formContainer {
     width: 100%;
     border: 2px solid red;
+    height: auto;
+  }
+  .formSection {
     height: auto;
   }
   .overallCostCard {
