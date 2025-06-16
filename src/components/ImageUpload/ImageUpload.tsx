@@ -21,7 +21,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) =>
     }
   };
 
-  const avatarSrc = image || imageProp || '/images/default-logo-image.png';
+  const avatarSrc = image || imageProp || '/images/default-avatar-profile.png';
   const isPlantOverview = pathname?.includes('/PlantOverview');
   return (
     <div className={styles.avatarStack}>

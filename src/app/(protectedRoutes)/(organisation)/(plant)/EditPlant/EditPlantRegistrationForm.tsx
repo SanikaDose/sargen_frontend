@@ -51,7 +51,7 @@ const EditPlantRegistrationForm = () => {
 
   const [editPlantInfo, { isLoading }] = useEditPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/plant-logo.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const { data: getPlantData, isLoading: isFetching } = useGetPlantByIdQuery({
@@ -242,7 +242,7 @@ const EditPlantRegistrationForm = () => {
             mt={5}
             ml={5}
             mr={5}
-            sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+            sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
           >
             <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
               Back

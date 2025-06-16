@@ -40,7 +40,7 @@ const PlantRegistrationForm = () => {
   const { control, handleSubmit, reset, setFocus } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/plant-logo.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
 
@@ -123,19 +123,12 @@ const PlantRegistrationForm = () => {
                               displayEmpty
                               value={field.value || ''}
                               inputProps={{ 'aria-label': 'Select Currency' }}
-                              sx={{ borderRadius: '8px', height: 36 }}
+                              sx={{ borderRadius: '16px', height: 36 }}
                               onFocus={() => setFocusedField('currencyType')}
                             >
-                              <MenuItem
-                                value=""
-                                sx={{
-                                  '& input::placeholder': {
-                                    fontWeight: 500, // Make placeholder bold
-                                    color: '#888', // Optional: placeholder color
-                                  },
-                                }}
-                              >
-                                Select Currency
+                              <MenuItem value="">
+                                {' '}
+                                <span style={{ color: '#cdcdcd' }}>Select Currency</span>
                               </MenuItem>
 
                               {currencyOptions.map((currency) => (

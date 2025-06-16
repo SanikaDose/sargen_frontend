@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller ,useWatch} from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Box, Button, Grid, Typography } from '@mui/material';
 import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
@@ -16,18 +16,18 @@ import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import {OrgFormInputs} from './FormConfig/formInputStep'
-import { OrgOnboard} from './OrganisationOnboarding.types'
+import { OrgFormInputs } from './FormConfig/formInputStep';
+import { OrgOnboard } from './OrganisationOnboarding.types';
 
 const steps = [
   'Company Name',
-      'Company website',
-      'GST In',
-      'Country',
-      'Organization Revenue',
-      'Currency Type',
-      'Number of Employees',
-      'About Organization',
+  'Company website',
+  'GST In',
+  'Country',
+  'Organization Revenue',
+  'Currency Type',
+  'Number of Employees',
+  'About Organization',
 ].map((label) => ({ label }));
 
 import { triggerToast } from '@/app/utils/toast';
@@ -36,8 +36,8 @@ function OrganizationOnbording() {
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
- 
+  const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
+
   const tenantId = getValueLocalStorage('tenantId');
   const {
     control,
@@ -60,31 +60,29 @@ function OrganizationOnbording() {
     skip: !tenantId,
   });
   console.log('if we have tenentid the we get this data', data);
- 
-   const [focusedField, setFocusedField] = useState<string | null>(null);
-     const watchedValues = useWatch({ control });
-  
 
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const watchedValues = useWatch({ control });
 
   // this is an spread operator to get the values of the form inputs (mainly for about section)
-   const allInputs = [...OrgFormInputs];
- 
-   // ✅ Compute activeStep based on focused field index
-   const activeStep = useMemo(() => {
-     const index = allInputs.findIndex((input) => input.name === focusedField);
-     return index !== -1 ? index : 0;
-   }, [focusedField]);
- 
-   // ✅ Compute completed steps where value length > 5
-   const completedSteps = useMemo(() => {
-     return allInputs.reduce((acc: number[], input, index) => {
-       const value = watchedValues?.[input.name as keyof OrgOnboard];
-       if (typeof value === 'string' && value.length > 1) {
-         acc.push(index);
-       }
-       return acc;
-     }, []);
-   }, [watchedValues]);
+  const allInputs = [...OrgFormInputs];
+
+  // ✅ Compute activeStep based on focused field index
+  const activeStep = useMemo(() => {
+    const index = allInputs.findIndex((input) => input.name === focusedField);
+    return index !== -1 ? index : 0;
+  }, [focusedField]);
+
+  // ✅ Compute completed steps where value length > 5
+  const completedSteps = useMemo(() => {
+    return allInputs.reduce((acc: number[], input, index) => {
+      const value = watchedValues?.[input.name as keyof OrgOnboard];
+      if (typeof value === 'string' && value.length > 1) {
+        acc.push(index);
+      }
+      return acc;
+    }, []);
+  }, [watchedValues]);
 
   //hnadle organization logo
   const handleUpload = async (file: File) => {
@@ -135,7 +133,7 @@ function OrganizationOnbording() {
           width: '100%',
           justifyContent: 'space-between',
           alignItems: 'center',
-          gap:1,
+          gap: 1,
           px: 1,
           flexDirection: { xs: 'column', lg: 'row' },
         }}
@@ -154,7 +152,12 @@ function OrganizationOnbording() {
               control={control}
               rules={{ required: 'Company name is required' }}
               render={({ field }) => (
-                <InputWithLabel label="Name of the company" placeholder="Enter Name of the company" {...field}    onFocus={() => setFocusedField('companyName')} />
+                <InputWithLabel
+                  label="Name of the company"
+                  placeholder="Enter Name of the company"
+                  {...field}
+                  onFocus={() => setFocusedField('companyName')}
+                />
               )}
             />
           </Grid>
@@ -164,7 +167,13 @@ function OrganizationOnbording() {
               name="website"
               control={control}
               render={({ field }) => (
-                <InputWithLabel label="Company Website" placeholder="Enter company website" {...field}  onFocus={() => setFocusedField('website')}  required  />
+                <InputWithLabel
+                  label="Company Website"
+                  placeholder="Enter company website"
+                  {...field}
+                  onFocus={() => setFocusedField('website')}
+                  required
+                />
               )}
             />
           </Grid>
@@ -174,14 +183,20 @@ function OrganizationOnbording() {
               name="gstin"
               control={control}
               render={({ field }) => (
-                <InputWithLabel type="text" label="GST In Details" placeholder="Enter GST IN no" {...field}  onFocus={() => setFocusedField('gstin')}/>
+                <InputWithLabel
+                  type="text"
+                  label="GST In Details"
+                  placeholder="Enter GST IN no"
+                  {...field}
+                  onFocus={() => setFocusedField('gstin')}
+                />
               )}
             />
           </Grid>
 
           {/* Row 2 */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt:2 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
               Country
             </Typography>
             <FormControl fullWidth>
@@ -196,7 +211,7 @@ function OrganizationOnbording() {
                     input={<OutlinedInput />}
                     value={field.value || ''}
                     onChange={(e) => field.onChange(e.target.value)}
-                 onFocus={() => setFocusedField('country')}
+                    onFocus={() => setFocusedField('country')}
                     sx={{ height: '36px', color: '#888', width: '100%' }}
                     renderValue={(selected) =>
                       !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
@@ -221,53 +236,57 @@ function OrganizationOnbording() {
               name="revenue"
               control={control}
               render={({ field }) => (
-                <InputWithLabel label="Organization Revenue" placeholder="Enter Revenue" {...field}  onFocus={() => setFocusedField('revenue')}/>
+                <InputWithLabel
+                  label="Organization Revenue"
+                  placeholder="Enter Revenue"
+                  {...field}
+                  onFocus={() => setFocusedField('revenue')}
+                />
               )}
             />
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
-          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2, ml: '7px',  }}>
-            Currency Type
-          </Typography>
-          <FormControl fullWidth sx={{  }}>
-            <Controller
-              name="uom"
-              control={control}
-              rules={{ required: 'Currency type is required' }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  displayEmpty
-                  input={<OutlinedInput />}
-                  value={field.value || ''}
-                  onChange={(e) => field.onChange(e.target.value)}
-                   onFocus={() => setFocusedField('uom')}
-                  sx={{
-                    height: '36px',
-                    color: '#888',
-                    width: '100%',
-                  }}
-                  renderValue={(selected) => {
-                    if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
-                    return selected;
-                  }}
-                >
-                  <MenuItem disabled value="">
-                    <em>Select From Dropdown</em>
-                  </MenuItem>
-
-                  {currencyOptions.map((country) => (
-                    <MenuItem key={country.code} value={country.name}>
-                      {country.name}
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2, ml: '7px' }}>
+              Currency Type
+            </Typography>
+            <FormControl fullWidth sx={{}}>
+              <Controller
+                name="uom"
+                control={control}
+                rules={{ required: 'Currency type is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    displayEmpty
+                    input={<OutlinedInput />}
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    onFocus={() => setFocusedField('uom')}
+                    sx={{
+                      height: '36px',
+                      color: '#888',
+                      width: '100%',
+                    }}
+                    renderValue={(selected) => {
+                      if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
+                      return selected;
+                    }}
+                  >
+                    <MenuItem disabled value="">
+                      <em>Select From Dropdown</em>
                     </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </FormControl>
-        </Grid>
 
+                    {currencyOptions.map((country) => (
+                      <MenuItem key={country.code} value={country.name}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </FormControl>
+          </Grid>
 
           {/* Row 3 */}
           <Grid size={{ xs: 12, md: 4 }}>
@@ -275,7 +294,12 @@ function OrganizationOnbording() {
               name="numberOfEmployees"
               control={control}
               render={({ field }) => (
-                <InputWithLabel label="Number of Employees" placeholder="Enter Number of Employees" {...field}  onFocus={() => setFocusedField('numberOfEmployees')}/>
+                <InputWithLabel
+                  label="Number of Employees"
+                  placeholder="Enter Number of Employees"
+                  {...field}
+                  onFocus={() => setFocusedField('numberOfEmployees')}
+                />
               )}
             />
           </Grid>
@@ -293,9 +317,8 @@ function OrganizationOnbording() {
               type="text"
               placeholder="Enter Organization Details"
               multiline
-             
               {...field}
-               onFocus={() => setFocusedField('about')}
+              onFocus={() => setFocusedField('about')}
             />
           )}
         />
@@ -323,7 +346,7 @@ function OrganizationOnbording() {
         </Grid>
       </Grid> */}
 
-       <Box
+      <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -333,12 +356,7 @@ function OrganizationOnbording() {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton
-          variant="contained"
-          icon="left"
-          color="primary"
-          disabled
-        >
+        <CustomButton variant="contained" icon="left" color="primary" disabled>
           Back
         </CustomButton>
         <CustomButton
@@ -346,13 +364,11 @@ function OrganizationOnbording() {
           variant="contained"
           icon="right"
           color="primary"
-        //  disabled={!isValid || isLoading}
-         
+          //  disabled={!isValid || isLoading}
         >
           Next
         </CustomButton>
       </Box>
-
     </form>
   );
 }

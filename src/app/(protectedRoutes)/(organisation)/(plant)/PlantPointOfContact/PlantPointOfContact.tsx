@@ -3,7 +3,7 @@
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { Box, FormControl, Grid, MenuItem, Select, Typography } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import defaultUserLogo from '../../../../../../public/images/default-logo-image.png';
+import defaultUserLogo from '../../../../../../public/images/default-avatar-profile.png';
 import styles from './PointOfContact.module.css';
 import { plantPointOfContactFormInputs } from './FormCongi/FormInputSteps';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -140,8 +140,9 @@ export default function PlantPointOfContact() {
                           sx={{ borderRadius: '8px' }}
                           onFocus={() => setFocusedField('pocCountry')}
                         >
-                          <MenuItem value="" sx={{ fontStyle: 'italic', color: 'gray' }}>
-                            <em>Select Country</em>
+                          <MenuItem value="">
+                            {' '}
+                            <span style={{ color: '#cdcdcd' }}>Select Country</span>
                           </MenuItem>
                           {CountryOptions.map((country) => (
                             <MenuItem key={country.code} value={country.name}>

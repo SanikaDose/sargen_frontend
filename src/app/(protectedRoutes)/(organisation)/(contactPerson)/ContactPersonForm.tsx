@@ -3,7 +3,7 @@
 import { Box, Grid, Typography, FormControl, MenuItem, Select, Paper } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import defaultUserLogo from './../../../../../public/images/default-logo-image.png';
+import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { useEffect, useState, useMemo } from 'react';
@@ -216,14 +216,14 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                           <Select
                             {...field}
                             displayEmpty
-                            sx={{ borderRadius: '16px', height: '39px' }}
+                            sx={{ borderRadius: '16px', height: '38.5px' }}
                             onOpen={() => handleFocus({ target: { name: 'country' } })}
-                            inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
+                            // inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
                             error={!!errors.country}
                           >
                             <MenuItem value="">
                               {' '}
-                              <em>Select Country</em>
+                              <span style={{ color: '#cdcdcd' }}>Select Country</span>
                             </MenuItem>
                             {CountryOptions.map((country) => (
                               <MenuItem key={country.code} value={country.name}>
