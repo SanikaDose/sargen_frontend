@@ -37,35 +37,59 @@ import {
   useAddAssessorInformationMutation,
   useUploadAssessorLogoMutation,
   useGetMetadataFileTemplateMutation,
-  useUploadAllMetadataFilesMutation,
+  useUploadQuestionnariesMutation,
+  useUploadCostProfileMutation,
+  useUploadKPIMutation,
+  useUploadPlanningHorizonMutation,
+  useUploadIndustrySelectionMutation,
+  useUploadCostProfileLookupMutation,
+  useUploadIndustrySelectionLookupMutation,
+  useUploadKPILookupMutation,
+  useUploadIndustryAssessmentMatrixMutation,
+  useUploadSolutionMetadataMutation,
+  useUploadBandDefinitionMutation,
 } from './AssessorOnboarding.Api';
 
 import { fileUploadKeyMap, fileTypes, fileValues, allowedExtensions } from './FormConfig/fileInput';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
-import Loader from '@/components/Loader/Loader';
-const tenantId = getValueLocalStorage('tenantId');
+import { kMaxLength } from 'node:buffer';
 
 const steps = [
-  'FirstName',
-  'LastName',
-  'e-Mail ID',
-  'ContactNumber',
+  'First Name',
+  'Last Name',
+  'e-Mail Id',
+  'Contact Number',
   'City',
   'Country',
-  'yearOfExperience',
-  'certificationYear',
+  'year Of Experience',
+  'Certification Year',
 ].map((label) => ({ label }));
+const tenantId = getValueLocalStorage('tenantId');
 
 function AssessorOnboarding() {
-  const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
-  //const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
+  //const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      contactNumber: '',
+      city: '',
+      country: '',
+      yearOfExperience: '',
+      certificationYear: '',
+    },
+  });
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
   const [addAssessorInformation] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-  const [focusedField, setFocusedField] = useState<string | null>(null);
-  const router = useRouter();
 
+  const [logoUrl, setLogoUrl] = useState<string>('images/default-logo-image.png?ignore');
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -77,43 +101,200 @@ function AssessorOnboarding() {
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
 
   //loading state is decreled
-  const [loadingKey, setLoadingKey] = useState<string | null>(null);
+  // const [loadingKey, setLoadingKey] = useState<string | null>(null);
 
-  const [uploadAllMetadataFiles] = useUploadAllMetadataFilesMutation();
+  const [uploadQuestionnaries, isLoading] = useUploadQuestionnariesMutation();
+  const [uploadCostProfile] = useUploadCostProfileMutation();
+  const [uploadKPI] = useUploadKPIMutation();
+  const [uploadPlanningHorizon] = useUploadPlanningHorizonMutation();
+  const [uploadIndustrySelection] = useUploadIndustrySelectionMutation();
+  const [uploadCostProfileLookup] = useUploadCostProfileLookupMutation();
+  const [uploadIndustrySelectionLookup] = useUploadIndustrySelectionLookupMutation();
+  const [uploadKPILookup] = useUploadKPILookupMutation();
+  const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
+  const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
+  const [uploadBandDefinition] = useUploadBandDefinitionMutation();
 
   const handleUploadFile = async (file: File, fileKey: string) => {
     try {
-      setLoadingKey(fileKey);
-      setUploadedFiles((prev) => {
-        const updated = { ...prev, [fileKey]: file };
-        console.log('📦 Updated uploadedFiles:', updated);
-        setLoadingKey(null);
-        // All required keys
-        const uploadedKeys = Object.keys(updated);
+      console.log('filekey', fileKey);
 
-        const allUploaded = fileValues.every((key) => uploadedKeys.includes(key));
-
-        if (allUploaded) {
-          // ✅ Trigger API only if ALL required files are uploaded
-          uploadAllMetadataFiles({
+      if (fileKey === 'questionnaires') {
+        try {
+          await uploadQuestionnaries({
             tenantId,
-            files: updated,
-          })
-            .unwrap()
-            .then((res) => {
-              console.log('✅ All files uploaded successfully:', res);
-            })
-            .catch((err) => {
-              console.error('❌ Upload failed:', err);
-            });
-        } else {
-          console.log('🕐 Waiting for all files to be uploaded...');
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
         }
+      }
+      if (fileKey === 'costProfile') {
+        try {
+          await uploadCostProfile({
+            tenantId,
+            file,
+          }).unwrap();
 
-        return updated;
-      });
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'kpi') {
+        try {
+          await uploadKPI({
+            tenantId,
+            file,
+          }).unwrap();
 
-      console.log(`📁 File stored for ${fileKey}`);
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'industrySelection') {
+        try {
+          await uploadIndustrySelection({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'planningHorizon') {
+        try {
+          await uploadPlanningHorizon({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'costProfileLookUpTable') {
+        try {
+          await uploadCostProfileLookup({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'industrySelectionLookUpTable') {
+        try {
+          await uploadIndustrySelectionLookup({
+            tenantId,
+            file,
+          });
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+
+      if (fileKey === 'kpiSelectionLookUpTable') {
+        try {
+          await uploadKPILookup({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'industryAssessmentMatrix') {
+        try {
+          await uploadIndustryAssessmentMatrix({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'solutionMetadataTable') {
+        try {
+          await uploadSolutionMetadata({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
+      if (fileKey === 'bandDefinitionTable') {
+        try {
+          await uploadBandDefinition({
+            tenantId,
+            file,
+          }).unwrap();
+
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [fileKey]: file,
+          }));
+        } catch (error) {
+          //tosterr
+          console.log('❌ Failed to upload file:', error);
+        }
+      }
     } catch (error) {
       console.error(`❌ Error storing file for ${fileKey}:`, error);
     }
@@ -226,12 +407,22 @@ function AssessorOnboarding() {
                     <Controller
                       name="firstName"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'First Name is required',
+                        pattern: {
+                          value: /^[A-Za-z ]+$/, // Only letters and spaces
+                          message: 'Only letters allowed ',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
                           label="First Name"
                           placeholder="Enter First Name"
+                          type="text"
                           {...field}
-                          required={true}
+                          required
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('firstName')}
                         />
                       )}
@@ -242,12 +433,22 @@ function AssessorOnboarding() {
                     <Controller
                       name="lastName"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'Last Name is required',
+                        pattern: {
+                          value: /^[A-Za-z ]+$/, // Only letters and spaces
+                          message: 'Only letters allowed (no special characters)',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
                           label="Last Name"
                           placeholder="Enter Last Name"
+                          type="text"
                           {...field}
-                          required={true}
+                          required
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('lastName')}
                         />
                       )}
@@ -257,12 +458,22 @@ function AssessorOnboarding() {
                     <Controller
                       name="email"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email format
+                          message: 'Enter a valid email address',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
-                          label="e-Mail ID"
-                          placeholder="Enter Email ID"
+                          type="email"
+                          label="e-Mail Id"
+                          placeholder="Enter Email"
                           {...field}
-                          required={true}
+                          required
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('email')}
                         />
                       )}
@@ -273,35 +484,55 @@ function AssessorOnboarding() {
                     <Controller
                       name="contactNumber"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'Contact number is required',
+                        pattern: {
+                          value: /^[0-9]$/,
+                          message: 'Enter a valid number',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
+                          //type="text"
                           label="Contact Number"
                           placeholder="Enter Contact Number"
                           {...field}
-                          required={true}
+                          required
+                          inputProps={{ maxLength: 10 }}
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('contactNumber')}
                         />
                       )}
                     />
                   </Grid>
-
                   <Grid size={{ xs: 12, md: 3 }}>
                     <Controller
                       name="city"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'City is required',
+                        pattern: {
+                          value: /^[A-Za-z ]+$/,
+                          message: 'Only letters allowed',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
                           label="City"
                           placeholder="Enter City"
+                          type="text"
                           {...field}
-                          required={true}
+                          required
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('city')}
                         />
                       )}
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 12, md: 3 }}>
+                  {/* <Grid size={{ xs: 12, md: 3 }}>
                     <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
                       Country
                     </Typography>
@@ -335,34 +566,90 @@ function AssessorOnboarding() {
                         )}
                       />
                     </FormControl>
+                  </Grid> */}
+
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
+                      Country
+                    </Typography>
+                    <FormControl fullWidth error={!!errors.country}>
+                      <Controller
+                        name="country"
+                        control={control}
+                        rules={{ required: 'Country is required' }}
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+                            displayEmpty
+                            input={<OutlinedInput />}
+                            value={field.value || ''}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            onFocus={() => setFocusedField('country')}
+                            sx={{ height: '36px', color: '#888', width: '100%', borderRadius: '15px' }}
+                            renderValue={(selected) =>
+                              !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
+                            }
+                          >
+                            <MenuItem disabled value="">
+                              <em>Select From Dropdown</em>
+                            </MenuItem>
+                            {CountryOptions.map((country) => (
+                              <MenuItem key={country.code} value={country.name}>
+                                {country.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        )}
+                      />
+                      {errors.country && <Typography color="error">{errors.country.message}</Typography>}
+                    </FormControl>
                   </Grid>
 
                   <Grid size={{ xs: 12, md: 3 }}>
                     <Controller
                       name="yearOfExperience"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'Year of experience is required',
+                        pattern: {
+                          value: /^\d+$/,
+                          message: 'Only digits allowed',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
+                          //type="text"
                           label="Year Of Experience"
-                          placeholder="Enter Total Year Of Experience"
+                          placeholder="Enter Year"
                           {...field}
-                          required={true}
+                          required
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('yearOfExperience')}
                         />
                       )}
                     />
                   </Grid>
-
                   <Grid size={{ xs: 12, md: 3 }}>
                     <Controller
                       name="certificationYear"
                       control={control}
-                      render={({ field }) => (
+                      rules={{
+                        required: 'Certification year is required',
+                        pattern: {
+                          value: /^\d{4}$/,
+                          message: 'Enter a valid 4-digit year',
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
                         <InputWithLabel
+                          //  type="text"
                           label="Certification Year"
                           placeholder="Enter Certification Year"
                           {...field}
-                          //    required={true}
+                          required
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                           onFocus={() => setFocusedField('certificationYear')}
                         />
                       )}
@@ -388,7 +675,15 @@ function AssessorOnboarding() {
               </Box>
 
               <Box className={styles.buttonSection}>
-                <CustomButton children={'Save'} variant="contained" color="primary" icon="save" type="submit" />
+                <CustomButton
+                  children={'Save'}
+                  variant="contained"
+                  color="primary"
+                  icon="save"
+                  type="submit"
+                  width="300px"
+                  className={styles.saveBtn}
+                />
               </Box>
             </Grid>
             {/* sx={{ width: '100%', overflowX: 'auto' }} */}
@@ -400,10 +695,11 @@ function AssessorOnboarding() {
                   // overflowX: 'auto',
 
                   overflowX: 'auto',
-                  maxWidth: '100%',
+                  //  maxWidth: '100%',
                 }}
               >
-                <Table stickyHeader size="small" sx={{ width: '100%', minWidth: 300 }}>
+                {/* stickyHeader size="small" */}
+                <Table sx={{ minWidth: 100 }}>
                   <TableHead>
                     <TableRow sx={{ padding: 0, textAlign: 'center' }}>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>No.</TableCell>
@@ -451,26 +747,33 @@ function AssessorOnboarding() {
                               padding: 1,
                             }}
                           >
-                            {loadingKey === backendKey ? (
+                            {/* {loadingKey === backendKey ? (
                               <ButtonWithLoader label="" loading={true} />
-                            ) : (
-                              <FileActionButton
-                                icon="upload"
-                                label="Upload"
-                                width="50px"
-                                //  showLabel={false}
-                                showIcon
-                                color={backendKey in uploadedFiles ? 'green' : '#1976d2'}
-                                onClick={() => {
-                                  setCurrentUploadKey(backendKey);
+                            ) : ( */}
+                            <FileActionButton
+                              icon="upload"
+                              label="Upload"
+                              width="50px"
+                              //  showLabel={false}
+                              showIcon
+                              color={backendKey in uploadedFiles ? 'green' : '#1976d2'}
+                              onClick={() => {
+                                setCurrentUploadKey(backendKey);
 
-                                  fileInputRef.current?.click();
-                                }}
-                              />
-                            )}
+                                fileInputRef.current?.click();
+                              }}
+                            />
+                            {/* )} */}
                           </TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                            <FileActionButton icon="view" label="View" width="50px" showIcon showLabel={false} />
+                            <span
+                              style={{
+                                pointerEvents: uploadedFiles[backendKey] ? 'auto' : 'none',
+                                opacity: uploadedFiles[backendKey] ? 1 : 0.5,
+                              }}
+                            >
+                              <FileActionButton icon="view" label="View" width="50px" showIcon showLabel={false} />
+                            </span>
                           </TableCell>
                         </TableRow>
                       );

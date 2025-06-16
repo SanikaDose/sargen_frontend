@@ -91,6 +91,10 @@ padding:0% 1%;
  justify-content: center;
  align-items: center;
 }
+.saveBtn{
+  width: 100%;
+  margin: 1% 0%;
+}
 .actionBtnContainer{
   display: flex;
   justify-content: center;
@@ -144,18 +148,22 @@ margin: 0px;
   .formContainer {
     flex-direction: column;
     width: 100%;
+    padding: 0;
   }
+
   .secondContainer{
     flex-direction: column;
     width: 100%;
+    padding: 0;
   }
   .btnContainer{
     width: 100%;
       /* justify-content: space-between; */
-    
+    padding: 0;
   }
    .FormContainer{
   width: 100%;
+  padding: 0;
 }
 
 }

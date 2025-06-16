@@ -2,11 +2,9 @@ export type AssessorFormType = {
   firstName: string;
   lastName: string;
   email: string;
-  contactNumber: number;
+  contactNumber: string;
   city: string;
   country: string;
-  yearOfExperience: number;
-  certificationYear: number;
-   
+  yearOfExperience: string;
+  certificationYear: string;
 };
-
