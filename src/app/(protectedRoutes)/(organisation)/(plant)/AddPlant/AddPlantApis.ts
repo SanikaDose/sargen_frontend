@@ -1,6 +1,7 @@
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
 import { AddPlantApi } from './AddPlant.types';
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
 export const plantInfoApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,6 +11,13 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant Information Added successfully!',
+          errorMessage: 'Falied To Add Plant Information',
+          duration: 4000,
+        });
+      },
 
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
