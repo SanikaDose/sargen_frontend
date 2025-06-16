@@ -76,12 +76,4 @@ export const sargenComponents = {
       },
     },
   },
-  // Fix stepper alignment by styling both icon and connector
-  MuiStepIcon: {
-    styleOverrides: {
-      root: {
-        '& .MuiStepIcon-active': { color: 'red' },
-      },
-    },
-  },
 };

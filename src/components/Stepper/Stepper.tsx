@@ -25,9 +25,6 @@ const Stepper: React.FC<StepperProps> = ({ steps = [], activeStep = 0, completed
               '& .MuiStepIcon-root.Mui-completed': {
                 color: theme.palette.success.main,
               },
-              '& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line': {
-                borderColor: theme.palette.success.main,
-              },
             }}
           >
             {steps.map((step, index) => (
