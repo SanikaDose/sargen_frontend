@@ -1,4 +1,3 @@
-// src/components/CurrencyValueSelector/CurrencyValueSelector.stories.tsx
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import CurrencyValueSelector from './CurrencyDropDown';
@@ -6,8 +5,28 @@ import CurrencyValueSelector from './CurrencyDropDown';
 const meta: Meta<typeof CurrencyValueSelector> = {
   title: 'Components/CurrencyValueSelector',
   component: CurrencyValueSelector,
-  parameters: {
-    layout: 'centered',
+  tags: ['autodocs'],
+  argTypes: {
+    width: {
+      control: 'text',
+      description: 'Width of the selector',
+    },
+    height: {
+      control: 'text',
+      description: 'Height of the selector',
+    },
+    borderRadius: {
+      control: 'text',
+      description: 'Border radius of the input',
+    },
+    backgroundColor: {
+      control: 'color',
+      description: 'Background color of the input',
+    },
+    placeholder: {
+      control: 'text',
+      description: 'Placeholder text when nothing is selected',
+    },
   },
 };
 
@@ -15,4 +34,77 @@ export default meta;
 
 type Story = StoryObj<typeof CurrencyValueSelector>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    placeholder: 'Select Currency',
+    width: '300px',
+    height: '45px',
+    borderRadius: '8px',
+    backgroundColor: '#fffff',
+    currenciesWithSymbols: {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      INR: '₹',
+      JPY: '¥',
+      CNY: '¥',
+      AUD: 'A$',
+      CAD: 'C$',
+      CHF: 'CHF',
+      NZD: 'NZ$',
+      SEK: 'kr',
+      NOK: 'kr',
+      DKK: 'kr',
+      RUB: '₽',
+      BRL: 'R$',
+      ZAR: 'R',
+      MXN: '$',
+      KRW: '₩',
+      SGD: 'S$',
+      HKD: 'HK$',
+      TRY: '₺',
+      AED: 'د.إ',
+      SAR: 'ر.س',
+      EGP: '£',
+      NGN: '₦',
+      TWD: 'NT$',
+      THB: '฿',
+      VND: '₫',
+      IDR: 'Rp',
+      MYR: 'RM',
+      PKR: '₨',
+      BDT: '৳',
+      LKR: 'Rs',
+      UAH: '₴',
+      KZT: '₸',
+      GEL: '₾',
+      ILS: '₪',
+      PLN: 'zł',
+      CZK: 'Kč',
+      HUF: 'Ft',
+      RON: 'lei',
+      ARS: '$',
+      CLP: '$',
+      COP: '$',
+      PEN: 'S/',
+      DOP: 'RD$',
+      BGN: 'лв',
+      HRK: 'kn',
+      ISK: 'kr',
+      MAD: 'د.م.',
+      JOD: 'د.ا',
+      QAR: 'ر.ق',
+      KWD: 'د.ك',
+      OMR: 'ر.ع.',
+      BTC: '₿',
+      ETH: 'Ξ',
+      LTC: 'Ł',
+      XMR: 'ɱ',
+      DOGE: 'Ð',
+      XRP: 'XRP',
+      USDT: '₮',
+      BNB: 'Ḇ',
+    },
+    defaultCurrency: ' INR',
+  },
+};

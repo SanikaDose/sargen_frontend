@@ -16,6 +16,7 @@ import { CountryOptions } from '@/app/utils/CountryOptions';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { OrgFormInputs } from '@/app/(protectedRoutes)/(organisation)/(organisationOnboarding)/organisationOnboarding/FormConfig/formInputStep';
 import { OrgOnboard } from './EditOrganisationOnboarding.types';
+import { triggerToast } from '@/app/utils/toast';
 
 const steps = [
   'Company Name',
@@ -88,7 +89,7 @@ function OrganizationOnbording() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.error('Image upload failed:', error);
+      triggerToast('Failed to add  upload image:', 'error');
     }
   };
 
@@ -96,10 +97,10 @@ function OrganizationOnbording() {
   const onSubmit = async (data: any) => {
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
-      console.log('Organization info submitted'); //use toster
       router.push('/AddContactPerson');
+      triggerToast('Organization info submitted', 'success');
     } catch (error) {
-      console.log('api submition failed', error);
+      triggerToast('Failed to add plant info ', 'error');
     }
   };
 
@@ -156,7 +157,6 @@ function OrganizationOnbording() {
         <Box sx={{ display: 'flex', width: '27%', justifyContent: 'center', alignItems: 'center' }}>
           <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
         </Box>
-
         {/* Inputs */}
 
         <Grid container spacing={2}>
@@ -172,6 +172,8 @@ function OrganizationOnbording() {
                   placeholder="Enter Name of the company"
                   {...field}
                   onFocus={() => setFocusedField('companyName')}
+                  error={!!errors.companyName}
+                  helperText={errors.companyName?.message}
                 />
               )}
             />
@@ -181,13 +183,21 @@ function OrganizationOnbording() {
             <Controller
               name="website"
               control={control}
+              rules={{
+                required: 'Website is required',
+                pattern: {
+                  value: /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/,
+                  message: 'Enter a valid URL',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   label="Company Website"
                   placeholder="Enter company website"
                   {...field}
                   onFocus={() => setFocusedField('website')}
-                  required
+                  error={!!errors.website}
+                  helperText={errors.website?.message}
                 />
               )}
             />
@@ -197,6 +207,13 @@ function OrganizationOnbording() {
             <Controller
               name="gstin"
               control={control}
+              rules={{
+                required: 'Gstin is required',
+                pattern: {
+                  value: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                  message: 'Enter valid GSTIN',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   type="text"
@@ -204,6 +221,8 @@ function OrganizationOnbording() {
                   placeholder="Enter GST IN no"
                   {...field}
                   onFocus={() => setFocusedField('gstin')}
+                  error={!!errors.gstin}
+                  helperText={errors.gstin?.message}
                 />
               )}
             />
@@ -250,12 +269,21 @@ function OrganizationOnbording() {
             <Controller
               name="revenue"
               control={control}
+              rules={{
+                required: 'Revenue is required',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Enter a valid number',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   label="Organization Revenue"
                   placeholder="Enter Revenue"
                   {...field}
                   onFocus={() => setFocusedField('revenue')}
+                  error={!!errors.revenue}
+                  helperText={errors.revenue?.message}
                 />
               )}
             />
@@ -308,12 +336,21 @@ function OrganizationOnbording() {
             <Controller
               name="numberOfEmployees"
               control={control}
+              rules={{
+                required: 'Number of employees is required',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Enter a valid number',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   label="Number of Employees"
                   placeholder="Enter Number of Employees"
                   {...field}
                   onFocus={() => setFocusedField('numberOfEmployees')}
+                  error={!!errors.numberOfEmployees}
+                  helperText={errors.numberOfEmployees?.message}
                 />
               )}
             />
@@ -325,6 +362,9 @@ function OrganizationOnbording() {
         <Controller
           name="about"
           control={control}
+          rules={{
+            required: 'Number of employees is required',
+          }}
           render={({ field }) => (
             <InputWithLabel
               label="About Organization"
@@ -333,6 +373,8 @@ function OrganizationOnbording() {
               multiline
               {...field}
               onFocus={() => setFocusedField('about')}
+              error={!!errors.about}
+              helperText={errors.about?.message}
             />
           )}
         />
@@ -349,12 +391,12 @@ function OrganizationOnbording() {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton variant="contained" icon="left" color="#2D7FF9" disabled>
+        <CustomButton variant="outlined" icon="left" color="#2D7FF9" disabled>
           Back
         </CustomButton>
         <CustomButton
           type="submit"
-          variant="contained"
+          variant="outlined"
           icon="right"
           color="#2D7FF9"
           //  disabled={!isValid || isLoading}
