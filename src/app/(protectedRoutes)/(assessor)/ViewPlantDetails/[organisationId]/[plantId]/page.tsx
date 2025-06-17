@@ -1,12 +1,14 @@
 'use client';
 
-import { Box, CircularProgress, Typography, Grid, Paper, Divider, Chip, Avatar } from '@mui/material';
-import { useParams } from 'next/navigation';
+import { Box, CircularProgress, Typography, Grid, Paper, Divider, Chip, Avatar, Button } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useGetSpecificPlantInfoQuery } from '../../../AssignedPlantsList/AssignedPlantsListApi';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import NumbersIcon from '@mui/icons-material/Numbers';
 import FactoryIcon from '@mui/icons-material/Factory';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import { AssessorProps } from '../../../Assessor.types';
 
 const excludeKeys = [
   'plantLogo',
@@ -21,9 +23,9 @@ const excludeKeys = [
   'updatedAt',
   'id',
 ];
-
-export default function ViewPlantDetails() {
+const ViewPlantDetails = ({}: AssessorProps) => {
   const params = useParams();
+  const router = useRouter();
   const organisationId = params?.organisationId as string;
   const plantId = params?.plantId as string;
 
@@ -56,12 +58,18 @@ export default function ViewPlantDetails() {
   }
 
   return (
-    <Box p={3}>
-      <Typography variant="h6" fontWeight={600}>
-        Plant Details
-      </Typography>
-
-      <Paper elevation={3} sx={{ borderRadius: 3, p: 3 }}>
+    <Box p={{ xs: 2, sm: 3 }}>
+      <Paper
+        elevation={2}
+        sx={{
+          borderRadius: '16px',
+          p: 2,
+          border: '1px solid #D8D8D8',
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} fontSize={'18px'} mb={5}>
+          Plant Details
+        </Typography>
         <Box display="flex" alignItems="flex-start" gap={3} mb={3}>
           {plant.plantLogo ? (
             <Avatar variant="circular" src={plant.plantLogo} alt={plant.name} sx={{ width: 100, height: 100 }} />
@@ -80,7 +88,30 @@ export default function ViewPlantDetails() {
               <Chip icon={<NumbersIcon />} label={`Reg No: ${plant.registrationNo}`} variant="outlined" />
             </Box>
           </Box>
+
+          {/* Push button to the right side */}
+          <Box display="flex" flexDirection="column" alignItems="flex-end" ml={{ xs: 0, sm: 'auto' }}>
+            <Button
+              startIcon={<OndemandVideoIcon />}
+              color={'secondary'}
+              variant={'text'}
+              sx={{
+                color: '#FFFFFF',
+                bgcolor: '#047af2',
+                fontSize: '18px',
+                mt: 2,
+                mr: { xs: 0, sm: 4 },
+                p: 1,
+                borderRadius: '16px',
+                '&:hover': { bgcolor: '#0356b0' },
+              }}
+              onClick={() => router.push(`/UserAssessmentPreview/${organisationId}/${plantId}`)}
+            >
+              Review Assessment
+            </Button>
+          </Box>
         </Box>
+
         <Divider sx={{ my: 2 }} />
         <Grid container spacing={2}>
           {filteredPlantInfo.map(([key, value]) => (
@@ -97,4 +128,6 @@ export default function ViewPlantDetails() {
       </Paper>
     </Box>
   );
-}
+};
+
+export default ViewPlantDetails;

@@ -1,24 +1,35 @@
 .panelContainer {
   height: 100%;
-  width: 30%;
+  width: 100%;
   padding: 2%;
   background-color: #fff;
   border-left: 0.1% solid #ccc;
   display: flex;
   flex-direction: column;
-  border-radius: 2%;
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
+  border: 1px solid #047af2;
 }
 
 .scrollContent {
   overflow-y: auto;
   flex-grow: 1;
-  scrollbar-width: none;
+  scrollbar-width: auto; /* revert back to visible scrollbar in Firefox */
 }
 
 .scrollContent::-webkit-scrollbar {
-  display: none;
+  display: block; /* show the scrollbar in WebKit browsers */
+  width: 8px; /* optional: control thickness of the scrollbar */
+}
+
+.scrollContent::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.scrollContent::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
 .titleContainer {
@@ -85,15 +96,21 @@
   background-color: lightgreen;
 }
 
+.statusAlert {
+  background-color: #ed6c02;
+}
+
 .statusNotReviewed {
   background-color: grey;
 }
+
 .innerStatusLegend {
   height: 100%;
-  width: 45%;
   display: flex;
-  justify-content: space-around;
   align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
 .statusLabel {
