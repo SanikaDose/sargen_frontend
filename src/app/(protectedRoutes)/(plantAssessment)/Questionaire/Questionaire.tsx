@@ -86,7 +86,7 @@ const Questionaire = () => {
   const questionText = currentGroup[0].question;
 
   return (
-    <Box component="form" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', gap: 1 }}>
+    <Box component="form" sx={{ height: '99%', display: 'flex', flexDirection: 'column', width: '100%' }}>
       <Box className={styles.stepperContainer}>
         <Stepper steps={steps} />
       </Box>
@@ -128,8 +128,8 @@ const Questionaire = () => {
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
               <InfoBox
+                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
                 heading="About Industry"
-                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu..."
               />
             </Box>
 
