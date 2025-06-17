@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ImageUploader from './ImageUpload';
-import defaultImage from '../../../public/images/default-logo-image.png';
+import defaultImage from '../../../public/images/default-avatar-profile.png';
 const meta: Meta<typeof ImageUploader> = {
   title: 'Components/ImageUploader',
   component: ImageUploader,

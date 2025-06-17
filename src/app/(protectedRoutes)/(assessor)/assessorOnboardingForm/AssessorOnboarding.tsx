@@ -87,8 +87,7 @@ function AssessorOnboarding() {
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
   const [addAssessorInformation] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
-
-  const [logoUrl, setLogoUrl] = useState<string>('images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

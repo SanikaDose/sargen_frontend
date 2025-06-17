@@ -28,7 +28,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   onClick,
   className = '',
   icon,
-  height = 64,
+  height = 60,
   width = 100,
   disabled = false,
   ...rest

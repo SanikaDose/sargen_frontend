@@ -36,7 +36,7 @@ function OrganizationOnbording() {
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
 
   const tenantId = getValueLocalStorage('tenantId');
   const {

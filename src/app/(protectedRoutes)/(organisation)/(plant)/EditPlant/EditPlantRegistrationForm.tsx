@@ -15,6 +15,8 @@ import { useEditPlantInfoMutation, useGetPlantByIdQuery, useUploadPlantLogoMutat
 import { useParams, useRouter } from 'next/navigation';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { triggerToast } from '@/app/utils/toast';
+import Loader from '@/components/Loader/Loader';
 
 const steps = [
   'Name',
@@ -40,18 +42,15 @@ const EditPlantRegistrationForm = () => {
   const plantId = params.PlantId as string;
 
   const {
-    register,
-    reset,
-    trigger,
-    getValues,
     control,
     handleSubmit,
+    reset,
+    setFocus,
     formState: { errors },
   } = useForm<PlantFormType>();
-
   const [editPlantInfo, { isLoading }] = useEditPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/plant-logo.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const { data: getPlantData, isLoading: isFetching } = useGetPlantByIdQuery({
@@ -104,6 +103,7 @@ const EditPlantRegistrationForm = () => {
       const { about, ...body } = data;
       await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
       // reset();
+      // triggerToast('Plant Updated successfully!', 'success');
       router.back();
     } catch (error) {
       console.error('Failed to add plant info:', error);
@@ -129,135 +129,148 @@ const EditPlantRegistrationForm = () => {
       return acc;
     }, []);
   }, [watchedValues]);
-
+  useEffect(() => {
+    // console.log('Errors:', errors);
+  }, [errors]);
   return (
-    <Box sx={{ width: '100%', height: '99.5%' }}>
-      {' '}
-      <Box className={styles.stepperContainer}>
-        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-      </Box>
-      <Box sx={{ width: '100%', display: 'flex', gap: 3, height: '80%' }}>
-        <form className={styles.mostOuterConatiner} style={{ width: '70%' }} onSubmit={handleSubmit(onSubmit)}>
-          <Paper
-            elevation={2}
-            sx={{
-              borderRadius: '16px',
-              p: 2,
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-              backgroundColor: 'white',
-              border: '1px solid rgb(216, 216, 216)',
-            }}
-          >
-            <Typography variant="h6" className={styles.heading}>
-              Plant Registration
-            </Typography>
+    <>
+      {isLoading || isFetching ? (
+        <Loader loading={true} />
+      ) : (
+        <Box sx={{ width: '100%', height: '99.5%' }}>
+          <Box className={styles.stepperContainer}>
+            <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+          </Box>
 
-            <Box className={styles.formContainer}>
-              <Box className={styles.imageBox}>
-                <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
-              </Box>
+          <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
+            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
+              <Box className={styles.formOuterContainer}>
+                <Typography variant="h6" className={styles.heading}>
+                  Plant Registration
+                </Typography>
 
-              <Box className={styles.formFieldsBox}>
-                <section className={styles.formFieldsInner}>
-                  <Grid container spacing={1}>
-                    {plantFormInputs.map((input) => (
-                      <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                <Box className={styles.formContainer}>
+                  <Box className={styles.imageBox}>
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                  </Box>
+
+                  <Box className={styles.formFieldsBox}>
+                    <section className={styles.formFieldsInner}>
+                      <Grid container spacing={1}>
+                        {plantFormInputs.map((input) => (
+                          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                            <Controller
+                              name={input.name as keyof PlantFormType}
+                              control={control}
+                              defaultValue=""
+                              rules={input.rules}
+                              render={({ field, fieldState }) => (
+                                <>
+                                  {input.isCurrency ? (
+                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
+                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
+                                        Currency Type
+                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
+                                      </Typography>
+                                      <Select
+                                        {...field}
+                                        displayEmpty
+                                        value={field.value || ''}
+                                        sx={{
+                                          borderRadius: '8px',
+                                          height: 36,
+                                          fontWeight: 500,
+                                          fontFamily: 'Inter, sans-serif',
+                                        }}
+                                        onFocus={() => setFocusedField('currencyType')}
+                                      >
+                                        <MenuItem value="">
+                                          <em>Select Currency</em>
+                                        </MenuItem>
+                                        {currencyOptions.map((currency) => (
+                                          <MenuItem key={currency.code} value={currency.name}>
+                                            {currency.name}
+                                          </MenuItem>
+                                        ))}
+                                      </Select>
+                                      {fieldState?.error?.message && (
+                                        <Typography variant="caption" color="error">
+                                          {fieldState.error.message}
+                                        </Typography>
+                                      )}
+                                    </FormControl>
+                                  ) : (
+                                    <>
+                                      <InputWithLabel
+                                        {...field}
+                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        placeholder={input.placeholder}
+                                        type={input.type || 'text'}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        size="small"
+                                      />
+                                      {fieldState?.error?.message && (
+                                        <Typography variant="caption" color="error">
+                                          {fieldState.error.message}
+                                        </Typography>
+                                      )}
+                                    </>
+                                  )}
+                                </>
+                              )}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+
+                      <Box className={styles.aboutSection}>
                         <Controller
-                          name={input.name as keyof PlantFormType}
+                          name="about"
                           control={control}
                           defaultValue=""
-                          rules={{ required: input.required }}
-                          render={({ field }) =>
-                            input.isCurrency ? (
-                              <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                <Typography sx={{ fontWeight: 600, color: '#000000' }}>Currency Type</Typography>
-                                <Select
-                                  {...field}
-                                  displayEmpty
-                                  value={field.value || ''}
-                                  inputProps={{ 'aria-label': 'Select Currency' }}
-                                  sx={{ borderRadius: '8px', height: 36 }}
-                                  onFocus={() => setFocusedField('currencyType')}
-                                >
-                                  <MenuItem
-                                    value=""
-                                    sx={{
-                                      '& input::placeholder': {
-                                        fontWeight: 500, // Make placeholder bold
-                                        color: '#888', // Optional: placeholder color
-                                      },
-                                    }}
-                                  >
-                                    <em>Select Currency</em>
-                                  </MenuItem>
-                                  {currencyOptions.map((currency) => (
-                                    <MenuItem key={currency.code} value={currency.name}>
-                                      {currency.name}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                            ) : (
-                              <InputWithLabel
-                                {...field}
-                                label={input.label}
-                                placeholder={input.placeholder}
-                                required={input.required}
-                                type={input.type || 'text'}
-                                onFocus={() => setFocusedField(input.name)}
-                                size="small"
-                              />
-                            )
-                          }
+                          render={({ field }) => (
+                            <InputWithLabel
+                              {...field}
+                              label="About Us"
+                              placeholder="Enter About Plant"
+                              multiline
+                              type="text"
+                              onFocus={() => setFocusedField('about')}
+                            />
+                          )}
                         />
-                      </Grid>
-                    ))}
-                  </Grid>
-                  <Box className={styles.aboutSection}>
-                    <Controller
-                      name="about"
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <InputWithLabel
-                          {...field}
-                          label="About Us"
-                          placeholder="Enter About Plant"
-                          multiline
-                          type="text"
-                          onFocus={() => setFocusedField('about')}
-                        />
-                      )}
-                    />
+                      </Box>
+                    </section>
                   </Box>
-                </section>
+                </Box>
               </Box>
+
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={1}
+                mt={5}
+                ml={5}
+                mr={5}
+                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+              >
+                <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
+                  Back
+                </CustomButton>
+                <CustomButton type="submit" variant="contained" icon="save">
+                  {isLoading ? 'Saving...' : 'Save'}
+                </CustomButton>
+              </Box>
+            </form>
+
+            <Box className={styles.rightSection}>
+              <InfoBox />
             </Box>
           </Paper>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            p={1}
-            mt={5}
-            ml={5}
-            mr={5}
-            sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
-          >
-            <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
-              Back
-            </CustomButton>
-            <CustomButton type="submit" variant="contained" icon="save">
-              {isLoading ? 'Saving...' : 'Save'}
-            </CustomButton>
-          </Box>
-        </form>
-
-        <Box sx={{ width: '30%' }}>
-          <InfoBox />
         </Box>
-      </Box>
-    </Box>
+      )}
+    </>
   );
 };
 
