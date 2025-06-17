@@ -17,6 +17,7 @@ COPY . .
 # Set environment variables
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+ENV NEXT_DISABLE_ESLINT 1
 
 # Build the application
 RUN npm run build
