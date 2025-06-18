@@ -1,6 +1,5 @@
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 import { buttonBaseClasses } from '@mui/material/ButtonBase';
-import { dividerClasses } from '@mui/material/Divider';
 import { menuItemClasses } from '@mui/material/MenuItem';
 import { selectClasses } from '@mui/material/Select';
 import { alpha, Components, Theme } from '@mui/material/styles';
@@ -9,7 +8,11 @@ import { tabClasses } from '@mui/material/Tab';
 import * as React from 'react';
 import { brand, gray } from '../themePrimitives';
 
-/* eslint-disable import/prefer-default-export */
+const SelectIcon = React.forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
+  <UnfoldMoreRoundedIcon fontSize="small" {...props} ref={ref} />
+));
+SelectIcon.displayName = 'SelectIcon';
+
 export const navigationCustomizations: Components<Theme> = {
   MuiMenuItem: {
     styleOverrides: {
@@ -31,9 +34,6 @@ export const navigationCustomizations: Components<Theme> = {
     styleOverrides: {
       list: {
         gap: '0px',
-        [`&.${dividerClasses.root}`]: {
-          margin: '0 -8px',
-        },
       },
       paper: ({ theme }) => ({
         marginTop: '4px',
@@ -47,18 +47,12 @@ export const navigationCustomizations: Components<Theme> = {
             backgroundColor: alpha(theme.palette.action.selected, 0.3),
           },
         },
-        ...theme.applyStyles('dark', {
-          background: gray[900],
-          boxShadow: 'hsla(220, 30%, 5%, 0.7) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.8) 0px 8px 16px -5px',
-        }),
       }),
     },
   },
   MuiSelect: {
     defaultProps: {
-      IconComponent: React.forwardRef<SVGSVGElement, SvgIconProps>((props, ref) => (
-        <UnfoldMoreRoundedIcon fontSize="small" {...props} ref={ref} />
-      )),
+      IconComponent: SelectIcon,
     },
     styleOverrides: {
       root: ({ theme }) => ({
@@ -79,36 +73,10 @@ export const navigationCustomizations: Components<Theme> = {
         '&:before, &:after': {
           display: 'none',
         },
-
-        ...theme.applyStyles('dark', {
-          borderRadius: (theme.vars || theme).shape.borderRadius,
-          borderColor: gray[700],
-          backgroundColor: (theme.vars || theme).palette.background.paper,
-          boxShadow: `inset 0 1px 0 1px ${alpha(gray[700], 0.15)}, inset 0 -1px 0 1px hsla(220, 0%, 0%, 0.7)`,
-          '&:hover': {
-            borderColor: alpha(gray[700], 0.7),
-            backgroundColor: (theme.vars || theme).palette.background.paper,
-            boxShadow: 'none',
-          },
-          [`&.${selectClasses.focused}`]: {
-            outlineOffset: 0,
-            borderColor: gray[900],
-          },
-          '&:before, &:after': {
-            display: 'none',
-          },
-        }),
       }),
-      select: ({ theme }) => ({
+      select: () => ({
         display: 'flex',
         alignItems: 'center',
-        ...theme.applyStyles('dark', {
-          display: 'flex',
-          alignItems: 'center',
-          '&:focus-visible': {
-            backgroundColor: gray[900],
-          },
-        }),
       }),
     },
   },
@@ -159,23 +127,14 @@ export const navigationCustomizations: Components<Theme> = {
           color: 'white',
           backgroundColor: (theme.vars || theme).palette.grey[900],
         },
-        ...theme.applyStyles('dark', {
-          '&.Mui-selected': {
-            color: 'black',
-            backgroundColor: (theme.vars || theme).palette.grey[50],
-          },
-        }),
       }),
     },
   },
   MuiTabs: {
     styleOverrides: {
       root: { minHeight: 'fit-content' },
-      indicator: ({ theme }) => ({
-        backgroundColor: (theme.vars || theme).palette.grey[800],
-        ...theme.applyStyles('dark', {
-          backgroundColor: (theme.vars || theme).palette.grey[200],
-        }),
+      indicator: () => ({
+        backgroundColor: gray[800],
       }),
     },
   },
@@ -199,16 +158,6 @@ export const navigationCustomizations: Components<Theme> = {
         [`&.${tabClasses.selected}`]: {
           color: gray[900],
         },
-        ...theme.applyStyles('dark', {
-          ':hover': {
-            color: (theme.vars || theme).palette.text.primary,
-            backgroundColor: gray[800],
-            borderColor: gray[700],
-          },
-          [`&.${tabClasses.selected}`]: {
-            color: '#fff',
-          },
-        }),
       }),
     },
   },
@@ -233,52 +182,78 @@ export const navigationCustomizations: Components<Theme> = {
 
   MuiStepIcon: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: () => ({
         color: 'transparent',
         border: `1px solid ${gray[400]}`,
         width: 15,
         height: 15,
         borderRadius: '50%',
-        '& text': {
-          display: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        '&.Mui-completed': {
+          color: 'white',
+          backgroundColor: brand[500],
+          borderColor: brand[500],
         },
         '&.Mui-active': {
-          border: 'none',
-          color: (theme.vars || theme).palette.primary.main,
+          color: brand[500],
+          borderColor: brand[500],
         },
-        '&.Mui-completed': {
-          border: 'none',
-          color: (theme.vars || theme).palette.success.main,
-        },
-        ...theme.applyStyles('dark', {
-          border: `1px solid ${gray[700]}`,
-          '&.Mui-active': {
-            border: 'none',
-            color: (theme.vars || theme).palette.primary.light,
-          },
-          '&.Mui-completed': {
-            border: 'none',
-            color: (theme.vars || theme).palette.success.light,
-          },
-        }),
-        variants: [
-          {
-            props: { completed: true },
-            style: {
-              width: 12,
-              height: 12,
-            },
-          },
-        ],
       }),
     },
   },
   MuiStepLabel: {
     styleOverrides: {
-      label: ({ theme }) => ({
-        '&.Mui-completed': {
-          opacity: 0.6,
-          ...theme.applyStyles('dark', { opacity: 0.5 }),
+      root: ({ theme }) => ({
+        '& .MuiStepLabel-label': {
+          color: (theme.vars || theme).palette.text.secondary,
+          fontSize: '0.875rem',
+          fontWeight: 500,
+          '&.Mui-active': {
+            color: (theme.vars || theme).palette.text.primary,
+            fontWeight: 600,
+          },
+          '&.Mui-completed': {
+            color: (theme.vars || theme).palette.text.primary,
+            fontWeight: 600,
+          },
+        },
+      }),
+    },
+  },
+  MuiBreadcrumbs: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '& .MuiBreadcrumbs-separator': {
+          color: (theme.vars || theme).palette.text.secondary,
+          margin: '0 8px',
+        },
+      }),
+    },
+  },
+  MuiSpeedDial: {
+    styleOverrides: {
+      root: () => ({
+        '& .MuiSpeedDial-fab': {
+          backgroundColor: brand[500],
+          color: 'white',
+          '&:hover': {
+            backgroundColor: brand[600],
+          },
+        },
+      }),
+    },
+  },
+  MuiSpeedDialAction: {
+    styleOverrides: {
+      fab: ({ theme }) => ({
+        backgroundColor: (theme.vars || theme).palette.background.paper,
+        color: (theme.vars || theme).palette.text.primary,
+        '&:hover': {
+          backgroundColor: gray[100],
         },
       }),
     },
