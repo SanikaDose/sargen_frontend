@@ -55,7 +55,7 @@ import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
-import { Disabled } from '@/components/Card/Card.stories';
+
 const steps = [
   'First Name',
   'Last Name',
@@ -88,8 +88,8 @@ function AssessorOnboarding() {
     },
   });
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
-  const [addAssessorInformation, isLoading] = useAddAssessorInformationMutation();
-  const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
+  const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
+  const [getMetadataFileTemplate, { isLoading: isUploadLoading }] = useGetMetadataFileTemplateMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
@@ -112,6 +112,8 @@ function AssessorOnboarding() {
   const [uploadBandDefinition, { isLoading: bloading }] = useUploadBandDefinitionMutation();
   const [viewMetadataFile, { isLoading: vloading }] = useViewMetadataFileMutation();
 
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [downloadKey, setdownloadKey] = useState<string | null>(null);
   //function to view the metadata files
   const handleViewClick = async (fileName: string) => {
     if (!fileName) {
@@ -328,7 +330,7 @@ function AssessorOnboarding() {
     solutions_with_band_weights_: uploadSolutionMetadata,
     band_definition_table_: uploadBandDefinition,
   };
-  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+
   const handleUploadFile = async (file: File, fileKey: string) => {
     console.log('Uploading file for:', uploadedFiles);
     setUploadingKey(fileKey);
@@ -419,6 +421,7 @@ function AssessorOnboarding() {
     }, []);
   }, [watchedValues]);
   // function to download the file
+
   const handleDownloadClick = async (fileName: string) => {
     if (!fileName) {
       triggerToast('Invalid file name.', 'warning');
@@ -426,6 +429,7 @@ function AssessorOnboarding() {
     }
 
     try {
+      setdownloadKey(fileName);
       const response = await getMetadataFileTemplate({
         userType: 'ASSESSOR',
         fileName,
@@ -445,11 +449,16 @@ function AssessorOnboarding() {
     } catch (err) {
       console.error('Error downloading file:', err);
       triggerToast('Failed to download file', 'error');
+    } finally {
+      setdownloadKey(null);
     }
   };
 
   return (
     <>
+      {/* {isLoading ? (
+        <Loader loading={true} />
+      ) : ( */}
       <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
         <Box className={styles.stepperContainer}>
           <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
@@ -555,14 +564,17 @@ function AssessorOnboarding() {
 
               <Box className={styles.buttonSection}>
                 <CustomButton
-                  children={'Save'}
+                  //   children={'save'}
                   variant="contained"
                   color="primary"
                   icon="save"
                   type="submit"
                   width="300px"
                   className={styles.saveBtn}
-                />
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Saving...' : 'Save'}
+                </CustomButton>
               </Box>
             </Grid>
 
@@ -610,13 +622,17 @@ function AssessorOnboarding() {
                               padding: 1,
                             }}
                           >
-                            <FileActionButton
-                              icon="download"
-                              label="Download"
-                              width="50px"
-                              showIcon
-                              onClick={() => handleDownloadClick(backendKey)}
-                            />
+                            {downloadKey === backendKey ? (
+                              <ButtonWithLoader loading={true} width="50px" label="" />
+                            ) : (
+                              <FileActionButton
+                                icon="download"
+                                label="Download"
+                                width="50px"
+                                showIcon
+                                onClick={() => handleDownloadClick(backendKey)}
+                              />
+                            )}
                           </TableCell>
                           <TableCell
                             sx={{
@@ -635,7 +651,6 @@ function AssessorOnboarding() {
                                 color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
                                 onClick={() => {
                                   setCurrentUploadKey(backendKey);
-
                                   fileInputRef.current?.click();
                                 }}
                               />
@@ -682,6 +697,7 @@ function AssessorOnboarding() {
           </Box>
         </Box>
       </form>
+      {/* )} */}
     </>
   );
 }

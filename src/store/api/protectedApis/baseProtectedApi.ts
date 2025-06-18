@@ -69,6 +69,7 @@ export const protectedApi = createApi({
   endpoints: () => ({}), // Placeholder, will inject endpoints later
   tagTypes: [
     'SpecificPlantInfo',
+    'Assessor',
     'AssessorMetadata',
     'Plant',
     'Organisation',
