@@ -1,26 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import styles from './kpiDefinition.module.css';
-import { Kpi, KpiFormValues } from '../plantAssement.model';
+import styles from './SolutionAndImpactValues.module.css';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../../(plantAssessment)/plantAssementApi';
+import { Kpi, KpiFormValues } from '../../(plantAssessment)/plantAssement.model';
+import { useCallback } from 'react';
 
-const KpiDefinition = () => {
+const SolutionAndImpactValues = () => {
   const params = useParams();
   const router = useRouter();
-  const organisationId = params.OrganisationId as string;
-  const plantId = params.PlantId as string;
+  const organisationId = params.organisationId as string;
+  const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId');
   const [getKPIDefinition] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition, { isLoading }] = useSelectKPIDefinitionMutation();
@@ -28,9 +25,11 @@ const KpiDefinition = () => {
   const { control, handleSubmit, reset } = useForm<KpiFormValues>({
     defaultValues: { kpis: [] },
   });
+
   const selectedKpis = useWatch({ control, name: 'kpis' });
   const selectedCount = selectedKpis?.filter((k) => k.isselected)?.length || 0;
-  const fetchKpis = async () => {
+
+  const fetchKpis = useCallback(async () => {
     try {
       const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
       const cleaned = response.map((k: Kpi) => ({
@@ -39,16 +38,16 @@ const KpiDefinition = () => {
       }));
       setKpiList(cleaned);
       reset({
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: Kpi) => ({ isselected: k.isselected })),
       });
     } catch (error) {
       console.error('Failed to fetch KPIs:', error);
     }
-  };
+  }, [getKPIDefinition, tenantId, plantId, reset]);
 
   useEffect(() => {
     fetchKpis();
-  }, []);
+  }, [fetchKpis]);
 
   const handleSave = async (formData: KpiFormValues) => {
     try {
@@ -65,27 +64,13 @@ const KpiDefinition = () => {
       if (kpisSaveSuccesfully) {
         router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
       }
-    } catch (error) {
+    } catch {
       alert('something went wrong');
     }
   };
 
-  const dispatch = useDispatch();
-  const stepperState = useSelector((state: RootState) => state.stepper);
-  useEffect(() => {
-    dispatch(setActiveStep(1));
-    dispatch(markStepCompleted(0));
-    dispatch(markStepIncomplete(2)); // If coming back from Planning
-  }, [dispatch]);
   return (
     <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
-      <Box className={styles.stepperContainer}>
-        <Stepper
-          steps={stepperState.steps}
-          activeStep={stepperState.activeStep}
-          completedSteps={stepperState.completedSteps}
-        />
-      </Box>
       <Paper
         className={styles.formSection}
         elevation={2}
@@ -154,15 +139,21 @@ const KpiDefinition = () => {
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
+              <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()}>
+                Back
+              </CustomButton>
+              <CustomButton variant="contained" icon="save" type="submit">
+                {isLoading ? 'Submitting...' : 'Submit'}
+              </CustomButton>
               <CustomButton
-                children="Back"
                 variant="contained"
                 color="primary"
-                icon="left"
+                icon="right"
                 type="button"
                 onClick={() => router.back()}
-              />
-              <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
+              >
+                next
+              </CustomButton>
             </Box>
           </Box>
         </Box>
@@ -171,4 +162,4 @@ const KpiDefinition = () => {
   );
 };
 
-export default KpiDefinition;
+export default SolutionAndImpactValues;
