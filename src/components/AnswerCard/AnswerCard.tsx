@@ -6,22 +6,30 @@ const AnswerCard = ({
   answerNumber = 1,
   answerText = 'How is product Design and  WORK INSTRUCTIONS  transferred to manufacturing so that they know how to produce it?',
   isSelected = false,
+  onClick = () => {},
 }: AnswerCardProps) => {
+  console.log('isSelected', isSelected);
+  console.log('answerText', answerText);
+
   return (
-    <>
-      <Box
-        className={styles.outerContainer}
-        sx={{
-          backgroundColor: isSelected ? 'rgba(16, 85, 124, 1)' : 'rgba(255, 255, 255, 1)',
-          color: isSelected ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
-        }}
-      >
-        <Typography variant="body1" className={styles.questionText}>
-          <strong>{String(answerNumber).padStart(2, '0')}.</strong>&nbsp;&nbsp;
-          {answerText}
-        </Typography>
-      </Box>
-    </>
+    <Box
+      onClick={onClick}
+      className={styles.outerContainer}
+      sx={{
+        backgroundColor: isSelected ? 'rgba(16, 85, 124, 1)' : 'rgba(255, 255, 255, 1)',
+        color: isSelected ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
+        cursor: 'pointer',
+        borderRadius: '12px',
+        p: 2,
+        mb: 1,
+        transition: 'background-color 0.3s ease',
+      }}
+    >
+      <Typography variant="body1" className={styles.questionText}>
+        <strong>{String(answerNumber).padStart(2, '0')}.</strong>&nbsp;&nbsp;
+        {answerText}
+      </Typography>
+    </Box>
   );
 };
 
