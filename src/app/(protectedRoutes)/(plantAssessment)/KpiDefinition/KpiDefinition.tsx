@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Checkbox, Grid, Typography } from '@mui/material';
+import { Box, Checkbox, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './kpiDefinition.module.css';
 import { Kpi, KpiFormValues } from '../plantAssement.model';
@@ -119,7 +119,16 @@ const KpiDefinition = () => {
           completedSteps={stepperState.completedSteps}
         />
       </Box>
-      <Box className={styles.formSection}>
+      <Paper
+        className={styles.formSection}
+        elevation={2}
+        sx={{
+          mt: 2,
+          borderRadius: '16px',
+          backgroundColor: 'white',
+          border: '1px solid rgb(216, 216, 216)',
+        }}
+      >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box component="form" className={styles.formContainer}>
             <Typography
@@ -190,7 +199,7 @@ const KpiDefinition = () => {
             </Box>
           </Box>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 };

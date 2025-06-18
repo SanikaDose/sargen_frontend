@@ -33,7 +33,7 @@ const OverallCostProfileCard: React.FC<OverallCostProfileCardProps & { onChange:
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderRadius: '8px',
+        borderRadius: '16px',
         boxShadow: ' 0px 4px 4px 0px #00000040',
         height: '100%',
         padding: 2,

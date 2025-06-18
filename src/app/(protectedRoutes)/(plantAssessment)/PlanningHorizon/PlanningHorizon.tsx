@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Button, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, Grid, Paper, Radio, RadioGroup, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption, MultipleSections } from '../plantAssement.model';
@@ -217,7 +217,16 @@ const PlanningHorizon = () => {
           completedSteps={stepperState.completedSteps}
         />
       </Box>
-      <Box className={styles.formSection}>
+      <Paper
+        className={styles.formSection}
+        elevation={2}
+        sx={{
+          mt: 2,
+          borderRadius: '16px',
+          backgroundColor: 'white',
+          border: '1px solid rgb(216, 216, 216)',
+        }}
+      >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box component="form" className={styles.formContainer}>
             <Typography
@@ -295,7 +304,7 @@ const PlanningHorizon = () => {
             </Box>
           </Box>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 };

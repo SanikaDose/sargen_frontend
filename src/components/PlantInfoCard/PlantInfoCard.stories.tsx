@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PlantInfoCard from './PlantInfoCard';
-import defaultImage from '../../../public/images/default-logo-image.png';
+import defaultImage from '../../../public/images/plant-logo.png';
 const meta: Meta<typeof PlantInfoCard> = {
   title: 'Components/PlantInfoCard',
   component: PlantInfoCard,

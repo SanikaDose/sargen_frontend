@@ -3,7 +3,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import Stepper from '@/components/Stepper/Stepper';
 import styles from './Questionaire.module.css';
-import { Box, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
@@ -91,7 +91,16 @@ const Questionaire = () => {
         <Stepper steps={steps} />
       </Box>
 
-      <Box className={styles.formSection}>
+      <Paper
+        className={styles.formSection}
+        elevation={2}
+        sx={{
+          mt: 2,
+          borderRadius: '16px',
+          backgroundColor: 'white',
+          border: '1px solid rgb(216, 216, 216)',
+        }}
+      >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
             <Typography variant="h6" mb="4px">
@@ -154,7 +163,7 @@ const Questionaire = () => {
             </Box>
           </Box>
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 };
