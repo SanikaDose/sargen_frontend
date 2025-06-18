@@ -65,7 +65,6 @@ const Questionaire = () => {
     setJustificationMap(justificationState);
     setCurrentIndex(0);
   };
-  console.log('groupedQuestions', groupedQuestions);
 
   useEffect(() => {
     fetchQuestions();

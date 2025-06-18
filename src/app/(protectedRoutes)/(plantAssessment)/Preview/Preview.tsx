@@ -21,12 +21,9 @@ export default function Preview() {
   const params = useParams();
 
   const plantId = params.PlantId as string;
-  const department = useSelector(
-    (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
-  );
   const tenantId = getValueLocalStorage('tenantId');
-
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [departmentIndex, setDepartmentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
@@ -34,38 +31,58 @@ export default function Preview() {
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
-  const fetchQuestions = async () => {
-    const result = await getQuestionnairesList({
-      tenantId,
-      plantId: plantId || '',
-      department: department || 'R&D',
-    }).unwrap();
+  const departmentName = [
+    'R&D',
+    // 'Planning',
+    'Production',
+    // 'Quality',
+    // 'Maintenance',
+    // 'Supply Chain Sales',
+    // 'Supply Chain Purchase',
+    'Finance',
+    // 'Utilities',
+    'IT',
+    // 'L&D',
+    // 'Management',
+    'HR',
+  ];
+  const fetchQuestions = async (dept: string) => {
+    try {
+      const result = await getQuestionnairesList({
+        tenantId,
+        plantId: plantId || '',
+        department: dept,
+      }).unwrap();
 
-    const questions = result?.questionsToSend || [];
+      const questions = result?.questionsToSend || [];
 
-    const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
-      if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
-      acc[curr.question_uid].push(curr);
-      return acc;
-    }, {});
+      const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
+        if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
+        acc[curr.question_uid].push(curr);
+        return acc;
+      }, {});
 
-    const justificationState: { [key: string]: string } = {};
+      const justificationState: { [key: string]: string } = {};
+      questions.forEach((q: Question) => {
+        if (q.isselected) {
+          justificationState[q.question_uid] = q.justification || '';
+        }
+      });
 
-    questions.forEach((q: Question) => {
-      if (q.isselected) {
-        justificationState[q.question_uid] = q.justification || '';
-      }
-    });
-
-    setGroupedQuestions(grouped);
-    setGroupKeys(Object.keys(grouped));
-    setJustificationMap(justificationState);
-    setCurrentIndex(0);
+      setGroupedQuestions(grouped);
+      setGroupKeys(Object.keys(grouped));
+      setJustificationMap(justificationState);
+      setCurrentIndex(0); // Reset question index for new department
+    } catch (error) {
+      console.error(`Error fetching questions for department ${dept}:`, error);
+    }
   };
 
   useEffect(() => {
-    fetchQuestions();
-  }, [department]);
+    if (departmentName.length > 0) {
+      fetchQuestions(departmentName[departmentIndex]);
+    }
+  }, [departmentIndex]);
 
   const handleAnswerClick = (answerId: string) => {
     const currentKey = groupKeys[currentIndex];
@@ -83,7 +100,6 @@ export default function Preview() {
   const submitQuestionnaireAnswer = async () => {
     const currentKey = groupKeys[currentIndex];
     const currentQuestionGroup = groupedQuestions[currentKey];
-    console.log('currentQuestionGroup', currentQuestionGroup);
 
     if (!currentQuestionGroup) return false;
 
@@ -119,6 +135,12 @@ export default function Preview() {
 
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
+  // Calculate completed steps
+  const completedSteps = groupKeys.reduce<number[]>((acc, key, index) => {
+    const group = groupedQuestions[key];
+    if (group?.some((q) => q.isselected)) acc.push(index);
+    return acc;
+  }, []);
 
   if (!currentGroup) return null;
 
@@ -146,7 +168,7 @@ export default function Preview() {
                 width: '100%',
               }}
             >
-              {department}
+              {currentGroup && currentGroup[0]?.department}
             </Typography>
 
             <Box className={styles.questionAnsweresSection}>
@@ -182,9 +204,8 @@ export default function Preview() {
             </Box>
           </Box>
 
-          {/* Right section */}
           <Box className={styles.rightSection}>
-            <Box className={styles.previreSideBox}>
+            <Box className={styles.aboutSection}>
               <PreviewSideBox />
             </Box>
 
@@ -192,35 +213,65 @@ export default function Preview() {
               display="flex"
               justifyContent="space-between"
               alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
               <CustomButton
-                children="Back"
                 variant="contained"
                 color="primary"
                 icon="left"
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                disabled={currentIndex === 0 || isSaving}
-              />
+                disabled={currentIndex === 0}
+              >
+                Back
+              </CustomButton>
               <CustomButton
-                children={isSaving ? 'Saving...' : 'Save'}
                 variant="contained"
-                icon="save"
+                icon="edit"
+                type="button"
+                color="warning"
+
+                // onClick={()}
+              >
+                Edit
+              </CustomButton>
+              <CustomButton
+                variant="contained"
+                icon="submit"
+                type="button"
+                color="warning"
+                // onClick={()}
+                disabled={true}
+              >
+                Submit
+              </CustomButton>
+              <CustomButton
+                variant="contained"
+                icon="right"
                 type="button"
                 onClick={async () => {
                   const success = await submitQuestionnaireAnswer();
                   if (success) {
-                    if (currentIndex === groupKeys.length - 1) {
-                      alert('All questions submitted!');
-                    } else {
+                    if (currentIndex < groupKeys.length - 1) {
+                      // Move to next question
                       setCurrentIndex((prev) => prev + 1);
+                    } else if (departmentIndex < departmentName.length - 1) {
+                      // All questions in this department completed → move to next department
+                      setDepartmentIndex((prev) => prev + 1);
+                    } else {
+                      alert('🎉 All department questions submitted!');
                     }
                   }
                 }}
                 disabled={isSaving}
-              />
+              >
+                {isLoading ? 'Saving...' : 'Next'}
+              </CustomButton>
             </Box>
           </Box>
         </Box>

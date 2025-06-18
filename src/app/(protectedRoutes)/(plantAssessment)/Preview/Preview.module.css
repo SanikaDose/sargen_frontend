@@ -1,7 +1,8 @@
 .formSection {
   display: flex;
   width: 100%;
-  height: 97%;
+  height: 99%;
+  /* border: 1px solid blue; */
 }
 
 .stepperContainer {
@@ -32,7 +33,6 @@
 }
 .answerSection {
   height: 100%;
-  overflow-x: auto;
   display: flex;
   flex-direction: column;
   gap: 15;
@@ -43,18 +43,17 @@
   width: 30%;
   padding: 20px;
   display: flex;
-  border-radius: 16px;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 12;
 }
 
-.previreSideBox {
-  height: 100%;
+.aboutSection {
+  /* border-radius: 16px;
+  border: 1px solid black; */
+  height: 90%;
   width: 100%;
-}
-.justification {
-  border-radius: 16px;
 }
 
 .buttonSection {
@@ -68,20 +67,19 @@
     display: none;
   }
 }
-@media (min-width: 300px) and (max-width: 1000px) {
+@media (min-width: 300px) and (max-width: 700px) {
   .formSection {
     width: 100%;
-    height: auto !important;
+    min-width: 0;
+    height: 'auto';
     flex-direction: column;
-    border: 1px solid blue;
   }
   .bothSections {
-    height: auto !important;
     display: flex;
     flex-direction: column;
     width: 100%;
   }
-  .previewSideBox {
+  .aboutSection {
     display: none;
   }
   .rightSection {
@@ -97,7 +95,6 @@
   .formContainer {
     height: auto;
     width: 100%;
-    /* min-height: auto; */
   }
 }
 @media (min-width: 700px) and (max-width: 1300px) {

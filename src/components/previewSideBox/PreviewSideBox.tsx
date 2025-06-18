@@ -5,10 +5,12 @@ import styles from './previewSideBox.module.css';
 import { Box, Typography, Divider, Button } from '@mui/material';
 import { questionData } from './previewSideBoxData';
 import QuestionSection from './QuestionSection';
+import { usePathname } from 'next/navigation';
 
 const initialVisibleCount = 3;
 
 const PreviewSideBox = () => {
+  const pathname = usePathname();
   const [currentQuestion, setCurrentQuestion] = useState<{
     section: string;
     questionNo: number;
@@ -64,20 +66,22 @@ const PreviewSideBox = () => {
             Reviewed
           </Typography>
         </section>
+        {pathname.includes('/UserAssessmentPreview') ? (
+          <section className={styles.innerStatusLegend}>
+            <Box
+              sx={{
+                width: { xs: '8px', sm: '10px', md: '20px' },
+                height: { xs: '8px', sm: '10px', md: '20px' },
+                borderRadius: '50%',
+              }}
+              className={`${styles.statusDot} ${styles.statusAlert}`}
+            />
 
-        <section className={styles.innerStatusLegend}>
-          <Box
-            sx={{
-              width: { xs: '8px', sm: '10px', md: '20px' },
-              height: { xs: '8px', sm: '10px', md: '20px' },
-              borderRadius: '50%',
-            }}
-            className={`${styles.statusDot} ${styles.statusAlert}`}
-          />
-          <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
-            Alert
-          </Typography>
-        </section>
+            <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
+              Alert
+            </Typography>
+          </section>
+        ) : null}
         <section className={styles.innerStatusLegend}>
           <Box
             sx={{
