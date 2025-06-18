@@ -122,7 +122,7 @@ const KpiDefinition = () => {
                       return (
                         <Card
                           key={field.id}
-                          kpi={field.kpi}
+                          label={field.kpi}
                           isSelected={isSelected}
                           isDisabled={isDisabled}
                           onToggle={() => controllerField.onChange(!isSelected)}

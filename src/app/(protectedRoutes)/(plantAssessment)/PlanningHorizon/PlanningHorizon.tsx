@@ -170,7 +170,7 @@ const PlanningHorizon = () => {
                       return (
                         <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
                           <Card
-                            kpi={option.planningHorizon}
+                            label={option.planningHorizon}
                             isSelected={isSelected}
                             onToggle={() => field.onChange(option.id)}
                           />

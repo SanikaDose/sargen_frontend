@@ -1,6 +1,7 @@
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { ContactPersonApiResponse, PocPayload } from './ContactPerson.types';
 import { apiRoutes } from '@/constants/apiRoutes';
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
 export const onboardingApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,6 +12,12 @@ export const onboardingApi = protectedApi.injectEndpoints({
         body,
       }),
       invalidatesTags: ['Poc'],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Contact Details submitted successfully!',
+          errorMessage: 'Failed to submit Contact Details!',
+        });
+      },
     }),
 
     getPointOfContact: builder.query<ContactPersonApiResponse<PocPayload>, string>({
@@ -29,6 +36,12 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
 
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'ProfilePic', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Profile Image uploaded successfully!',
+          errorMessage: 'Failed to upload Profile Image!',
+        });
+      },
     }),
 
     getPocProfilePic: builder.query<string, { tenantId: string }>({

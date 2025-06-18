@@ -3,25 +3,24 @@
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from './userAssessmentPreview.module.css';
 import { Box, Paper, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
-import { useCallback } from 'react';
+import AnswerCard from '@/components/AnswerCard/AnswerCard';
 
 const UserAssessmentPreview = () => {
-  // const router = useRouter();
   const params = useParams();
+  const router = useRouter();
 
-  // const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
-  const department = useSelector((state: RootState) => state.plantAssessmentGlobal.questionnairesDeparment);
+  const organisationId = params.organisationId as string;
+  const department = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
   const tenantId = getValueLocalStorage('tenantId');
   const isLoading = false;
 
@@ -30,7 +29,6 @@ const UserAssessmentPreview = () => {
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
 
   const [getQuestionnairesList] = useGetQuestionnairesListMutation();
-  // const [selectQuestionnairesAnswer] = useSelectQuestionnairesAnswerMutation();
 
   const fetchQuestions = useCallback(async () => {
     const result = await getQuestionnairesList({
@@ -109,6 +107,7 @@ const UserAssessmentPreview = () => {
                       answerNumber={idx + 1}
                       answerText={option.answer ?? ''}
                       isSelected={option.isselected}
+                      onClick={() => {}}
                     />
                   </div>
                 ))}
@@ -142,22 +141,24 @@ const UserAssessmentPreview = () => {
               >
                 Back
               </CustomButton>
-              <CustomButton
-                variant="contained"
-                icon="alert"
-                type="button"
-                color="warning"
-                // onClick={()}
-              >
+
+              <CustomButton variant="contained" icon="alert" type="button" color="warning">
                 Alert
               </CustomButton>
+
               <CustomButton
                 variant="contained"
                 icon="save"
                 type="button"
-                onClick={() => setCurrentIndex((prev) => Math.min(prev + 1, groupKeys.length - 1))}
+                onClick={() => {
+                  if (currentIndex === groupKeys.length - 1) {
+                    router.push(`/AssessmentBasedImpactValues/${organisationId}/${plantId}`);
+                  } else {
+                    setCurrentIndex((prev) => Math.min(prev + 1, groupKeys.length - 1));
+                  }
+                }}
               >
-                {isLoading ? 'Saving...' : 'Save'}
+                {isLoading ? 'Saving...' : currentIndex === groupKeys.length - 1 ? 'Finish' : 'Save'}
               </CustomButton>
             </Box>
           </Box>

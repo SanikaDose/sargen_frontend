@@ -134,6 +134,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     try {
       await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
       console.log('Form submitted successfully');
+      router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
