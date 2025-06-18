@@ -26,95 +26,339 @@ import styles from './AssessorOnboarding.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { AssessorFormType } from './AssessorOnboarding.types';
 
-import { AssessorFormInputs } from './FormConfig/formInputStep';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useRouter } from 'next/navigation';
 import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
-import { certificateData } from './FormConfig/fileInput';
+import { certificateData, fileValues } from './FormConfig/fileInput';
 import FileActionButton from '@/components/FileActionButton/FileActionButton';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import {
   useAddAssessorInformationMutation,
   useUploadAssessorLogoMutation,
   useGetMetadataFileTemplateMutation,
-  useUploadAllMetadataFilesMutation,
+  useUploadQuestionnariesMutation,
+  useUploadCostProfileMutation,
+  useUploadKPIMutation,
+  useUploadPlanningHorizonMutation,
+  useUploadIndustrySelectionMutation,
+  useUploadCostProfileLookupMutation,
+  useUploadIndustrySelectionLookupMutation,
+  useUploadKPILookupMutation,
+  useUploadIndustryAssessmentMatrixMutation,
+  useUploadSolutionMetadataMutation,
+  useUploadBandDefinitionMutation,
+  useViewMetadataFileMutation,
 } from './AssessorOnboarding.Api';
 
-import { fileUploadKeyMap, fileTypes, fileValues, allowedExtensions } from './FormConfig/fileInput';
+import { fileUploadKeyMap, fileTypes } from './FormConfig/fileInput';
+import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
+import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
-const tenantId = getValueLocalStorage('tenantId');
-// const [fileUploadLoader, setFileUploadLoader] = useState(false);
+import { Disabled } from '@/components/Card/Card.stories';
 const steps = [
-  'FirstName',
-  'LastName',
-  'e-Mail ID',
-  'ContactNumber',
+  'First Name',
+  'Last Name',
+  'e-Mail Id',
+  'Contact Number',
   'City',
   'Country',
-  'yearOfExperience',
-  'certificationYear',
+  'year Of Experience',
+  'Certification Year',
 ].map((label) => ({ label }));
 
+const tenantId = getValueLocalStorage('tenantId');
+
 function AssessorOnboarding() {
-  const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
-  //const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
+  //const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      contactNumber: '',
+      city: '',
+      country: '',
+      yearOfExperience: '',
+      certificationYear: '',
+    },
+  });
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
-  const [addAssessorInformation] = useAddAssessorInformationMutation();
+  const [addAssessorInformation, isLoading] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const router = useRouter();
-
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
   let tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
-
-  //uploded data
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
-  // const [isFinalUpload, setIsFinalUpload] = useState(false);
-  const [uploadAllMetadataFiles] = useUploadAllMetadataFilesMutation();
 
-  const handleUploadFile = async (file: File, fileKey: string) => {
+  const [uploadQuestionnaries, { isLoading: qloading }] = useUploadQuestionnariesMutation();
+  const [uploadCostProfile, { isLoading: cloading }] = useUploadCostProfileMutation();
+  const [uploadKPI, { isLoading: kloading }] = useUploadKPIMutation();
+  const [uploadPlanningHorizon, { isLoading: ploading }] = useUploadPlanningHorizonMutation();
+  const [uploadIndustrySelection, { isLoading: iloading }] = useUploadIndustrySelectionMutation();
+  const [uploadCostProfileLookup, { isLoading: clloading }] = useUploadCostProfileLookupMutation();
+  const [uploadIndustrySelectionLookup, { isLoading: illoading }] = useUploadIndustrySelectionLookupMutation();
+  const [uploadKPILookup, { isLoading: klloading }] = useUploadKPILookupMutation();
+  const [uploadIndustryAssessmentMatrix, { isLoading: ialoading }] = useUploadIndustryAssessmentMatrixMutation();
+  const [uploadSolutionMetadata, { isLoading: sloading }] = useUploadSolutionMetadataMutation();
+  const [uploadBandDefinition, { isLoading: bloading }] = useUploadBandDefinitionMutation();
+  const [viewMetadataFile, { isLoading: vloading }] = useViewMetadataFileMutation();
+
+  //function to view the metadata files
+  const handleViewClick = async (fileName: string) => {
+    if (!fileName) {
+      triggerToast('Invalid file name.', 'warning');
+      return;
+    }
     try {
-      setUploadedFiles((prev) => {
-        const updated = { ...prev, [fileKey]: file };
-        console.log('📦 Updated uploadedFiles:', updated);
-
-        // All required keys
-        const uploadedKeys = Object.keys(updated);
-
-        const allUploaded = fileValues.every((key) => uploadedKeys.includes(key));
-
-        if (allUploaded) {
-          // ✅ Trigger API only if ALL required files are uploaded
-          uploadAllMetadataFiles({
-            tenantId,
-            files: updated,
-          })
-            .unwrap()
-            .then((res) => {
-              console.log('✅ All files uploaded successfully:', res);
-            })
-            .catch((err) => {
-              console.error('❌ Upload failed:', err);
-            });
-        } else {
-          console.log('🕐 Waiting for all files to be uploaded...');
-        }
-
-        return updated;
-      });
-
-      console.log(`📁 File stored for ${fileKey}`);
-    } catch (error) {
-      console.error(`❌ Error storing file for ${fileKey}:`, error);
+      const response = await viewMetadataFile({
+        tenantId: tenantId,
+        fileName: fileName,
+      }).unwrap();
+      if (response?.url) {
+        window.open(response.url, '_blank');
+      } else {
+        triggerToast('File URL not found.', 'error');
+      }
+    } catch (err) {
+      triggerToast('Failed to view file', 'error');
     }
   };
 
+  //function to upload files
+  // const handleUploadFile = async (file: File, fileKey: string) => {
+  //   console.log('filekey', fileKey);
+  //   try {
+  //     if (fileKey === 'questionnaires_') {
+  //       try {
+  //         await uploadQuestionnaries({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+
+  //         setUploadedFiles((prev) => {
+  //           const newState = { ...prev };
+  //           delete newState[fileKey];
+  //           return newState;
+  //         });
+  //       }
+  //     }
+
+  //     if (fileKey === 'cost_profile_') {
+  //       try {
+  //         await uploadCostProfile({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'kpi_selection_') {
+  //       try {
+  //         await uploadKPI({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'industry_selection_') {
+  //       try {
+  //         await uploadIndustrySelection({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'planning_horizon_') {
+  //       try {
+  //         await uploadPlanningHorizon({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'cost_lookup_table_') {
+  //       try {
+  //         await uploadCostProfileLookup({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'industry_selection_lookup_table_') {
+  //       try {
+  //         await uploadIndustrySelectionLookup({
+  //           tenantId,
+  //           file,
+  //         });
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+
+  //     if (fileKey === 'kpi_lookup_table_') {
+  //       try {
+  //         await uploadKPILookup({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'assessment_matrix_score_lookup_table_') {
+  //       try {
+  //         await uploadIndustryAssessmentMatrix({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'solutions_with_band_weights_') {
+  //       try {
+  //         await uploadSolutionMetadata({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'band_definition_table_') {
+  //       try {
+  //         await uploadBandDefinition({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(`❌ Error storing file for ${fileKey}:`, error);
+  //   }
+  // };
+
+  const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => Promise<any>> = {
+    questionnaires_: uploadQuestionnaries,
+    cost_profile_: uploadCostProfile,
+    kpi_selection_: uploadKPI,
+    industry_selection_: uploadIndustrySelection,
+    planning_horizon_: uploadPlanningHorizon,
+    cost_lookup_table_: uploadCostProfileLookup,
+    industry_selection_lookup_table_: uploadIndustrySelectionLookup,
+    kpi_lookup_table_: uploadKPILookup,
+    assessment_matrix_score_lookup_table_: uploadIndustryAssessmentMatrix,
+    solutions_with_band_weights_: uploadSolutionMetadata,
+    band_definition_table_: uploadBandDefinition,
+  };
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const handleUploadFile = async (file: File, fileKey: string) => {
+    console.log('Uploading file for:', uploadedFiles);
+    setUploadingKey(fileKey);
+
+    const uploadFunction = uploadFunctionMap[fileKey];
+    if (!uploadFunction) {
+      console.error('No upload function found for:', fileKey);
+      return;
+    }
+
+    try {
+      const response = await uploadFunction({ tenantId, file });
+      console.log('uploaded resp', response);
+      if (response.data.status === true) {
+        setUploadedFiles((prev) => ({
+          ...prev,
+          [fileKey]: file,
+        }));
+      } else {
+        triggerToast(`Please add a valid ${fileKey} file`, 'error');
+      }
+    } catch (error) {
+      console.log('catch error');
+      triggerToast(`Please add a valid ${fileKey} file`, 'error');
+    } finally {
+      setUploadingKey(null);
+    }
+  };
+
+  //function to handle the profileimage upload
   const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -123,28 +367,35 @@ function AssessorOnboarding() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.error('Image upload failed:', error);
+      triggerToast('Image upload failed', 'error');
     }
   };
-
+  //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
+    // console.log(fileValues);
+    // console.log(uploadedFiles);
+    // const allFilesUploaded = fileValues.every((key) => uploadedFiles[key]);
+    // if (!allFilesUploaded) {
+    //   triggerToast('Please upload all required files before submitting.', 'error');
+    //   return;
+    // }
+    if (!selectedFile) {
+      triggerToast('Please add siriCertificate', 'error');
+    }
     try {
       const formData = new FormData();
-
       formData.append('data', JSON.stringify(formValues));
       if (selectedFile) {
-        formData.append('siriCertificate', selectedFile); // ✅ actual file object
+        formData.append('siriCertificate', selectedFile);
       }
       await addAssessorInformation({
         tenantId: tenantId ?? '',
-        data: formValues, // not used in request directly, just for clarity
+        data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
-
-      console.log('✅ Assessor information submitted successfully!');
-      // router.push('/some-path'); // Optional redirect
+      triggerToast('✅ Assessor information submitted successfully!', 'success');
     } catch (error) {
-      console.error('❌ Failed to submit assessor information:', error);
+      triggerToast('❌ Failed to submit assessor information:', 'error');
     }
   };
 
@@ -167,12 +418,12 @@ function AssessorOnboarding() {
       return acc;
     }, []);
   }, [watchedValues]);
-
+  // function to download the file
   const handleDownloadClick = async (fileName: string) => {
-    // if (!fileName) {
-    //   showToast("Invalid file name.", "warning");
-    //   return;
-    // }
+    if (!fileName) {
+      triggerToast('Invalid file name.', 'warning');
+      return;
+    }
 
     try {
       const response = await getMetadataFileTemplate({
@@ -182,7 +433,6 @@ function AssessorOnboarding() {
 
       const blob = await response.blob();
       const suggestedFileName = `${fileName}.xlsx`;
-
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -194,7 +444,7 @@ function AssessorOnboarding() {
       console.log('downloaded sucessfully', url);
     } catch (err) {
       console.error('Error downloading file:', err);
-      //showToast("Failed to download file", "error");
+      triggerToast('Failed to download file', 'error');
     }
   };
 
@@ -217,153 +467,73 @@ function AssessorOnboarding() {
 
             <Box className={styles.formFieldsBox}>
               <section className={styles.formFieldsInner}>
-                <Grid container spacing={1}>
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="firstName"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="First Name"
-                          placeholder="Enter First Name"
-                          {...field}
-                          required={true}
-                          onFocus={() => setFocusedField('firstName')}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="lastName"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="Last Name"
-                          placeholder="Enter Last Name"
-                          {...field}
-                          required={true}
-                          onFocus={() => setFocusedField('lastName')}
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="email"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="e-Mail ID"
-                          placeholder="Enter Email ID"
-                          {...field}
-                          required={true}
-                          onFocus={() => setFocusedField('email')}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="contactNumber"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="Contact Number"
-                          placeholder="Enter Contact Number"
-                          {...field}
-                          required={true}
-                          onFocus={() => setFocusedField('contactNumber')}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="city"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="City"
-                          placeholder="Enter City"
-                          {...field}
-                          required={true}
-                          onFocus={() => setFocusedField('city')}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
-                      Country
-                    </Typography>
-                    <FormControl fullWidth>
+                <Grid container spacing={1} className={styles.FormContainer}>
+                  {AssessorFormInputs.map((input) => (
+                    <Grid size={{ xs: 12, md: 3 }} key={input.name}>
                       <Controller
-                        name="country"
+                        name={input.name as keyof AssessorFormType}
                         control={control}
-                        rules={{ required: 'Country is required' }}
-                        render={({ field }) => (
-                          <Select
-                            {...field}
-                            displayEmpty
-                            input={<OutlinedInput />}
-                            value={field.value || ''}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            onFocus={() => setFocusedField('country')}
-                            sx={{ height: '36px', color: '#888', width: '100%' }}
-                            renderValue={(selected) =>
-                              !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
-                            }
-                          >
-                            <MenuItem disabled value="">
-                              <em>Select From Dropdown</em>
-                            </MenuItem>
-                            {CountryOptions.map((country) => (
-                              <MenuItem key={country.code} value={country.name}>
-                                {country.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
+                        defaultValue=""
+                        rules={input.rules}
+                        render={({ field, fieldState }) => (
+                          <>
+                            {input.iscountry ? (
+                              <FormControl fullWidth sx={{ mt: 1.9 }}>
+                                <Typography sx={{ fontWeight: 600, color: '#000000' }}>
+                                  Currency Type
+                                  {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
+                                </Typography>
+                                <Select
+                                  {...field}
+                                  displayEmpty
+                                  value={field.value || ''}
+                                  sx={{
+                                    borderRadius: '8px',
+                                    height: 36,
+                                    fontWeight: 500,
+                                    fontfamily: 'Inter, sans-serif',
+                                  }}
+                                  onFocus={() => setFocusedField('currencyType')}
+                                >
+                                  <MenuItem value="">
+                                    <em>Select Currency</em>
+                                  </MenuItem>
+                                  {CountryOptions.map((country) => (
+                                    <MenuItem key={country.code} value={country.name}>
+                                      {country.name}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="error">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </FormControl>
+                            ) : (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  label={input.label + (input.rules?.required ? ' *' : '')}
+                                  placeholder={input.placeholder}
+                                  type={input.type || 'text'}
+                                  onFocus={() => setFocusedField(input.name)}
+                                  size="small"
+                                  error={!!fieldState.error}
+                                  helperText={fieldState.error?.message}
+                                />
+                                {/* {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="error">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )} */}
+                              </>
+                            )}
+                          </>
                         )}
                       />
-                    </FormControl>
-                  </Grid>
-
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="yearOfExperience"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="Year Of Experience"
-                          placeholder="Enter Total Year Of Experience"
-                          {...field}
-                          required={true}
-                          onFocus={() => setFocusedField('yearOfExperience')}
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    <Controller
-                      name="certificationYear"
-                      control={control}
-                      render={({ field }) => (
-                        <InputWithLabel
-                          label="Certification Year"
-                          placeholder="Enter Certification Year"
-                          {...field}
-                          //    required={true}
-                          onFocus={() => setFocusedField('certificationYear')}
-                        />
-                      )}
-                    />
-                  </Grid>
+                    </Grid>
+                  ))}
                 </Grid>
               </section>
             </Box>
@@ -384,30 +554,30 @@ function AssessorOnboarding() {
               </Box>
 
               <Box className={styles.buttonSection}>
-                {/* icon="cancel" */}
-                <CustomButton children="Cancel" variant="contained" color="primary" type="button" />
                 <CustomButton
                   children={'Save'}
                   variant="contained"
                   color="primary"
                   icon="save"
                   type="submit"
-                  // onClick={() => {
-                  //   router.push('/PlantOverview');
-                  // }}
+                  width="300px"
+                  className={styles.saveBtn}
                 />
               </Box>
             </Grid>
-            <Box className={styles.tableContainer}>
+
+            <Box className={styles.tableContainer} sx={{ overflowX: 'auto' }}>
               <TableContainer
                 component={Paper}
                 sx={{
-                  maxHeight: 420,
+                  maxHeight: 400,
+                  //overflowX: 'auto',
                   overflowX: 'auto',
-                  // boxShadow: 'none',
+                  //  maxWidth: '100%',
                 }}
               >
-                <Table stickyHeader size="small" sx={{ minWidth: 650 }}>
+                {/* stickyHeader size="small" */}
+                <Table>
                   <TableHead>
                     <TableRow sx={{ padding: 0, textAlign: 'center' }}>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>No.</TableCell>
@@ -416,7 +586,7 @@ function AssessorOnboarding() {
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>First Uploaded</TableCell>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>Last Uploaded </TableCell>
                       {/* <TableCell sx={{padding:1, textAlign:'center'}}></TableCell> */}
-                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>Download</TableCell>
+                      <TableCell sx={{ padding: 1, textAlign: 'center' }}>Download Template</TableCell>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>Upload</TableCell>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>View</TableCell>
                     </TableRow>
@@ -433,32 +603,60 @@ function AssessorOnboarding() {
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.version ?? '-'}</TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.createdAt ?? '-'}</TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 0 }}>{cert?.updatedAt ?? '-'}</TableCell>
-                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
+                          <TableCell
+                            sx={{
+                              textAlign: 'center',
+
+                              padding: 1,
+                            }}
+                          >
                             <FileActionButton
                               icon="download"
                               label="Download"
                               width="50px"
-                              showLabel={false}
                               showIcon
                               onClick={() => handleDownloadClick(backendKey)}
                             />
                           </TableCell>
-                          <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                            <FileActionButton
-                              icon="upload"
-                              label="Upload"
-                              showLabel={false}
-                              width="50px"
-                              showIcon
-                              onClick={() => {
-                                setCurrentUploadKey(backendKey);
+                          <TableCell
+                            sx={{
+                              textAlign: 'center',
+                              padding: 1,
+                            }}
+                          >
+                            {uploadingKey === backendKey ? (
+                              <ButtonWithLoader loading={true} width="50px" label="" />
+                            ) : (
+                              <FileActionButton
+                                icon="upload"
+                                label="Upload"
+                                width="50px"
+                                showIcon
+                                color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
+                                onClick={() => {
+                                  setCurrentUploadKey(backendKey);
 
-                                fileInputRef.current?.click();
-                              }}
-                            />
+                                  fileInputRef.current?.click();
+                                }}
+                              />
+                            )}
                           </TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 1 }}>
-                            <FileActionButton icon="view" label="View" width="50px" showLabel={false} showIcon />
+                            <span
+                              style={{
+                                pointerEvents: uploadedFiles[backendKey] ? 'auto' : 'none',
+                                opacity: uploadedFiles[backendKey] ? 1 : 0.5,
+                              }}
+                            >
+                              <FileActionButton
+                                icon="view"
+                                label="View"
+                                width="50px"
+                                showIcon
+                                showLabel={false}
+                                onClick={() => handleViewClick(backendKey)}
+                              />
+                            </span>
                           </TableCell>
                         </TableRow>
                       );
@@ -469,15 +667,12 @@ function AssessorOnboarding() {
                     type="file"
                     ref={fileInputRef}
                     style={{ display: 'none' }}
-                    accept=".pdf,.doc,.docx,.jpg,.png,.xlsx"
+                    accept=".csv, .xls, .xlsx"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const file = e.target.files?.[0];
                       if (file && currentUploadKey) {
                         handleUploadFile(file, currentUploadKey);
                       }
-
-                      // Reset
-                      //  setIsFinalUpload(false);
                       if (fileInputRef.current) fileInputRef.current.value = '';
                     }}
                   />

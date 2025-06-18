@@ -59,8 +59,6 @@ function OrganizationOnbording() {
   const { data } = useGetOrganizationInfoQuery(tenantId || '', {
     skip: !tenantId,
   });
-  console.log('if we have tenentid the we get this data', data);
-
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
@@ -93,7 +91,7 @@ function OrganizationOnbording() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.error('Image upload failed:', error);
+      triggerToast('Failed to add  upload image:', 'error');
     }
   };
 
@@ -103,11 +101,10 @@ function OrganizationOnbording() {
     console.log('Form Data:', data);
     try {
       await submitOrganizationInfo({ tenantId, body: data }).unwrap();
-      console.log('Organization info submitted'); //use toster
-
       router.push('/AddContactPerson');
+      triggerToast('Organization info submitted', 'success');
     } catch (error) {
-      console.log('api submition failed', error);
+      triggerToast('Failed to add plant info ', 'error');
     }
   };
 
@@ -157,6 +154,8 @@ function OrganizationOnbording() {
                   placeholder="Enter Name of the company"
                   {...field}
                   onFocus={() => setFocusedField('companyName')}
+                  error={!!errors.companyName}
+                  helperText={errors.companyName?.message}
                 />
               )}
             />
@@ -166,13 +165,21 @@ function OrganizationOnbording() {
             <Controller
               name="website"
               control={control}
+              rules={{
+                required: 'Website is required',
+                pattern: {
+                  value: /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/,
+                  message: 'Enter a valid URL',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   label="Company Website"
                   placeholder="Enter company website"
                   {...field}
                   onFocus={() => setFocusedField('website')}
-                  required
+                  error={!!errors.website}
+                  helperText={errors.website?.message}
                 />
               )}
             />
@@ -182,6 +189,13 @@ function OrganizationOnbording() {
             <Controller
               name="gstin"
               control={control}
+              rules={{
+                required: 'Gstin is required',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Enter valid GSTIN',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   type="text"
@@ -189,6 +203,8 @@ function OrganizationOnbording() {
                   placeholder="Enter GST IN no"
                   {...field}
                   onFocus={() => setFocusedField('gstin')}
+                  error={!!errors.gstin}
+                  helperText={errors.gstin?.message}
                 />
               )}
             />
@@ -235,12 +251,21 @@ function OrganizationOnbording() {
             <Controller
               name="revenue"
               control={control}
+              rules={{
+                required: 'Revenue is required',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Enter a valid number',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   label="Organization Revenue"
                   placeholder="Enter Revenue"
                   {...field}
                   onFocus={() => setFocusedField('revenue')}
+                  error={!!errors.revenue}
+                  helperText={errors.revenue?.message}
                 />
               )}
             />
@@ -293,12 +318,21 @@ function OrganizationOnbording() {
             <Controller
               name="numberOfEmployees"
               control={control}
+              rules={{
+                required: 'Number of employees is required',
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Enter a valid number',
+                },
+              }}
               render={({ field }) => (
                 <InputWithLabel
                   label="Number of Employees"
                   placeholder="Enter Number of Employees"
                   {...field}
                   onFocus={() => setFocusedField('numberOfEmployees')}
+                  error={!!errors.numberOfEmployees}
+                  helperText={errors.numberOfEmployees?.message}
                 />
               )}
             />
@@ -311,6 +345,9 @@ function OrganizationOnbording() {
         <Controller
           name="about"
           control={control}
+          rules={{
+            required: 'About Organization is required',
+          }}
           render={({ field }) => (
             <InputWithLabel
               label="About Organization"
@@ -319,32 +356,12 @@ function OrganizationOnbording() {
               multiline
               {...field}
               onFocus={() => setFocusedField('about')}
+              error={!!errors.about}
+              helperText={errors.about?.message}
             />
           )}
         />
       </Grid>
-
-      {/* Buttons */}
-      {/* <Grid
-        container
-        justifyContent="space-between"
-        sx={{ p: 0.5, borderRadius: 4, backgroundColor: '#B0E0E6', border: '1px solid purple' }}
-      >
-        <Grid>
-          <CustomButton children="Back" variant="contained" color="primary" icon="left" height="55px" width="80px"    disabled  />
-        </Grid>
-        <Grid>
-          <CustomButton
-            children="Next"
-            variant="contained"
-            color="primary"
-            icon="right"
-            height="55px"
-            width="80px"
-            type="submit"
-          />
-        </Grid>
-      </Grid> */}
 
       <Box
         display="flex"
@@ -359,13 +376,7 @@ function OrganizationOnbording() {
         <CustomButton variant="contained" icon="left" color="primary" disabled>
           Back
         </CustomButton>
-        <CustomButton
-          type="submit"
-          variant="contained"
-          icon="right"
-          color="primary"
-          //  disabled={!isValid || isLoading}
-        >
+        <CustomButton type="submit" variant="contained" icon="right" color="primary">
           Next
         </CustomButton>
       </Box>

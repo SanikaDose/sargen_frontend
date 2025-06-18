@@ -38,6 +38,12 @@ const steps = [
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
+  useEffect(() => {
+    const draft = localStorage.getItem('plantFormDraft');
+    if (draft) {
+      reset(JSON.parse(draft)); // ✅ Prefill form
+    }
+  }, []);
   const {
     control,
     handleSubmit,
@@ -87,6 +93,7 @@ const PlantRegistrationForm = () => {
       // ✅ Step 2: Extract `plantId` from response
       const newPlantId = response?.data.id;
 
+      localStorage.setItem('plantFormDraft', JSON.stringify(data));
       if (selectedFile) {
         handleUpload(selectedFile);
       }
@@ -103,8 +110,8 @@ const PlantRegistrationForm = () => {
       triggerToast('Plant Onboarded successfully!', 'success');
 
       // ✅ Step 4: Reset and redirect
-      reset();
-      router.push('/PlantOverview');
+      //reset();
+      router.push('/PlantPointOfContact');
     } catch (error) {
       console.error('Failed to add plant info or upload image:', error);
     }
@@ -258,8 +265,13 @@ const PlantRegistrationForm = () => {
                 <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
                   Back
                 </CustomButton>
-                <CustomButton type="submit" variant="contained" icon="save">
-                  {isLoading ? 'Saving...' : 'Save'}
+                <CustomButton
+                  type="submit"
+                  variant="contained"
+                  icon="save"
+                  onClick={() => router.push('/PlantPointOfContact')}
+                >
+                  {isLoading ? 'Next..' : 'Next'}
                 </CustomButton>
               </Box>
             </form>
