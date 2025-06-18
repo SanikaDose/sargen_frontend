@@ -26,24 +26,14 @@ const Questionaire = () => {
     (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
   );
   const tenantId = getValueLocalStorage('tenantId');
-  const initialLoading = false;
-
-  const steps = [
-    'First Name',
-    'Last Name',
-    'Email Mail',
-    'Contact No.',
-    'Designation',
-    'Country',
-    'Employee Id',
-    'Job Role',
-  ].map((label) => ({ label }));
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
-
+  const steps = groupKeys.map((_, index) => ({
+    label: `${index + 1}`,
+  }));
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
   const fetchQuestions = async () => {
@@ -62,6 +52,7 @@ const Questionaire = () => {
     }, {});
 
     const justificationState: { [key: string]: string } = {};
+    console.log('questions', questions);
 
     questions.forEach((q: Question) => {
       if (q.isselected) {
@@ -74,6 +65,7 @@ const Questionaire = () => {
     setJustificationMap(justificationState);
     setCurrentIndex(0);
   };
+  console.log('groupedQuestions', groupedQuestions);
 
   useEffect(() => {
     fetchQuestions();
@@ -95,13 +87,11 @@ const Questionaire = () => {
   const submitQuestionnaireAnswer = async () => {
     const currentKey = groupKeys[currentIndex];
     const currentQuestionGroup = groupedQuestions[currentKey];
-    console.log('currentQuestionGroup', currentQuestionGroup);
 
     if (!currentQuestionGroup) return false;
 
     const selectedOption = currentQuestionGroup.find((opt) => opt.isselected);
     const question_uid = currentQuestionGroup[0]?.question_uid;
-    // console.log('selected options', selectedOption);
 
     const payload = {
       tenantId,
@@ -121,8 +111,6 @@ const Questionaire = () => {
       },
     };
 
-    // console.log('questionnariesData', payload);
-
     try {
       await selectQuestionnairesAnswer(payload).unwrap();
       return true;
@@ -135,44 +123,51 @@ const Questionaire = () => {
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
 
+  // Calculate completed steps
+  const completedSteps = groupKeys.reduce<number[]>((acc, key, index) => {
+    const group = groupedQuestions[key];
+    if (group?.some((q) => q.isselected)) acc.push(index);
+    return acc;
+  }, []);
+
   if (!currentGroup) return null;
 
   const questionText = currentGroup[0].question;
 
   return (
     <>
-      {isLoading ? (
-        <Loader loading={isLoading} />
-      ) : (
-        <Box component="form" sx={{ height: '99%' }}>
-          <Box className={styles.stepperContainer}>
-            <Stepper steps={steps} />
-          </Box>
+      <Box component="form" sx={{ height: '99%' }}>
+        <Box className={styles.stepperContainer}>
+          <Stepper steps={steps} completedSteps={completedSteps} activeStep={currentIndex} />
+        </Box>
 
-          <Paper
-            className={styles.formSection}
-            elevation={2}
-            sx={{
-              mt: 2,
-              borderRadius: '16px',
-              backgroundColor: 'white',
-              border: '1px solid rgb(216, 216, 216)',
-            }}
-          >
-            <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              {/* Left section */}
-              <Box className={styles.formContainer}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  {department}
-                </Typography>
+        <Paper
+          className={styles.formSection}
+          elevation={2}
+          sx={{
+            mt: 2,
+            borderRadius: '16px',
+            backgroundColor: 'white',
+            border: '1px solid rgb(216, 216, 216)',
+          }}
+        >
+          <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+            {/* Left section */}
+            <Box className={styles.formContainer}>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: 'black',
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+              >
+                {department}
+              </Typography>
 
+              {isLoading || isSaving ? (
+                <Loader loading={isLoading} />
+              ) : (
                 <Box className={styles.questionAnsweresSection}>
                   <Box className={styles.questionSection}>
                     <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
@@ -190,74 +185,74 @@ const Questionaire = () => {
                     ))}
                   </Box>
                 </Box>
+              )}
 
-                <Box className={styles.justification}>
-                  <TextArea
-                    value={justificationMap[currentGroup[0]?.question_uid] || ''}
-                    onChange={(val) => {
-                      setJustificationMap((prev) => ({
-                        ...prev,
-                        [currentGroup[0]?.question_uid]: val,
-                      }));
-                    }}
-                    placeholder="Enter justification"
-                    readOnly={false}
-                  />
-                </Box>
-              </Box>
-
-              {/* Right section */}
-              <Box className={styles.rightSection}>
-                <Box className={styles.aboutSection}>
-                  <InfoBox
-                    heading="About Industry"
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
-                  />
-                </Box>
-
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  p={1}
-                  mt={3}
-                  ml={5}
-                  mr={5}
-                  sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
-                  className={styles.buttonSection}
-                >
-                  <CustomButton
-                    children="Back"
-                    variant="contained"
-                    color="primary"
-                    icon="left"
-                    type="button"
-                    onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                    disabled={currentIndex === 0 || isSaving}
-                  />
-                  <CustomButton
-                    children={isSaving ? 'Saving...' : 'Save'}
-                    variant="contained"
-                    icon="save"
-                    type="button"
-                    onClick={async () => {
-                      const success = await submitQuestionnaireAnswer();
-                      if (success) {
-                        if (currentIndex === groupKeys.length - 1) {
-                          alert('All questions submitted!');
-                        } else {
-                          setCurrentIndex((prev) => prev + 1);
-                        }
-                      }
-                    }}
-                    disabled={isSaving}
-                  />
-                </Box>
+              <Box className={styles.justification}>
+                <TextArea
+                  value={justificationMap[currentGroup[0]?.question_uid] || ''}
+                  onChange={(val) => {
+                    setJustificationMap((prev) => ({
+                      ...prev,
+                      [currentGroup[0]?.question_uid]: val,
+                    }));
+                  }}
+                  placeholder="Enter justification"
+                  readOnly={false}
+                />
               </Box>
             </Box>
-          </Paper>
-        </Box>
-      )}
+
+            {/* Right section */}
+            <Box className={styles.rightSection}>
+              <Box className={styles.aboutSection}>
+                <InfoBox
+                  heading="About Industry"
+                  content="Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
+                />
+              </Box>
+
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={1}
+                mt={3}
+                ml={5}
+                mr={5}
+                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+                className={styles.buttonSection}
+              >
+                <CustomButton
+                  children="Back"
+                  variant="contained"
+                  color="primary"
+                  icon="left"
+                  type="button"
+                  onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+                  disabled={currentIndex === 0 || isSaving}
+                />
+                <CustomButton
+                  children={isSaving ? 'Saving...' : 'Save'}
+                  variant="contained"
+                  icon="save"
+                  type="button"
+                  onClick={async () => {
+                    const success = await submitQuestionnaireAnswer();
+                    if (success) {
+                      if (currentIndex === groupKeys.length - 1) {
+                        alert('All questions submitted!');
+                      } else {
+                        setCurrentIndex((prev) => prev + 1);
+                      }
+                    }
+                  }}
+                  disabled={isSaving}
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
     </>
   );
 };
