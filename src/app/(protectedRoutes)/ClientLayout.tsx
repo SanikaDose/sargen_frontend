@@ -25,7 +25,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
@@ -126,28 +126,34 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
   const sideBarListItems: SidebarItem[] = useSelector((state: RootState) => state.global.SideBarListItem);
   const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
-  console.log('pagename', pageNameHeader);
+
   // For users
   if (onboardingStatus !== OnboardingStatus.COMPLETED && userType && userType[0] === UserType.PLATFORMUSER) {
-    console.log('not completed as the platform user', onboardingStatus);
     dispatch(setSideBarListItem(organisationOnboardingMenuList));
   }
   if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.PLATFORMUSER) {
-    console.log('completed as the platform user', onboardingStatus);
     dispatch(setSideBarListItem(organisationOnboardedMenuList));
   }
   //  For assessors
   if (onboardingStatus !== OnboardingStatus.COMPLETED && userType && userType[0] === UserType.ASSESSOR) {
-    console.log('not completed as the  assessor', onboardingStatus);
     dispatch(setSideBarListItem(assessorOnboardingMenuList));
   }
   if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.ASSESSOR) {
-    console.log('completed as the  assessor', onboardingStatus);
     dispatch(setSideBarListItem(assessorOnboardedMenuList));
   }
   const sideBarListItemOnClick = (link: string) => {
     router.push(link);
+
+    // Create the updated list
+    const updatedList = sideBarListItems.map((item) => ({
+      ...item,
+      isActive: item.linkRoute === link,
+    }));
+
+    // Dispatch to global state
+    dispatch(setSideBarListItem(updatedList));
   };
+  const pathName = usePathname();
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -176,7 +182,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{ color: theme.palette.text.primary }} variant="h6" noWrap component="div">
+          <Typography sx={{ color: theme.palette.text.primary }} variant="h4" noWrap component="div">
             {pageNameHeader}
           </Typography>
 
@@ -233,12 +239,38 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
         <List>
           {sideBarListItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
+            <ListItem
+              key={item.text}
+              disablePadding
+              sx={{
+                backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                // '&:hover': {
+                //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
+                // },
+              }}
+            >
               <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
-                <ListItemIcon>{item.icon ? <item.icon /> : null}</ListItemIcon>
-                <ListItemText>
-                  <Typography variant="h6">{item.text}</Typography>
-                </ListItemText>
+                <ListItemIcon
+                  sx={{
+                    mr: 2,
+                    color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
+                  }}
+                >
+                  {item.icon ? <item.icon /> : null}
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
+                        // fontWeight: item.linkRoute === pathName ? 600 : 550,
+                      }}
+                    >
+                      {item.text}
+                    </Typography>
+                  }
+                />
               </ListItemButton>
             </ListItem>
           ))}

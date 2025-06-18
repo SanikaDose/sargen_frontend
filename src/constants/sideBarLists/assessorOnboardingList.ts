@@ -3,19 +3,9 @@ import { SidebarItem } from './assessorOnboardedList';
 
 export const assessorOnboardingMenuList: SidebarItem[] = [
   {
-    text: 'Organisation onboarding',
+    text: 'Assessor onboarding',
     icon: HomeRoundedIcon,
-    linkRoute: 'organisationOnboarding',
-
-    show: false,
-    isActive: true,
-  },
-  {
-    text: 'Add contact person',
-    icon: HomeRoundedIcon,
-    linkRoute: 'AddContactPerson',
-
-    show: false,
+    linkRoute: '/assessorOnboarding',
     isActive: true,
   },
 ];
