@@ -1,0 +1,229 @@
+.card {
+  width: 100%;
+  padding: 0 10px;
+  border-radius: 16px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f2f2f2;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 2.5vw;
+}
+
+.titleSm {
+  font-size: 2vw;
+}
+
+.titleMd {
+  font-size: 1.8vw;
+}
+
+.editButton {
+  padding: 4px;
+  font-size: 1.5vw;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+}
+
+.plantImage {
+  width: 50%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.infoGrid {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* border: 1px solid; */
+}
+
+.textLabel {
+  /* color: gray; */
+  font-weight: bold;
+  font-size: 12px !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+.textLabel,
+.textLabelSm,
+.textLabelMd,
+.textLabelLg {
+  font-size: 13px !important;
+}
+/* .dates {
+  border: 1px solid;
+} */
+
+.datesTitle {
+  color: gray;
+  font-weight: bold;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* border: 1px solid; */
+}
+
+.statusLabel {
+  color: gray;
+  font-weight: bold;
+  /* font-size: 1.2vw; */
+}
+
+/* .statusLabel {
+  margin-top: 8px;
+  background-color: #10557c33;
+  padding: 6px 24px;
+  font-weight: 500;
+  text-transform: none;
+  font-size: 1.2vw;
+  border: 1px solid;
+} */
+
+.progressCircle {
+  position: relative;
+  display: inline-flex;
+}
+
+@media (min-width: 300px) and (max-width: 500px) {
+  .title {
+    font-size: 10px !important;
+  }
+  .infoBox {
+    flex-direction: column;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 10px !important;
+  }
+
+  .editButton {
+    font-size: 12px !important;
+  }
+}
+
+@media (min-width: 500px) and (max-width: 900px) {
+  .title {
+    font-size: 2vw;
+  }
+  .card {
+    height: auto;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 12px !important;
+  }
+  .content {
+    gap: 30px;
+  }
+
+  .editButton {
+    font-size: 12px !important;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1000px) {
+  .title {
+    font-size: 2vw;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 12px !important;
+  }
+  .content {
+    gap: 30px;
+  }
+
+  .editButton {
+    font-size: 12px !important;
+  }
+}
+@media (min-width: 1000px) and (max-width: 1650px) {
+  .title {
+    font-size: 2vw;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 10px !important;
+  }
+  .content {
+    gap: 30px;
+  }
+  .editButton {
+    font-size: 10px !important;
+  }
+}
+/* @media (min-width: 1250px) and (max-width: 1500px) {
+  .title {
+    font-size: 2vw;
+  }
+
+  .titleSm,
+  .titleMd,
+  .textLabel,
+  .textLabelSm,
+  .textLabelMd,
+  .textLabelLg,
+  .statusLabel,
+  .datesTitle,
+  .startButton {
+    font-size: 12px !important;
+  }
+
+  .editButton {
+    font-size: 12px !important;
+  }
+} */

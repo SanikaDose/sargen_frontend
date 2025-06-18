@@ -1,0 +1,86 @@
+.avatarStack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.avatarImage {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+.avtarUpload {
+  position: absolute;
+  top: 0;
+  left: 85%;
+}
+.editButton {
+  position: absolute;
+  background-color: white;
+  color: #2505a8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  z-index: 2;
+  font-size: 1rem;
+}
+
+.editButton:hover {
+  background-color: #f0f0f0;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* 🔽 RESPONSIVE MEDIA QUERIES */
+
+@media ((min-width: 1500px) and  (max-width: 2000px)) {
+  .avatarWrapper {
+    height: 100%;
+    width: 100%;
+    margin: auto;
+  }
+}
+@media (max-width: 768px) {
+  .avatarWrapper {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+  }
+
+  .editButton {
+    width: 25px;
+    height: 25px;
+    top: 0;
+    left: 85%;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .avatarWrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .editButton {
+    width: 10px;
+    height: 10px;
+    top: 0;
+    left: 85%;
+    font-size: 0.5rem;
+  }
+}

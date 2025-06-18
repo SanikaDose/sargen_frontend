@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  gap: 16px; 
+}
+
+.formControl {
+  min-width: 200px;
+}
+
+.textField {
+  min-width: 200px;
+}

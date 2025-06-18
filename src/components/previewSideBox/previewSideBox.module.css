@@ -1,0 +1,110 @@
+.panelContainer {
+  height: 100%;
+  width: 30%;
+  padding: 2%;
+  background-color: #fff;
+  border-left: 0.1% solid #ccc;
+  display: flex;
+  flex-direction: column;
+  border-radius: 2%;
+  overflow: hidden;
+  position: relative;
+}
+
+.scrollContent {
+  overflow-y: auto;
+  flex-grow: 1;
+  scrollbar-width: none;
+}
+
+.scrollContent::-webkit-scrollbar {
+  display: none;
+}
+
+.titleContainer {
+  margin-bottom: 2%;
+}
+
+.title {
+  color: black;
+  font-size: 120%;
+  text-align: center;
+}
+
+.sectionBox {
+  margin-bottom: 5%;
+  display: flex;
+  flex-direction: column;
+  /* border: 1px solid red; */
+}
+
+.sectionHeader {
+  height: auto;
+  display: flex;
+  align-items: center;
+  gap: 1%;
+  margin-left: 10px;
+  margin-right: 10px;
+  /* border: 1px solid red; */
+}
+
+.sectionTitle {
+  margin-bottom: 1%;
+  color: #666;
+  font-weight: 500;
+  font-size: 90%;
+  white-space: nowrap;
+}
+
+.sectionDivider {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.divider {
+  margin: 2% 0;
+}
+
+.statusLegend {
+  height: 5%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2%;
+  /* border: 1px solid red; */
+}
+
+.statusDot {
+  border-radius: 50%;
+  /* border: 1px solid red; */
+}
+
+.statusReviewed {
+  background-color: lightgreen;
+}
+
+.statusNotReviewed {
+  background-color: grey;
+}
+.innerStatusLegend {
+  height: 100%;
+  width: 45%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.statusLabel {
+  color: black;
+  font-size: 75%;
+  margin-right: 2%;
+}
+
+.showMoreButton {
+  margin: 2% auto;
+  font-size: 90%;
+  padding: 1% 2%;
+  width: fit-content;
+}

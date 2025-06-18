@@ -1,19 +1,28 @@
-// import plantAssessmentReducer from '@/app/(protectedRoute)/[...plantAssement]/plantAssementSlice';
-// import decodedTokenReducer from '@/app/(unprotectedRoute)/login/loginSlice';
-// import toasterReducer from '@/components/Toaster/toasterSlice';
-// import { protectedApi, publicApi } from '@/services/api';
-// import { configureStore } from '@reduxjs/toolkit';
+import plantAssessmentReducer from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementSlice';
+import LoginReducer from '@/app/(unprotectedRoutes)/login/loginSlice';
+import { configureStore } from '@reduxjs/toolkit';
+import { protectedApi } from './api/protectedApis/baseProtectedApi';
+import { publicApi } from './api/publicApis/basePublicApi';
+import globalReducer from './globalSlice';
+import stepperReducer from './Slices/StepperSlice';
+import toasterReducer from '../components/toaster/toasterSlice';
 
-// export const store = configureStore({
-//   reducer: {
-//     toasterGlobal: toasterReducer,
-//     decodedTokenGlobal: decodedTokenReducer,
-//     plantAssessmentGlobal: plantAssessmentReducer,
+import languageReducer from './languageSlice';
+export const store = configureStore({
+  reducer: {
+    global: globalReducer,
+    toasterGlobal: toasterReducer,
+    [protectedApi.reducerPath]: protectedApi.reducer,
+    [publicApi.reducerPath]: publicApi.reducer,
+    plantAssessmentGlobal: plantAssessmentReducer,
+    language: languageReducer,
+    tokenDecode: LoginReducer,
+    stepper: stepperReducer,
+  },
 
-//     [protectedApi.reducerPath]: protectedApi.reducer,
-//     [publicApi.reducerPath]: publicApi.reducer,
-//   },
-// });
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(protectedApi.middleware).concat(publicApi.middleware),
+});
 
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

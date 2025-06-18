@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
+import { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const config: NextConfig = {
+  output: 'standalone',
+  // i18n: i18nConfig.i18n,
+  allowedDevOrigins: ['*'],
+  devIndicators: false,
 };
 
-export default nextConfig;
+export default config;
