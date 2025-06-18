@@ -372,12 +372,15 @@ function AssessorOnboarding() {
   };
   //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
-    console.log(fileValues);
-    console.log(uploadedFiles);
-    const allFilesUploaded = fileValues.every((key) => uploadedFiles[key]);
-    if (!allFilesUploaded) {
-      triggerToast('Please upload all required files before submitting.', 'error');
-      return;
+    // console.log(fileValues);
+    // console.log(uploadedFiles);
+    // const allFilesUploaded = fileValues.every((key) => uploadedFiles[key]);
+    // if (!allFilesUploaded) {
+    //   triggerToast('Please upload all required files before submitting.', 'error');
+    //   return;
+    // }
+    if (!selectedFile) {
+      triggerToast('Please add siriCertificate', 'error');
     }
     try {
       const formData = new FormData();
