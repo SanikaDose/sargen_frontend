@@ -47,12 +47,15 @@ import {
   useUploadIndustryAssessmentMatrixMutation,
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
+  useViewMetadataFileMutation,
 } from './AssessorOnboarding.Api';
 
 import { fileUploadKeyMap, fileTypes } from './FormConfig/fileInput';
 import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { AssessorFormInputs } from './FormConfig/formInputStep';
+import Loader from '@/components/Loader/Loader';
+import { Disabled } from '@/components/Card/Card.stories';
 const steps = [
   'First Name',
   'Last Name',
@@ -85,7 +88,7 @@ function AssessorOnboarding() {
     },
   });
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
-  const [addAssessorInformation] = useAddAssessorInformationMutation();
+  const [addAssessorInformation, isLoading] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -96,198 +99,265 @@ function AssessorOnboarding() {
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
 
-  const [uploadQuestionnaries, isLoading] = useUploadQuestionnariesMutation();
-  const [uploadCostProfile] = useUploadCostProfileMutation();
-  const [uploadKPI] = useUploadKPIMutation();
-  const [uploadPlanningHorizon] = useUploadPlanningHorizonMutation();
-  const [uploadIndustrySelection] = useUploadIndustrySelectionMutation();
-  const [uploadCostProfileLookup] = useUploadCostProfileLookupMutation();
-  const [uploadIndustrySelectionLookup] = useUploadIndustrySelectionLookupMutation();
-  const [uploadKPILookup] = useUploadKPILookupMutation();
-  const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
-  const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
-  const [uploadBandDefinition] = useUploadBandDefinitionMutation();
+  const [uploadQuestionnaries, { isLoading: qloading }] = useUploadQuestionnariesMutation();
+  const [uploadCostProfile, { isLoading: cloading }] = useUploadCostProfileMutation();
+  const [uploadKPI, { isLoading: kloading }] = useUploadKPIMutation();
+  const [uploadPlanningHorizon, { isLoading: ploading }] = useUploadPlanningHorizonMutation();
+  const [uploadIndustrySelection, { isLoading: iloading }] = useUploadIndustrySelectionMutation();
+  const [uploadCostProfileLookup, { isLoading: clloading }] = useUploadCostProfileLookupMutation();
+  const [uploadIndustrySelectionLookup, { isLoading: illoading }] = useUploadIndustrySelectionLookupMutation();
+  const [uploadKPILookup, { isLoading: klloading }] = useUploadKPILookupMutation();
+  const [uploadIndustryAssessmentMatrix, { isLoading: ialoading }] = useUploadIndustryAssessmentMatrixMutation();
+  const [uploadSolutionMetadata, { isLoading: sloading }] = useUploadSolutionMetadataMutation();
+  const [uploadBandDefinition, { isLoading: bloading }] = useUploadBandDefinitionMutation();
+  const [viewMetadataFile, { isLoading: vloading }] = useViewMetadataFileMutation();
 
-  //function to upload files
-  const handleUploadFile = async (file: File, fileKey: string) => {
+  //function to view the metadata files
+  const handleViewClick = async (fileName: string) => {
+    if (!fileName) {
+      triggerToast('Invalid file name.', 'warning');
+      return;
+    }
     try {
-      if (fileKey === 'questionnaires') {
-        try {
-          await uploadQuestionnaries({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-
-          setUploadedFiles((prev) => {
-            const newState = { ...prev };
-            delete newState[fileKey];
-            return newState;
-          });
-        }
+      const response = await viewMetadataFile({
+        tenantId: tenantId,
+        fileName: fileName,
+      }).unwrap();
+      if (response?.url) {
+        window.open(response.url, '_blank');
+      } else {
+        triggerToast('File URL not found.', 'error');
       }
-
-      if (fileKey === 'costProfile') {
-        try {
-          await uploadCostProfile({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'kpi') {
-        try {
-          await uploadKPI({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'industrySelection') {
-        try {
-          await uploadIndustrySelection({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'planningHorizon') {
-        try {
-          await uploadPlanningHorizon({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'costProfileLookUpTable') {
-        try {
-          await uploadCostProfileLookup({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'industrySelectionLookUpTable') {
-        try {
-          await uploadIndustrySelectionLookup({
-            tenantId,
-            file,
-          });
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-
-      if (fileKey === 'kpiSelectionLookUpTable') {
-        try {
-          await uploadKPILookup({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'industryAssessmentMatrix') {
-        try {
-          await uploadIndustryAssessmentMatrix({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'solutionMetadataTable') {
-        try {
-          await uploadSolutionMetadata({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-      if (fileKey === 'bandDefinitionTable') {
-        try {
-          await uploadBandDefinition({
-            tenantId,
-            file,
-          }).unwrap();
-
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [fileKey]: file,
-          }));
-        } catch (error) {
-          triggerToast(`Please Add valid ${fileKey} file`, 'error');
-        }
-      }
-    } catch (error) {
-      console.error(`❌ Error storing file for ${fileKey}:`, error);
+    } catch (err) {
+      triggerToast('Failed to view file', 'error');
     }
   };
+
+  //function to upload files
+  // const handleUploadFile = async (file: File, fileKey: string) => {
+  //   console.log('filekey', fileKey);
+  //   try {
+  //     if (fileKey === 'questionnaires_') {
+  //       try {
+  //         await uploadQuestionnaries({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+
+  //         setUploadedFiles((prev) => {
+  //           const newState = { ...prev };
+  //           delete newState[fileKey];
+  //           return newState;
+  //         });
+  //       }
+  //     }
+
+  //     if (fileKey === 'cost_profile_') {
+  //       try {
+  //         await uploadCostProfile({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'kpi_selection_') {
+  //       try {
+  //         await uploadKPI({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'industry_selection_') {
+  //       try {
+  //         await uploadIndustrySelection({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'planning_horizon_') {
+  //       try {
+  //         await uploadPlanningHorizon({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'cost_lookup_table_') {
+  //       try {
+  //         await uploadCostProfileLookup({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'industry_selection_lookup_table_') {
+  //       try {
+  //         await uploadIndustrySelectionLookup({
+  //           tenantId,
+  //           file,
+  //         });
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+
+  //     if (fileKey === 'kpi_lookup_table_') {
+  //       try {
+  //         await uploadKPILookup({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'assessment_matrix_score_lookup_table_') {
+  //       try {
+  //         await uploadIndustryAssessmentMatrix({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'solutions_with_band_weights_') {
+  //       try {
+  //         await uploadSolutionMetadata({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //     if (fileKey === 'band_definition_table_') {
+  //       try {
+  //         await uploadBandDefinition({
+  //           tenantId,
+  //           file,
+  //         }).unwrap();
+
+  //         setUploadedFiles((prev) => ({
+  //           ...prev,
+  //           [fileKey]: file,
+  //         }));
+  //       } catch (error) {
+  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(`❌ Error storing file for ${fileKey}:`, error);
+  //   }
+  // };
+
+  const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => Promise<any>> = {
+    questionnaires_: uploadQuestionnaries,
+    cost_profile_: uploadCostProfile,
+    kpi_selection_: uploadKPI,
+    industry_selection_: uploadIndustrySelection,
+    planning_horizon_: uploadPlanningHorizon,
+    cost_lookup_table_: uploadCostProfileLookup,
+    industry_selection_lookup_table_: uploadIndustrySelectionLookup,
+    kpi_lookup_table_: uploadKPILookup,
+    assessment_matrix_score_lookup_table_: uploadIndustryAssessmentMatrix,
+    solutions_with_band_weights_: uploadSolutionMetadata,
+    band_definition_table_: uploadBandDefinition,
+  };
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const handleUploadFile = async (file: File, fileKey: string) => {
+    console.log('Uploading file for:', uploadedFiles);
+    setUploadingKey(fileKey);
+
+    const uploadFunction = uploadFunctionMap[fileKey];
+    if (!uploadFunction) {
+      console.error('No upload function found for:', fileKey);
+      return;
+    }
+
+    try {
+      const response = await uploadFunction({ tenantId, file });
+      console.log('uploaded resp', response);
+      if (response.data.status === true) {
+        setUploadedFiles((prev) => ({
+          ...prev,
+          [fileKey]: file,
+        }));
+      } else {
+        triggerToast(`Please add a valid ${fileKey} file`, 'error');
+      }
+    } catch (error) {
+      console.log('catch error');
+      triggerToast(`Please add a valid ${fileKey} file`, 'error');
+    } finally {
+      setUploadingKey(null);
+    }
+  };
+
   //function to handle the profileimage upload
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -343,7 +413,7 @@ function AssessorOnboarding() {
       return acc;
     }, []);
   }, [watchedValues]);
-
+  // function to download the file
   const handleDownloadClick = async (fileName: string) => {
     if (!fileName) {
       triggerToast('Invalid file name.', 'warning');
@@ -502,7 +572,7 @@ function AssessorOnboarding() {
                 }}
               >
                 {/* stickyHeader size="small" */}
-                <Table sx={{ minWidth: 100 }}>
+                <Table>
                   <TableHead>
                     <TableRow sx={{ padding: 0, textAlign: 'center' }}>
                       <TableCell sx={{ padding: 1, textAlign: 'center' }}>No.</TableCell>
@@ -549,22 +619,22 @@ function AssessorOnboarding() {
                               padding: 1,
                             }}
                           >
-                            {/* {isLoading ? (
-                              <ButtonWithLoader label="" loading={true} />
-                            ) : (  */}
-                            <FileActionButton
-                              icon="upload"
-                              label="Upload"
-                              width="50px"
-                              showIcon
-                              color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
-                              onClick={() => {
-                                setCurrentUploadKey(backendKey);
+                            {uploadingKey === backendKey ? (
+                              <ButtonWithLoader loading={true} width="50px" label="" />
+                            ) : (
+                              <FileActionButton
+                                icon="upload"
+                                label="Upload"
+                                width="50px"
+                                showIcon
+                                color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
+                                onClick={() => {
+                                  setCurrentUploadKey(backendKey);
 
-                                fileInputRef.current?.click();
-                              }}
-                            />
-                            {/* )}  */}
+                                  fileInputRef.current?.click();
+                                }}
+                              />
+                            )}
                           </TableCell>
                           <TableCell sx={{ textAlign: 'center', padding: 1 }}>
                             <span
@@ -573,7 +643,14 @@ function AssessorOnboarding() {
                                 opacity: uploadedFiles[backendKey] ? 1 : 0.5,
                               }}
                             >
-                              <FileActionButton icon="view" label="View" width="50px" showIcon showLabel={false} />
+                              <FileActionButton
+                                icon="view"
+                                label="View"
+                                width="50px"
+                                showIcon
+                                showLabel={false}
+                                onClick={() => handleViewClick(backendKey)}
+                              />
                             </span>
                           </TableCell>
                         </TableRow>

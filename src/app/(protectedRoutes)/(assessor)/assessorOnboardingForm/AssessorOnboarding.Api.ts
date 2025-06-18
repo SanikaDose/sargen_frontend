@@ -192,7 +192,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('questionnaires', file);
+          formData.append('questionnaires_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadQuestionnaires}${tenantId}`,
@@ -206,7 +206,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('costProfile', file);
+          formData.append('cost_profile_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadCostProfile}${tenantId}`,
@@ -220,7 +220,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('kpi', file);
+          formData.append('kpi_selection_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadKPI}${tenantId}`,
@@ -234,7 +234,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('planningHorizon', file);
+          formData.append('planning_horizon_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadPlanningHorizon}${tenantId}`,
@@ -248,7 +248,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('industrySelection', file);
+          formData.append('industry_selection_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustrySelection}${tenantId}`,
@@ -262,7 +262,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('costProfileLookUpTable', file);
+          formData.append('cost_lookup_table_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadCostProfileLookup}${tenantId}`,
@@ -276,7 +276,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('industrySelectionLookUpTable', file);
+          formData.append('industry_selection_lookup_table_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustrySelectionLookup}${tenantId}`,
@@ -290,7 +290,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('kpiSelectionLookUpTable', file);
+          formData.append('kpi_lookup_table_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadKPILookup}${tenantId}`,
@@ -304,7 +304,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('industryAssessmentMatrix', file);
+          formData.append('assessment_matrix_score_lookup_table_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustryAssessmentMatrix}${tenantId}`,
@@ -318,7 +318,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('solutionMetadataTable', file);
+          formData.append('solutions_with_band_weights_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadSolutionMetadata}${tenantId}`,
@@ -332,7 +332,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('bandDefinitionTable', file);
+          formData.append('band_definition_table_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadBandDefinition}${tenantId}`,
@@ -367,6 +367,19 @@ export const assessorApi = protectedApi.injectEndpoints({
       }),
     }),
 
+    viewMetadataFile: builder.mutation({
+      query: ({ tenantId, fileName }) => {
+        // const formData = new FormData();
+        // if (file) {
+        //   formData.append('kpiSelectionLookUpTable', file);
+        // }
+        return {
+          url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.viewMetadataFile}`,
+          method: 'POST',
+          body: { tenantId, fileName },
+        };
+      },
+    }),
     getAssessorInfo: builder.query<getOrgPayload & { id: number; createdAt: string; updatedAt: string }, string>({
       query: (tenantId) => ({
         url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.getAssessorInformation}${tenantId}`,
@@ -396,4 +409,6 @@ export const {
   useUploadIndustryAssessmentMatrixMutation,
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
+
+  useViewMetadataFileMutation,
 } = assessorApi;

@@ -62,6 +62,8 @@ export const apiControllerPath = {
     uploadIndustryAssessmentMatrix: '/upload-industry-assessment-matrix/',
     uploadSolutionMetadata: '/upload-solution-metadata/',
     uploadBandDefinition: '/upload-band-definition/',
+
+    viewMetadataFile: '/view-metadata-file',
   },
   assessorFlow: {
     root: 'assessor-flow',

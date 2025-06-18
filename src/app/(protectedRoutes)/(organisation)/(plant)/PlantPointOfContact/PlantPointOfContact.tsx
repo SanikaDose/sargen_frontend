@@ -13,13 +13,14 @@ import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { useEditPlantInfoMutation, useUploadPlantPointOfContactLogoMutation } from './PlantPointOfContactApi';
 import { CountryOptions } from '@/app/utils/CountryOptions';
-
+import { useRouter } from 'next/navigation';
+import InfoBox from '@/components/InfoBox/InfoBox';
 export default function PlantPointOfContact() {
   const { control, handleSubmit, reset, setFocus } = useForm<PlantPointOfContactType>();
   const [logoUrl, setLogoUrl] = useState<string>(defaultUserLogo.src);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
-
+  const router = useRouter();
   const tenantId = 'tanpure-corp-c8e1eeba-65d8-4351-837c-d1b5b5f45bbf';
   const plantId = '6ca0fa88-b57d-43d9-ba1a-629a174e3bfa';
 
@@ -197,7 +198,14 @@ export default function PlantPointOfContact() {
               </Grid>
             </Box>
             <Box className={styles.buttonSection}>
-              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" />
+              <CustomButton
+                children="Back"
+                variant="contained"
+                color="primary"
+                icon="left"
+                type="button"
+                onClick={() => router.back()}
+              />
               <CustomButton
                 children={isLoading ? 'Saving...' : 'Save'}
                 variant="contained"
