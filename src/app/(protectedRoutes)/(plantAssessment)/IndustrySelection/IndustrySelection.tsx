@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Button, FormControl, FormControlLabel, Grid, Paper, Radio, RadioGroup, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './IndustrySelection.module.css';
-import { Industry, IndustryFormValues, MultipleSections } from '../plantAssement.model';
+import { Industry, IndustryFormValues } from '../plantAssement.model';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -15,19 +15,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
-
-const steps = [
-  'Research',
-  'Selling',
-  'RTransport',
-  'Utilities',
-  'Aftermarket',
-  'Description',
-  'Labour',
-  'maintainance',
-  'Raw Material',
-  'Rental',
-].map((label) => ({ label }));
 
 const IndustrySelection = () => {
   const router = useRouter();
@@ -150,7 +137,7 @@ const IndustrySelection = () => {
                       return (
                         <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
                           <Card
-                            kpi={industry.industry_name}
+                            label={industry.industry_name}
                             isSelected={isSelected}
                             isDisabled={isDisabled}
                             onToggle={() => field.onChange(industry.id)}

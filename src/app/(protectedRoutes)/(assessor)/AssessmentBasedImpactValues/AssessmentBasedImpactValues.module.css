@@ -1,46 +1,28 @@
 .formSection {
   display: flex;
   width: 100%;
-  height: 87%;
+  height: 98%;
 }
 
 .stepperContainer {
   width: 100%;
   display: flex;
   justify-content: center;
-  /* border: 1px solid; */
 }
 
 .formContainer {
   height: 100%;
-  width: 70%;
+  width: 65%;
   padding: 20px;
   display: flex;
+  border-radius: 16px;
   flex-direction: column;
-  /* border: 2px solid red; */
   position: relative;
-}
-
-.questionAnsweresSection {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 15;
-}
-.questionSection {
-  height: 15%;
-}
-.answerSection {
-  height: 100%;
-  overflow-x: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 15;
 }
 
 .rightSection {
   height: 100%;
-  width: 30%;
+  width: 35%;
   padding: 20px;
   display: flex;
   border-radius: 16px;
@@ -51,11 +33,8 @@
 }
 
 .aboutSection {
-  height: 100%;
+  height: 90%;
   width: 100%;
-}
-.justification {
-  border-radius: 16px;
 }
 
 .buttonSection {
@@ -64,20 +43,17 @@
   display: flex;
   justify-content: space-between;
 }
-@media (min-width: 300px) and (max-width: 900px) {
+
+@media (min-width: 300px) and (max-width: 915px) {
   .stepperContainer {
     display: none;
   }
-}
-@media (min-width: 300px) and (max-width: 1000px) {
   .formSection {
     width: 100%;
-    height: auto !important;
+    height: auto;
     flex-direction: column;
-    border: 1px solid blue;
   }
   .bothSections {
-    height: auto !important;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -87,7 +63,6 @@
   }
   .rightSection {
     width: 100%;
-    height: auto;
   }
   .buttonSection {
     display: flex;
@@ -96,19 +71,11 @@
   }
 
   .formContainer {
-    height: auto;
     width: 100%;
-    /* min-height: auto; */
   }
 }
-@media (min-width: 700px) and (max-width: 1300px) {
+@media (min-width: 915px) and (max-width: 1100px) {
   .stepperContainer {
     display: none;
-  }
-  .cards {
-    width: 45%;
-    height: 100;
-    min-width: 0;
-    display: inline-flex;
   }
 }
