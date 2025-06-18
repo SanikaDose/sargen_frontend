@@ -7,6 +7,7 @@ const initialState = {
   InfoBoxToShow: false,
   organizationId: '',
   sideBarDrawerList: [],
+  pageNameHeader: 'Page heading',
 };
 
 const globalSlice = createSlice({
@@ -28,6 +29,9 @@ const globalSlice = createSlice({
     setOrganizationId: (state, action) => {
       state.organizationId = action.payload;
     },
+    setPageNameHeader: (state, action) => {
+      state.pageNameHeader = action.payload;
+    },
     resetGlobalState: () => initialState,
   },
 });
@@ -39,6 +43,7 @@ export const {
   setInfoBoxToShow,
   setOrganizationId,
   resetGlobalState,
+  setPageNameHeader,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;
