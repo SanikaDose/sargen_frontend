@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import Loader from '@/components/Loader/Loader';
 const steps = [
   'Research',
   'Selling',
@@ -33,8 +34,8 @@ const PlanningHorizon = () => {
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
-  const [getHorizonOptions] = useGetPlanningHorizonListMutation();
-  const [selectHorizonOption, { isLoading }] = useSelectPlanningHorizonListMutation();
+  const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
+  const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
   const tenantId = getValueLocalStorage('tenantId');
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
@@ -149,38 +150,45 @@ const PlanningHorizon = () => {
             >
               Planning Horizon
             </Typography>
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                mt: 2,
-              }}
-            >
-              <Controller
-                name="selectedHorizonId"
-                control={control}
-                render={({ field }) => (
-                  <>
-                    {horizonOptions.map((option) => {
-                      const isSelected = field.value === option.id;
 
-                      return (
-                        <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
-                          <Card
-                            label={option.planningHorizon}
-                            isSelected={isSelected}
-                            onToggle={() => field.onChange(option.id)}
-                          />
-                        </Grid>
-                      );
-                    })}
-                  </>
-                )}
-              />
-            </Grid>
+            {isLoadingGet || isLoadingAdd ? (
+              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Loader loading />
+              </Box>
+            ) : (
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  mt: 2,
+                }}
+              >
+                <Controller
+                  name="selectedHorizonId"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      {horizonOptions.map((option) => {
+                        const isSelected = field.value === option.id;
+
+                        return (
+                          <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+                            <Card
+                              label={option.planningHorizon}
+                              isSelected={isSelected}
+                              onToggle={() => field.onChange(option.id)}
+                            />
+                          </Grid>
+                        );
+                      })}
+                    </>
+                  )}
+                />
+              </Grid>
+            )}
           </Box>
 
           <Box className={styles.rightSection}>
@@ -210,7 +218,12 @@ const PlanningHorizon = () => {
                 type="button"
                 onClick={() => router.back()}
               />
-              <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
+              <CustomButton
+                children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                variant="contained"
+                icon="save"
+                type="submit"
+              />
             </Box>
           </Box>
         </Box>

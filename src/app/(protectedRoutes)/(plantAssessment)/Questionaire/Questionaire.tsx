@@ -3,7 +3,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import Stepper from '@/components/Stepper/Stepper';
 import styles from './Questionaire.module.css';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Skeleton, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
@@ -155,25 +155,27 @@ const Questionaire = () => {
   const questionText = currentGroup[0].question;
 
   return (
-    <>
-      <Box component="form" sx={{ height: '99%' }}>
-        <Box className={styles.stepperContainer}>
-          <Stepper steps={steps} completedSteps={completedSteps} activeStep={currentIndex} />
-        </Box>
+    <Box component="form" sx={{ height: '99%' }}>
+      <Box className={styles.stepperContainer}>
+        <Stepper steps={steps} completedSteps={completedSteps} activeStep={currentIndex} />
+      </Box>
 
-        <Paper
-          className={styles.formSection}
-          elevation={2}
-          sx={{
-            mt: 2,
-            borderRadius: '16px',
-            backgroundColor: 'white',
-            border: '1px solid rgb(216, 216, 216)',
-          }}
-        >
-          <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-            {/* Left section */}
-            <Box className={styles.formContainer}>
+      <Paper
+        className={styles.formSection}
+        elevation={2}
+        sx={{
+          mt: 2,
+          borderRadius: '16px',
+          backgroundColor: 'white',
+          border: '1px solid rgb(216, 216, 216)',
+        }}
+      >
+        <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+          {/* Left section */}
+          <Box className={styles.formContainer}>
+            {isLoading || isSaving ? (
+              <Skeleton variant="text" width="40%" height={40} />
+            ) : (
               <Typography
                 variant="h6"
                 sx={{
@@ -184,30 +186,47 @@ const Questionaire = () => {
               >
                 {currentGroup && currentGroup[0]?.department}
               </Typography>
+            )}
 
-              {isLoading || isSaving ? (
-                <Loader loading={isLoading} />
-              ) : (
-                <Box className={styles.questionAnsweresSection}>
-                  <Box className={styles.questionSection}>
-                    <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
-                  </Box>
-
-                  <Box className={styles.answerSection}>
-                    {currentGroup.map((option, idx) => (
-                      <AnswerCard
-                        key={option.id}
-                        answerNumber={idx + 1}
-                        answerText={option.answer ?? ''}
-                        isSelected={option.isselected}
-                        onClick={() => handleAnswerClick(option.id)}
-                      />
-                    ))}
-                  </Box>
+            {isLoading || isSaving ? (
+              <Box className={styles.questionAnsweresSection}>
+                <Skeleton variant="rectangular" height={60} width="100%" sx={{ mb: 2, borderRadius: '8px' }} />
+                <Box className={styles.answerSection}>
+                  {[1, 2, 3].map((_, i) => (
+                    <Skeleton
+                      key={i}
+                      variant="rectangular"
+                      height={48}
+                      width="100%"
+                      sx={{ mb: 1, borderRadius: '8px' }}
+                    />
+                  ))}
                 </Box>
-              )}
+              </Box>
+            ) : (
+              <Box className={styles.questionAnsweresSection}>
+                <Box className={styles.questionSection}>
+                  <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
+                </Box>
 
-              <Box className={styles.justification}>
+                <Box className={styles.answerSection}>
+                  {currentGroup.map((option, idx) => (
+                    <AnswerCard
+                      key={option.id}
+                      answerNumber={idx + 1}
+                      answerText={option.answer ?? ''}
+                      isSelected={option.isselected}
+                      onClick={() => handleAnswerClick(option.id)}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+
+            <Box className={styles.justification}>
+              {isLoading || isSaving ? (
+                <Skeleton variant="rectangular" height={120} width="100%" sx={{ borderRadius: '8px' }} />
+              ) : (
                 <TextArea
                   value={justificationMap[currentGroup[0]?.question_uid] || ''}
                   onChange={(val) => {
@@ -219,65 +238,60 @@ const Questionaire = () => {
                   placeholder="Enter justification"
                   readOnly={false}
                 />
-              </Box>
-            </Box>
-
-            {/* Right section */}
-            <Box className={styles.rightSection}>
-              <Box className={styles.aboutSection}>
-                <InfoBox
-                  heading="About Industry"
-                  content="Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
-                />
-              </Box>
-
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                p={1}
-                mt={3}
-                ml={5}
-                mr={5}
-                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
-                className={styles.buttonSection}
-              >
-                <CustomButton
-                  children="Back"
-                  variant="contained"
-                  color="primary"
-                  icon="left"
-                  type="button"
-                  onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                  disabled={currentIndex === 0 || isSaving}
-                />
-                <CustomButton
-                  children={isSaving ? 'Saving...' : 'Save'}
-                  variant="contained"
-                  icon="save"
-                  type="button"
-                  onClick={async () => {
-                    const success = await submitQuestionnaireAnswer();
-                    if (success) {
-                      if (currentIndex < groupKeys.length - 1) {
-                        // Move to next question
-                        setCurrentIndex((prev) => prev + 1);
-                      } else if (departmentIndex < departmentName.length - 1) {
-                        // All questions in this department completed → move to next department
-                        setDepartmentIndex((prev) => prev + 1);
-                      } else {
-                        alert('🎉 All department questions submitted!');
-                      }
-                    }
-                  }}
-                  disabled={isSaving}
-                />
-              </Box>
+              )}
             </Box>
           </Box>
-        </Paper>
-      </Box>
-    </>
+
+          {/* Right section */}
+          <Box className={styles.rightSection}>
+            <Box className={styles.aboutSection}>
+              <InfoBox heading="About Industry" content="Lorem ipsum dolor sit amet, consectetur adipiscing elit..." />
+            </Box>
+
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={3}
+              ml={5}
+              mr={5}
+              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+              className={styles.buttonSection}
+            >
+              <CustomButton
+                children="Back"
+                variant="contained"
+                color="primary"
+                icon="left"
+                type="button"
+                onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+                disabled={currentIndex === 0 || isSaving}
+              />
+              <CustomButton
+                children={isSaving ? 'Saving...' : 'Save'}
+                variant="contained"
+                icon="save"
+                type="button"
+                onClick={async () => {
+                  const success = await submitQuestionnaireAnswer();
+                  if (success) {
+                    if (currentIndex < groupKeys.length - 1) {
+                      setCurrentIndex((prev) => prev + 1);
+                    } else if (departmentIndex < departmentName.length - 1) {
+                      setDepartmentIndex((prev) => prev + 1);
+                    } else {
+                      alert('🎉 All department questions submitted!');
+                    }
+                  }
+                }}
+                disabled={isSaving}
+              />
+            </Box>
+          </Box>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 

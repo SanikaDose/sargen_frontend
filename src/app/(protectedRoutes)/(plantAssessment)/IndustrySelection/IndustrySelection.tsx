@@ -15,14 +15,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import Loader from '@/components/Loader/Loader';
 
 const IndustrySelection = () => {
   const router = useRouter();
   const params = useParams();
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
-  const [getIndustrySelectionList] = useGetIndustrySelectionListMutation();
-  const [selectIndustrySelectionList, { isLoading }] = useSelectIndustrySelectionListMutation();
+  const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
+  const [selectIndustrySelectionList, { isLoading: isLoadingAdd }] = useSelectIndustrySelectionListMutation();
   const tenantId = getValueLocalStorage('tenantId');
   const [industryData, setIndustryData] = useState<Industry[]>([]);
 
@@ -115,40 +116,46 @@ const IndustrySelection = () => {
             >
               Industry Selection
             </Typography>
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                mt: 2,
-              }}
-            >
-              <Controller
-                name="selectedIndustryId"
-                control={control}
-                render={({ field }) => (
-                  <>
-                    {industryData.map((industry) => {
-                      const isSelected = field.value === industry.id;
-                      const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
+            {isLoadingGet || isLoadingAdd ? (
+              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Loader loading />
+              </Box>
+            ) : (
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  mt: 2,
+                }}
+              >
+                <Controller
+                  name="selectedIndustryId"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      {industryData.map((industry) => {
+                        const isSelected = field.value === industry.id;
+                        const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
 
-                      return (
-                        <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
-                          <Card
-                            label={industry.industry_name}
-                            isSelected={isSelected}
-                            isDisabled={isDisabled}
-                            onToggle={() => field.onChange(industry.id)}
-                          />
-                        </Grid>
-                      );
-                    })}
-                  </>
-                )}
-              />
-            </Grid>
+                        return (
+                          <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+                            <Card
+                              label={industry.industry_name}
+                              isSelected={isSelected}
+                              isDisabled={isDisabled}
+                              onToggle={() => field.onChange(industry.id)}
+                            />
+                          </Grid>
+                        );
+                      })}
+                    </>
+                  )}
+                />
+              </Grid>
+            )}
           </Box>
 
           <Box className={styles.rightSection}>
@@ -178,7 +185,12 @@ const IndustrySelection = () => {
                 type="button"
                 onClick={() => router.back()}
               />
-              <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
+              <CustomButton
+                children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                variant="contained"
+                icon="save"
+                type="submit"
+              />
             </Box>
           </Box>
         </Box>
