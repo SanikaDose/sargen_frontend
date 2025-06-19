@@ -14,7 +14,7 @@ import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
-
+import Loader from '@/components/Loader/Loader';
 const CostProfile = () => {
   const params = useParams();
   const router = useRouter();
@@ -35,8 +35,8 @@ const CostProfile = () => {
   const plantId = params.PlantId as string;
 
   const tenantId = getValueLocalStorage('tenantId');
-  const [getCostCategories] = useGetCostCategoriesMutation();
-  const [addCostCategories, { isLoading }] = useAddCostCategoriesMutation();
+  const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
+  const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
 
   const { control, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: { costs: [] },
@@ -126,6 +126,7 @@ const CostProfile = () => {
           completedSteps={stepperState.completedSteps}
         />
       </Box>
+
       <Paper
         className={styles.formSection}
         elevation={2}
@@ -137,6 +138,7 @@ const CostProfile = () => {
         }}
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+          {/* Left Section */}
           <Box className={styles.formContainer}>
             <Typography
               variant="h6"
@@ -148,17 +150,17 @@ const CostProfile = () => {
             >
               Cost Profile
             </Typography>
-            {/* <Box className={styles.costProfile} sx={{ width: '100%' }}>
+
+            {/* Loader inside left section */}
+            {isLoadingGet || isLoadingAdd ? (
+              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Loader loading />
+              </Box>
+            ) : (
               <Grid
                 container
                 spacing={2}
-                sx={{
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  display: 'flex',
-                  width: '100%',
-                }}
+                sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}
               >
                 {fields.length > 0
                   ? fields.map((field, index) => (
@@ -179,39 +181,9 @@ const CostProfile = () => {
                     ))
                   : 'No cost Profile'}
               </Grid>
+            )}
 
-              <Box className={styles.OverallCostProfileCard}>
-                <OverallCostProfileCard
-                  fieldName="Overall Cost Profile"
-                  costValue={averagePercentage}
-                  onChange={() => {}}
-                  readonly
-                  boxBackgroundColor="#10557C"
-                  textColor="#FFFFFF"
-                />
-              </Box>
-            </Box> */}
-
-            <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-              {fields.length > 0
-                ? fields.map((field, index) => (
-                    <Box key={field.id} className={styles.costInputCards}>
-                      <Controller
-                        name={`costs.${index}.costAsAPercentageOfRevenue`}
-                        control={control}
-                        render={({ field: controllerField }) => (
-                          <OverallCostProfileCard
-                            fieldName={field.costCategory}
-                            costValue={controllerField.value}
-                            onChange={(val) => controllerField.onChange(val)}
-                            readonly={false}
-                          />
-                        )}
-                      />
-                    </Box>
-                  ))
-                : 'No cost Profile'}
-            </Grid>
+            {/* Always show overall cost summary */}
             <Box className={styles.OverallCostProfileCard}>
               <OverallCostProfileCard
                 fieldName="Overall Cost Profile"
@@ -224,10 +196,11 @@ const CostProfile = () => {
             </Box>
           </Box>
 
+          {/* Right Section */}
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
               <InfoBox
-                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
+                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..."
                 heading="About Industry"
               />
             </Box>
@@ -251,7 +224,12 @@ const CostProfile = () => {
                 type="button"
                 onClick={() => router.back()}
               />
-              <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
+              <CustomButton
+                children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                variant="contained"
+                icon="save"
+                type="submit"
+              />
             </Box>
           </Box>
         </Box>

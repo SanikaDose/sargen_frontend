@@ -4,15 +4,16 @@ import { Button, ButtonProps } from '@mui/material';
 import React from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
-
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import CancelIcon from '@mui/icons-material/Cancel';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
-export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success' | 'cancel';
+export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success' | 'cancel' | 'edit' | 'submit';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
   variant?: ButtonVariant;
-  color?: 'primary' | 'secondary' | 'error' | 'success' | 'cancel';
+  color?: 'primary' | 'secondary' | 'error' | 'success' | 'cancel' | 'warning' | 'submit';
   onClick?: () => void;
   className?: string;
   icon?: ButtonIcon;
@@ -47,6 +48,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return <PlaylistAddCheckCircleIcon fontSize="medium" />;
       case 'cancel':
         return <CancelIcon />;
+      case 'edit':
+        return <ModeEditOutlineOutlinedIcon fontSize="medium" />;
+      case 'submit':
+        return <AssignmentTwoToneIcon fontSize="medium" />;
       default:
         return null;
     }

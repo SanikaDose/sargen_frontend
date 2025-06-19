@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { OnboardingStatus, Token } from './login.types';
 
 /**
  * Redux slice for managing decoded JWT token after login.
@@ -11,23 +12,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
  * @date 2025-04-09
  */
 
-type Token = {
-  exp: number;
-  iat: number;
-  tenantId: string;
-  userId: string;
-  userRole: string[];
-  userType: string[];
-};
-
 type LoginState = {
   decodedToken: Token | null;
-  onboardingStatus: string;
+  onboardingStatus: OnboardingStatus;
 };
 
 const initialState: LoginState = {
   decodedToken: null,
-  onboardingStatus: '',
+  onboardingStatus: OnboardingStatus.NOT_STARTED,
 };
 
 /**
@@ -43,7 +35,7 @@ const LoginSlice = createSlice({
     setDecodedToken: (state, actions: PayloadAction<Token>) => {
       state.decodedToken = actions.payload;
     },
-    setOnboardingStatus: (state, actions: PayloadAction<string>) => {
+    setOnboardingStatus: (state, actions: PayloadAction<OnboardingStatus>) => {
       state.onboardingStatus = actions.payload;
     },
   },

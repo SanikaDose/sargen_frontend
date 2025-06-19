@@ -104,7 +104,7 @@ const EditPlantRegistrationForm = () => {
       await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
       // reset();
       // triggerToast('Plant Updated successfully!', 'success');
-      router.back();
+      router.push('/PlantOverview');
     } catch (error) {
       console.error('Failed to add plant info:', error);
     }

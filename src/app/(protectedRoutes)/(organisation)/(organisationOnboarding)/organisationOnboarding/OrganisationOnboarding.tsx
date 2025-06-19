@@ -1,22 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
+
 import Stepper from '@/components/Stepper/Stepper';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
+
+import { Box, Paper, FormControl, Grid, MenuItem, Select, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
+
+import { OrgFormInputs } from './FormConfig/formInputStep';
+
 import {
+  useGetOrganizationInfoQuery,
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
-  useGetOrganizationInfoQuery,
 } from './OrganisationOnboardingAPi';
-import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
+
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import { OrgFormInputs } from './FormConfig/formInputStep';
+// import { OrgFormInputs } from './FormConfig/formInputStep';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
 import Loader from '@/components/Loader/Loader';
 import styles from './OrganisationOnboarding.module.css';
@@ -33,6 +36,7 @@ const steps = [
 
 import { triggerToast } from '@/app/utils/toast';
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 function OrganizationOnbording() {
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();

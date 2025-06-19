@@ -1,26 +1,28 @@
 'use client';
 
-import { Box, Grid, Typography, FormControl, MenuItem, Select, Paper, useMediaQuery } from '@mui/material';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
-import Stepper from '@/components/Stepper/Stepper';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { useEffect, useState, useMemo } from 'react';
+import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import Stepper from '@/components/Stepper/Stepper';
+import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography, useMediaQuery } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
+import styles from './ContactPerson.module.css';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
 import {
   useAddPointOfContactMutation,
   useGetPointOfContactQuery,
   useUploadPocProfilePicMutation,
 } from './ContactPersonApi';
-import styles from './ContactPerson.module.css';
-import { CountryOptions } from '@/app/utils/CountryOptions';
-import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { useRouter } from 'next/navigation';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { setPageName } from '@/store/globalSlice';
-import { useDispatch } from 'react-redux';
+
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { useDispatch } from 'react-redux';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -37,9 +39,15 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const isTablet = useMediaQuery('(max-width: 900px)');
 
   useEffect(() => {
-    dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
+    // Set the header based on editMode
+    if (editMode) {
+      dispatch(setPageNameHeader('Edit contact person'));
+    } else {
+      dispatch(setPageNameHeader(pagesNames.organisationOnboardingContactPerson));
+    }
+
     return () => {
-      dispatch(setPageName(''));
+      dispatch(setPageNameHeader(''));
     };
   }, [dispatch, editMode]);
 
@@ -134,6 +142,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     try {
       await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
       console.log('Form submitted successfully');
+      router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }

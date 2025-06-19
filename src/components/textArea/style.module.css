@@ -1,24 +1,23 @@
-/* components/textArea/style.module.css */
-.rich-text-container {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.textAreaContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.ql-toolbar {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  background-color: #f8f9fa;
+.textArea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  font-size: 16px;
+  resize: vertical;
+  font-family: inherit;
+  background-color: white;
+  min-height: 150px;
+  outline: none;
 }
 
-.ql-container {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-}
-
-.ql-syntax {
-  background-color: #282c34 !important;
-  color: #abb2bf;
-  padding: 16px !important;
-  border-radius: 4px;
+.textArea:focus {
+  border-color: #10557c;
+  box-shadow: 0 0 0 2px rgba(16, 85, 124, 0.2);
 }
