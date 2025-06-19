@@ -15,8 +15,8 @@ export const plantInfoApi = protectedApi.injectEndpoints({
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Organization Onboarded successfully!',
-          errorMessage: 'Organization Onboarding failed!',
+          successMessage: 'Plant Onboarded successfully!',
+          errorMessage: 'Plant Onboarding failed!',
           duration: 4000,
         });
       },
@@ -30,6 +30,13 @@ export const plantInfoApi = protectedApi.injectEndpoints({
       }),
 
       invalidatesTags: (result, error, { plantId }) => [{ type: 'PlantLogo', id: plantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant Logo Uploaded successfully!',
+          errorMessage: 'Failed to upload Plant Logo',
+          duration: 4000,
+        });
+      },
     }),
 
     // 📥 Get Plant Logo
@@ -39,6 +46,13 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: (result, error, { plantId }) => [{ type: 'PlantLogo', id: plantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant logo fetched successfully.',
+          errorMessage: 'Failed to fetch plant logo.',
+          duration: 4000,
+        });
+      },
     }),
   }),
 });

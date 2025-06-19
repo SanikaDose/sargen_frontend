@@ -131,7 +131,8 @@ function AssessorOnboarding() {
         triggerToast('File URL not found.', 'error');
       }
     } catch (err) {
-      triggerToast('Failed to view file', 'error');
+      console.log('error', err);
+      //  triggerToast('Failed to view file', 'error');
     }
   };
 
@@ -353,8 +354,7 @@ function AssessorOnboarding() {
         triggerToast(`Please add a valid ${fileKey} file`, 'error');
       }
     } catch (error) {
-      console.log('catch error');
-      triggerToast(`Please add a valid ${fileKey} file`, 'error');
+      console.log('catch error', error);
     } finally {
       setUploadingKey(null);
     }
@@ -369,7 +369,7 @@ function AssessorOnboarding() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      triggerToast('Image upload failed', 'error');
+      console.log('error', error);
     }
   };
   //function to submit the formdata
@@ -395,9 +395,8 @@ function AssessorOnboarding() {
         data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
-      triggerToast('✅ Assessor information submitted successfully!', 'success');
     } catch (error) {
-      triggerToast('❌ Failed to submit assessor information:', 'error');
+      console.log('error', error);
     }
   };
 
@@ -448,7 +447,6 @@ function AssessorOnboarding() {
       console.log('downloaded sucessfully', url);
     } catch (err) {
       console.error('Error downloading file:', err);
-      triggerToast('Failed to download file', 'error');
     } finally {
       setdownloadKey(null);
     }
