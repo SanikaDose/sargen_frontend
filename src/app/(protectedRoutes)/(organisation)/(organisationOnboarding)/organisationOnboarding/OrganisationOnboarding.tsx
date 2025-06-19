@@ -1,23 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, Button, Grid, Typography } from '@mui/material';
-import Stepper from '@/components/Stepper/Stepper';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
-import {
-  useSubmitOrganizationInfoMutation,
-  useUploadOrganizationLogoMutation,
-  useGetOrganizationInfoQuery,
-} from './OrganisationOnboardingAPi';
+import Stepper from '@/components/Stepper/Stepper';
+import { Box, FormControl, Grid, MenuItem, OutlinedInput, Select, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
-import { CountryOptions } from '@/app/utils/CountryOptions';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import { OrgOnboard } from './OrganisationOnboarding.types';
+import {
+  useGetOrganizationInfoQuery,
+  useSubmitOrganizationInfoMutation,
+  useUploadOrganizationLogoMutation,
+} from './OrganisationOnboardingAPi';
 
 const steps = [
   'Company Name',
