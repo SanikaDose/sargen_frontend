@@ -8,7 +8,10 @@ import { setSideBarListItem } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -27,9 +30,10 @@ import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
-
+import { setDecodedToken } from '../(unprotectedRoutes)/login/loginSlice';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -94,8 +98,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
   const router = useRouter();
-  const department = useSelector((state: RootState) => state.plantAssessmentGlobal.questionnairesDeparment);
-  const sidbarListItems = useSelector((state: RootState) => state.global.SideBarListItem);
+
   // Media queries to detect device type
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-960px
@@ -117,6 +120,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setMobileOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('Authorization');
+      if (token) {
+        const decoded: Token = jwtDecode(token);
+        setDecodedToken(decoded);
+      }
+    }
+  }, []);
   const decodedToken: Token = jwtDecode(localStorage.getItem('Authorization') || '');
 
   const { userRole: userRoleFromLocalStorage, userType: userTypeFromLocalStorage } = decodedToken;
@@ -153,7 +166,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // Dispatch to global state
     dispatch(setSideBarListItem(updatedList));
   };
+
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pathName = usePathname();
+
+  const iconMap: Record<string, React.ElementType> = {
+    HomeRoundedIcon: HomeRoundedIcon,
+    DashboardIcon: DashboardIcon,
+    SettingsIcon: SettingsIcon,
+    // ✅ Keep adding to this map as needed
+  };
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -236,7 +258,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           )}
         </DrawerHeader>
         <Divider />
-
+        {/* Main list */}
         <List>
           {sideBarListItems.map((item) => (
             <ListItem
@@ -256,7 +278,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
                   }}
                 >
-                  {item.icon ? <item.icon /> : null}
+                  {item.icon && iconMap[item.icon] ? React.createElement(iconMap[item.icon]) : null}
                 </ListItemIcon>
                 <ListItemText
                   primary={
@@ -275,7 +297,48 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </ListItem>
           ))}
         </List>
-
+        {/* SubList which will be activated in the assessement view for both  */}
+        {showAssessmentListSideBar && (
+          <List>
+            {sideBarListItems.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
+                sx={{
+                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                  // '&:hover': {
+                  //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
+                  // },
+                }}
+              >
+                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                  <ListItemIcon
+                    sx={{
+                      mr: 2,
+                      color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
+                    }}
+                  >
+                    {item.icon ? <item.icon /> : null}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
+                          // fontWeight: item.linkRoute === pathName ? 600 : 550,
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        )}
+        {/* Main menu to add the edit preview and the reports to view also the org info*/}
         <Box sx={{ flexGrow: 1 }} />
         <Box
           sx={{

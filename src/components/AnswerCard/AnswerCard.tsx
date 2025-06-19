@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
-import styles from './style.module.css';
 import type { AnswerCardProps } from './AnswerCard.types';
+import styles from './style.module.css';
 
 const AnswerCard = ({
   answerNumber = 1,
@@ -9,6 +9,7 @@ const AnswerCard = ({
   onClick = () => {},
 }: AnswerCardProps) => {
   console.log('isSelected', isSelected);
+  console.log('answerText', answerText);
 
   return (
     <Box
@@ -16,9 +17,9 @@ const AnswerCard = ({
       className={styles.outerContainer}
       sx={{
         backgroundColor: isSelected ? 'rgba(16, 85, 124, 1)' : 'rgba(255, 255, 255, 1)',
-        color: isSelected ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
+        color: isSelected ? 'rgba(255, 255, 255, 1)!important' : 'rgba(0, 0, 0, 1)',
         cursor: 'pointer',
-
+        borderRadius: '12px',
         p: 2,
         mb: 1,
         transition: 'background-color 0.3s ease',

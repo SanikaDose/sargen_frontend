@@ -81,7 +81,7 @@ export const sargenComponents = {
     styleOverrides: {
       root: {
         // global typography defaults
-        color: '#212121',
+        color: 'inherit',
       },
       h1: {
         fontSize: '2rem',
