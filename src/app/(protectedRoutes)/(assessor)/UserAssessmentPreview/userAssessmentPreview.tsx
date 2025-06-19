@@ -22,15 +22,10 @@ const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();
   const plantId = params.plantId as string;
-  // const organisationId = params.organisationId as string;
-  // const department = useSelector(
-  //   (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
-  // );
-  const department = useSelector(
-    (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
-  );
-  const tenantId = getValueLocalStorage('tenantId');
+  const organisationId = params.organisationId as string;
 
+  const tenantId = getValueLocalStorage('tenantId');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
@@ -151,6 +146,15 @@ const UserAssessmentPreview = () => {
   const questionText = currentGroup[0].question;
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
 
+  const handlePrimaryClick = () => {
+    setIsModalOpen(false);
+    console.log('Primary action clicked');
+  };
+
+  const handleSecondaryClick = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Box component="form" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', gap: 1 }}>
       <Paper
@@ -166,7 +170,7 @@ const UserAssessmentPreview = () => {
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
             <Typography variant="h6" mb="4px">
-              {department.toUpperCase()}
+              {currentGroup[0]?.department} Assessment
             </Typography>
 
             <Box className={styles.questionAnsweresSection}>
