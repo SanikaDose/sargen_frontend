@@ -8,7 +8,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import NumbersIcon from '@mui/icons-material/Numbers';
 import FactoryIcon from '@mui/icons-material/Factory';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import { AssessorProps } from '../../../Assessor.types';
+import { AssessorProps } from '../../Assessor.types';
 
 const excludeKeys = [
   'plantLogo',
