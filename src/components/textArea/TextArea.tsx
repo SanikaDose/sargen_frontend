@@ -55,7 +55,6 @@
 import React from 'react';
 import styles from './style.module.css';
 import { TextAreaProps } from './TextArea.types';
-import { log } from 'console';
 
 const TextArea: React.FC<TextAreaProps> = ({ value, onChange, placeholder = '', readOnly = false }) => {
   console.log('value', value);
