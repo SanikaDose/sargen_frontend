@@ -18,17 +18,33 @@ import { showToast } from '@/components/toaster/toasterSlice';
 import Loader from '@/components/Loader/Loader';
 
 const Questionaire = () => {
+  const departmentName = [
+    'R&D',
+    // 'Planning',
+    'Production',
+    // 'Quality',
+    // 'Maintenance',
+    // 'Supply Chain Sales',
+    // 'Supply Chain Purchase',
+    'Finance',
+    // 'Utilities',
+    'IT',
+    // 'L&D',
+    // 'Management',
+    'HR',
+  ];
   const router = useRouter();
   const params = useParams();
 
   const plantId = params.PlantId as string;
-  const department = useSelector(
-    (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
-  );
+  // const department = useSelector(
+  //   (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
+  // );
   const tenantId = getValueLocalStorage('tenantId');
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
+  const [departmentIndex, setDepartmentIndex] = useState<number>(0);
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
   const steps = groupKeys.map((_, index) => ({
@@ -36,47 +52,56 @@ const Questionaire = () => {
   }));
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
-  const fetchQuestions = async () => {
-    const result = await getQuestionnairesList({
-      tenantId,
-      plantId: plantId || '',
-      department: department || 'R&D',
-    }).unwrap();
+  const fetchQuestions = async (dept: string) => {
+    try {
+      const result = await getQuestionnairesList({
+        tenantId,
+        plantId: plantId || '',
+        department: dept,
+      }).unwrap();
 
-    const questions = result?.questionsToSend || [];
+      const questions = result?.questionsToSend || [];
 
-    const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
-      if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
-      acc[curr.question_uid].push(curr);
-      return acc;
-    }, {});
+      const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
+        if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
+        acc[curr.question_uid].push(curr);
+        return acc;
+      }, {});
 
-    const justificationState: { [key: string]: string } = {};
-    console.log('questions', questions);
+      const justificationState: { [key: string]: string } = {};
+      questions.forEach((q: Question) => {
+        if (q.isselected) {
+          justificationState[q.question_uid] = q.justification || '';
+        }
+      });
 
-    questions.forEach((q: Question) => {
-      if (q.isselected) {
-        justificationState[q.question_uid] = q.justification || '';
-      }
-    });
-
-    setGroupedQuestions(grouped);
-    setGroupKeys(Object.keys(grouped));
-    setJustificationMap(justificationState);
-    setCurrentIndex(0);
+      setGroupedQuestions(grouped);
+      setGroupKeys(Object.keys(grouped));
+      setJustificationMap(justificationState);
+      setCurrentIndex(0); // Reset question index for new department
+    } catch (error) {
+      console.error(`Error fetching questions for department ${dept}:`, error);
+    }
   };
 
   useEffect(() => {
-    fetchQuestions();
-  }, [department]);
+    if (departmentName.length > 0) {
+      fetchQuestions(departmentName[departmentIndex]);
+    }
+  }, [departmentIndex]);
 
   const handleAnswerClick = (answerId: string) => {
     const currentKey = groupKeys[currentIndex];
 
-    const updatedGroup = groupedQuestions[currentKey].map((ans) => ({
-      ...ans,
-      isselected: ans.id === answerId,
-    }));
+    const updatedGroup = groupedQuestions[currentKey].map((ans) => {
+      if (ans.id === answerId) {
+        return {
+          ...ans,
+          isselected: !ans.isselected, // Toggle selection
+        };
+      }
+      return ans;
+    });
 
     setGroupedQuestions((prev) => ({
       ...prev,
@@ -161,7 +186,7 @@ const Questionaire = () => {
                   width: '100%',
                 }}
               >
-                {department}
+                {currentGroup && currentGroup[0]?.department}
               </Typography>
 
               {isLoading || isSaving ? (
@@ -238,10 +263,14 @@ const Questionaire = () => {
                   onClick={async () => {
                     const success = await submitQuestionnaireAnswer();
                     if (success) {
-                      if (currentIndex === groupKeys.length - 1) {
-                        alert('All questions submitted!');
-                      } else {
+                      if (currentIndex < groupKeys.length - 1) {
+                        // Move to next question
                         setCurrentIndex((prev) => prev + 1);
+                      } else if (departmentIndex < departmentName.length - 1) {
+                        // All questions in this department completed → move to next department
+                        setDepartmentIndex((prev) => prev + 1);
+                      } else {
+                        alert('🎉 All department questions submitted!');
                       }
                     }
                   }}

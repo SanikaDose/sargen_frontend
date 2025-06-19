@@ -87,10 +87,15 @@ export default function Preview() {
   const handleAnswerClick = (answerId: string) => {
     const currentKey = groupKeys[currentIndex];
 
-    const updatedGroup = groupedQuestions[currentKey].map((ans) => ({
-      ...ans,
-      isselected: ans.id === answerId,
-    }));
+    const updatedGroup = groupedQuestions[currentKey].map((ans) => {
+      if (ans.id === answerId) {
+        return {
+          ...ans,
+          isselected: !ans.isselected, // Toggle selection
+        };
+      }
+      return ans;
+    });
 
     setGroupedQuestions((prev) => ({
       ...prev,
@@ -133,6 +138,8 @@ export default function Preview() {
     }
   };
 
+  console.log('Preview groupedQuestions', groupedQuestions);
+
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
   // Calculate completed steps
@@ -142,9 +149,14 @@ export default function Preview() {
     return acc;
   }, []);
 
-  if (!currentGroup) return null;
+  console.log('currentGroup', currentGroup);
 
+  // Collect completed question UIDs
+  const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
+
+  if (!currentGroup) return null;
   const questionText = currentGroup[0].question;
+
   return (
     <Box component="form" sx={{ height: '99%' }}>
       <Paper
@@ -206,7 +218,12 @@ export default function Preview() {
 
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
-              <PreviewSideBox />
+              <PreviewSideBox
+                groupedQuestions={groupedQuestions}
+                currentIndex={currentIndex}
+                setCurrentIndex={setCurrentIndex}
+                completedQuestionIds={completedQuestionIds}
+              />
             </Box>
 
             <Box
@@ -234,7 +251,7 @@ export default function Preview() {
                 variant="contained"
                 icon="edit"
                 type="button"
-                color="warning"
+                // color="warning"
 
                 // onClick={()}
               >
