@@ -11,15 +11,15 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'POST',
         body,
       }),
+
+      invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Plant Information Added successfully!',
-          errorMessage: 'Falied To Add Plant Information',
+          successMessage: 'Organization Onboarded successfully!',
+          errorMessage: 'Organization Onboarding failed!',
           duration: 4000,
         });
       },
-
-      invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
     // 📤 Upload Plant Logo
     uploadPlantLogo: builder.mutation<void, { tenantId: string; plantId: string; formData: FormData }>({

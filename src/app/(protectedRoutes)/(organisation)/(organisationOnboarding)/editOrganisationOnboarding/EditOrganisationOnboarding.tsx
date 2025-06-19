@@ -17,6 +17,7 @@ import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { OrgFormInputs } from '@/app/(protectedRoutes)/(organisation)/(organisationOnboarding)/organisationOnboarding/FormConfig/formInputStep';
 import { OrgOnboard } from './EditOrganisationOnboarding.types';
 import { triggerToast } from '@/app/utils/toast';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 
 const steps = [
   'Company Name',
@@ -33,10 +34,10 @@ function OrganizationOnbording() {
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
-  const tenantId = 'mayuri-Corp-5baeb801-9a20-4e6b-b842-110f74db41c0';
+  const tenantId = getValueLocalStorage('tenantId');
 
   // ✅ Fetch organization info
-  const { data } = useGetOrganizationInfoQuery(tenantId, {
+  const { data } = useGetOrganizationInfoQuery(tenantId ?? '', {
     skip: !tenantId,
   });
 
@@ -85,7 +86,7 @@ function OrganizationOnbording() {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadOrganizationLogo({ tenantId, formData }).unwrap();
+      await uploadOrganizationLogo({ tenantId: tenantId ?? '', formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
@@ -96,7 +97,7 @@ function OrganizationOnbording() {
   //on form submit
   const onSubmit = async (data: any) => {
     try {
-      await submitOrganizationInfo({ tenantId, body: data }).unwrap();
+      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
       router.push('/AddContactPerson');
       triggerToast('Organization info submitted', 'success');
     } catch (error) {
@@ -391,17 +392,11 @@ function OrganizationOnbording() {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton variant="outlined" icon="left" color="#2D7FF9" disabled>
+        <CustomButton variant="outlined" icon="left" color="primary" disabled>
           Back
         </CustomButton>
-        <CustomButton
-          type="submit"
-          variant="outlined"
-          icon="right"
-          color="#2D7FF9"
-          //  disabled={!isValid || isLoading}
-        >
-          Next
+        <CustomButton type="submit" variant="outlined" icon="right" color="primary">
+          {isLoading ? 'Next..' : 'Next'}
         </CustomButton>
       </Box>
     </form>

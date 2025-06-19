@@ -38,12 +38,6 @@ const steps = [
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
-  useEffect(() => {
-    const draft = localStorage.getItem('plantFormDraft');
-    if (draft) {
-      reset(JSON.parse(draft)); // ✅ Prefill form
-    }
-  }, []);
   const {
     control,
     handleSubmit,
@@ -76,7 +70,7 @@ const PlantRegistrationForm = () => {
   const onSubmit = async (data: PlantFormType) => {
     try {
       const { about, ...body } = data;
-
+      console.log('data from the add plant', data);
       // Convert revenue to number if it's a string
       const bodyWithNumberRevenue = {
         ...body,
@@ -93,10 +87,6 @@ const PlantRegistrationForm = () => {
       // ✅ Step 2: Extract `plantId` from response
       const newPlantId = response?.data.id;
 
-      localStorage.setItem('plantFormDraft', JSON.stringify(data));
-      if (selectedFile) {
-        handleUpload(selectedFile);
-      }
       // ✅ Step 3: Upload image only if user uploaded one
       if (logoUrl && !logoUrl.includes('default-logo-image')) {
         const blob = await fetch(logoUrl).then((res) => res.blob());
@@ -110,7 +100,7 @@ const PlantRegistrationForm = () => {
       triggerToast('Plant Onboarded successfully!', 'success');
 
       // ✅ Step 4: Reset and redirect
-      //reset();
+      reset();
       router.push('/PlantPointOfContact');
     } catch (error) {
       console.error('Failed to add plant info or upload image:', error);
@@ -166,7 +156,7 @@ const PlantRegistrationForm = () => {
                     <section className={styles.formFieldsInner}>
                       <Grid container spacing={1}>
                         {plantFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller
                               name={input.name as keyof PlantFormType}
                               control={control}
@@ -243,6 +233,7 @@ const PlantRegistrationForm = () => {
                               // required={true}
                               multiline
                               type="text"
+                              rows={2}
                               onFocus={() => setFocusedField('about')}
                             />
                           )}
@@ -260,18 +251,18 @@ const PlantRegistrationForm = () => {
                 mt={5}
                 ml={5}
                 mr={5}
-                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+                sx={{
+                  background: '#F5FAFD',
+                  height: '70px',
+                  borderRadius: '8px',
+                  marginTop: { sx: 5, md: 2, sm: 3, lg: 0 },
+                }}
               >
                 <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
                   Back
                 </CustomButton>
-                <CustomButton
-                  type="submit"
-                  variant="contained"
-                  icon="save"
-                  onClick={() => router.push('/PlantPointOfContact')}
-                >
-                  {isLoading ? 'Next..' : 'Next'}
+                <CustomButton type="submit" variant="contained" icon="save">
+                  {isLoading ? 'Saving..' : 'Save'}
                 </CustomButton>
               </Box>
             </form>
