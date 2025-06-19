@@ -1,4 +1,5 @@
 export interface Question {
+  key: string | undefined;
   bandName: string;
   bandWeight: string;
   context: string;

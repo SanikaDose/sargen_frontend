@@ -57,7 +57,6 @@ import styles from './style.module.css';
 import { TextAreaProps } from './TextArea.types';
 
 const TextArea: React.FC<TextAreaProps> = ({ value, onChange, placeholder = '', readOnly = false }) => {
-  console.log('value', value);
   return (
     <div className={styles.textAreaContainer}>
       <textarea
