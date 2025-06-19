@@ -391,14 +391,14 @@ function OrganizationOnbording() {
         mr={5}
         sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
       >
-        <CustomButton variant="outlined" icon="left" color="#2D7FF9" disabled>
+        <CustomButton variant="outlined" icon="left" color="primary" disabled>
           Back
         </CustomButton>
         <CustomButton
           type="submit"
           variant="outlined"
           icon="right"
-          color="#2D7FF9"
+          color="primary"
           //  disabled={!isValid || isLoading}
         >
           Next
