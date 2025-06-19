@@ -93,21 +93,17 @@ const Questionaire = () => {
   const handleAnswerClick = (answerId: string) => {
     const currentKey = groupKeys[currentIndex];
 
-    const updatedGroup = groupedQuestions[currentKey].map((ans) => {
-      if (ans.id === answerId) {
-        return {
-          ...ans,
-          isselected: !ans.isselected, // Toggle selection
-        };
-      }
-      return ans;
-    });
+    const updatedGroup = groupedQuestions[currentKey].map((ans) => ({
+      ...ans,
+      isselected: ans.id === answerId, // ✅ Only selected one is true
+    }));
 
     setGroupedQuestions((prev) => ({
       ...prev,
       [currentKey]: updatedGroup,
     }));
   };
+
   const submitQuestionnaireAnswer = async () => {
     const currentKey = groupKeys[currentIndex];
     const currentQuestionGroup = groupedQuestions[currentKey];

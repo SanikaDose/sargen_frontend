@@ -14,8 +14,8 @@ const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, compl
   return (
     <div className={styles.buttonGrid}>
       {questions.map((q) => {
-        const isSelected = q.question_uid === selectedQuestionId;
-        const isCompleted = completedIds.includes(q.question_uid);
+        const isSelected = q.key === selectedQuestionId;
+        const isCompleted = completedIds.includes(q.key);
 
         const classNames = [
           styles.questionButton,
@@ -26,7 +26,7 @@ const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, compl
           .join(' ');
 
         return (
-          <button type="button" key={q.question_uid} className={classNames} onClick={() => onSelect(q.question_uid)}>
+          <button type="button" key={q.question_uid} className={classNames} onClick={() => onSelect(q.key)}>
             {(q.questionNo ?? 0).toString().padStart(2, '0')}
           </button>
         );

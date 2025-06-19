@@ -22,86 +22,84 @@ export default function Preview() {
 
   const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [departmentIndex, setDepartmentIndex] = useState<number>(0);
-  const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
 
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
-  const departmentName = [
-    'R&D',
-    // 'Planning',
-    'Production',
-    // 'Quality',
-    // 'Maintenance',
-    // 'Supply Chain Sales',
-    // 'Supply Chain Purchase',
-    'Finance',
-    // 'Utilities',
-    'IT',
-    // 'L&D',
-    // 'Management',
-    'HR',
-  ];
-  const fetchQuestions = async (dept: string) => {
-    try {
-      const result = await getQuestionnairesList({
-        tenantId,
-        plantId: plantId || '',
-        department: dept,
-      }).unwrap();
-
-      const questions = result?.questionsToSend || [];
-
-      const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
-        if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
-        acc[curr.question_uid].push(curr);
-        return acc;
-      }, {});
-
-      const justificationState: { [key: string]: string } = {};
-      questions.forEach((q: Question) => {
-        if (q.isselected) {
-          justificationState[q.question_uid] = q.justification || '';
-        }
-      });
-
-      setGroupedQuestions(grouped);
-      setGroupKeys(Object.keys(grouped));
-      setJustificationMap(justificationState);
-      setCurrentIndex(0); // Reset question index for new department
-    } catch (error) {
-      console.error(`Error fetching questions for department ${dept}:`, error);
-    }
-  };
+  const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
 
   useEffect(() => {
-    if (departmentName.length > 0) {
-      fetchQuestions(departmentName[departmentIndex]);
-    }
-  }, [departmentIndex]);
+    const fetchAllDepartmentQuestions = async () => {
+      try {
+        let all: Question[] = [];
+
+        for (const dept of departmentName) {
+          const result = await getQuestionnairesList({
+            tenantId,
+            plantId: plantId || '',
+            department: dept,
+          }).unwrap();
+          all.push(...(result?.questionsToSend || []));
+        }
+
+        const grouped: { [key: string]: Question[] } = {};
+        const justification: { [key: string]: string } = {};
+
+        all.forEach((q) => {
+          // Create a unique composite key
+          const key = `${q.question_uid}__${q.department}__${q.context}`;
+
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(q);
+
+          if (q.isselected) {
+            justification[key] = q.justification || '';
+          }
+        });
+
+        const dedupedQuestions = Object.keys(grouped).map((key, index) => {
+          const first = grouped[key][0];
+          return {
+            ...first,
+            groupKey: key,
+            questionNo: index + 1,
+          };
+        });
+
+        setGroupedQuestions(grouped);
+        setGroupKeys(Object.keys(grouped));
+        setJustificationMap(justification);
+        setAllQuestions(dedupedQuestions);
+        setCurrentIndex(0);
+      } catch (error) {
+        console.error('Failed to load questions:', error);
+      }
+    };
+
+    fetchAllDepartmentQuestions();
+  }, []);
 
   const handleAnswerClick = (answerId: string) => {
-    const currentKey = groupKeys[currentIndex];
+    const questionUID = groupKeys[currentIndex];
+    if (!questionUID) return;
 
-    const updatedGroup = groupedQuestions[currentKey].map((ans) => {
-      if (ans.id === answerId) {
-        return {
-          ...ans,
-          isselected: !ans.isselected, // Toggle selection
-        };
-      }
-      return ans;
-    });
+    const updatedGroup = groupedQuestions[questionUID].map((ans) => ({
+      ...ans,
+      isselected: ans.id === answerId, // ✅ single select
+    }));
 
     setGroupedQuestions((prev) => ({
       ...prev,
-      [currentKey]: updatedGroup,
+      [questionUID]: updatedGroup,
     }));
   };
+
   const submitQuestionnaireAnswer = async () => {
     const currentKey = groupKeys[currentIndex];
     const currentQuestionGroup = groupedQuestions[currentKey];
@@ -125,7 +123,7 @@ export default function Preview() {
         answer: selectedOption?.answer ?? '',
         bandWeight: selectedOption?.bandWeight ?? '',
         bandName: selectedOption?.bandName ?? '',
-        justification: justificationMap[question_uid] || '',
+        justification: justificationMap[currentKey] || '',
       },
     };
 
@@ -138,24 +136,13 @@ export default function Preview() {
     }
   };
 
-  console.log('Preview groupedQuestions', groupedQuestions);
-
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
-  // Calculate completed steps
-  const completedSteps = groupKeys.reduce<number[]>((acc, key, index) => {
-    const group = groupedQuestions[key];
-    if (group?.some((q) => q.isselected)) acc.push(index);
-    return acc;
-  }, []);
-
   console.log('currentGroup', currentGroup);
-
-  // Collect completed question UIDs
-  const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
-
   if (!currentGroup) return null;
-  const questionText = currentGroup[0].question;
+
+  const questionText = currentGroup[0]?.question ?? '';
+  const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
 
   return (
     <Box component="form" sx={{ height: '99%' }}>
@@ -170,17 +157,10 @@ export default function Preview() {
         }}
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-          {/* Left section */}
+          {/* Left Section */}
           <Box className={styles.formContainer}>
-            <Typography
-              variant="h6"
-              sx={{
-                color: 'black',
-                textAlign: 'left',
-                width: '100%',
-              }}
-            >
-              {currentGroup && currentGroup[0]?.department}
+            <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
+              {currentGroup[0]?.department}
             </Typography>
 
             <Box className={styles.questionAnsweresSection}>
@@ -203,19 +183,20 @@ export default function Preview() {
 
             <Box className={styles.justification}>
               <TextArea
-                value={justificationMap[currentGroup[0]?.question_uid] || ''}
-                onChange={(val) => {
+                value={justificationMap[currentKey] || ''}
+                onChange={(val) =>
                   setJustificationMap((prev) => ({
                     ...prev,
-                    [currentGroup[0]?.question_uid]: val,
-                  }));
-                }}
+                    [currentKey]: val,
+                  }))
+                }
                 placeholder="Enter justification"
                 readOnly={false}
               />
             </Box>
           </Box>
 
+          {/* Right Section */}
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
               <PreviewSideBox
@@ -223,6 +204,7 @@ export default function Preview() {
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
                 completedQuestionIds={completedQuestionIds}
+                allQuestions={allQuestions}
               />
             </Box>
 
@@ -247,47 +229,28 @@ export default function Preview() {
               >
                 Back
               </CustomButton>
-              <CustomButton
-                variant="contained"
-                icon="edit"
-                type="button"
-                // color="warning"
 
-                // onClick={()}
-              >
+              <CustomButton variant="contained" icon="edit" type="button" disabled>
                 Edit
               </CustomButton>
-              <CustomButton
-                variant="contained"
-                icon="submit"
-                type="button"
-                color="warning"
-                // onClick={()}
-                disabled={true}
-              >
+
+              <CustomButton variant="contained" icon="submit" type="button" color="warning" disabled>
                 Submit
               </CustomButton>
+
               <CustomButton
                 variant="contained"
                 icon="right"
                 type="button"
                 onClick={async () => {
                   const success = await submitQuestionnaireAnswer();
-                  if (success) {
-                    if (currentIndex < groupKeys.length - 1) {
-                      // Move to next question
-                      setCurrentIndex((prev) => prev + 1);
-                    } else if (departmentIndex < departmentName.length - 1) {
-                      // All questions in this department completed → move to next department
-                      setDepartmentIndex((prev) => prev + 1);
-                    } else {
-                      alert('🎉 All department questions submitted!');
-                    }
+                  if (success && currentIndex < groupKeys.length - 1) {
+                    setCurrentIndex((prev) => prev + 1);
                   }
                 }}
                 disabled={isSaving}
               >
-                {isLoading ? 'Saving...' : 'Next'}
+                {isSaving ? 'Saving...' : 'Next'}
               </CustomButton>
             </Box>
           </Box>
