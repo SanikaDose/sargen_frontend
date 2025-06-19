@@ -83,7 +83,7 @@ const AssessmentSolution = () => {
 
       const result = await selectSolutionsByImpact(payload).unwrap();
       if (result) {
-        router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
+        router.push(`/AddReportData/${organisationId}/${plantId}`);
       }
     } catch (error) {
       console.error('Save failed:', error);

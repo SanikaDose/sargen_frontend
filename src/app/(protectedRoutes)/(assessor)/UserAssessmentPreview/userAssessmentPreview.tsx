@@ -13,22 +13,32 @@ import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire
 import { useGetQuestionnairesListMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();
-
   const plantId = params.plantId as string;
   const organisationId = params.organisationId as string;
-  const department = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
+  const department = useSelector(
+    (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
+  );
   const tenantId = getValueLocalStorage('tenantId');
   const isLoading = false;
-
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
-
   const [getQuestionnairesList] = useGetQuestionnairesListMutation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePrimaryClick = () => {
+    setIsModalOpen(false);
+    console.log('Primary action clicked');
+  };
+
+  const handleSecondaryClick = () => {
+    setIsModalOpen(false);
+  };
 
   const fetchQuestions = useCallback(async () => {
     const result = await getQuestionnairesList({
@@ -142,7 +152,23 @@ const UserAssessmentPreview = () => {
                 Back
               </CustomButton>
 
-              <CustomButton variant="contained" icon="alert" type="button" color="warning">
+              {isModalOpen && (
+                <PopupModal
+                  label="Alert Confirmation"
+                  text="Are you sure you want to mark this question as needing attention?"
+                  primaryButtonText="Yes"
+                  secondaryButtonText="Cancel"
+                  onPrimaryClick={handlePrimaryClick}
+                  onSecondaryClick={handleSecondaryClick}
+                />
+              )}
+              <CustomButton
+                variant="contained"
+                icon="alert"
+                type="button"
+                color="warning"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Alert
               </CustomButton>
 
