@@ -10,7 +10,10 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
-import { useGetQuestionnairesListMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
+import {
+  useGetQuestionnairesListMutation,
+  useSelectQuestionnairesAnswerMutation,
+} from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 
@@ -20,59 +23,130 @@ const UserAssessmentPreview = () => {
 
   const plantId = params.plantId as string;
   const organisationId = params.organisationId as string;
-  const department = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
+  const department = useSelector(
+    (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
+  );
   const tenantId = getValueLocalStorage('tenantId');
-  const isLoading = false;
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
+  const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
 
-  const [getQuestionnairesList] = useGetQuestionnairesListMutation();
+  const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
+  const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
-  const fetchQuestions = useCallback(async () => {
-    const result = await getQuestionnairesList({
-      tenantId,
-      plantId: plantId || '',
-      department: department || 'R&D',
-    }).unwrap();
-
-    const questions = result?.questionsToSend || [];
-
-    const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
-      if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
-      acc[curr.question_uid].push(curr);
-      return acc;
-    }, {});
-
-    setGroupedQuestions(grouped);
-    setGroupKeys(Object.keys(grouped));
-    setCurrentIndex(0);
-  }, [getQuestionnairesList, tenantId, plantId, department]);
+  const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
 
   useEffect(() => {
-    fetchQuestions();
-  }, [department, fetchQuestions]);
+    const fetchAllDepartmentQuestions = async () => {
+      try {
+        let all: Question[] = [];
 
-  const handleAnswerClick = (answerId: number) => {
-    const currentKey = groupKeys[currentIndex];
-    const updatedGroup = groupedQuestions[currentKey].map((ans) => ({
+        for (const dept of departmentName) {
+          const result = await getQuestionnairesList({
+            tenantId,
+            plantId: plantId || '',
+            department: dept,
+          }).unwrap();
+          all.push(...(result?.questionsToSend || []));
+        }
+
+        const grouped: { [key: string]: Question[] } = {};
+        const justification: { [key: string]: string } = {};
+
+        all.forEach((q) => {
+          // Create a unique composite key
+          const key = `${q.question_uid}__${q.department}__${q.context}`;
+
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(q);
+
+          if (q.isselected) {
+            justification[key] = q.justification || '';
+          }
+        });
+
+        const dedupedQuestions = Object.keys(grouped).map((key, index) => {
+          const first = grouped[key][0];
+          return {
+            ...first,
+            groupKey: key,
+            questionNo: index + 1,
+          };
+        });
+
+        setGroupedQuestions(grouped);
+        setGroupKeys(Object.keys(grouped));
+        setJustificationMap(justification);
+        setAllQuestions(dedupedQuestions);
+        setCurrentIndex(0);
+      } catch (error) {
+        console.error('Failed to load questions:', error);
+      }
+    };
+
+    fetchAllDepartmentQuestions();
+  }, []);
+
+  const handleAnswerClick = (answerId: string) => {
+    const questionUID = groupKeys[currentIndex];
+    if (!questionUID) return;
+
+    const updatedGroup = groupedQuestions[questionUID].map((ans) => ({
       ...ans,
-      isselected: Number(ans.id) === answerId,
+      isselected: ans.id === answerId, // ✅ single select
     }));
 
-    setGroupedQuestions({
-      ...groupedQuestions,
-      [currentKey]: updatedGroup,
-    });
+    setGroupedQuestions((prev) => ({
+      ...prev,
+      [questionUID]: updatedGroup,
+    }));
   };
 
+  const submitQuestionnaireAnswer = async () => {
+    const currentKey = groupKeys[currentIndex];
+    const currentQuestionGroup = groupedQuestions[currentKey];
+
+    if (!currentQuestionGroup) return false;
+
+    const selectedOption = currentQuestionGroup.find((opt) => opt.isselected);
+    const question_uid = currentQuestionGroup[0]?.question_uid;
+
+    const payload = {
+      tenantId,
+      plantId,
+      questionnariesData: {
+        id: selectedOption?.id ?? '',
+        question_uid,
+        dim: currentQuestionGroup[0]?.dim,
+        department: currentQuestionGroup[0]?.department,
+        context: currentQuestionGroup[0]?.context,
+        question: currentQuestionGroup[0]?.question,
+        answerOption: selectedOption?.answer ?? '',
+        answer: selectedOption?.answer ?? '',
+        bandWeight: selectedOption?.bandWeight ?? '',
+        bandName: selectedOption?.bandName ?? '',
+        justification: justificationMap[currentKey] || '',
+      },
+    };
+
+    try {
+      await selectQuestionnairesAnswer(payload).unwrap();
+      return true;
+    } catch (error) {
+      console.error('Failed to submit answer:', error);
+      return false;
+    }
+  };
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
 
   if (!currentGroup) return null;
 
   const questionText = currentGroup[0].question;
+  const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
 
   return (
     <Box component="form" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', gap: 1 }}>
@@ -117,7 +191,13 @@ const UserAssessmentPreview = () => {
 
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
-              <PreviewSideBox />
+              <PreviewSideBox
+                groupedQuestions={groupedQuestions}
+                currentIndex={currentIndex}
+                setCurrentIndex={setCurrentIndex}
+                completedQuestionIds={completedQuestionIds}
+                allQuestions={allQuestions}
+              />
             </Box>
 
             <Box
