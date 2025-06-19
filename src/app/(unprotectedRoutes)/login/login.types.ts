@@ -13,9 +13,29 @@ export interface LoginResponse {
   accessToken: string;
 }
 
+export enum OnboardingStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  STARTED = 'STARTED',
+  COMPLETED = 'COMPLETED',
+}
+export enum UserType {
+  ADMIN = 'ADMIN',
+  PLATFORMUSER = 'PLATFORMUSER',
+  ASSESSOR = 'ASSESSOR',
+}
+
 export interface OnboardingStatusResponse {
   onboardingCompletionPercentage: number;
-  onboardingStatus: string;
+  onboardingStatus: OnboardingStatus;
+}
+export interface OnboardingStatusResponse {
+  onboardingCompletionPercentage: number;
+  onboardingStatus: OnboardingStatus;
+}
+
+export interface OnboardingStatusResponse {
+  onboardingCompletionPercentage: number;
+  onboardingStatus: OnboardingStatus;
 }
 
 export interface ForgotPasswordRequest {
@@ -38,6 +58,15 @@ export type FormValues = {
   rePassword: string;
 };
 export type Token = {
+  exp: number;
+  iat: number;
+  tenantId: string;
+  userId: string;
+  userRole: string[];
+  userType: UserType[];
+};
+
+export type RawToken = {
   exp: number;
   iat: number;
   tenantId: string;

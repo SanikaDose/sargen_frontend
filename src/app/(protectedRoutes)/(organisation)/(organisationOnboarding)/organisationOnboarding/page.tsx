@@ -2,6 +2,7 @@
 
 'use client';
 import OrganisationOnboarding from './OrganisationOnboarding';
+
 const OrganizationPage = () => {
   return <OrganisationOnboarding />;
 };

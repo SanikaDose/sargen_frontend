@@ -7,8 +7,8 @@ import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { LoginFormInputs, Token } from './login.types';
+import { useDispatch } from 'react-redux';
+import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './login.types';
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
@@ -36,14 +36,18 @@ const LoginPage = () => {
       if (!result.success) throw new Error('Login unsuccessful');
 
       const token = result.accessToken;
-      const decoded = jwtDecode<Token>(token);
-      const { tenantId, userType } = decoded;
+      const rawDecoded = jwtDecode<RawToken>(token);
+      const { tenantId, userType } = rawDecoded;
 
       localStorage.setItem('accessToken', result.accessToken);
       localStorage.setItem('Authorization', token);
       localStorage.setItem('tenantId', tenantId);
-
-      dispatch(setDecodedToken(decoded));
+      localStorage.setItem('userType', userType[0] || '');
+      const typedToken: Token = {
+        ...rawDecoded,
+        userType: rawDecoded.userType.map((type: string) => type as UserType),
+      };
+      dispatch(setDecodedToken(typedToken));
 
       if (userType[0] === 'ASSESSOR') {
         hasNavigatedRef.current = true;
@@ -53,11 +57,17 @@ const LoginPage = () => {
       }
 
       const response = await getOnboardingStatus(tenantId);
+      console.log(response);
 
       const onboardingData = response.data;
 
       const error = response.error;
-      if (!error) await dispatch(setOnboardingStatus(response.data?.onboardingStatus || 'NOT_STARTED'));
+      if (!error) {
+        localStorage.setItem('onboardingStatus', response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED);
+
+        dispatch(setOnboardingStatus(response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED));
+      }
+
       if (error || !onboardingData) {
         console.log('eerror in getting onboarding status ');
 

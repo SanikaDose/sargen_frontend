@@ -3,7 +3,7 @@ import { dataDisplayCustomizations } from './customizations/dataDisplay';
 import { feedbackCustomizations } from './customizations/feedback';
 import { sargenComponents, sargenPalette } from './customizations/sargenTheme';
 import { surfacesCustomizations } from './customizations/surfaces';
-import { colorSchemes, shadows, shape, typography } from './themePrimitives';
+import { shadows, shape, typography } from './themePrimitives';
 
 const theme = createTheme({
   breakpoints: {
@@ -20,9 +20,11 @@ const theme = createTheme({
     cssVarPrefix: 'template',
   },
 
-  palette: sargenPalette,
+  palette: {
+    ...sargenPalette,
+    mode: 'light',
+  },
 
-  colorSchemes,
   typography,
   shadows,
   shape,

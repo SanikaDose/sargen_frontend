@@ -76,11 +76,50 @@ export const sargenComponents = {
       },
     },
   },
-  // Fix stepper alignment by styling both icon and connector
-  MuiStepIcon: {
+
+  MuiTypography: {
     styleOverrides: {
       root: {
-        '& .MuiStepIcon-active': { color: 'red' },
+        // global typography defaults
+        color: '#212121',
+      },
+      h1: {
+        fontSize: '2rem',
+        fontWeight: 600,
+        lineHeight: 1.2,
+      },
+      h2: {
+        fontSize: '1.75rem',
+        fontWeight: 600,
+      },
+      h3: {
+        fontSize: '1.5rem',
+        fontWeight: 600,
+      },
+      h4: {
+        fontSize: '1.25rem',
+        fontWeight: 600,
+      },
+      h5: {
+        fontSize: '1rem',
+        fontWeight: 500,
+      },
+      h6: {
+        fontSize: '0.875rem',
+        fontWeight: 500,
+      },
+      body1: {
+        fontSize: '1rem',
+        lineHeight: 1.5,
+      },
+      body2: {
+        fontSize: '0.875rem',
+        lineHeight: 1.43,
+      },
+      caption: {
+        fontSize: '0.75rem',
+        lineHeight: 1.66,
+        color: '#757575',
       },
     },
   },
