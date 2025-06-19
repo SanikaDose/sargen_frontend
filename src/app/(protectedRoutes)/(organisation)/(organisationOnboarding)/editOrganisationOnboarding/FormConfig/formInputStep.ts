@@ -1,4 +1,4 @@
-import { OrgFormInput } from '../OrganisationOnboarding.types';
+import { OrgFormInput } from '../EditOrganisationOnboarding.types';
 
 export const OrgFormInputs: OrgFormInput[] = [
   {
