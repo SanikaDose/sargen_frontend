@@ -1,21 +1,33 @@
-import { Props } from './PreviewSideBox.types';
+'use client';
+
+import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import styles from './questionSection.module.css';
 
-const QuestionSection: React.FC<Props> = ({ questions, selected, onSelect }) => {
+type Props = {
+  questions: Question[];
+  selectedQuestionId?: string;
+  completedIds: string[];
+  onSelect: (questionId: string) => void;
+};
+
+const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
   return (
     <div className={styles.buttonGrid}>
       {questions.map((q) => {
-        const isSelected = selected?.section === q.section && selected?.questionNo === q.questionNo;
+        const isSelected = q.key === selectedQuestionId;
+        const isCompleted = completedIds.includes(q.key);
 
         const classNames = [
           styles.questionButton,
-          q.status === 'reviewed' ? styles.reviewed : '',
+          isCompleted ? styles.reviewed : '',
           isSelected ? styles.selected : '',
-        ].join(' ');
+        ]
+          .filter(Boolean)
+          .join(' ');
 
         return (
-          <button key={q.questionNo} className={classNames} onClick={() => onSelect(q)}>
-            {q.questionNo.toString().padStart(2, '0')}
+          <button type="button" key={q.question_uid} className={classNames} onClick={() => onSelect(q.key)}>
+            {(q.questionNo ?? 0).toString().padStart(2, '0')}
           </button>
         );
       })}
