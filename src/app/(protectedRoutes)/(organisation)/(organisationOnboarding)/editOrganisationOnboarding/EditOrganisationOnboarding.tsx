@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import { OrgFormInputs } from '@/app/(protectedRoutes)/(organisation)/(organisationOnboarding)/organisationOnboarding/FormConfig/formInputStep';
+import { OrgFormInputs } from './FormConfig/formInputStep';
 import { OrgOnboardType } from './EditOrganisationOnboarding.types';
 import { triggerToast } from '@/app/utils/toast';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';

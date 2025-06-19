@@ -63,7 +63,7 @@ function OrganizationOnbording() {
   // });
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
-  console.log('watched vale for the number of employ', watchedValues.numberOfEmployees);
+
   // this is an spread operator to get the values of the form inputs (mainly for about section)
   const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
 
