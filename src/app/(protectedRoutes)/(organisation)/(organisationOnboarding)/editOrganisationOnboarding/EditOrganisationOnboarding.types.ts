@@ -27,6 +27,7 @@ export interface OrgFormInput {
   required?: boolean;
   isCountry?: boolean;
   isCurrency?: boolean;
+  numberOfEmployees?: string;
   rules?: RegisterOptions<OrgOnboardType, keyof OrgOnboardType>;
 }
 
