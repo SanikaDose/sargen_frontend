@@ -1,16 +1,18 @@
 'use client';
-
-import { assessorOnboardedMenuList } from '@/constants/sideBarLists/assessorOnboardedList';
+import { assessorOnboardedMenuList, PlantAssessmentMenuList } from '@/constants/sideBarLists/assessorOnboardedList';
 import { assessorOnboardingMenuList } from '@/constants/sideBarLists/assessorOnboardingList';
 import { organisationOnboardedMenuList, SidebarItem } from '@/constants/sideBarLists/organisationOnboardedList';
 import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
-import { setSideBarListItem } from '@/store/globalSlice';
+import { setSideBarListItem, setSideBarListItemsForAssessment } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ContactsIcon from '@mui/icons-material/Contacts';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import FactoryIcon from '@mui/icons-material/Factory';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MenuIcon from '@mui/icons-material/Menu';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -30,10 +32,8 @@ import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
-import { setDecodedToken } from '../(unprotectedRoutes)/login/loginSlice';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -120,8 +120,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setMobileOpen(false);
     }
   };
+  const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
 
-  useEffect(() => {
+  // Only one useEffect is needed
+  React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('Authorization');
       if (token) {
@@ -130,14 +132,21 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       }
     }
   }, []);
-  const decodedToken: Token = jwtDecode(localStorage.getItem('Authorization') || '');
 
-  const { userRole: userRoleFromLocalStorage, userType: userTypeFromLocalStorage } = decodedToken;
+  // Safe destructuring with fallback
+  const userRoleFromLocalStorage = decodedToken?.userRole;
+  const userTypeFromLocalStorage = decodedToken?.userType;
+
   const onboardingStatus: OnboardingStatus =
     useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || userRoleFromLocalStorage;
   const userType =
     useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
   const sideBarListItems: SidebarItem[] = useSelector((state: RootState) => state.global.SideBarListItem);
+  const sideBarListItemsForAssessment: SidebarItem[] = useSelector(
+    (state: RootState) => state.global.sideBarListItemsForAssessment,
+  );
+
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
 
   // For users
@@ -154,6 +163,17 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.ASSESSOR) {
     dispatch(setSideBarListItem(assessorOnboardedMenuList));
   }
+  // For
+  if (
+    onboardingStatus === OnboardingStatus.COMPLETED &&
+    userType &&
+    userType[0] === UserType.ASSESSOR &&
+    showAssessmentListSideBar
+  ) {
+    dispatch(setSideBarListItemsForAssessment(PlantAssessmentMenuList));
+  }
+
+  //For assessor
   const sideBarListItemOnClick = (link: string) => {
     router.push(link);
 
@@ -167,16 +187,45 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     dispatch(setSideBarListItem(updatedList));
   };
 
-  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pathName = usePathname();
 
   const iconMap: Record<string, React.ElementType> = {
     HomeRoundedIcon: HomeRoundedIcon,
     DashboardIcon: DashboardIcon,
     SettingsIcon: SettingsIcon,
-    // ✅ Keep adding to this map as needed
+    PersonAddIcon: PersonAddIcon,
+    FactoryIcon: FactoryIcon,
+    ContactsIcon: ContactsIcon,
+    PreviewIcon: PreviewIcon,
+    ScienceIcon: ScienceIcon,
+    EventNoteIcon: EventNoteIcon,
+    PrecisionManufacturingIcon: PrecisionManufacturingIcon,
+    VerifiedIcon: VerifiedIcon,
+    BuildIcon: BuildIcon,
+    TrendingUpIcon: TrendingUpIcon,
+    ShoppingCartIcon: ShoppingCartIcon,
+    AccountBalanceIcon: AccountBalanceIcon,
+    ElectricalServicesIcon: ElectricalServicesIcon,
+    ComputerIcon: ComputerIcon,
+    SchoolIcon: SchoolIcon,
+    SupervisorAccountIcon: SupervisorAccountIcon,
+    GroupIcon: GroupIcon,
+    TuneIcon: TuneIcon,
+    ChecklistIcon: ChecklistIcon,
+    AssessmentIcon: AssessmentIcon,
+    InfoIcon: InfoIcon,
+    BusinessIcon: BusinessIcon,
+    SummarizeIcon: SummarizeIcon,
+    ShowChartIcon: ShowChartIcon,
+    CommentIcon: CommentIcon,
+    DomainIcon: DomainIcon,
+    TimelineIcon: TimelineIcon,
+    SpeedIcon: SpeedIcon,
+    MonetizationOnIcon: MonetizationOnIcon,
+    QuizIcon: QuizIcon,
+    CorporateFareIcon: CorporateFareIcon,
+    PermContactCalendarIcon: PermContactCalendarIcon,
   };
-
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
       <CssBaseline />
@@ -300,7 +349,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         {/* SubList which will be activated in the assessement view for both  */}
         {showAssessmentListSideBar && (
           <List>
-            {sideBarListItems.map((item) => (
+            {sideBarListItemsForAssessment.map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
@@ -311,7 +360,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   // },
                 }}
               >
-                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                <ListItemButton
+                  onClick={() => {
+                    dispatch(setSideBarListItem(false));
+
+                    sideBarListItemOnClick(item.linkRoute);
+                  }}
+                >
                   <ListItemIcon
                     sx={{
                       mr: 2,
