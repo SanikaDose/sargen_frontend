@@ -54,8 +54,6 @@
   font-size: 30px;
   font-weight: 600;
   background: #047af2;
-  color: #ffffff;
-  margin-bottom: 8px;
   padding: 8px 12px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -64,11 +62,9 @@
 .solutionItem {
   padding-left: 20px;
   background-color: #f9f9f9;
-  border-left: 2px solid #0f567e;
-  margin-bottom: 4px;
+  border-left: 2px solid #047af2;
 }
 
-/* Responsive adjustments */
 @media (min-width: 300px) and (max-width: 915px) {
   .formSection {
     width: 100%;

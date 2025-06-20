@@ -1,26 +1,28 @@
 'use client';
 
-import { Box, Grid, Typography, FormControl, MenuItem, Select, Paper, useMediaQuery } from '@mui/material';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import ImageUploader from '@/components/ImageUpload/ImageUpload';
-import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
-import Stepper from '@/components/Stepper/Stepper';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { useEffect, useState, useMemo } from 'react';
+import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import Stepper from '@/components/Stepper/Stepper';
+import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography, useMediaQuery } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
+import styles from './ContactPerson.module.css';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
 import {
   useAddPointOfContactMutation,
   useGetPointOfContactQuery,
   useUploadPocProfilePicMutation,
 } from './ContactPersonApi';
-import styles from './ContactPerson.module.css';
-import { CountryOptions } from '@/app/utils/CountryOptions';
-import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { useRouter } from 'next/navigation';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { setPageName } from '@/store/globalSlice';
-import { useDispatch } from 'react-redux';
+
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { useDispatch } from 'react-redux';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -37,9 +39,15 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const isTablet = useMediaQuery('(max-width: 900px)');
 
   useEffect(() => {
-    dispatch(setPageName(editMode ? 'Edit Contact Person' : 'Add Contact Person'));
+    // Set the header based on editMode
+    if (editMode) {
+      dispatch(setPageNameHeader('Edit contact person'));
+    } else {
+      dispatch(setPageNameHeader(pagesNames.organisationOnboardingContactPerson));
+    }
+
     return () => {
-      dispatch(setPageName(''));
+      dispatch(setPageNameHeader(''));
     };
   }, [dispatch, editMode]);
 
@@ -169,7 +177,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         <Grid container spacing={2} alignItems="stretch" sx={{ height: isMobile || isTablet ? 'auto' : '74.5vh' }}>
           {/* Left side - form content (existing structure) */}
           <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
-            <Typography variant="h6" fontWeight={600} className={styles.heading}>
+            <Typography variant="h4" fontWeight={600} className={styles.heading}>
               User Profile
             </Typography>
             <Grid className={styles.formContainer}>
@@ -268,7 +276,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
             <Grid size={{ xs: 4 }}>
               <InfoBox
                 content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                heading="About Industry"
+                heading="About Contact Person"
               />
             </Grid>
           )}

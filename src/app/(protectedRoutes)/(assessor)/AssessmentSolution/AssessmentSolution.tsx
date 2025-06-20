@@ -6,20 +6,18 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { useGetSolutionsByImpactQuery, useSelectSolutionsByImpactMutation } from './AssessmentSolutionApi';
-import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox } from '@mui/material';
+import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox, Divider } from '@mui/material';
 import styles from './AssessmentSolution.module.css';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 interface Solution {
   id: string;
   solution_name: string;
   solution_category: string;
   solution_band_weight: number;
-  isSelected?: boolean;
-}
-
-interface DimensionWithSolutions {
-  dimension: string;
-  solutions: Solution[];
+  isselected?: boolean;
 }
 
 const AssessmentSolution = () => {
@@ -28,59 +26,32 @@ const AssessmentSolution = () => {
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId');
-
-  const {
-    data: solutionsData,
-    error: solutionsError,
-    isLoading: solutionsLoading,
-  } = useGetSolutionsByImpactQuery({ tenantId, plantId });
-
+  const { data, error, isLoading } = useGetSolutionsByImpactQuery({ tenantId, plantId });
   const [selectSolutionsByImpact, { isLoading: isSavingSolutions }] = useSelectSolutionsByImpactMutation();
-  const [dimensionsWithSolutions, setDimensionsWithSolutions] = useState<DimensionWithSolutions[]>([]);
+  const [groupedSolutions, setGroupedSolutions] = useState<Record<string, Solution[]>>({});
   const [selectedSolutions, setSelectedSolutions] = useState<Set<string>>(new Set());
-
-  const formatDimensionName = (name: string): string => {
-    return name
-      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/([a-zA-Z])(\d)/g, '$1 $2')
-      .replace(/(\d)([a-zA-Z])/g, '$1 $2')
-      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
-      .replace(/\b\w/g, (match) => match.toUpperCase())
-      .replace(/\bA\b/g, 'a')
-      .replace(/\bAn\b/g, 'an')
-      .replace(/\bThe\b/g, 'the')
-      .replace(/\bOf\b/g, 'of')
-      .replace(/\bIn\b/g, 'in')
-      .replace(/\bOn\b/g, 'on')
-      .replace(/\bAt\b/g, 'at')
-      .replace(/\bTo\b/g, 'to')
-      .replace(/\bFor\b/g, 'for')
-      .replace(/\bWith\b/g, 'with')
-      .replace(/\bBy\b/g, 'by')
-      .replace(/\bAs\b/g, 'as')
-      .replace(/^[a-z]/, (match) => match.toUpperCase());
-  };
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
 
   useEffect(() => {
-    if (solutionsData && Array.isArray(solutionsData)) {
-      const processedData = solutionsData.map((item: DimensionWithSolutions) => ({
-        ...item,
-        dimension: formatDimensionName(item.dimension),
-      }));
-      setDimensionsWithSolutions(processedData);
+    if (data && Array.isArray(data)) {
+      const grouped = data.reduce((acc: Record<string, Solution[]>, solution: Solution) => {
+        const category = solution.solution_category;
+        if (!acc[category]) acc[category] = [];
+        acc[category].push(solution);
+        return acc;
+      }, {});
+      setGroupedSolutions(grouped);
 
       const initiallySelected = new Set<string>();
-      solutionsData.forEach((dimension: DimensionWithSolutions) => {
-        dimension.solutions.forEach((solution: Solution) => {
-          if (solution.isSelected) {
-            initiallySelected.add(solution.id);
-          }
-        });
+      data.forEach((solution) => {
+        if (solution.isselected) {
+          initiallySelected.add(solution.id);
+        }
       });
       setSelectedSolutions(initiallySelected);
     }
-  }, [solutionsData]);
+  }, [data]);
 
   const toggleSolutionSelection = (solutionId: string) => {
     setSelectedSolutions((prev) => {
@@ -96,8 +67,8 @@ const AssessmentSolution = () => {
 
   const handleSave = async () => {
     try {
-      const selectedSolutionWithBandWeight = dimensionsWithSolutions
-        .flatMap((dim) => dim.solutions)
+      const selectedSolutionWithBandWeight = Object.values(groupedSolutions)
+        .flat()
         .filter((sol) => selectedSolutions.has(sol.id))
         .map((sol) => ({
           id: sol.id,
@@ -107,16 +78,15 @@ const AssessmentSolution = () => {
           isselected: true,
         }));
 
-      const solutionsPayload = {
+      const payload = {
         tenantId,
         plantId,
         selectedSolutionWithBandWeight,
       };
 
-      const result = await selectSolutionsByImpact(solutionsPayload).unwrap();
-
+      const result = await selectSolutionsByImpact(payload).unwrap();
       if (result) {
-        router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
+        router.push(`/AddReportData/${organisationId}/${plantId}`);
       }
     } catch (error) {
       console.error('Save failed:', error);
@@ -124,7 +94,7 @@ const AssessmentSolution = () => {
     }
   };
 
-  if (solutionsLoading) {
+  if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
         <Typography>Loading solutions...</Typography>
@@ -132,7 +102,7 @@ const AssessmentSolution = () => {
     );
   }
 
-  if (solutionsError) {
+  if (error) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
         <Typography color="error">Error loading solutions. Please try again.</Typography>
@@ -154,35 +124,32 @@ const AssessmentSolution = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6">Assessment Solutions</Typography>
+            <Typography variant="h4">Assessment Solutions</Typography>
 
             <Grid container spacing={2} sx={{ mt: 2 }}>
-              {dimensionsWithSolutions.map((item) => (
-                <Grid size={{ xs: 12, sm: 6 }} key={item.dimension}>
+              {Object.entries(groupedSolutions).map(([category, solutions]) => (
+                <Grid size={{ xs: 12, md: 6 }} key={category}>
                   <Box className={styles.solutionCard}>
-                    <Typography sx={{ fontSize: '18px' }} className={styles.solutionTitle}>
-                      {item.dimension}
+                    <Typography
+                      variant="h6"
+                      className={styles.solutionTitle}
+                      sx={{ fontSize: '16px', color: '#FFFFFF', fontWeight: 600 }}
+                    >
+                      {category.replace(/_/g, ' ').charAt(0).toUpperCase() +
+                        category.replace(/_/g, ' ').slice(1).toLowerCase()}
                     </Typography>
                     <List component="div" disablePadding>
-                      {item.solutions.map((solution) => (
-                        <ListItemButton
-                          key={solution.id}
-                          className={styles.solutionItem}
-                          onClick={() => toggleSolutionSelection(solution.id)}
-                          sx={{
-                            backgroundColor: selectedSolutions.has(solution.id) ? '#e3f2fd' : 'transparent',
-                            '&:hover': {
-                              backgroundColor: selectedSolutions.has(solution.id) ? '#bbdefb' : '#f5f5f5',
-                            },
-                          }}
-                        >
-                          <Checkbox
-                            checked={selectedSolutions.has(solution.id)}
-                            onChange={() => toggleSolutionSelection(solution.id)}
-                            sx={{ mr: 1 }}
-                          />
-                          <Typography sx={{ fontSize: '16px' }}>{solution.solution_name}</Typography>
-                        </ListItemButton>
+                      {solutions.map((solution, idx) => (
+                        <Box key={solution.id}>
+                          <ListItemButton className={styles.solutionItem}>
+                            <Checkbox
+                              checked={selectedSolutions.has(solution.id)}
+                              onChange={() => toggleSolutionSelection(solution.id)}
+                            />
+                            <Typography sx={{ fontSize: '16px' }}>{solution.solution_name}</Typography>
+                          </ListItemButton>
+                          {idx < solutions.length - 1 && <Divider />}
+                        </Box>
                       ))}
                     </List>
                   </Box>

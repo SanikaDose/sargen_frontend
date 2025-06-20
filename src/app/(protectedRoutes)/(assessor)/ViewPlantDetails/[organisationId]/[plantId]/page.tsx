@@ -8,7 +8,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import NumbersIcon from '@mui/icons-material/Numbers';
 import FactoryIcon from '@mui/icons-material/Factory';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import { AssessorProps } from '../../../Assessor.types';
+import { AssessorProps } from '../../Assessor.types';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const excludeKeys = [
   'plantLogo',
@@ -28,7 +31,8 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const router = useRouter();
   const organisationId = params?.organisationId as string;
   const plantId = params?.plantId as string;
-
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
   const { data, isFetching, isError } = useGetSpecificPlantInfoQuery(
     { organisationId, plantId },
     { skip: !organisationId || !plantId },
@@ -67,7 +71,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
           border: '1px solid #D8D8D8',
         }}
       >
-        <Typography variant="h6" fontWeight={600} fontSize={'18px'} mb={5}>
+        <Typography variant="h4" mb={5}>
           Plant Details
         </Typography>
         <Box display="flex" alignItems="flex-start" gap={3} mb={3}>

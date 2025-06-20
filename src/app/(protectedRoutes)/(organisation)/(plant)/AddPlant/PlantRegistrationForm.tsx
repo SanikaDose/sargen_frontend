@@ -18,7 +18,6 @@ import { plantFormInputs } from './FormConfig/formInputStep';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { triggerToast } from '@/app/utils/toast';
 import Loader from '@/components/Loader/Loader';
-
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -34,6 +33,9 @@ const steps = [
   'Lines',
   'Assessment',
   'Debrief',
+  'Full Name',
+  'Email',
+  'Contact Number',
   'About',
 ].map((label) => ({ label }));
 
@@ -101,7 +103,7 @@ const PlantRegistrationForm = () => {
 
       // ✅ Step 4: Reset and redirect
       reset();
-      router.push('/PlantPointOfContact');
+      router.push('/PlantOverview');
     } catch (error) {
       console.error('Failed to add plant info or upload image:', error);
     }

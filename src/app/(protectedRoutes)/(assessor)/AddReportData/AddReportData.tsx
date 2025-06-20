@@ -3,30 +3,32 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper, Typography } from '@mui/material';
-import styles from './AssessmentBasedImpactValues.module.css';
+import styles from './../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
+
+import Card from '@/components/Card/Card';
 import {
   useGetImpactValuesMutation,
   useGetSelectedImpactValuesMutation,
   useSelectImpactValuesMutation,
-} from './AssessmentBasedImpactValuesApi';
-import Card from '@/components/Card/Card';
+} from '../AssessmentBasedImpactValues/AssessmentBasedImpactValuesApi';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 
-const AssessmentBasedImpactValues = () => {
+const AddReportData = () => {
   const params = useParams();
   const router = useRouter();
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId') ?? '';
+
   const [dimensionData, setDimensionData] = useState<{ dimension: string; value: number }[]>([]);
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>([]);
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorDimenasionSelection));
+  dispatch(setPageNameHeader(pagesNames.assessorReportData));
 
   // Helper function to format camelCase to Title Case
   const formatDimensionName = (name: string): string => {
@@ -179,26 +181,12 @@ const AssessmentBasedImpactValues = () => {
                     <Card
                       label={
                         <Box textAlign="center">
-                          <Typography fontSize={'14px'} marginLeft={2}>
+                          <Typography fontSize={'17px'} marginLeft={2}>
                             {formatDimensionName(dimension)}
                           </Typography>
-                          <Typography
-                            variant="body2"
-                            mt={0.5}
-                            color="textSecondary"
-                            sx={{
-                              fontSize: '1.25rem',
-                              fontWeight: 'bold',
-                              color: 'black',
-                              textAlign: 'left',
-                              ml: 2,
-                            }}
-                          >
-                            <span
-                              style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'black', alignItems: 'start' }}
-                            >
-                              {value}
-                            </span>
+                          <Typography variant="body2" mt={0.5} color="textSecondary">
+                            Rating:{' '}
+                            <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'black' }}>{value}</span>
                           </Typography>
                         </Box>
                       }
@@ -244,4 +232,4 @@ const AssessmentBasedImpactValues = () => {
   );
 };
 
-export default AssessmentBasedImpactValues;
+export default AddReportData;

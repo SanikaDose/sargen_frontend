@@ -1,0 +1,153 @@
+
+.mostOuterConatiner {
+  /* height: 87vh; */
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  /* gap: 10%; */
+  padding: 1px;
+  width: 100%;
+}
+
+.paperContainer {
+  border-radius: 16px;
+  padding: 2;
+  background-color: white;
+  border: 1px solid rgb(216, 216, 216);
+  width: 100%;
+  display: flex;
+  gap: 3;
+  min-height: 87%;
+}
+.heading {
+  font-weight: 600;
+  padding: 1rem 0 0 1rem;
+}
+
+.stepperContainer {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.formContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  /* border: 1px solid; */
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1%;
+  flex-direction: column;
+  gap: 1rem;
+}
+.rightSection {
+  width: 30%;
+  padding: 20px;
+}
+@media (min-width: 800px) {
+  .formContainer {
+    flex-direction: row;
+    gap: 2.5rem;
+  }
+}
+
+.imageBox {
+  display: flex;
+  width: 200px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid rgb(0, 17, 255); */
+  margin: auto;
+}
+
+.formFieldsInner {
+  width: 100%;
+  /* border: 1px solid rgb(78, 47, 255); */
+}
+.formFieldsBox {
+  width: 70%;
+}
+
+.formFieldsInner {
+  width: 100%;
+}
+
+.aboutSection {
+  height: 20%;
+  padding: 0% 0% 2% 0;
+}
+
+.buttonSection {
+  padding: 2% 2%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Optional: Hide stepper on small devices if needed */
+@media (min-width: 280px) and (max-width: 768px) {
+  .mostOuterContainer {
+    width: 100%;
+    /* border: 1px solid blue; */
+  }
+  .formOuterContainer {
+    width: 100%;
+    /* border: 2px solid red; */
+  }
+  .formContainer {
+    flex-direction: column;
+    width: 100%;
+    /* border: 1px solid; */
+  }
+
+  .formFieldsBox {
+    width: 100%;
+    /* border: 1px solid; */
+  }
+  .stepperContainer {
+    display: none;
+  }
+  .rightSection {
+    display: none;
+  }
+  .paperContainer {
+    height: auto;
+  }
+}
+
+/* Optional: Fine-tuned responsiveness */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .formContainer {
+    gap: 2rem;
+  }
+  .formFieldsBox {
+    width: 100%;
+  }
+
+  .stepperContainer {
+    display: none;
+  }
+  .rightSection {
+    display: none;
+  }
+
+  .paperContainer {
+    height: auto;
+  }
+}
+
+@media (min-width: 1024px) and (min-width: 1440px) {
+  .formContainer {
+    gap: 3rem;
+  }
+  .paperContainer {
+    height: auto;
+  }
+}
+
+@media (min-width: 1920px) {
+  .formContainer {
+    gap: 4rem;
+  }
+}

@@ -15,12 +15,12 @@
 .scrollContent {
   overflow-y: auto;
   flex-grow: 1;
-  scrollbar-width: auto; /* revert back to visible scrollbar in Firefox */
+  scrollbar-width: auto;
 }
 
 .scrollContent::-webkit-scrollbar {
-  display: block; /* show the scrollbar in WebKit browsers */
-  width: 8px; /* optional: control thickness of the scrollbar */
+  display: block;
+  width: 8px;
 }
 
 .scrollContent::-webkit-scrollbar-thumb {
@@ -93,7 +93,7 @@
 }
 
 .statusReviewed {
-  background-color: lightgreen;
+  background-color: rgba(161, 208, 102, 1);
 }
 
 .statusAlert {
@@ -101,7 +101,7 @@
 }
 
 .statusNotReviewed {
-  background-color: grey;
+  background-color: lightgray;
 }
 
 .innerStatusLegend {

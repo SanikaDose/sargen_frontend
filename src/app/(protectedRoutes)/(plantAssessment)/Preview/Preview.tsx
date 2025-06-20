@@ -1,48 +1,40 @@
 'use client';
 
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import styles from './userAssessmentPreview.module.css';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Skeleton, Typography } from '@mui/material';
+import styles from './Preview.module.css';
 import React, { useEffect, useState } from 'react';
+import { Question } from '../Questionaire/Questionaire.type';
+import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
-import {
-  useGetQuestionnairesListMutation,
-  useSelectQuestionnairesAnswerMutation,
-} from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
-import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
-import { PopupModal } from '@/components/PopupModal/PopupModal';
 import TextArea from '@/components/textArea/TextArea';
-import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 
-const UserAssessmentPreview = () => {
-  const params = useParams();
+export default function Preview() {
   const router = useRouter();
-  const plantId = params.plantId as string;
-  const organisationId = params.organisationId as string;
+  const params = useParams();
+
+  const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
+
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
-  const [selectQuestionnairesAnswer] = useSelectQuestionnairesAnswerMutation();
-  const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
+  const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
   const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
-        const all: Question[] = [];
+        let all: Question[] = [];
 
         for (const dept of departmentName) {
           const result = await getQuestionnairesList({
@@ -140,25 +132,17 @@ const UserAssessmentPreview = () => {
       return false;
     }
   };
+
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
-
+  console.log('currentGroup', currentGroup);
   if (!currentGroup) return null;
 
-  const questionText = currentGroup[0].question;
+  const questionText = currentGroup[0]?.question ?? '';
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
 
-  const handlePrimaryClick = () => {
-    setIsModalOpen(false);
-    console.log('Primary action clicked');
-  };
-
-  const handleSecondaryClick = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <Box component="form" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', gap: 1 }}>
+    <Box component="form" sx={{ height: '99%' }}>
       <Paper
         className={styles.formSection}
         elevation={2}
@@ -170,42 +154,73 @@ const UserAssessmentPreview = () => {
         }}
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+          {/* Left Section */}
           <Box className={styles.formContainer}>
-            <Typography variant="h4" sx={{ mb: 1 }}>
-              {currentGroup[0]?.department} Assessment
-            </Typography>
+            {isLoading || isSaving ? (
+              <>
+                <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
-            <Box className={styles.questionAnsweresSection}>
-              <Box className={styles.questionSection}>
-                <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
-              </Box>
-              <Box className={styles.answerSection}>
-                {currentGroup.map((option, idx) => (
-                  <AnswerCard
-                    key={option.id}
-                    answerNumber={idx + 1}
-                    answerText={option.answer ?? ''}
-                    isSelected={option.isselected}
-                    onClick={() => handleAnswerClick(option.id)}
+                <Box className={styles.questionAnsweresSection}>
+                  <Skeleton variant="rectangular" width="100%" height={60} sx={{ mb: 3, borderRadius: '8px' }} />
+                  <Box className={styles.answerSection}>
+                    {[1, 2, 3].map((_, i) => (
+                      <Skeleton
+                        key={i}
+                        variant="rectangular"
+                        width="100%"
+                        height={48}
+                        sx={{ mb: 1.5, borderRadius: '8px' }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+
+                <Box className={styles.justification}>
+                  <Skeleton variant="rectangular" width="100%" height={120} sx={{ borderRadius: '8px', mt: 3 }} />
+                </Box>
+              </>
+            ) : (
+              <>
+                <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
+                  {currentGroup[0]?.department}
+                </Typography>
+
+                <Box className={styles.questionAnsweresSection}>
+                  <Box className={styles.questionSection}>
+                    <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
+                  </Box>
+
+                  <Box className={styles.answerSection}>
+                    {currentGroup.map((option, idx) => (
+                      <AnswerCard
+                        key={option.id}
+                        answerNumber={idx + 1}
+                        answerText={option.answer ?? ''}
+                        isSelected={option.isselected}
+                        onClick={() => handleAnswerClick(option.id)}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+
+                <Box className={styles.justification}>
+                  <TextArea
+                    value={justificationMap[currentKey] || ''}
+                    onChange={(val) =>
+                      setJustificationMap((prev) => ({
+                        ...prev,
+                        [currentKey]: val,
+                      }))
+                    }
+                    placeholder="Enter justification"
+                    readOnly={false}
                   />
-                ))}
-              </Box>
-            </Box>
-            <Box className={styles.justification}>
-              <TextArea
-                value={justificationMap[currentKey] || ''}
-                onChange={(val) =>
-                  setJustificationMap((prev) => ({
-                    ...prev,
-                    [currentKey]: val,
-                  }))
-                }
-                placeholder="Enter justification"
-                readOnly={false}
-              />
-            </Box>
+                </Box>
+              </>
+            )}
           </Box>
 
+          {/* Right Section */}
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
               <PreviewSideBox
@@ -239,52 +254,27 @@ const UserAssessmentPreview = () => {
                 Back
               </CustomButton>
 
-              {isModalOpen && (
-                <PopupModal
-                  label="Alert Confirmation"
-                  text="Are you sure you want to mark this question as needing attention?"
-                  primaryButtonText="Yes"
-                  secondaryButtonText="Cancel"
-                  onPrimaryClick={handlePrimaryClick}
-                  onSecondaryClick={handleSecondaryClick}
-                />
-              )}
-              <CustomButton
-                variant="contained"
-                icon="alert"
-                type="button"
-                color="warning"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Query
+              <CustomButton variant="contained" icon="edit" type="button" disabled>
+                Edit
               </CustomButton>
-              <CustomButton
-                variant="contained"
-                icon="save"
-                type="button"
-                onClick={async () => {
-                  const success = await submitQuestionnaireAnswer();
-                  if (success && currentIndex === groupKeys.length - 1) {
-                    router.push(`/AssessmentBasedImpactValues/${organisationId}/${plantId}`);
-                  }
-                }}
-              >
-                {isLoading ? 'Saving...' : currentIndex === groupKeys.length - 1 ? 'Finish' : 'Save'}
+
+              <CustomButton variant="contained" icon="submit" type="button" color="warning" disabled>
+                Submit
               </CustomButton>
 
               <CustomButton
                 variant="contained"
-                color="primary"
                 icon="right"
                 type="button"
-                onClick={() => {
-                  if (currentIndex < groupKeys.length - 1) {
+                onClick={async () => {
+                  const success = await submitQuestionnaireAnswer();
+                  if (success && currentIndex < groupKeys.length - 1) {
                     setCurrentIndex((prev) => prev + 1);
                   }
                 }}
-                disabled={currentIndex === groupKeys.length - 1}
+                disabled={isSaving}
               >
-                Next
+                {isSaving ? 'Saving...' : 'Next'}
               </CustomButton>
             </Box>
           </Box>
@@ -292,6 +282,4 @@ const UserAssessmentPreview = () => {
       </Paper>
     </Box>
   );
-};
-
-export default UserAssessmentPreview;
+}

@@ -24,7 +24,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
     >
       {heading && (
         <Typography
-          variant="h6"
+          variant="h4"
           sx={{
             mb: 2,
             fontWeight: 600,
@@ -41,7 +41,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
           flexGrow: 1,
           p: 2,
           textAlign: 'justify',
-          fontSize: 'small',
+          fontSize: 'medium',
         }}
       >
         {content || 'Please Enter the About us in Organization Entry Portal'}
