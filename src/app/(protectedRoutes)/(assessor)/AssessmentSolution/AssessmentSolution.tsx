@@ -8,6 +8,9 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import { useGetSolutionsByImpactQuery, useSelectSolutionsByImpactMutation } from './AssessmentSolutionApi';
 import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox, Divider } from '@mui/material';
 import styles from './AssessmentSolution.module.css';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 interface Solution {
   id: string;
@@ -23,12 +26,12 @@ const AssessmentSolution = () => {
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId');
-
   const { data, error, isLoading } = useGetSolutionsByImpactQuery({ tenantId, plantId });
-
   const [selectSolutionsByImpact, { isLoading: isSavingSolutions }] = useSelectSolutionsByImpactMutation();
   const [groupedSolutions, setGroupedSolutions] = useState<Record<string, Solution[]>>({});
   const [selectedSolutions, setSelectedSolutions] = useState<Set<string>>(new Set());
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
@@ -121,13 +124,17 @@ const AssessmentSolution = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6">Assessment Solutions</Typography>
+            <Typography variant="h4">Assessment Solutions</Typography>
 
             <Grid container spacing={2} sx={{ mt: 2 }}>
               {Object.entries(groupedSolutions).map(([category, solutions]) => (
                 <Grid size={{ xs: 12, md: 6 }} key={category}>
                   <Box className={styles.solutionCard}>
-                    <Typography variant="h6" sx={{ fontSize: '18px' }} className={styles.solutionTitle}>
+                    <Typography
+                      variant="h6"
+                      className={styles.solutionTitle}
+                      sx={{ fontSize: '16px', color: '#FFFFFF', fontWeight: 600 }}
+                    >
                       {category.replace(/_/g, ' ').charAt(0).toUpperCase() +
                         category.replace(/_/g, ' ').slice(1).toLowerCase()}
                     </Typography>

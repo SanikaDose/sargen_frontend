@@ -8,12 +8,10 @@ import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
-import { RootState } from '@/store/store';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import TextArea from '@/components/textArea/TextArea';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import InfoBox from '@/components/InfoBox/InfoBox';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';

@@ -55,7 +55,8 @@ import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
-
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
 const steps = [
   'First Name',
   'Last Name',
@@ -70,7 +71,11 @@ const steps = [
 const tenantId = getValueLocalStorage('tenantId');
 
 function AssessorOnboarding() {
-  //const { control, handleSubmit, reset, setFocus } = useForm<AssessorFormType>();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPageNameHeader('Assessor Onboarding'));
+  }, [dispatch]);
   const {
     control,
     handleSubmit,
@@ -94,7 +99,7 @@ function AssessorOnboarding() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  let tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
@@ -136,188 +141,6 @@ function AssessorOnboarding() {
     }
   };
 
-  //function to upload files
-  // const handleUploadFile = async (file: File, fileKey: string) => {
-  //   console.log('filekey', fileKey);
-  //   try {
-  //     if (fileKey === 'questionnaires_') {
-  //       try {
-  //         await uploadQuestionnaries({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-
-  //         setUploadedFiles((prev) => {
-  //           const newState = { ...prev };
-  //           delete newState[fileKey];
-  //           return newState;
-  //         });
-  //       }
-  //     }
-
-  //     if (fileKey === 'cost_profile_') {
-  //       try {
-  //         await uploadCostProfile({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'kpi_selection_') {
-  //       try {
-  //         await uploadKPI({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'industry_selection_') {
-  //       try {
-  //         await uploadIndustrySelection({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'planning_horizon_') {
-  //       try {
-  //         await uploadPlanningHorizon({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'cost_lookup_table_') {
-  //       try {
-  //         await uploadCostProfileLookup({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'industry_selection_lookup_table_') {
-  //       try {
-  //         await uploadIndustrySelectionLookup({
-  //           tenantId,
-  //           file,
-  //         });
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-
-  //     if (fileKey === 'kpi_lookup_table_') {
-  //       try {
-  //         await uploadKPILookup({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'assessment_matrix_score_lookup_table_') {
-  //       try {
-  //         await uploadIndustryAssessmentMatrix({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'solutions_with_band_weights_') {
-  //       try {
-  //         await uploadSolutionMetadata({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //     if (fileKey === 'band_definition_table_') {
-  //       try {
-  //         await uploadBandDefinition({
-  //           tenantId,
-  //           file,
-  //         }).unwrap();
-
-  //         setUploadedFiles((prev) => ({
-  //           ...prev,
-  //           [fileKey]: file,
-  //         }));
-  //       } catch (error) {
-  //         triggerToast(`Please Add valid ${fileKey} file`, 'error');
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error(`❌ Error storing file for ${fileKey}:`, error);
-  //   }
-  // };
-
   const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => Promise<any>> = {
     questionnaires_: uploadQuestionnaries,
     cost_profile_: uploadCostProfile,
@@ -343,7 +166,7 @@ function AssessorOnboarding() {
     }
 
     try {
-      const response = await uploadFunction({ tenantId, file });
+      const response = await uploadFunction({ tenantId: tenantId ?? '', file });
       console.log('uploaded resp', response);
       if (response.data.status === true) {
         setUploadedFiles((prev) => ({

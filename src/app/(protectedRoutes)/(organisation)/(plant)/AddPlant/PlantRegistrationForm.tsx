@@ -37,6 +37,9 @@ const steps = [
   'Lines',
   'Assessment',
   'Debrief',
+  'Full Name',
+  'Email',
+  'Contact Number',
   'About',
 ].map((label) => ({ label }));
 

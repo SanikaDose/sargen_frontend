@@ -13,6 +13,9 @@ import {
   useSelectImpactValuesMutation,
 } from './AssessmentBasedImpactValuesApi';
 import Card from '@/components/Card/Card';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const AssessmentBasedImpactValues = () => {
   const params = useParams();
@@ -20,9 +23,10 @@ const AssessmentBasedImpactValues = () => {
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId') ?? '';
-
   const [dimensionData, setDimensionData] = useState<{ dimension: string; value: number }[]>([]);
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorDimenasionSelection));
 
   // Helper function to format camelCase to Title Case
   const formatDimensionName = (name: string): string => {
@@ -157,7 +161,7 @@ const AssessmentBasedImpactValues = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6">Assessment Based Impact Values</Typography>
+            <Typography variant="h4">Assessment Based Impact Values</Typography>
             <Grid
               container
               spacing={2}
@@ -175,12 +179,26 @@ const AssessmentBasedImpactValues = () => {
                     <Card
                       label={
                         <Box textAlign="center">
-                          <Typography fontSize={'17px'} marginLeft={2}>
+                          <Typography fontSize={'14px'} marginLeft={2}>
                             {formatDimensionName(dimension)}
                           </Typography>
-                          <Typography variant="body2" mt={0.5} color="textSecondary">
-                            Rating:{' '}
-                            <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'black' }}>{value}</span>
+                          <Typography
+                            variant="body2"
+                            mt={0.5}
+                            color="textSecondary"
+                            sx={{
+                              fontSize: '1.25rem',
+                              fontWeight: 'bold',
+                              color: 'black',
+                              textAlign: 'left',
+                              ml: 2,
+                            }}
+                          >
+                            <span
+                              style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'black', alignItems: 'start' }}
+                            >
+                              {value}
+                            </span>
                           </Typography>
                         </Box>
                       }

@@ -8,12 +8,16 @@ import { useRouter } from 'next/navigation';
 import AssessorPlantInfoCard from './AssessorPlantInfoCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useGetAllAssignPlantQuery } from './AssignedPlantsListApi';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 export default function AssignedPlantsList() {
   const router = useRouter();
   const assessorId = getValueLocalStorage('assessorId');
   const [searchValue, setSearchValue] = useState('');
-
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorAssignedPlants));
   const { data: plantInfo, isLoading } = useGetAllAssignPlantQuery(assessorId ?? '', {
     skip: !assessorId,
   });

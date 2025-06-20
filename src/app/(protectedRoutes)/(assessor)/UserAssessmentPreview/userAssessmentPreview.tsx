@@ -3,12 +3,10 @@
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from './userAssessmentPreview.module.css';
 import { Box, Paper, Typography } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import {
   useGetQuestionnairesListMutation,
@@ -17,13 +15,16 @@ import {
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
+import TextArea from '@/components/textArea/TextArea';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();
   const plantId = params.plantId as string;
   const organisationId = params.organisationId as string;
-
   const tenantId = getValueLocalStorage('tenantId');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -31,16 +32,17 @@ const UserAssessmentPreview = () => {
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
-
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
-  const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
+  const [selectQuestionnairesAnswer] = useSelectQuestionnairesAnswerMutation();
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
 
   const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
-        let all: Question[] = [];
+        const all: Question[] = [];
 
         for (const dept of departmentName) {
           const result = await getQuestionnairesList({
@@ -169,7 +171,7 @@ const UserAssessmentPreview = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6" mb="4px">
+            <Typography variant="h4" sx={{ mb: 1 }}>
               {currentGroup[0]?.department} Assessment
             </Typography>
 
@@ -179,20 +181,28 @@ const UserAssessmentPreview = () => {
               </Box>
               <Box className={styles.answerSection}>
                 {currentGroup.map((option, idx) => (
-                  <div
+                  <AnswerCard
                     key={option.id}
-                    onClick={() => handleAnswerClick(Number(option.id))}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <AnswerCard
-                      answerNumber={idx + 1}
-                      answerText={option.answer ?? ''}
-                      isSelected={option.isselected}
-                      onClick={() => {}}
-                    />
-                  </div>
+                    answerNumber={idx + 1}
+                    answerText={option.answer ?? ''}
+                    isSelected={option.isselected}
+                    onClick={() => handleAnswerClick(option.id)}
+                  />
                 ))}
               </Box>
+            </Box>
+            <Box className={styles.justification}>
+              <TextArea
+                value={justificationMap[currentKey] || ''}
+                onChange={(val) =>
+                  setJustificationMap((prev) => ({
+                    ...prev,
+                    [currentKey]: val,
+                  }))
+                }
+                placeholder="Enter justification"
+                readOnly={false}
+              />
             </Box>
           </Box>
 
@@ -246,22 +256,35 @@ const UserAssessmentPreview = () => {
                 color="warning"
                 onClick={() => setIsModalOpen(true)}
               >
-                Alert
+                Query
               </CustomButton>
-
               <CustomButton
                 variant="contained"
                 icon="save"
                 type="button"
-                onClick={() => {
-                  if (currentIndex === groupKeys.length - 1) {
+                onClick={async () => {
+                  const success = await submitQuestionnaireAnswer();
+                  if (success && currentIndex === groupKeys.length - 1) {
                     router.push(`/AssessmentBasedImpactValues/${organisationId}/${plantId}`);
-                  } else {
-                    setCurrentIndex((prev) => Math.min(prev + 1, groupKeys.length - 1));
                   }
                 }}
               >
                 {isLoading ? 'Saving...' : currentIndex === groupKeys.length - 1 ? 'Finish' : 'Save'}
+              </CustomButton>
+
+              <CustomButton
+                variant="contained"
+                color="primary"
+                icon="right"
+                type="button"
+                onClick={() => {
+                  if (currentIndex < groupKeys.length - 1) {
+                    setCurrentIndex((prev) => prev + 1);
+                  }
+                }}
+                disabled={currentIndex === groupKeys.length - 1}
+              >
+                Next
               </CustomButton>
             </Box>
           </Box>

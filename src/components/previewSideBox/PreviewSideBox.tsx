@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import styles from './previewSideBox.module.css';
-import { Box, Typography, Divider, Button } from '@mui/material';
+import { Box, Typography, Divider } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import QuestionSection from './QuestionSection';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
@@ -15,7 +15,6 @@ type PreviewSideBoxProps = {
   allQuestions: Question[];
 };
 
-const initialVisibleCount = 3;
 const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
   groupedQuestions,
   currentIndex,
@@ -23,8 +22,11 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
   setCurrentIndex,
   allQuestions,
 }) => {
-  const [showAll, setShowAll] = useState(false);
+  const [prevDepartment, setPrevDepartment] = useState<string>('');
   const pathname = usePathname();
+
+  // Create refs for each department
+  const departmentRefs = useRef<{ [department: string]: HTMLDivElement | null }>({});
 
   // Group questions by department
   const departmentGroups: { [department: string]: { key: string; question: Question }[] } = {};
@@ -40,7 +42,18 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
   });
 
   const departmentNames = Object.keys(departmentGroups);
-  const visibleDepartments = showAll ? departmentNames : departmentNames.slice(0, 3);
+
+  const currentDepartment = groupedQuestions[Object.keys(groupedQuestions)[currentIndex]]?.[0]?.department || '';
+
+  useEffect(() => {
+    if (currentDepartment && prevDepartment !== currentDepartment) {
+      const targetRef = departmentRefs.current[currentDepartment];
+      if (targetRef && typeof targetRef.scrollIntoView === 'function') {
+        targetRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setPrevDepartment(currentDepartment);
+    }
+  }, [currentDepartment, prevDepartment]);
 
   const currentKey = Object.keys(groupedQuestions)[currentIndex];
   const selectedQuestionId = currentKey;
@@ -48,14 +61,20 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
   return (
     <Box className={styles.panelContainer}>
       <section className={styles.titleContainer}>
-        <Typography variant="h6" className={styles.title}>
+        <Typography variant="h4" className={styles.title}>
           Assessment Questions
         </Typography>
       </section>
 
       <Box className={styles.scrollContent}>
-        {visibleDepartments.map((dept) => (
-          <Box key={dept} className={styles.sectionBox}>
+        {departmentNames.map((dept) => (
+          <Box
+            key={dept}
+            className={styles.sectionBox}
+            ref={(el: HTMLDivElement | null) => {
+              departmentRefs.current[dept] = el;
+            }}
+          >
             <Box className={styles.sectionHeader}>
               <Typography className={styles.sectionTitle}>{dept}</Typography>
               <Box className={styles.sectionDivider} />
@@ -64,7 +83,7 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
             <QuestionSection
               questions={departmentGroups[dept].map(({ key, question }, index) => ({
                 ...question,
-                key, // ✅ include full key
+                key,
                 questionNo: allQuestions.find((q) => q.groupKey === key)?.questionNo ?? index + 1,
               }))}
               selectedQuestionId={selectedQuestionId}
@@ -76,12 +95,6 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
             />
           </Box>
         ))}
-
-        {!showAll && departmentNames.length > 3 && (
-          <Button className={styles.showMoreButton} variant="outlined" onClick={() => setShowAll(true)}>
-            Show More
-          </Button>
-        )}
       </Box>
 
       <Divider className={styles.divider} />
@@ -112,7 +125,7 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
               className={`${styles.statusDot} ${styles.statusAlert}`}
             />
             <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
-              Alert
+              Query
             </Typography>
           </section>
         )}
