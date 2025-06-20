@@ -155,6 +155,7 @@
 //   useUploadAssessorLogoMutation,
 // } = assessorApi;
 
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
 // import { rtkAPIToast } from "@/utils/rtkAPIToast";
@@ -186,6 +187,15 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Assessor information added successfully!',
+          errorMessage: 'Failed to add assessor information!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadQuestionnaries: builder.mutation({
@@ -199,6 +209,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           method: 'POST',
           body: formData,
         };
+      },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Questionnaire metadata uploaded successfully!',
+          errorMessage: 'Failed to upload questionnaire metadata!',
+          duration: 4000,
+        });
       },
     }),
 
@@ -214,6 +232,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Cost profile uploaded successfully!',
+          errorMessage: 'Failed to upload cost profile!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadKPI: builder.mutation({
@@ -227,6 +253,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           method: 'POST',
           body: formData,
         };
+      },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'KPI metadata uploaded successfully!',
+          errorMessage: 'Failed to upload KPI metadata!',
+          duration: 4000,
+        });
       },
     }),
 
@@ -242,6 +276,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Planning horizon uploaded successfully!',
+          errorMessage: 'Failed to upload planning horizon!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadIndustrySelection: builder.mutation({
@@ -255,6 +297,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           method: 'POST',
           body: formData,
         };
+      },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Industry selection uploaded successfully!',
+          errorMessage: 'Failed to upload industry selection!',
+          duration: 4000,
+        });
       },
     }),
 
@@ -270,6 +320,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Cost profile lookup uploaded successfully!',
+          errorMessage: 'Failed to upload cost profile lookup!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadIndustrySelectionLookup: builder.mutation({
@@ -283,6 +341,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           method: 'POST',
           body: formData,
         };
+      },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Industry selection lookup uploaded successfully!',
+          errorMessage: 'Failed to upload industry selection lookup!',
+          duration: 4000,
+        });
       },
     }),
 
@@ -298,6 +364,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'KPI lookup uploaded successfully!',
+          errorMessage: 'Failed to upload KPI lookup!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadIndustryAssessmentMatrix: builder.mutation({
@@ -311,6 +385,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           method: 'POST',
           body: formData,
         };
+      },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Industry assessment matrix uploaded successfully!',
+          errorMessage: 'Failed to upload industry assessment matrix!',
+          duration: 4000,
+        });
       },
     }),
 
@@ -326,6 +408,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Solution metadata uploaded successfully!',
+          errorMessage: 'Failed to upload solution metadata!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadBandDefinition: builder.mutation({
@@ -340,6 +430,14 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Band definition table uploaded successfully!',
+          errorMessage: 'Failed to upload band definition table!',
+          duration: 4000,
+        });
+      },
     }),
     getMetadataFileTemplate: builder.mutation<Response, { userType: string; fileName: string }>({
       query: ({ userType, fileName }) => ({
@@ -349,6 +447,14 @@ export const assessorApi = protectedApi.injectEndpoints({
         responseHandler: (response) => Promise.resolve(response),
         cache: 'no-cache',
       }),
+      invalidatesTags: (_result, _error, { fileName }) => [{ type: 'Assessor', id: fileName }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'file template downloaded successfully!',
+          errorMessage: 'Failed to download file template!',
+          duration: 4000,
+        });
+      },
     }),
 
     getMetadataInformation: builder.query({
@@ -357,6 +463,14 @@ export const assessorApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: { tenantId },
       }),
+      providesTags: (_result, _error, tenantId) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Fetched metadata information successfully!',
+          errorMessage: 'Failed to fetch metadata information!',
+          duration: 4000,
+        });
+      },
     }),
 
     uploadAssessorLogo: builder.mutation<void, { tenantId: string; formData: FormData }>({
@@ -365,6 +479,14 @@ export const assessorApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Assessor logo uploaded successfully!',
+          errorMessage: 'Failed to upload assessor logo!',
+          duration: 4000,
+        });
+      },
     }),
 
     viewMetadataFile: builder.mutation({
@@ -379,12 +501,28 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: { tenantId, fileName },
         };
       },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'File content retrieved successfully!',
+          errorMessage: 'Failed to view metadata file!',
+          duration: 4000,
+        });
+      },
     }),
     getAssessorInfo: builder.query<getOrgPayload & { id: number; createdAt: string; updatedAt: string }, string>({
       query: (tenantId) => ({
         url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.getAssessorInformation}${tenantId}`,
         method: 'GET',
       }),
+      providesTags: (result, error, tenantId) => [{ type: 'Assessor', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Assessor information fetched successfully.',
+          errorMessage: 'Failed to fetch assessor information.',
+          duration: 4000,
+        });
+      },
     }),
   }),
 

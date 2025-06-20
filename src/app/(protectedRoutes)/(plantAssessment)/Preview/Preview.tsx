@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Skeleton, Typography } from '@mui/material';
 import styles from './Preview.module.css';
 import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
@@ -156,41 +156,68 @@ export default function Preview() {
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           {/* Left Section */}
           <Box className={styles.formContainer}>
-            <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
-              {currentGroup[0]?.department}
-            </Typography>
+            {isLoading || isSaving ? (
+              <>
+                <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
-            <Box className={styles.questionAnsweresSection}>
-              <Box className={styles.questionSection}>
-                <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
-              </Box>
+                <Box className={styles.questionAnsweresSection}>
+                  <Skeleton variant="rectangular" width="100%" height={60} sx={{ mb: 3, borderRadius: '8px' }} />
+                  <Box className={styles.answerSection}>
+                    {[1, 2, 3].map((_, i) => (
+                      <Skeleton
+                        key={i}
+                        variant="rectangular"
+                        width="100%"
+                        height={48}
+                        sx={{ mb: 1.5, borderRadius: '8px' }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
 
-              <Box className={styles.answerSection}>
-                {currentGroup.map((option, idx) => (
-                  <AnswerCard
-                    key={option.id}
-                    answerNumber={idx + 1}
-                    answerText={option.answer ?? ''}
-                    isSelected={option.isselected}
-                    onClick={() => handleAnswerClick(option.id)}
+                <Box className={styles.justification}>
+                  <Skeleton variant="rectangular" width="100%" height={120} sx={{ borderRadius: '8px', mt: 3 }} />
+                </Box>
+              </>
+            ) : (
+              <>
+                <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
+                  {currentGroup[0]?.department}
+                </Typography>
+
+                <Box className={styles.questionAnsweresSection}>
+                  <Box className={styles.questionSection}>
+                    <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
+                  </Box>
+
+                  <Box className={styles.answerSection}>
+                    {currentGroup.map((option, idx) => (
+                      <AnswerCard
+                        key={option.id}
+                        answerNumber={idx + 1}
+                        answerText={option.answer ?? ''}
+                        isSelected={option.isselected}
+                        onClick={() => handleAnswerClick(option.id)}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+
+                <Box className={styles.justification}>
+                  <TextArea
+                    value={justificationMap[currentKey] || ''}
+                    onChange={(val) =>
+                      setJustificationMap((prev) => ({
+                        ...prev,
+                        [currentKey]: val,
+                      }))
+                    }
+                    placeholder="Enter justification"
+                    readOnly={false}
                   />
-                ))}
-              </Box>
-            </Box>
-
-            <Box className={styles.justification}>
-              <TextArea
-                value={justificationMap[currentKey] || ''}
-                onChange={(val) =>
-                  setJustificationMap((prev) => ({
-                    ...prev,
-                    [currentKey]: val,
-                  }))
-                }
-                placeholder="Enter justification"
-                readOnly={false}
-              />
-            </Box>
+                </Box>
+              </>
+            )}
           </Box>
 
           {/* Right Section */}

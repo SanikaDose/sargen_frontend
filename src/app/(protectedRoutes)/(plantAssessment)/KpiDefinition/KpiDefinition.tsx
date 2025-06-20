@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import Loader from '@/components/Loader/Loader';
 
 const KpiDefinition = () => {
   const params = useParams();
@@ -22,8 +23,8 @@ const KpiDefinition = () => {
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
-  const [getKPIDefinition] = useGetKPIDefinitionMutation();
-  const [selectKPIDefinition, { isLoading }] = useSelectKPIDefinitionMutation();
+  const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
+  const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
   const { control, handleSubmit, reset } = useForm<KpiFormValues>({
     defaultValues: { kpis: [] },
@@ -108,31 +109,40 @@ const KpiDefinition = () => {
             >
               Kpis Selection
             </Typography>
+            {isLoadingGet || isLoadingAdd ? (
+              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Loader loading />
+              </Box>
+            ) : (
+              <Grid
+                container
+                spacing={2}
+                sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}
+              >
+                {kpiList.map((field, index) => (
+                  <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '10%' }}>
+                    <Controller
+                      name={`kpis.${index}.isselected`}
+                      control={control}
+                      render={({ field: controllerField }) => {
+                        const isSelected = controllerField.value;
+                        const isDisabled = !isSelected && selectedCount >= 5;
 
-            <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-              {kpiList.map((field, index) => (
-                <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '10%' }}>
-                  <Controller
-                    name={`kpis.${index}.isselected`}
-                    control={control}
-                    render={({ field: controllerField }) => {
-                      const isSelected = controllerField.value;
-                      const isDisabled = !isSelected && selectedCount >= 5;
-
-                      return (
-                        <Card
-                          key={field.id}
-                          label={field.kpi}
-                          isSelected={isSelected}
-                          isDisabled={isDisabled}
-                          onToggle={() => controllerField.onChange(!isSelected)}
-                        />
-                      );
-                    }}
-                  />
-                </Grid>
-              ))}
-            </Grid>
+                        return (
+                          <Card
+                            key={field.id}
+                            label={field.kpi}
+                            isSelected={isSelected}
+                            isDisabled={isDisabled}
+                            onToggle={() => controllerField.onChange(!isSelected)}
+                          />
+                        );
+                      }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </Box>
 
           <Box className={styles.rightSection}>
@@ -162,7 +172,12 @@ const KpiDefinition = () => {
                 type="button"
                 onClick={() => router.back()}
               />
-              <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
+              <CustomButton
+                children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                variant="contained"
+                icon="save"
+                type="submit"
+              />
             </Box>
           </Box>
         </Box>
