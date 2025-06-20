@@ -67,7 +67,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
           border: '1px solid #D8D8D8',
         }}
       >
-        <Typography variant="h6" fontWeight={600} fontSize={'18px'} mb={5}>
+        <Typography variant="h4" mb={5}>
           Plant Details
         </Typography>
         <Box display="flex" alignItems="flex-start" gap={3} mb={3}>

@@ -48,7 +48,7 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
   return (
     <Box className={styles.panelContainer}>
       <section className={styles.titleContainer}>
-        <Typography variant="h6" className={styles.title}>
+        <Typography variant="h4" className={styles.title}>
           Assessment Questions
         </Typography>
       </section>
@@ -112,7 +112,7 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
               className={`${styles.statusDot} ${styles.statusAlert}`}
             />
             <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
-              Alert
+              Query
             </Typography>
           </section>
         )}

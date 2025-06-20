@@ -157,7 +157,7 @@ const AssessmentBasedImpactValues = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6">Assessment Based Impact Values</Typography>
+            <Typography variant="h4">Assessment Based Impact Values</Typography>
             <Grid
               container
               spacing={2}
@@ -175,12 +175,26 @@ const AssessmentBasedImpactValues = () => {
                     <Card
                       label={
                         <Box textAlign="center">
-                          <Typography fontSize={'17px'} marginLeft={2}>
+                          <Typography fontSize={'14px'} marginLeft={2}>
                             {formatDimensionName(dimension)}
                           </Typography>
-                          <Typography variant="body2" mt={0.5} color="textSecondary">
-                            Rating:{' '}
-                            <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'black' }}>{value}</span>
+                          <Typography
+                            variant="body2"
+                            mt={0.5}
+                            color="textSecondary"
+                            sx={{
+                              fontSize: '1.25rem',
+                              fontWeight: 'bold',
+                              color: 'black',
+                              textAlign: 'left',
+                              ml: 2,
+                            }}
+                          >
+                            <span
+                              style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'black', alignItems: 'start' }}
+                            >
+                              {value}
+                            </span>
                           </Typography>
                         </Box>
                       }
