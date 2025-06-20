@@ -99,7 +99,7 @@ function AssessorOnboarding() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  let tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
@@ -166,7 +166,7 @@ function AssessorOnboarding() {
     }
 
     try {
-      const response = await uploadFunction({ tenantId, file });
+      const response = await uploadFunction({ tenantId: tenantId ?? '', file });
       console.log('uploaded resp', response);
       if (response.data.status === true) {
         setUploadedFiles((prev) => ({
