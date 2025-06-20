@@ -19,8 +19,8 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import { triggerToast } from '@/app/utils/toast';
 import Loader from '@/components/Loader/Loader';
 
-const tenantId = getValueLocalStorage('tenantId');
-
+//const tenantId = getValueLocalStorage('tenantId');
+const tenantId = 'mayuri-Corp-eee82da2-a550-4113-9e2f-bf8255ea11d7';
 const steps = [
   'Name',
   'Location',
@@ -101,7 +101,7 @@ const PlantRegistrationForm = () => {
 
       // ✅ Step 4: Reset and redirect
       reset();
-      router.push('/PlantPointOfContact');
+      router.push('/PlantOverview');
     } catch (error) {
       console.error('Failed to add plant info or upload image:', error);
     }
