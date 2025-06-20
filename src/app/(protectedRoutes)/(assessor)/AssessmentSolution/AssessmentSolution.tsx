@@ -121,13 +121,17 @@ const AssessmentSolution = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6">Assessment Solutions</Typography>
+            <Typography variant="h4">Assessment Solutions</Typography>
 
             <Grid container spacing={2} sx={{ mt: 2 }}>
               {Object.entries(groupedSolutions).map(([category, solutions]) => (
                 <Grid size={{ xs: 12, md: 6 }} key={category}>
                   <Box className={styles.solutionCard}>
-                    <Typography variant="h6" sx={{ fontSize: '18px' }} className={styles.solutionTitle}>
+                    <Typography
+                      variant="h6"
+                      className={styles.solutionTitle}
+                      sx={{ fontSize: '16px', color: '#FFFFFF', fontWeight: 600 }}
+                    >
                       {category.replace(/_/g, ' ').charAt(0).toUpperCase() +
                         category.replace(/_/g, ' ').slice(1).toLowerCase()}
                     </Typography>

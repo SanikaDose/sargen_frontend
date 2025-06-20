@@ -3,12 +3,10 @@
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from './userAssessmentPreview.module.css';
 import { Box, Paper, Typography } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import {
   useGetQuestionnairesListMutation,
@@ -17,6 +15,7 @@ import {
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
+import TextArea from '@/components/textArea/TextArea';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
@@ -33,14 +32,14 @@ const UserAssessmentPreview = () => {
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
 
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
-  const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
+  const [selectQuestionnairesAnswer] = useSelectQuestionnairesAnswerMutation();
 
   const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
-        let all: Question[] = [];
+        const all: Question[] = [];
 
         for (const dept of departmentName) {
           const result = await getQuestionnairesList({
@@ -169,7 +168,7 @@ const UserAssessmentPreview = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography variant="h6" mb="4px">
+            <Typography variant="h4" sx={{ mb: 1 }}>
               {currentGroup[0]?.department} Assessment
             </Typography>
 
@@ -179,20 +178,28 @@ const UserAssessmentPreview = () => {
               </Box>
               <Box className={styles.answerSection}>
                 {currentGroup.map((option, idx) => (
-                  <div
+                  <AnswerCard
                     key={option.id}
-                    onClick={() => handleAnswerClick(Number(option.id))}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <AnswerCard
-                      answerNumber={idx + 1}
-                      answerText={option.answer ?? ''}
-                      isSelected={option.isselected}
-                      onClick={() => {}}
-                    />
-                  </div>
+                    answerNumber={idx + 1}
+                    answerText={option.answer ?? ''}
+                    isSelected={option.isselected}
+                    onClick={() => handleAnswerClick(option.id)}
+                  />
                 ))}
               </Box>
+            </Box>
+            <Box className={styles.justification}>
+              <TextArea
+                value={justificationMap[currentKey] || ''}
+                onChange={(val) =>
+                  setJustificationMap((prev) => ({
+                    ...prev,
+                    [currentKey]: val,
+                  }))
+                }
+                placeholder="Enter justification"
+                readOnly={false}
+              />
             </Box>
           </Box>
 
@@ -246,9 +253,8 @@ const UserAssessmentPreview = () => {
                 color="warning"
                 onClick={() => setIsModalOpen(true)}
               >
-                Alert
+                Query
               </CustomButton>
-
               <CustomButton
                 variant="contained"
                 icon="save"
@@ -262,6 +268,16 @@ const UserAssessmentPreview = () => {
                 }}
               >
                 {isLoading ? 'Saving...' : currentIndex === groupKeys.length - 1 ? 'Finish' : 'Save'}
+              </CustomButton>
+              <CustomButton
+                variant="contained"
+                color="primary"
+                icon="right"
+                type="button"
+                onClick={() => setCurrentIndex((prev) => Math.max(prev + 1, 0))}
+                disabled={currentIndex === 0}
+              >
+                Next
               </CustomButton>
             </Box>
           </Box>

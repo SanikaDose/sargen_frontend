@@ -6,14 +6,11 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useSelector } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
-import { RootState } from '@/store/store';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import TextArea from '@/components/textArea/TextArea';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import InfoBox from '@/components/InfoBox/InfoBox';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 
 export default function Preview() {
