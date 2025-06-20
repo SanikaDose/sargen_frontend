@@ -94,6 +94,7 @@ function OrganizationOnbording() {
       setLogoUrl(localUrl);
     } catch (error) {
       console.log('');
+      console.log('');
     }
   };
 
@@ -101,8 +102,10 @@ function OrganizationOnbording() {
   const onSubmit = async (data: any) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
+      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
       router.push('/AddContactPerson');
     } catch (error) {
+      console.log('error ', error);
       console.log('error ', error);
     }
   };
@@ -112,6 +115,144 @@ function OrganizationOnbording() {
   };
 
   return (
+    <>
+      {isLoading ? (
+        <Loader loading={true} />
+      ) : (
+        <Box sx={{ width: '100%', height: '99.5%' }}>
+          {' '}
+          <Box className={styles.stepperContainer}>
+            <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+          </Box>
+          <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
+            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
+              <Box className={styles.formOuterContainer}>
+                <Typography variant="h6" className={styles.heading}>
+                  Organization Details
+                </Typography>
+
+                <Box className={styles.formContainer}>
+                  <Box className={styles.imageBox}>
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                  </Box>
+
+                  <Box className={styles.formFieldsBox}>
+                    <section className={styles.formFieldsInner}>
+                      <Grid container spacing={1}>
+                        {OrgFormInputs.map((input) => (
+                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
+                            <Controller
+                              name={input.name as keyof OrgOnboardType}
+                              control={control}
+                              defaultValue=""
+                              rules={input.rules}
+                              render={({ field, fieldState }) => (
+                                <>
+                                  {input.isCountry || input.isCurrency ? (
+                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
+                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
+                                        {input.label}
+                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
+                                      </Typography>
+                                      <Select
+                                        {...field}
+                                        displayEmpty
+                                        value={field.value || ''}
+                                        sx={{
+                                          borderRadius: '8px',
+                                          height: 36,
+                                          fontWeight: 500,
+                                          fontfamily: 'Inter, sans-serif',
+                                        }}
+                                        onFocus={() => setFocusedField('country')}
+                                      >
+                                        <MenuItem disabled value="">
+                                          <em>Select From Dropdown</em>
+                                        </MenuItem>
+                                        {(input.isCountry ? CountryOptions : currencyOptions).map((option) => (
+                                          <MenuItem key={option.code} value={option.name}>
+                                            {option.name}
+                                          </MenuItem>
+                                        ))}
+                                      </Select>
+                                      {fieldState?.error?.message && (
+                                        <Typography variant="caption" color="error">
+                                          {fieldState.error.message}
+                                        </Typography>
+                                      )}
+                                    </FormControl>
+                                  ) : (
+                                    <>
+                                      <InputWithLabel
+                                        {...field}
+                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        placeholder={input.placeholder}
+                                        type={input.type || 'text'}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        size="small"
+                                      />
+                                      {fieldState?.error?.message && (
+                                        <Typography variant="caption" color="error">
+                                          {fieldState.error.message}
+                                        </Typography>
+                                      )}
+                                    </>
+                                  )}
+                                </>
+                              )}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Box className={styles.aboutSection}>
+                        <Controller
+                          name="about"
+                          control={control}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <InputWithLabel
+                              {...field}
+                              label="About Orgnization"
+                              placeholder="Enter About Orgnization"
+                              // required={true}
+                              multiline
+                              type="text"
+                              rows={2}
+                              onFocus={() => setFocusedField('about')}
+                            />
+                          )}
+                        />
+                      </Box>
+                    </section>
+                  </Box>
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={1}
+                mt={1}
+                ml={5}
+                mr={5}
+                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+              >
+                <CustomButton variant="contained" icon="left" color="primary" disabled>
+                  Back
+                </CustomButton>
+                <CustomButton type="submit" variant="contained" icon="right" color="primary">
+                  {isLoading ? 'Next...' : 'Next'}
+                </CustomButton>
+              </Box>
+            </form>
+
+            <Box sx={{ width: '30%' }} className={styles.rightSection}>
+              <InfoBox />
+            </Box>
+          </Paper>
+        </Box>
+      )}
+    </>
     <>
       {isLoading ? (
         <Loader loading={true} />

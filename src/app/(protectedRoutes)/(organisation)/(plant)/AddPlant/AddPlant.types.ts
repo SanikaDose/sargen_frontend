@@ -44,4 +44,8 @@ export interface AddPlantApi {
   about?: string;
   currencyType: string;
   gstin: string;
+
+  pocFullName: string;
+  pocEmail: string;
+  pocContactNo: string;
 }

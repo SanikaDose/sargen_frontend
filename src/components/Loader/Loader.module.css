@@ -1,4 +1,4 @@
-.loaderWrapper {
+/* .loaderWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,6 +6,24 @@
 }
 
 .backdrop {
-  z-index: 1300; /* MUI default */
+  z-index: 1300; 
   color: #fff;
+} */
+
+
+.loaderWrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed; /* Ensure it's over everything */
+  top: 0;
+  left: 0;
+  z-index: 1300; /* High enough to overlay most content */
+  background-color: white; /* Optional: if you want a white screen background */
+}
+
+.backdrop {
+  z-index: 1301 !important; /* Ensure it's above other UI */
 }

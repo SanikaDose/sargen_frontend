@@ -18,6 +18,7 @@ import {
   OnboardingStatusResponse,
 } from './login.types';
 import { apiControllerPath } from '@/store/api/routes';
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
 export const loginApi = publicApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,13 +36,13 @@ export const loginApi = publicApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //     await rtkAPIToast(queryFulfilled, dispatch, {
-      //       successMessage: 'Login successful!',
-      //       errorMessage: 'Login failed!',
-      //       duration: 4000,
-      //     });
-      //   },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Login successful!',
+          errorMessage: 'Login failed. Please check your credentials.',
+          duration: 4000,
+        });
+      },
     }),
 
     /**
@@ -57,13 +58,13 @@ export const loginApi = publicApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //     await rtkAPIToast(queryFulfilled, dispatch, {
-      //       successMessage: 'Forgot Password successful!',
-      //       errorMessage: 'Forgot Password failed!',
-      //       duration: 4000,
-      //     });
-      //   },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Forgot Password successful!',
+          errorMessage: 'Forgot Password failed!',
+          duration: 4000,
+        });
+      },
     }),
 
     getOnboardingStatus: builder.query<OnboardingStatusResponse, string>({
