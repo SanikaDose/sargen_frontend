@@ -26,7 +26,11 @@ export default function PlantOverview() {
       <Typography className={styles.headingSection}>
         <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
-          <Paper component="form" sx={{ display: 'flex', alignItems: 'center' }} className={styles.searchInput}>
+          <Paper
+            component="form"
+            sx={{ display: 'flex', alignItems: 'center', backgroundColor: ' #ECE6F0', borderRadius: '16px' }}
+            className={styles.searchInput}
+          >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search Plant..."
@@ -38,7 +42,6 @@ export default function PlantOverview() {
             <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
               <SearchIcon />
             </IconButton>
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           </Paper>
         </Box>
       </Typography>

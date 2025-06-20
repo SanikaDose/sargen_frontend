@@ -176,14 +176,7 @@ const Questionaire = () => {
             {isLoading || isSaving ? (
               <Skeleton variant="text" width="40%" height={40} />
             ) : (
-              <Typography
-                variant="h6"
-                sx={{
-                  color: 'black',
-                  textAlign: 'left',
-                  width: '100%',
-                }}
-              >
+              <Typography variant="h4" sx={{ marginBottom: 1 }}>
                 {currentGroup && currentGroup[0]?.department}
               </Typography>
             )}

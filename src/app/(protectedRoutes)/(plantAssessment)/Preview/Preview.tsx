@@ -184,7 +184,7 @@ export default function Preview() {
               </>
             ) : (
               <>
-                <Typography variant="h6" sx={{ color: 'black', textAlign: 'left', width: '100%' }}>
+                <Typography variant="h4" sx={{ color: 'black', textAlign: 'left', width: '100%', marginBottom: 1 }}>
                   {currentGroup[0]?.department}
                 </Typography>
 
