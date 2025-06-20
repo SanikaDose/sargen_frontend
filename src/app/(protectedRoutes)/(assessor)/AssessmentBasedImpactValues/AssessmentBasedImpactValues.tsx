@@ -13,6 +13,9 @@ import {
   useSelectImpactValuesMutation,
 } from './AssessmentBasedImpactValuesApi';
 import Card from '@/components/Card/Card';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const AssessmentBasedImpactValues = () => {
   const params = useParams();
@@ -20,9 +23,10 @@ const AssessmentBasedImpactValues = () => {
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId') ?? '';
-
   const [dimensionData, setDimensionData] = useState<{ dimension: string; value: number }[]>([]);
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorDimenasionSelection));
 
   // Helper function to format camelCase to Title Case
   const formatDimensionName = (name: string): string => {

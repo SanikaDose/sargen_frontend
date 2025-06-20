@@ -11,5 +11,10 @@ export const pagesNames = {
   plantAssessmentSolution: 'Assessment / Solutions',
   plantAssessmentQuestionnaires: 'Assessment / Questionnaires',
   assessorOnboardingInfo: 'Onboarding / Assessor',
-  assessorAssignedPlants: 'Assigned plants',
+  assessorAssignedPlants: 'Assessor / Assigned plants',
+  assessorViewAssignedPlantDetails: 'Assessor / View Plant',
+  assessorAssessmentQuestionnairePreview: 'Assessor / Questionnaires Preview ',
+  assessorDimenasionSelection: 'Assessor / Dimension selection ',
+  assessorSolutionSelection: 'Assessor / Solution selection ',
+  assessorReportData: 'Assessor / Report Data ',
 };

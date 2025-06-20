@@ -14,6 +14,9 @@ import {
   useGetSelectedImpactValuesMutation,
   useSelectImpactValuesMutation,
 } from '../AssessmentBasedImpactValues/AssessmentBasedImpactValuesApi';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const AddReportData = () => {
   const params = useParams();
@@ -24,6 +27,8 @@ const AddReportData = () => {
 
   const [dimensionData, setDimensionData] = useState<{ dimension: string; value: number }[]>([]);
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorReportData));
 
   // Helper function to format camelCase to Title Case
   const formatDimensionName = (name: string): string => {

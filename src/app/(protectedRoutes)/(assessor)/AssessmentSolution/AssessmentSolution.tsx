@@ -8,6 +8,9 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import { useGetSolutionsByImpactQuery, useSelectSolutionsByImpactMutation } from './AssessmentSolutionApi';
 import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox, Divider } from '@mui/material';
 import styles from './AssessmentSolution.module.css';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 interface Solution {
   id: string;
@@ -23,12 +26,12 @@ const AssessmentSolution = () => {
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId');
-
   const { data, error, isLoading } = useGetSolutionsByImpactQuery({ tenantId, plantId });
-
   const [selectSolutionsByImpact, { isLoading: isSavingSolutions }] = useSelectSolutionsByImpactMutation();
   const [groupedSolutions, setGroupedSolutions] = useState<Record<string, Solution[]>>({});
   const [selectedSolutions, setSelectedSolutions] = useState<Set<string>>(new Set());
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
