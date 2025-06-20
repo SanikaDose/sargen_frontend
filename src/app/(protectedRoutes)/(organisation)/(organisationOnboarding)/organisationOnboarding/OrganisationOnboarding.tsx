@@ -20,6 +20,8 @@ import { OrgFormInputs } from './FormConfig/formInputStep';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
 import Loader from '@/components/Loader/Loader';
 import styles from './OrganisationOnboarding.module.css';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
 const steps = [
   'Company Name',
   'Company website',
@@ -34,6 +36,11 @@ const steps = [
 import { triggerToast } from '@/app/utils/toast';
 import InfoBox from '@/components/InfoBox/InfoBox';
 function OrganizationOnbording() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPageNameHeader('Organization Onboarding'));
+  }, [dispatch]);
   const router = useRouter();
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
 
