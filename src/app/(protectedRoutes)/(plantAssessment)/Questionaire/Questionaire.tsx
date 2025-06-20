@@ -10,12 +10,16 @@ import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { Question } from './Questionaire.type';
 import TextArea from '@/components/textArea/TextArea';
 import { showToast } from '@/components/toaster/toasterSlice';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import Toaster from '@/components/toaster/Toaster';
+import { triggerToast } from '@/app/utils/toast';
 
 const Questionaire = () => {
   const departmentName = [
@@ -35,7 +39,8 @@ const Questionaire = () => {
   ];
   const router = useRouter();
   const params = useParams();
-
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
   const plantId = params.PlantId as string;
   // const department = useSelector(
   //   (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
@@ -274,7 +279,9 @@ const Questionaire = () => {
                     } else if (departmentIndex < departmentName.length - 1) {
                       setDepartmentIndex((prev) => prev + 1);
                     } else {
-                      alert('🎉 All department questions submitted!');
+                      // alert('🎉 All department questions submitted!');
+                      triggerToast('All department questions submitted!', 'success');
+                      router.push(`/Preview/${tenantId}/${plantId}`);
                     }
                   }
                 }}

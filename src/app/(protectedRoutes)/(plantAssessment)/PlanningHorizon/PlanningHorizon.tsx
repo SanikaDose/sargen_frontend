@@ -16,6 +16,8 @@ import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 const steps = [
   'Research',
   'Selling',
@@ -31,6 +33,9 @@ const steps = [
 const PlanningHorizon = () => {
   const params = useParams();
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
@@ -111,7 +116,6 @@ const PlanningHorizon = () => {
     }
   };
 
-  const dispatch = useDispatch();
   const stepperState = useSelector((state: RootState) => state.stepper);
 
   useEffect(() => {

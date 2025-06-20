@@ -16,10 +16,14 @@ import { RootState } from '@/store/store';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const IndustrySelection = () => {
   const router = useRouter();
   const params = useParams();
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentIndustrySelection));
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
@@ -78,7 +82,6 @@ const IndustrySelection = () => {
     }
   };
 
-  const dispatch = useDispatch();
   const stepperState = useSelector((state: RootState) => state.stepper);
 
   useEffect(() => {

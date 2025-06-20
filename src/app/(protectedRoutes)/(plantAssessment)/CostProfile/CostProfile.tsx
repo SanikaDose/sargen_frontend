@@ -1,6 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
+import {
+  useAddCostCategoriesMutation,
+  useGetAssesmentStatusMutation,
+  useGetCostCategoriesMutation,
+} from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { CostInputPercentage, FormValues, MultipleSections, RawCostCategory } from '../plantAssement.model';
 import { Box, Button, Grid, Paper, Typography } from '@mui/material';
@@ -15,9 +19,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 const CostProfile = () => {
   const params = useParams();
   const router = useRouter();
+
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
   const steps = [
     'Research',
     'Selling',
@@ -37,6 +46,7 @@ const CostProfile = () => {
   const tenantId = getValueLocalStorage('tenantId');
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
+  // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
 
   const { control, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: { costs: [] },
@@ -110,7 +120,6 @@ const CostProfile = () => {
     fetchCostProfileData();
   }, [params]);
 
-  const dispatch = useDispatch();
   const stepperState = useSelector((state: RootState) => state.stepper);
   useEffect(() => {
     dispatch(setActiveStep(0));

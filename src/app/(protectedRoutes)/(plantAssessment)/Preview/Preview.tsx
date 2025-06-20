@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
 import { RootState } from '@/store/store';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
@@ -15,15 +15,22 @@ import TextArea from '@/components/textArea/TextArea';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { triggerToast } from '@/app/utils/toast';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
 
 export default function Preview() {
   const router = useRouter();
   const params = useParams();
-
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
   const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
 
+  const [isEditMode, setIsEditMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [finalSubmitModel, setFinalSubmitModel] = useState(false);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
@@ -86,6 +93,7 @@ export default function Preview() {
   }, []);
 
   const handleAnswerClick = (answerId: string) => {
+    if (!isEditMode) return; //if edit is off then it will return
     const questionUID = groupKeys[currentIndex];
     if (!questionUID) return;
 
@@ -257,11 +265,30 @@ export default function Preview() {
                 Back
               </CustomButton>
 
-              <CustomButton variant="contained" icon="edit" type="button" disabled>
+              <CustomButton
+                variant="contained"
+                icon="edit"
+                type="button"
+                onClick={() => setIsEditMode(true)} // only turn ON
+                disabled={isEditMode || isSaving} // disabled when already in edit mode or saving
+              >
                 Edit
               </CustomButton>
 
-              <CustomButton variant="contained" icon="submit" type="button" color="warning" disabled>
+              <CustomButton
+                variant="contained"
+                icon="submit"
+                type="button"
+                color="warning"
+                onClick={async () => {
+                  const success = await submitQuestionnaireAnswer();
+                  if (success) {
+                    triggerToast('Question saved successfully!', 'success');
+                    setIsEditMode(false); // ✅ Turn off edit mode after submit
+                  }
+                }}
+                disabled={!isEditMode || isSaving} // ✅ Only enabled when editing
+              >
                 Submit
               </CustomButton>
 
@@ -270,12 +297,15 @@ export default function Preview() {
                 icon="right"
                 type="button"
                 onClick={async () => {
-                  const success = await submitQuestionnaireAnswer();
-                  if (success && currentIndex < groupKeys.length - 1) {
+                  if (currentIndex < groupKeys.length - 1) {
                     setCurrentIndex((prev) => prev + 1);
+                  } else if (currentIndex == groupKeys.length - 1) {
+                    console.log('currentIndex == groupKeys.length - 1', groupKeys.length);
+
+                    setFinalSubmitModel(true);
                   }
                 }}
-                disabled={isSaving}
+                disabled={isSaving || isEditMode}
               >
                 {isSaving ? 'Saving...' : 'Next'}
               </CustomButton>
@@ -283,6 +313,21 @@ export default function Preview() {
           </Box>
         </Box>
       </Paper>
+      {finalSubmitModel && (
+        <PopupModal
+          label="Confirm Final Submit"
+          text="Are you sure you want to submit?"
+          primaryButtonText="Confirm"
+          secondaryButtonText="Cancel"
+          onPrimaryClick={() => {
+            setFinalSubmitModel(false);
+            setTimeout(() => {
+              router.push('/PlantOverview');
+            }, 100); // slight delay after closing modal
+          }}
+          onSecondaryClick={() => setFinalSubmitModel(false)}
+        />
+      )}
     </Box>
   );
 }

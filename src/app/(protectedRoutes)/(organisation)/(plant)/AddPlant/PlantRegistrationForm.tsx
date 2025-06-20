@@ -18,9 +18,12 @@ import { plantFormInputs } from './FormConfig/formInputStep';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { triggerToast } from '@/app/utils/toast';
 import Loader from '@/components/Loader/Loader';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
-//const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'mayuri-Corp-eee82da2-a550-4113-9e2f-bf8255ea11d7';
+const tenantId = getValueLocalStorage('tenantId');
+
 const steps = [
   'Name',
   'Location',
@@ -38,6 +41,8 @@ const steps = [
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantOnboarding));
   const {
     control,
     handleSubmit,

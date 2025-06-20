@@ -26,6 +26,8 @@ export const plantInfoApi = protectedApi.injectEndpoints({
       }),
       providesTags: (result, error, { plantId }) => [{ type: 'PlantLogo', id: plantId }],
     }),
+
+    //get assesment status
   }),
 });
 

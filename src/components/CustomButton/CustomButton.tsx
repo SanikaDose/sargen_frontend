@@ -5,10 +5,20 @@ import React from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { MdOutlineAddAlert } from 'react-icons/md';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import CancelIcon from '@mui/icons-material/Cancel';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
-export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success' | 'cancel' | 'edit' | 'submit';
+export type ButtonIcon =
+  | 'left'
+  | 'right'
+  | 'save'
+  | 'alert'
+  | 'success'
+  | 'cancel'
+  | 'edit'
+  | 'submit'
+  | 'startAssesment';
 
 type CustomButtonProps = {
   children?: React.ReactNode;
@@ -52,6 +62,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         return <ModeEditOutlineOutlinedIcon fontSize="medium" />;
       case 'submit':
         return <AssignmentTwoToneIcon fontSize="medium" />;
+      case 'startAssesment':
+        return <OndemandVideoIcon fontSize="medium" />;
       default:
         return null;
     }

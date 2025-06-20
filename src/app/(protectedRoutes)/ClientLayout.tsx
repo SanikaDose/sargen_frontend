@@ -34,6 +34,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
 import { setDecodedToken } from '../(unprotectedRoutes)/login/loginSlice';
+import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -98,6 +99,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
   const router = useRouter();
+
+  const tenantId = getValueLocalStorage('tenantId');
+  if (!tenantId) {
+    router.push('/login');
+  }
 
   // Media queries to detect device type
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px

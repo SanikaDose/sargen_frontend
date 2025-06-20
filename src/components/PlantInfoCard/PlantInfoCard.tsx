@@ -5,9 +5,11 @@ import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
 import ImageUploader from '../ImageUpload/ImageUpload';
+import { CustomButton } from '../CustomButton/CustomButton';
 
-const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
+const PlantInfoCard = ({ data, editPlantOnClick, onClick, assesmentStatus }: PlantInfoCardProps) => {
   const plantData = data;
+  console.log('assesmentStatus', assesmentStatus);
 
   return (
     <Box className={styles.card}>
@@ -69,12 +71,29 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
         <Box>
           <Divider sx={{ marginBottom: 1 }} />
           <Typography className={styles.statusLabel}>Status</Typography>
-          <Button
+          {/* <Button
             startIcon={<OndemandVideoIcon />}
             children={'Start Assessment'}
             color={'secondary'}
             variant={'text'}
-            sx={{ bgcolor: '#10557C33' }}
+            onClick={onClick}
+          /> */}
+          <CustomButton
+            icon="startAssesment"
+            children={
+              assesmentStatus?.assesorCompletionStage === 'NOT_STARTED'
+                ? 'Request for Assessment'
+                : assesmentStatus?.assesorCompletionStage === 'STARTED'
+                  ? 'Assessment Started'
+                  : assesmentStatus?.assesorCompletionStage === 'FINISH_ASSESSMENT'
+                    ? 'Download Report'
+                    : 'Status Unknown'
+            }
+            variant="contained"
+            color="primary"
+            width="100%"
+            height="30px"
+            disabled={assesmentStatus?.assesorCompletionStage === 'NOT_STARTED'}
             onClick={onClick}
           />
         </Box>

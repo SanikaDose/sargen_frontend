@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, Divider, Grid, IconButton, Input, InputBase, Paper, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import styles from './PlantOverview.module.css';
 import AddPlantCard from '@/components/AddPlantCard/AddPlantCard';
 import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
@@ -10,17 +10,61 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
+import Loader from '@/components/Loader/Loader';
 
 export default function PlantOverview() {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
 
   const [searchValue, setSearchValue] = useState('');
-  const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({ tenantId, search: searchValue });
-  const router = useRouter();
+  const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
+  const [statusLoading, setStatusLoading] = useState(false);
+
+  // Set page header
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.organisationOnboardedPlantOverView));
+  }, [dispatch]);
+
+  const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({
+    tenantId,
+    search: searchValue,
+  });
+
+  const [getAssesmentStatus, { isLoading: assesmentStatusLoading }] = useGetAssesmentStatusMutation();
+
+  useEffect(() => {
+    const fetchAssessmentStatuses = async () => {
+      if (!Array.isArray(plantInfo?.data) || plantInfo.data.length === 0) return;
+
+      setStatusLoading(true);
+      const statuses: Record<string, any> = {};
+
+      for (const plant of plantInfo.data) {
+        try {
+          const res = await getAssesmentStatus({ tenantId, plantId: plant.id }).unwrap();
+          statuses[plant.id] = res;
+        } catch (error) {
+          console.error(`Failed to fetch status for plant ${plant.id}`, error);
+          statuses[plant.id] = null;
+        }
+      }
+
+      setAssessmentStatuses(statuses);
+      setStatusLoading(false);
+    };
+
+    fetchAssessmentStatuses();
+  }, [plantInfo?.data, getAssesmentStatus, tenantId]);
+
   const handleSearch = (value: string) => {
-    console.log('search value ', value);
     setSearchValue(value);
   };
+
   return (
     <div className={styles.wrapper}>
       <Typography className={styles.headingSection}>
@@ -28,16 +72,14 @@ export default function PlantOverview() {
         <Box sx={{ padding: 1 }}>
           <Paper
             component="form"
-            sx={{ display: 'flex', alignItems: 'center', backgroundColor: ' #ECE6F0', borderRadius: '16px' }}
+            sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#ECE6F0', borderRadius: '16px' }}
             className={styles.searchInput}
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search Plant..."
-              inputProps={{ 'aria-label': 'search google maps' }}
-              onChange={(e) => {
-                handleSearch(e.target.value);
-              }}
+              inputProps={{ 'aria-label': 'search plant' }}
+              onChange={(e) => handleSearch(e.target.value)}
             />
             <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
               <SearchIcon />
@@ -45,60 +87,70 @@ export default function PlantOverview() {
           </Paper>
         </Box>
       </Typography>
-
-      <Grid
-        container
-        spacing={{ xs: 1.5, md: 1.5 }}
-        columns={{ xs: 12, sm: 12, md: 12, xl: 12, lg: 12 }}
-        className={styles.gridContainer}
-      >
-        {/* Add Plant Card */}
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
-          <AddPlantCard
-            backgroundColor="#D4D4D4"
-            label="Click To Add Plant"
-            onClick={() => {
-              router.push(pageRoutes.plant.addPlant);
-
-              console.log(pageRoutes.plant.addPlant);
-            }}
-          />
-        </Grid>
-
-        {/* Plant Info Cards */}
-        {!plantsLoading &&
-          Array.isArray(plantInfo?.data) &&
-          plantInfo.data.map((plant: any) => (
-            <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
-              <PlantInfoCard
-                data={{
-                  age: plant.age,
-                  assessmentCompletionPercentage: plant.assessmentCompletion,
-                  assessmentStartDate: plant.assessmentDate,
-                  createdAt: plant.assessmentDate,
-                  debriefDate: plant.debriefDate,
-                  gstin: plant.gstin,
-                  location: plant.location,
-                  name: plant.name,
-                  numberOfEmployees: plant.numberOfEmployees,
-                  numberOfLines: plant.numberOfLines,
-                  plantLogo: plant.plantLogo,
-                  registrationNo: plant.registrationNo,
-                  revenue: plant.revenue,
-                  updatedAt: plant.debriefDate,
-                }}
-                editPlantOnClick={() => {
-                  console.log('plant id', plant.id);
-
-                  router.push(`EditPlant/${tenantId}/${plant.id}`);
-                }}
-                onClick={() => {
-                  router.push(`CostProfile/${tenantId}/${plant.id}`);
-                }}
-              />
+      {plantsLoading || statusLoading ? (
+        <Grid
+          container
+          spacing={{ xs: 1.5, md: 1.5 }}
+          columns={{ xs: 12, sm: 12, md: 12, xl: 12, lg: 12 }}
+          className={styles.gridContainer}
+        >
+          {[...Array(8)].map((_, index) => (
+            <Grid key={index} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
+              <Box sx={{ padding: 2, borderRadius: '12px', backgroundColor: '#f4f4f4', width: '100%' }}>
+                <Skeleton variant="rectangular" width="100%" height={140} />
+                <Skeleton variant="text" height={30} sx={{ mt: 1 }} />
+                <Skeleton variant="text" height={20} width="60%" />
+                <Skeleton variant="text" height={20} width="80%" />
+                <Skeleton variant="text" height={20} width="40%" />
+              </Box>
             </Grid>
           ))}
-      </Grid>
+        </Grid>
+      ) : (
+        <Grid
+          container
+          spacing={{ xs: 1.5, md: 1.5 }}
+          columns={{ xs: 12, sm: 12, md: 12, xl: 12, lg: 12 }}
+          className={styles.gridContainer}
+        >
+          {/* Add Plant Card */}
+          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
+            <AddPlantCard
+              backgroundColor="#D4D4D4"
+              label="Click To Add Plant"
+              onClick={() => router.push(pageRoutes.plant.addPlant)}
+            />
+          </Grid>
+
+          {/* Plant Info Cards */}
+          {Array.isArray(plantInfo?.data) &&
+            plantInfo.data.map((plant: any) => (
+              <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
+                <PlantInfoCard
+                  data={{
+                    age: plant.age,
+                    assessmentCompletionPercentage: plant.assessmentCompletion,
+                    assessmentStartDate: plant.assessmentDate,
+                    createdAt: plant.assessmentDate,
+                    debriefDate: plant.debriefDate,
+                    gstin: plant.gstin,
+                    location: plant.location,
+                    name: plant.name,
+                    numberOfEmployees: plant.numberOfEmployees,
+                    numberOfLines: plant.numberOfLines,
+                    plantLogo: plant.plantLogo,
+                    registrationNo: plant.registrationNo,
+                    revenue: plant.revenue,
+                    updatedAt: plant.debriefDate,
+                  }}
+                  assesmentStatus={assessmentStatuses[plant.id]}
+                  editPlantOnClick={() => router.push(`EditPlant/${tenantId}/${plant.id}`)}
+                  onClick={() => router.push(`CostProfile/${tenantId}/${plant.id}`)}
+                />
+              </Grid>
+            ))}
+        </Grid>
+      )}
     </div>
   );
 }
