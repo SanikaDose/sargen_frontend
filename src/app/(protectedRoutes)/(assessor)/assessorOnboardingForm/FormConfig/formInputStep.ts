@@ -64,7 +64,7 @@ export const AssessorFormInputs: AssessorFormInput[] = [
   },
   {
     name: 'city',
-    label: 'City,Country',
+    label: 'City',
     placeholder: 'Enter City',
     required: true,
     rules: {

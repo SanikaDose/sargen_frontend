@@ -47,14 +47,11 @@ export const onboardingApi = protectedApi.injectEndpoints({
         body,
       }),
 
-      // Invalidate the Organization tag when new data is submitted
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Organisation', id: tenantId }],
-
-      // Show toast on success/failure using reusable utility
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Organization Onboarded successfully!',
-          errorMessage: 'Organization Onboarding failed!',
+          successMessage: 'Organization details submitted successfully!',
+          errorMessage: 'Failed to submit organization details!',
           duration: 4000,
         });
       },
@@ -70,8 +67,13 @@ export const onboardingApi = protectedApi.injectEndpoints({
 
       // Invalidate the Point of Contact tag when new data is submitted
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Poc', id: tenantId }],
-
-      
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Point of Contact submitted successfully!',
+          errorMessage: 'Failed to submit Point of Contact!',
+          duration: 4000,
+        });
+      },
     }),
 
     // Get Organization Info (provides a tag)
@@ -82,6 +84,13 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
       // Provide a tag so that the cache can be updated later when necessary
       providesTags: (result, error, tenantId) => [{ type: 'Organisation', id: tenantId }],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Fetched organization details successfully!',
+          errorMessage: 'Failed to fetch organization details!',
+          duration: 4000,
+        });
+      },
     }),
 
     // Get Point of Contact Info (provides a tag)
@@ -92,6 +101,13 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
       // Provide a tag so that the cache can be updated later when necessary
       providesTags: (result, error, tenantId) => [{ type: 'Poc', id: tenantId }],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Fetched Point of Contact details successfully!',
+          errorMessage: 'Failed to fetch Point of Contact details!',
+          duration: 4000,
+        });
+      },
     }),
     // 📤 Upload Plant Logo
     uploadOrganizationLogo: builder.mutation<void, { tenantId: string; formData: FormData }>({
@@ -101,7 +117,14 @@ export const onboardingApi = protectedApi.injectEndpoints({
         body: formData,
       }),
 
-      invalidatesTags: (result, error, { tenantId }) => [{ type: 'PlantLogo', id: tenantId }],
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'PlantLogo', id: tenantId }],
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Logo uploaded successfully!',
+          errorMessage: 'Logo upload failed!',
+          duration: 4000,
+        });
+      },
     }),
   }),
 });

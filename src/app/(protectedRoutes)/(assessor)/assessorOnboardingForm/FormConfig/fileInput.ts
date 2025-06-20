@@ -103,4 +103,4 @@ export const fileUploadKeyMap: { [key: string]: string } = {
 export const allowedExtensions = ['.csv', '.xls', '.xlsx'];
 
 export const fileTypes = Object.keys(fileUploadKeyMap); // display keys
-export const fileValues = Object.values(fileUploadKeyMap);
+export const fileValues = Object.values(fileUploadKeyMap); //display values

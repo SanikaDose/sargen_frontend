@@ -11,15 +11,15 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'POST',
         body,
       }),
+
+      invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Plant Information Added successfully!',
-          errorMessage: 'Falied To Add Plant Information',
+          successMessage: 'Plant Onboarded successfully!',
+          errorMessage: 'Plant Onboarding failed!',
           duration: 4000,
         });
       },
-
-      invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
     // 📤 Upload Plant Logo
     uploadPlantLogo: builder.mutation<void, { tenantId: string; plantId: string; formData: FormData }>({
@@ -30,6 +30,13 @@ export const plantInfoApi = protectedApi.injectEndpoints({
       }),
 
       invalidatesTags: (result, error, { plantId }) => [{ type: 'PlantLogo', id: plantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant Logo Uploaded successfully!',
+          errorMessage: 'Failed to upload Plant Logo',
+          duration: 4000,
+        });
+      },
     }),
 
     // 📥 Get Plant Logo
@@ -39,6 +46,13 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: (result, error, { plantId }) => [{ type: 'PlantLogo', id: plantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant logo fetched successfully.',
+          errorMessage: 'Failed to fetch plant logo.',
+          duration: 4000,
+        });
+      },
     }),
   }),
 });
