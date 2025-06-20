@@ -20,6 +20,8 @@ import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import Loader from '@/components/Loader/Loader';
 import styles from './EditOrganisationOnboarding.module.css';
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
 const steps = [
   'Company Name',
   'Company website',
@@ -32,6 +34,11 @@ const steps = [
 ].map((label) => ({ label }));
 function OrganizationOnbording() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPageNameHeader('Organization Onboarding'));
+  }, [dispatch]);
   const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
@@ -124,9 +131,14 @@ function OrganizationOnbording() {
   const completedSteps = useMemo(() => {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
-      if (typeof value === 'string' && value.length > 1) {
+
+      const isFilled =
+        (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+      if (isFilled) {
         acc.push(index);
       }
+
       return acc;
     }, []);
   }, [watchedValues]);
