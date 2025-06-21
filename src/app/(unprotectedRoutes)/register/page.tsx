@@ -6,7 +6,6 @@ import {
   Button,
   Container,
   Typography,
-  Paper,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -17,12 +16,15 @@ import { useForm, Controller } from 'react-hook-form';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
 import styles from './style.module.css';
-import { FormValues, RegisterFormInputs } from './register.types';
+import { RegisterFormInputs } from './register.types';
 import { useRegisterUserMutation } from './registerApi';
 import { useRouter } from 'next/navigation';
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 
 const RegisterPage = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const [registerUser] = useRegisterUserMutation();
   const {
     control,
@@ -55,6 +57,7 @@ const RegisterPage = () => {
 
   async function handleRegister(data: RegisterFormInputs) {
     console.log('inside the handle register function');
+    setLoading(true);
     const preDefinedBody = {
       ...data,
       applications: ['SARGEN'],
@@ -70,6 +73,8 @@ const RegisterPage = () => {
       }
     } catch (error) {
       console.error('Registration error:', error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -254,7 +259,17 @@ const RegisterPage = () => {
           />
 
           <Button type="submit" fullWidth variant="contained" className={styles.button}>
-            Create Account
+            {loading ? (
+              <ButtonWithLoader
+                label="Create Account"
+                backgroundColor="inherit"
+                loaderColor="white"
+                loading={true}
+                height="30px"
+              />
+            ) : (
+              'Create Account'
+            )}
           </Button>
         </Box>
       </Box>

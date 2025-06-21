@@ -12,6 +12,7 @@ import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
@@ -162,7 +163,17 @@ const LoginPage = () => {
           />
 
           <Button type="submit" fullWidth variant="contained" className={styles.button}>
-            Sign In
+            {loading ? (
+              <ButtonWithLoader
+                label="Sign In"
+                backgroundColor="inherit"
+                loaderColor="white"
+                loading={true}
+                height="30px"
+              />
+            ) : (
+              'Sign In'
+            )}
           </Button>
 
           <Typography variant="body2" className={styles.forgotPassword}>

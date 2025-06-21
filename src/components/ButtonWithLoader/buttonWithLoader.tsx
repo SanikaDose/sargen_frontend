@@ -14,26 +14,26 @@ const ButtonWithLoader: React.FC<ButtonWithLoaderProps> = ({
   loaderSize = 20,
   loaderThickness = 4,
   loaderColor = 'green',
-  width = '150px',
-  height = '40px',
+  width,
+  height,
   backgroundColor = '#1976d2',
   disabled = false,
+  fullWidth = false,
 }) => {
   return (
     <Button
       onClick={onClick}
       disabled={disabled || loading}
       variant="contained"
-      style={{ width, height, backgroundColor }}
+      style={{
+        width: fullWidth ? '100%' : width,
+        height,
+        backgroundColor,
+      }}
+      fullWidth={fullWidth}
     >
       <div className={clsx(styles.buttonContent)}>
-        {loading && (
-          <CircularProgress
-  size={loaderSize}
-  thickness={loaderThickness}
-  sx={{ color: loaderColor }} 
-/>
-        )}
+        {loading && <CircularProgress size={loaderSize} thickness={loaderThickness} sx={{ color: loaderColor }} />}
         {!loading && label}
       </div>
     </Button>
