@@ -22,6 +22,8 @@ export default function PlantOverview() {
   const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
 
+  // when ever the user will be there in plant overview then setShowAssessmentListSideBar will be always false
+  dispatch(setShowAssessmentListSideBar(false));
   const [searchValue, setSearchValue] = useState('');
   const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
   const [statusLoading, setStatusLoading] = useState(false);
@@ -65,6 +67,7 @@ export default function PlantOverview() {
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
+
   const handleButtonClick = (tenantId: string, plantId: string) => {
     router.push(`CostProfile/${tenantId}/${plantId}`);
     dispatch(setShowAssessmentListSideBar(true));
