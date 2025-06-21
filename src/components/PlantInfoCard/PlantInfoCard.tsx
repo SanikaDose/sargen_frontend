@@ -9,7 +9,6 @@ import { CustomButton } from '../CustomButton/CustomButton';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick, assesmentStatus }: PlantInfoCardProps) => {
   const plantData = data;
-  console.log('assesmentStatus', assesmentStatus);
 
   return (
     <Box className={styles.card}>
