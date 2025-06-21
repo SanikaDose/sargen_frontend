@@ -144,8 +144,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const userRoleFromLocalStorage = decodedToken?.userRole;
   const userTypeFromLocalStorage = decodedToken?.userType;
 
-  const onboardingStatus: OnboardingStatus =
-    useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || userRoleFromLocalStorage;
+  const onboardingStatus: string = useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || '';
 
   const userType = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
 

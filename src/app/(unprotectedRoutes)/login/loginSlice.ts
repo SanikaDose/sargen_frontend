@@ -14,12 +14,12 @@ import { OnboardingStatus, Token } from './login.types';
 
 type LoginState = {
   decodedToken: Token | null;
-  onboardingStatus: OnboardingStatus;
+  onboardingStatus: string;
 };
 
 const initialState: LoginState = {
   decodedToken: null,
-  onboardingStatus: OnboardingStatus.NOT_STARTED,
+  onboardingStatus: localStorage.getItem('onboardingStatus') || '',
 };
 
 /**
