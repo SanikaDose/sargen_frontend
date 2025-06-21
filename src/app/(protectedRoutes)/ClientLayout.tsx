@@ -181,18 +181,15 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   React.useEffect(() => {
     if (!userType || !onboardingStatus) return;
 
-    // Onboarding menus for assessor and platform user
     if (onboardingStatus !== OnboardingStatus.COMPLETED) {
+      // Not completed: show onboarding list
       if (userType[0] === UserType.PLATFORMUSER) {
         dispatch(setSideBarListItem(organisationOnboardingMenuList));
       } else if (userType[0] === UserType.ASSESSOR) {
         dispatch(setSideBarListItem(assessorOnboardingMenuList));
       }
-      return;
-    }
-
-    // Onboarded menus
-    if (onboardingStatus !== OnboardingStatus.COMPLETED) {
+    } else {
+      // COMPLETED: show onboarded + extra list
       if (userType[0] === UserType.PLATFORMUSER) {
         dispatch(setSideBarListItem(organisationOnboardedMenuList));
         dispatch(setExtraListItems(organisationExtraMenuList));
@@ -453,9 +450,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </Typography>
         </Box>
       </Drawer>
-      <Main open={open}>
+      <Main open={open} sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <DrawerHeader />
-        {children}
+        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>{children}</Box>
       </Main>
     </Box>
   );
