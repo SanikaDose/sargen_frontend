@@ -10,11 +10,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
 import Loader from '@/components/Loader/Loader';
+import { RootState } from '@/store/store';
 
 export default function PlantOverview() {
   const dispatch = useDispatch();
@@ -64,6 +65,13 @@ export default function PlantOverview() {
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
+  const handleButtonClick = (tenantId: string, plantId: string) => {
+    router.push(`CostProfile/${tenantId}/${plantId}`);
+    dispatch(setShowAssessmentListSideBar(true));
+  };
+
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  console.log('showAssessmentListSideBar', showAssessmentListSideBar);
 
   return (
     <div className={styles.wrapper}>
@@ -115,11 +123,7 @@ export default function PlantOverview() {
         >
           {/* Add Plant Card */}
           <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
-            <AddPlantCard
-              backgroundColor="#D4D4D4"
-              label="Click To Add Plant"
-              onClick={() => router.push(pageRoutes.plant.addPlant)}
-            />
+            <AddPlantCard backgroundColor="#D4D4D4" label="Click To Add Plant" onClick={() => router.push(pageRoutes.plant.addPlant)} />
           </Grid>
 
           {/* Plant Info Cards */}
@@ -145,7 +149,7 @@ export default function PlantOverview() {
                   }}
                   assesmentStatus={assessmentStatuses[plant.id]}
                   editPlantOnClick={() => router.push(`EditPlant/${tenantId}/${plant.id}`)}
-                  onClick={() => router.push(`CostProfile/${tenantId}/${plant.id}`)}
+                  onClick={() => handleButtonClick(tenantId, plant.id)}
                 />
               </Grid>
             ))}

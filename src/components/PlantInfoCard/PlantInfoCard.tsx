@@ -56,12 +56,8 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, assesmentStatus }: Pla
         <Typography className={styles.datesTitle}>Dates</Typography>
         <Divider sx={{ marginBottom: 1 }} />
         <Box>
-          <Typography className={styles.textLabel}>
-            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString()}
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString()}
-          </Typography>
+          <Typography className={styles.textLabel}>Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString()}</Typography>
+          <Typography className={styles.textLabel}>Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString()}</Typography>
         </Box>
       </Box>
 

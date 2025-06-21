@@ -34,6 +34,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { ICONS } from '../utils/iconsMap';
+import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
