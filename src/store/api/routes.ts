@@ -107,4 +107,7 @@ export const apiControllerPath = {
     root: 'metadata-files-template',
     getMetadataFile: '/download',
   },
+  enquiry: {
+    root: '/enquiry',
+  },
 };

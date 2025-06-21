@@ -126,6 +126,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('Authorization');
+      console.log(token);
       if (token) {
         const decoded: Token = jwtDecode(token);
         setDecodedToken(decoded);
@@ -139,6 +140,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const onboardingStatus: OnboardingStatus =
     useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || userRoleFromLocalStorage;
+
   const userType = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
 
   //Side bar list items states
@@ -177,22 +179,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const pathName = usePathname();
 
   // Component mount and change in the dependency the component will remount
-
+  console.log('onboarding', onboardingStatus);
   React.useEffect(() => {
     if (!userType || !onboardingStatus) return;
 
-    // Onboarding menus for assessor and platform user
-    if (onboardingStatus !== OnboardingStatus.COMPLETED) {
+    if (onboardingStatus === OnboardingStatus.NOT_STARTED || onboardingStatus === OnboardingStatus.STARTED) {
+      // Not completed: show onboarding list
       if (userType[0] === UserType.PLATFORMUSER) {
         dispatch(setSideBarListItem(organisationOnboardingMenuList));
       } else if (userType[0] === UserType.ASSESSOR) {
         dispatch(setSideBarListItem(assessorOnboardingMenuList));
       }
-      return;
-    }
-
-    // Onboarded menus
-    if (onboardingStatus !== OnboardingStatus.COMPLETED) {
+    } else {
+      // COMPLETED: show onboarded + extra list
       if (userType[0] === UserType.PLATFORMUSER) {
         dispatch(setSideBarListItem(organisationOnboardedMenuList));
         dispatch(setExtraListItems(organisationExtraMenuList));
