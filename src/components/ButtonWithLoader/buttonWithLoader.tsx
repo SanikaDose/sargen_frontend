@@ -19,9 +19,11 @@ const ButtonWithLoader: React.FC<ButtonWithLoaderProps> = ({
   backgroundColor = '#1976d2',
   disabled = false,
   fullWidth = false,
+  type,
 }) => {
   return (
     <Button
+      type={type}
       onClick={onClick}
       disabled={disabled || loading}
       variant="contained"
