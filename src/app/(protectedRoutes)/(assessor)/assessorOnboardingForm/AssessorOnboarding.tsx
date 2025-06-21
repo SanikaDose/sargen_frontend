@@ -244,36 +244,29 @@ function AssessorOnboarding() {
   }, [watchedValues]);
   // function to download the file
 
-  const handleDownloadClick = async (fileName: string) => {
-    if (!fileName) {
-      triggerToast('Invalid file name.', 'warning');
-      return;
-    }
+ const handleDownloadClick = async (fileName: string) => {
+  if (!fileName) {
+    triggerToast('Invalid file name.', 'warning');
+    return;
+  }
 
-    try {
-      setdownloadKey(fileName);
-      const response = await getMetadataFileTemplate({
-        userType: 'ASSESSOR',
-        fileName,
-      }).unwrap();
+  try {
+    setdownloadKey(fileName);
 
-      const blob = await response.blob();
-      const suggestedFileName = `${fileName}.xlsx`;
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', suggestedFileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      console.log('downloaded sucessfully', url);
-    } catch (err) {
-      console.error('Error downloading file:', err);
-    } finally {
-      setdownloadKey(null);
-    }
-  };
+    // This will internally trigger the file download via responseHandler
+    await getMetadataFileTemplate({
+      userType: 'ASSESSOR',
+      fileName,
+    }).unwrap();
+
+    console.log('Download triggered successfully.');
+  } catch (err) {
+    console.error('Error downloading file:', err);
+  } finally {
+    setdownloadKey(null);
+  }
+};
+
 
   return (
     <>
