@@ -14,10 +14,11 @@ const QuillTextArea: React.FC<QuillTextAreaProps> = ({
 }) => {
   const quillRef = useRef<Quill | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (!editorRef.current || initializedRef.current) return;
+    if (!editorRef.current || !toolbarRef.current || initializedRef.current) return;
 
     const toolbarOptions = {
       full: [
@@ -35,10 +36,19 @@ const QuillTextArea: React.FC<QuillTextAreaProps> = ({
       placeholder,
       readOnly,
       modules: {
-        toolbar: toolbarOptions[toolbar],
+        toolbar: {
+          container: toolbarRef.current,
+          handlers: {},
+        },
         clipboard: { matchVisual: false },
       },
     });
+
+    // Manually add toolbar options to the custom toolbar
+    const quillToolbarModule = quillRef.current.getModule('toolbar');
+    if (quillToolbarModule && toolbarOptions[toolbar]) {
+      // The toolbar is now controlled by our custom container
+    }
 
     // Set initial content
     if (value) {
@@ -65,7 +75,41 @@ const QuillTextArea: React.FC<QuillTextAreaProps> = ({
 
   return (
     <div className={styles.richTextContainer}>
-      <div ref={editorRef} style={{ flex: 1 }} />
+      {/* Fixed toolbar at top */}
+      <div ref={toolbarRef} className={styles.customToolbar}>
+        <span className="ql-formats">
+          <select className="ql-header">
+            <option value="1">Heading 1</option>
+            <option value="2">Heading 2</option>
+            <option value="">Normal</option>
+          </select>
+        </span>
+        <span className="ql-formats">
+          <button className="ql-bold"></button>
+          <button className="ql-italic"></button>
+          <button className="ql-underline"></button>
+          <button className="ql-strike"></button>
+        </span>
+        <span className="ql-formats">
+          <button className="ql-list" value="ordered"></button>
+          <button className="ql-list" value="bullet"></button>
+        </span>
+        <span className="ql-formats">
+          <select className="ql-color"></select>
+          <select className="ql-background"></select>
+        </span>
+        <span className="ql-formats">
+          <button className="ql-link"></button>
+        </span>
+        <span className="ql-formats">
+          <button className="ql-clean"></button>
+        </span>
+      </div>
+
+      {/* Scrollable editor area */}
+      <div className={styles.editorWrapper}>
+        <div ref={editorRef} className={styles.editor} />
+      </div>
     </div>
   );
 };

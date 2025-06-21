@@ -35,7 +35,12 @@ const AddReportData = () => {
   const dispatch = useDispatch();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [content, setContent] = useState('');
+
+  // Store content for each question separately
+  const [questionContents, setQuestionContents] = useState<string[]>(new Array(questions.length).fill(''));
+
+  // Current content is derived from questionContents array
+  const content = questionContents[currentQuestionIndex];
 
   dispatch(setPageNameHeader(pagesNames.assessorReportData));
 
@@ -45,6 +50,15 @@ const AddReportData = () => {
   const [addSummary] = useSummaryOfObservationsAndRecommendationsMutation();
   const [addROI] = useAddRoiMutation();
   const [addComment] = useAddCommentMutation();
+
+  // Update content for current question
+  const handleContentChange = (newContent: string) => {
+    setQuestionContents((prev) => {
+      const updated = [...prev];
+      updated[currentQuestionIndex] = newContent;
+      return updated;
+    });
+  };
 
   const handleSave = async () => {
     const payload: PayloadType = {
@@ -81,7 +95,6 @@ const AddReportData = () => {
 
     try {
       await mutationFn(payload).unwrap();
-      setContent('');
 
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex((prev) => prev + 1);
@@ -91,6 +104,12 @@ const AddReportData = () => {
     } catch (error) {
       console.error('Save failed:', error);
       alert('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
@@ -120,7 +139,7 @@ const AddReportData = () => {
             </Typography>
 
             <Box sx={{ flex: 1 }}>
-              <QuillTextArea value={content} onChange={setContent} placeholder="Enter your justification..." />
+              <QuillTextArea value={content} onChange={handleContentChange} placeholder="Enter your content here..." />
             </Box>
           </Box>
 
@@ -148,11 +167,7 @@ const AddReportData = () => {
                 color="primary"
                 icon="left"
                 type="button"
-                onClick={() => {
-                  if (currentQuestionIndex > 0) {
-                    setCurrentQuestionIndex((prev) => prev - 1);
-                  }
-                }}
+                onClick={handleBack}
                 disabled={currentQuestionIndex === 0}
               >
                 Back
