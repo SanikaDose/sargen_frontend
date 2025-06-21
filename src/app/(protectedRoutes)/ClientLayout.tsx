@@ -146,7 +146,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
-
+  const showOrganisationExtraListItems = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   // For users
   if (onboardingStatus !== OnboardingStatus.COMPLETED && userType && userType[0] === UserType.PLATFORMUSER) {
     dispatch(setSideBarListItem(organisationOnboardingMenuList));
@@ -161,11 +161,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.ASSESSOR) {
     dispatch(setSideBarListItem(assessorOnboardedMenuList));
   }
-  // For
+  // For showing the assesment list
   if (
     onboardingStatus !== OnboardingStatus.COMPLETED &&
     userType &&
     userType[0] === UserType.ASSESSOR &&
+    showAssessmentListSideBar
+  ) {
+    dispatch(setSideBarListItemsForAssessment(PlantAssessmentMenuList));
+  }
+  // For showing extra list items
+  if (
+    onboardingStatus !== OnboardingStatus.COMPLETED &&
+    userType &&
+    userType[0] === UserType.PLATFORMUSER &&
     showAssessmentListSideBar
   ) {
     dispatch(setSideBarListItemsForAssessment(PlantAssessmentMenuList));
@@ -371,6 +380,45 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               ))}
             </>
           )}
+
+          {/* The below list will be used for the  report org info edit etc for organisation or for the assessor */}
+          {sideBarListItems.map((item) => (
+            <ListItem
+              key={item.text}
+              disablePadding
+              sx={{
+                pl: 0,
+                backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                // '&:hover': {
+                //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
+                // },
+              }}
+            >
+              <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                <ListItemIcon
+                  sx={{
+                    mr: 2,
+                    color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                  }}
+                >
+                  {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        // fontWeight: item.linkRoute === pathName ? 600 : 550,
+                      }}
+                    >
+                      {item.text}
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </Box>
         {/* Main menu to add the edit preview and the reports to view also the org info*/}
         <Box sx={{ flexGrow: 1 }} />
