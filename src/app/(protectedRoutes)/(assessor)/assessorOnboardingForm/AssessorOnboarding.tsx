@@ -58,6 +58,8 @@ import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { Dropdown } from '@/components/Dropdown/Dropdown';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
 const steps = [
   'First Name',
   'Last Name',
@@ -92,6 +94,8 @@ function AssessorOnboarding() {
       yearOfExperience: '',
       certificationYear: '',
     },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
   const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
@@ -198,13 +202,7 @@ function AssessorOnboarding() {
   };
   //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
-    // console.log(fileValues);
-    // console.log(uploadedFiles);
-    // const allFilesUploaded = fileValues.every((key) => uploadedFiles[key]);
-    // if (!allFilesUploaded) {
-    //   triggerToast('Please upload all required files before submitting.', 'error');
-    //   return;
-    // }
+    console.log('submot button clicked');
     if (!selectedFile) {
       triggerToast('Please add siriCertificate', 'error');
     }
@@ -302,7 +300,7 @@ function AssessorOnboarding() {
                     <section className={styles.formFieldsInner}>
                       <Grid container spacing={1} className={styles.FormContainer}>
                         {AssessorFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, md: 3 }} key={input.name}>
+                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller
                               name={input.name as keyof AssessorFormType}
                               control={control}
@@ -311,38 +309,23 @@ function AssessorOnboarding() {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.iscountry ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        Currency Type
-                                        {input.rules?.required && <span style={{ color: 'black' }}> *</span>}
-                                      </Typography>
-                                      <Select
+                                    <>
+                                      <CurrencyValueSelector
                                         {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '15px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('currencyType')}
-                                      >
-                                        <MenuItem value="">
-                                          <em>Select Currency</em>
-                                        </MenuItem>
-                                        {CountryOptions.map((country) => (
-                                          <MenuItem key={country.code} value={country.name}>
-                                            {country.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
+                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        placeholder={input.placeholder}
+                                        options={CountryOptions.map(({ name, code }) => ({
+                                          label: name,
+                                          value: code,
+                                        }))}
+                                        onFocus={() => setFocusedField(input.name)}
+                                      />
                                       {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
+                                        <Typography variant="caption" color="red">
                                           {fieldState.error.message}
                                         </Typography>
                                       )}
-                                    </FormControl>
+                                    </>
                                   ) : (
                                     <>
                                       <InputWithLabel
@@ -352,14 +335,12 @@ function AssessorOnboarding() {
                                         type={input.type || 'text'}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
-                                        error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                  <Typography variant="caption" color="error">
-                                    {fieldState.error.message}
-                                  </Typography>
-                                )} */}
+                                      {fieldState?.error?.message && (
+                                        <Typography variant="caption" color="error">
+                                          {fieldState.error.message}
+                                        </Typography>
+                                      )}
                                     </>
                                   )}
                                 </>
@@ -374,11 +355,12 @@ function AssessorOnboarding() {
 
                 <Box className={styles.secondContainer}>
                   <Grid className={styles.btnContainer}>
-                    <Box className={styles.fileUploadContainer}>
+                    <Box className={styles.fileUploadContainer} sx={{ marginTop: 5, marginBottom: 5 }}>
                       <FileUploadButton
                         label="Certificate"
                         size="large"
                         iconSize="100"
+                        accept="application/pdf"
                         onFileSelect={(file) => {
                           console.log('Selected file:', file);
                           setSelectedFile(file);
@@ -388,14 +370,13 @@ function AssessorOnboarding() {
 
                     <Box className={styles.buttonSection}>
                       <CustomButton
-                        //   children={'save'}
+                        // children={'save'}
                         variant="contained"
                         color="primary"
                         icon="save"
                         type="submit"
                         width="300px"
                         className={styles.saveBtn}
-                        disabled={isLoading}
                       >
                         {isLoading ? 'Saving...' : 'Save'}
                       </CustomButton>
@@ -499,22 +480,21 @@ function AssessorOnboarding() {
                             );
                           })}
                         </TableBody>
-
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          style={{ display: 'none' }}
-                          accept=".csv, .xls, .xlsx"
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            const file = e.target.files?.[0];
-                            if (file && currentUploadKey) {
-                              handleUploadFile(file, currentUploadKey);
-                            }
-                            if (fileInputRef.current) fileInputRef.current.value = '';
-                          }}
-                        />
                       </Table>
                     </TableContainer>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }}
+                      accept=".csv, .xls, .xlsx"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const file = e.target.files?.[0];
+                        if (file && currentUploadKey) {
+                          handleUploadFile(file, currentUploadKey);
+                        }
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                      }}
+                    />
                   </Box>
                 </Box>
               </Box>

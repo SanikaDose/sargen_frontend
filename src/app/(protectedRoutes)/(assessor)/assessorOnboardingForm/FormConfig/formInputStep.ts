@@ -86,7 +86,7 @@ export const AssessorFormInputs: AssessorFormInput[] = [
   {
     name: 'yearOfExperience',
     label: 'Total Experience',
-    placeholder: 'Enter Year',
+    placeholder: 'Enter Years',
     required: true,
     rules: {
       required: 'Year of experience is required',
