@@ -11,6 +11,7 @@ import { useGetAllAssignPlantQuery } from './AssignedPlantsListApi';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import Loader from '@/components/Loader/Loader';
 
 export default function AssignedPlantsList() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function AssignedPlantsList() {
   const [searchValue, setSearchValue] = useState('');
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorAssignedPlants));
+
   const { data: plantInfo, isLoading } = useGetAllAssignPlantQuery(assessorId ?? '', {
     skip: !assessorId,
   });
@@ -25,6 +27,11 @@ export default function AssignedPlantsList() {
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
+
+  const filteredPlants =
+    plantInfo?.data?.filter((plant: any) =>
+      (plant.plantName ?? '').toLowerCase().includes(searchValue.toLowerCase()),
+    ) ?? [];
 
   return (
     <div className={styles.wrapper}>
@@ -52,35 +59,45 @@ export default function AssignedPlantsList() {
         </Box>
       </Typography>
 
-      <Grid container spacing={1.5} className={styles.gridContainer}>
-        {!isLoading &&
-          Array.isArray(plantInfo?.data) &&
-          plantInfo.data
-            .filter((plant: any) => (plant.plantName ?? '').toLowerCase().includes(searchValue.toLowerCase()))
-            .map((plant: any) => {
-              const organisationName = plant.organisationId
-                ? plant.organisationId.split('-').slice(0, 2).join('-')
-                : 'N/A';
-              return (
-                <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
-                  <AssessorPlantInfoCard
-                    data={{
-                      plantId: plant.plantId,
-                      plantName: plant.plantName,
-                      organisationName,
-                      organisationId: plant.organisationId,
-                      assesorCompletionStage: plant.assesorCompletionStage,
-                      createdAt: plant.createdAt,
-                      updatedAt: plant.updatedAt,
-                    }}
-                    viewPlantOnClick={() => {
-                      router.push(`/ViewPlantDetails/${plant.organisationId}/${plant.plantId}`);
-                    }}
-                  />
-                </Grid>
-              );
-            })}
-      </Grid>
+      {/* Content Area */}
+      <Box sx={{ mt: 2 }}>
+        {isLoading ? (
+          <Box height="40vh" display="flex" justifyContent="center" alignItems="center">
+            <Loader loading={true} />
+          </Box>
+        ) : (
+          <Grid container spacing={1.5} className={styles.gridContainer}>
+            {filteredPlants.length > 0 ? (
+              filteredPlants.map((plant: any) => {
+                const organisationName = plant.organisationId
+                  ? plant.organisationId.split('-').slice(0, 2).join('-')
+                  : 'N/A';
+
+                return (
+                  <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
+                    <AssessorPlantInfoCard
+                      data={{
+                        plantId: plant.plantId,
+                        plantName: plant.plantName,
+                        organisationName,
+                        organisationId: plant.organisationId,
+                        assesorCompletionStage: plant.assesorCompletionStage,
+                        createdAt: plant.createdAt,
+                        updatedAt: plant.updatedAt,
+                      }}
+                      viewPlantOnClick={() => router.push(`/ViewPlantDetails/${plant.organisationId}/${plant.plantId}`)}
+                    />
+                  </Grid>
+                );
+              })
+            ) : (
+              <Box width="100%" textAlign="center" py={6} fontSize={16} color="#777">
+                No plants found.
+              </Box>
+            )}
+          </Grid>
+        )}
+      </Box>
     </div>
   );
 }

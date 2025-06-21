@@ -1,4 +1,5 @@
-import { SidebarItem } from './organisationOnboardedList';
+import { SidebarItem } from './sideBarList.type';
+
 export const organisationOnboardingMenuList: SidebarItem[] = [
   {
     text: 'Organisation details',

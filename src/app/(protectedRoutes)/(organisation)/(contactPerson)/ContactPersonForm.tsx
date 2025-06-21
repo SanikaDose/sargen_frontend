@@ -6,7 +6,17 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
-import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  FormControl,
+  FormHelperText,
+  Grid,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -23,10 +33,11 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { useDispatch } from 'react-redux';
+import Loader from '@/components/Loader/Loader';
+import { contactPersonValidationRules } from './ContactPerson.validations';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
-  console.log('tenantId ', tenantId);
   const router = useRouter();
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
@@ -35,11 +46,30 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     skip: !editMode,
   });
   const dispatch = useDispatch();
+
+  // Enhanced media queries for different screen sizes
   const isMobile = useMediaQuery('(max-width: 600px)');
   const isTablet = useMediaQuery('(max-width: 900px)');
+  const isMacBook = useMediaQuery('(min-width: 901px) and (max-width: 1440px)');
+  const isLargeScreen = useMediaQuery('(min-width: 1441px)');
+
+  // Calculate paper height based on screen size
+  const getPaperHeight = () => {
+    if (isMobile || isTablet) return 'auto';
+    if (isMacBook) return '75vh'; // Reduced height for MacBook
+    if (isLargeScreen) return '78vh'; // Original height for large screens
+    return '70vh'; // Default fallback
+  };
+
+  // Calculate container height based on screen size
+  const getContainerHeight = () => {
+    if (isMobile || isTablet) return 'auto';
+    if (isMacBook) return '61vh'; // Adjusted for MacBook
+    if (isLargeScreen) return '74.5vh'; // Original height for large screens
+    return '66vh'; // Default fallback
+  };
 
   useEffect(() => {
-    // Set the header based on editMode
     if (editMode) {
       dispatch(setPageNameHeader('Edit contact person'));
     } else {
@@ -55,7 +85,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     control,
     handleSubmit,
     reset,
-    formState: { isValid, errors },
+    formState: { errors },
+    trigger,
   } = useForm<PocPayload>({
     defaultValues: {
       firstName: '',
@@ -67,7 +98,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       contactNumber: '',
       jobRole: '',
     },
-    mode: 'onChange',
+    mode: 'onSubmit', // Changed to onSubmit so errors only show after form submission
   });
 
   const watchedValues = useWatch({ control });
@@ -91,7 +122,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   useEffect(() => {
     if (editMode && existingData?.data && !isFetching) {
       const contact = existingData.data;
-
       reset({
         firstName: contact.firstName || '',
         lastName: contact.lastName || '',
@@ -108,8 +138,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       }
     }
   }, [editMode, existingData, isFetching, reset]);
-
-  console.log('Fetched POC?', existingData);
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
@@ -140,149 +168,175 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   const onSubmit = async (data: PocPayload) => {
     try {
+      // Trigger validation for all fields
+      const isValid = await trigger();
+
+      if (!isValid) {
+        console.log('Form has validation errors');
+        return;
+      }
+
       await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
-      console.log('Form submitted successfully');
       router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
   };
 
-  if (editMode && isFetching) {
-    return (
-      <Typography ml={2} mt={2}>
-        Loading contact data...
-      </Typography>
-    );
-  }
+  const handleSaveClick = async () => {
+    // Trigger validation for all fields when save is clicked
+    await trigger();
+    handleSubmit(onSubmit)();
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {!isMobile && !isTablet && (
-        <Grid className={styles.stepperContainer}>
-          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-        </Grid>
-      )}
-      <Paper
-        elevation={2}
-        sx={{
-          borderRadius: '16px',
-          p: 2,
-          backgroundColor: 'white',
-          border: '1px solid #D8D8D8',
-          height: isMobile || isTablet ? 'auto' : '78vh',
-        }}
-      >
-        {/* Split into 2 columns and match their height */}
-        <Grid container spacing={2} alignItems="stretch" sx={{ height: isMobile || isTablet ? 'auto' : '74.5vh' }}>
-          {/* Left side - form content (existing structure) */}
-          <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
-            <Typography variant="h4" fontWeight={600} className={styles.heading}>
-              User Profile
-            </Typography>
-            <Grid className={styles.formContainer}>
-              <Box className={styles.imageBox}>
-                <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
-              </Box>
-              <Box className={styles.formFieldsBox}>
-                <Grid container spacing={1}>
-                  {(
-                    [
-                      'firstName',
-                      'lastName',
-                      'employeeId',
-                      'email',
-                      'designation',
-                      'jobRole',
-                      'contactNumber',
-                    ] as (keyof PocPayload)[]
-                  ).map((fieldName) => (
-                    <Grid key={fieldName} size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name={fieldName}
-                        control={control}
-                        render={({ field }) => (
-                          <InputWithLabel
-                            {...field}
-                            label={fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
-                            placeholder={`Enter ${fieldName
-                              .replace(/([A-Z])/g, ' $1')
-                              .replace(/^./, (str) => str.toUpperCase())}`}
-                            onFocus={handleFocus}
-                            required
-                            error={!!errors[fieldName]}
-                            helperText={errors[fieldName]?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  ))}
-                  <Grid size={{ xs: 12, sm: 6 }}>
-                    <FormControl fullWidth sx={{ mt: 1.8 }}>
-                      <Typography sx={{ fontWeight: 600, color: '#313131' }}>
-                        Country <span style={{ color: 'red' }}>*</span>
-                      </Typography>
-                      <Controller
-                        name="country"
-                        control={control}
-                        render={({ field }) => (
-                          <Select
-                            {...field}
-                            displayEmpty
-                            sx={{ borderRadius: '16px', height: '38.5px' }}
-                            onOpen={() => handleFocus({ target: { name: 'country' } })}
-                            // inputProps={{ name: 'country', 'aria-label': 'Select Country' }}
-                            error={!!errors.country}
-                          >
-                            <MenuItem value="">
-                              {' '}
-                              <span style={{ color: 'grey' }}>Select Country</span>
-                            </MenuItem>
-                            {CountryOptions.map((country) => (
-                              <MenuItem key={country.code} value={country.name}>
-                                {country.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        )}
-                      />
-                    </FormControl>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Grid>
-
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              p={1}
-              mt={5}
-              ml={5}
-              mr={5}
-              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
-            >
-              <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
-                Back
-              </CustomButton>
-              <CustomButton type="submit" variant="contained" icon="save" disabled={!isValid || isLoading}>
-                {isLoading ? 'Saving...' : 'Save'}
-              </CustomButton>
-            </Box>
-          </Grid>
-
-          {/* Right side - InfoBox */}
+    <>
+      {isFetching ? (
+        <Loader loading={true} />
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)}>
           {!isMobile && !isTablet && (
-            <Grid size={{ xs: 4 }}>
-              <InfoBox
-                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                heading="About Contact Person"
-              />
+            <Grid className={styles.stepperContainer}>
+              <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
             </Grid>
           )}
-        </Grid>
-      </Paper>
-    </form>
+          <Paper
+            elevation={2}
+            sx={{
+              borderRadius: '16px',
+              p: 2,
+              backgroundColor: 'white',
+              border: '1px solid #D8D8D8',
+              height: getPaperHeight(),
+            }}
+          >
+            <Grid container spacing={2} alignItems="stretch" sx={{ height: getContainerHeight() }}>
+              <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
+                <Typography variant="h4" fontWeight={600} className={styles.heading}>
+                  User Profile
+                </Typography>
+                <Grid className={styles.formContainer}>
+                  <Box className={styles.imageBox}>
+                    <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
+                  </Box>
+                  <Box className={styles.formFieldsBox}>
+                    <Grid container spacing={1}>
+                      {(
+                        [
+                          'firstName',
+                          'lastName',
+                          'employeeId',
+                          'email',
+                          'designation',
+                          'jobRole',
+                          'contactNumber',
+                        ] as (keyof PocPayload)[]
+                      ).map((fieldName) => (
+                        <Grid key={fieldName} size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name={fieldName}
+                            control={control}
+                            rules={contactPersonValidationRules[fieldName as keyof typeof contactPersonValidationRules]}
+                            render={({ field }) => (
+                              <InputWithLabel
+                                {...field}
+                                label={fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
+                                placeholder={`Enter ${fieldName
+                                  .replace(/([A-Z])/g, ' $1')
+                                  .replace(/^./, (str) => str.toUpperCase())}`}
+                                onFocus={handleFocus}
+                                required
+                                error={!!errors[fieldName]}
+                                helperText={errors[fieldName]?.message}
+                              />
+                            )}
+                          />
+                        </Grid>
+                      ))}
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth sx={{ mt: 1.8 }} error={!!errors.country}>
+                          <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#313131' }}>
+                            Country <span style={{ color: 'red' }}>*</span>
+                          </Typography>
+                          <Controller
+                            name="country"
+                            control={control}
+                            rules={contactPersonValidationRules.country}
+                            render={({ field }) => (
+                              <>
+                                <Select
+                                  {...field}
+                                  displayEmpty
+                                  sx={{ borderRadius: '16px', height: '38.2px' }}
+                                  onOpen={() => handleFocus({ target: { name: 'country' } })}
+                                  error={!!errors.country}
+                                >
+                                  <MenuItem value="">
+                                    <span style={{ color: 'grey' }}>Select Country</span>
+                                  </MenuItem>
+                                  {CountryOptions.map((country) => (
+                                    <MenuItem key={country.code} value={country.name}>
+                                      {country.name}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                {errors.country && (
+                                  <FormHelperText sx={{ color: 'red', fontSize: '12px' }}>
+                                    {errors.country.message}
+                                  </FormHelperText>
+                                )}
+                              </>
+                            )}
+                          />
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
+
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  p={1}
+                  mt={isMacBook ? 3 : 5} // Reduced margin for MacBook
+                  ml={5}
+                  mr={5}
+                  sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+                >
+                  <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
+                    Back
+                  </CustomButton>
+                  <CustomButton
+                    type="button"
+                    variant="contained"
+                    icon="save"
+                    disabled={isLoading}
+                    onClick={handleSaveClick}
+                  >
+                    {isLoading ? 'Saving...' : 'Save'}
+                  </CustomButton>
+                </Box>
+              </Grid>
+
+              {!isMobile && !isTablet && (
+                <Grid size={{ xs: 4 }}>
+                  <InfoBox
+                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
+                    heading="About Contact Person"
+                    sx={{
+                      height: getPaperHeight() === 'auto' ? 'auto' : `calc(${getPaperHeight()} - 32px)`,
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  />
+                </Grid>
+              )}
+            </Grid>
+          </Paper>
+        </form>
+      )}
+    </>
   );
 };
 
