@@ -8,7 +8,7 @@ import { FileUploadButtonProps } from './FileUploadButton.types';
 const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   onFileSelect,
   label = 'Upload File',
-  accept = '*',
+  accept = '.pdf',
   size = 'medium',
   buttonVariant = 'contained',
   iconSize,
@@ -22,11 +22,11 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-     if (file && onFileSelect) {
-    onFileSelect(file); // ✅ Ensure this line exists
-  }
+    if (file && onFileSelect) {
+      onFileSelect(file); // ✅ Ensure this line exists
+    }
 
-  console.log('File input changed:', e.target.files);
+    console.log('File input changed:', e.target.files);
   };
 
   return (
