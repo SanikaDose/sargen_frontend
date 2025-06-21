@@ -142,6 +142,21 @@ const LoginPage = () => {
                 showLockIcon={false}
                 showPasswordToggle
                 showStrengthIndicator
+                sx={{
+                  height: '40px',
+                  '& .MuiOutlinedInput-root': {
+                    height: '40px',
+                    borderRadius: '18px',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '0 14px',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                  },
+                }}
               />
             )}
           />

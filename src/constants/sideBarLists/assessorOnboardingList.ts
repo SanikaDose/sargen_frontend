@@ -4,7 +4,7 @@ export const assessorOnboardingMenuList: SidebarItem[] = [
   {
     text: 'Assessor onboarding',
     icon: 'PersonAddIcon',
-    linkRoute: '/assessorOnboarding',
+    linkRoute: '/assessorOnboardingForm',
     isActive: true,
   },
 ];

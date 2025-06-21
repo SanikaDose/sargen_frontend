@@ -54,7 +54,7 @@ const RegisterPage = () => {
   );
 
   async function handleRegister(data: RegisterFormInputs) {
-    console.log('inside the handle register function')
+    console.log('inside the handle register function');
     const preDefinedBody = {
       ...data,
       applications: ['SARGEN'],
@@ -201,6 +201,21 @@ const RegisterPage = () => {
                 placeholder="Enter your password"
                 showPasswordToggle
                 showStrengthIndicator
+                sx={{
+                  height: '40px',
+                  '& .MuiOutlinedInput-root': {
+                    height: '40px',
+                    borderRadius: '18px',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '0 14px',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                  },
+                }}
               />
             )}
           />
@@ -219,6 +234,21 @@ const RegisterPage = () => {
                 label="Confirm Password"
                 placeholder="Re-enter your password"
                 showPasswordToggle
+                sx={{
+                  height: '40px',
+                  '& .MuiOutlinedInput-root': {
+                    height: '40px',
+                    borderRadius: '18px',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '0 14px',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                  },
+                }}
               />
             )}
           />
