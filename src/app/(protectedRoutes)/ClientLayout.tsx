@@ -1,28 +1,21 @@
 'use client';
-
-import { assessorOnboardedMenuList } from '@/constants/sideBarLists/assessorOnboardedList';
+import { assessorOnboardedMenuList, PlantAssessmentMenuList } from '@/constants/sideBarLists/assessorOnboardedList';
 import { assessorOnboardingMenuList } from '@/constants/sideBarLists/assessorOnboardingList';
 import { organisationOnboardedMenuList, SidebarItem } from '@/constants/sideBarLists/organisationOnboardedList';
 import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
-import { setSideBarListItem } from '@/store/globalSlice';
+import { setSideBarListItem, setSideBarListItemsForAssessment } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import MenuIcon from '@mui/icons-material/Menu';
-import SettingsIcon from '@mui/icons-material/Settings';
+
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
+
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
+
 import ListItemText from '@mui/material/ListItemText';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
@@ -30,10 +23,15 @@ import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
-import { setDecodedToken } from '../(unprotectedRoutes)/login/loginSlice';
+
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from '@mui/icons-material/Menu';
+import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import { ICONS } from '../utils/iconsMap';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -120,8 +118,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setMobileOpen(false);
     }
   };
+  const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
 
-  useEffect(() => {
+  // Only one useEffect is needed
+  React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('Authorization');
       if (token) {
@@ -130,16 +130,23 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       }
     }
   }, []);
-  const decodedToken: Token = jwtDecode(localStorage.getItem('Authorization') || '');
 
-  const { userRole: userRoleFromLocalStorage, userType: userTypeFromLocalStorage } = decodedToken;
+  // Safe destructuring with fallback
+  const userRoleFromLocalStorage = decodedToken?.userRole;
+  const userTypeFromLocalStorage = decodedToken?.userType;
+
   const onboardingStatus: OnboardingStatus =
     useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || userRoleFromLocalStorage;
   const userType =
     useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
   const sideBarListItems: SidebarItem[] = useSelector((state: RootState) => state.global.SideBarListItem);
-  const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
+  const sideBarListItemsForAssessment: SidebarItem[] = useSelector(
+    (state: RootState) => state.global.sideBarListItemsForAssessment,
+  );
 
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
+  const showOrganisationExtraListItems = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   // For users
   if (onboardingStatus !== OnboardingStatus.COMPLETED && userType && userType[0] === UserType.PLATFORMUSER) {
     dispatch(setSideBarListItem(organisationOnboardingMenuList));
@@ -154,6 +161,26 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.ASSESSOR) {
     dispatch(setSideBarListItem(assessorOnboardedMenuList));
   }
+  // For showing the assesment list
+  if (
+    onboardingStatus !== OnboardingStatus.COMPLETED &&
+    userType &&
+    userType[0] === UserType.ASSESSOR &&
+    showAssessmentListSideBar
+  ) {
+    dispatch(setSideBarListItemsForAssessment(PlantAssessmentMenuList));
+  }
+  // For showing extra list items
+  if (
+    onboardingStatus !== OnboardingStatus.COMPLETED &&
+    userType &&
+    userType[0] === UserType.PLATFORMUSER &&
+    showAssessmentListSideBar
+  ) {
+    dispatch(setSideBarListItemsForAssessment(PlantAssessmentMenuList));
+  }
+
+  //For assessor
   const sideBarListItemOnClick = (link: string) => {
     router.push(link);
 
@@ -167,15 +194,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     dispatch(setSideBarListItem(updatedList));
   };
 
-  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pathName = usePathname();
-
-  const iconMap: Record<string, React.ElementType> = {
-    HomeRoundedIcon: HomeRoundedIcon,
-    DashboardIcon: DashboardIcon,
-    SettingsIcon: SettingsIcon,
-    // ✅ Keep adding to this map as needed
-  };
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -190,19 +209,17 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       >
         <Toolbar>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
+            color="inherit"
             edge="start"
             sx={[
-              {
-                mr: 2,
-              },
+              { color: theme.palette.primary.main, mr: 2 },
               // Hide menu icon when sidebar is open OR when on desktop
               (open || isDesktop) && { display: 'none' },
             ]}
           >
-            <MenuIcon />
+            <MenuIcon sx={{ color: theme.palette.primary.main, mr: 2 }} />
           </IconButton>
           <Typography sx={{ color: theme.palette.text.primary }} variant="h4" noWrap component="div">
             {pageNameHeader}
@@ -222,11 +239,23 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </Toolbar>
       </AppBar>
       <Drawer
+        // sx={{
+        //   width: drawerWidth,
+        //   flexShrink: 0,
+        //   '& .MuiDrawer-paper': {
+        //     width: drawerWidth,
+        //     boxSizing: 'border-box',
+        //     display: 'flex',
+        //     flexDirection: 'column',
+        //     backgroundColor: theme.palette.background.paper,
+        //   },
+        // }}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: isDesktop ? drawerWidth : '100%', // mobile full width
+            height: '100%', // mobile full height
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
@@ -243,68 +272,35 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             src="/sargen-png-logo.png"
             alt="Sargen Logo"
             sx={{
-              maxWidth: isDesktop ? '100%' : '80%',
+              maxWidth: isDesktop ? '100%' : '50%',
               height: 'auto',
               padding: isDesktop ? 0 : 1,
               display: 'block',
               margin: '0 auto',
             }}
           />
+
           {/* Hide close icon on desktop */}
           {!isDesktop && (
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton onClick={handleDrawerClose} sx={{ color: theme.palette.primary.main }}>
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           )}
         </DrawerHeader>
         <Divider />
         {/* Main list */}
-        <List>
-          {sideBarListItems.map((item) => (
-            <ListItem
-              key={item.text}
-              disablePadding
-              sx={{
-                backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
-                // '&:hover': {
-                //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
-                // },
-              }}
-            >
-              <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
-                <ListItemIcon
-                  sx={{
-                    mr: 2,
-                    color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
-                  }}
-                >
-                  {item.icon && iconMap[item.icon] ? React.createElement(iconMap[item.icon]) : null}
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
-                        // fontWeight: item.linkRoute === pathName ? 600 : 550,
-                      }}
-                    >
-                      {item.text}
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        {/* SubList which will be activated in the assessement view for both  */}
-        {showAssessmentListSideBar && (
-          <List>
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+          <>
+            <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+              Onboarding menu
+            </Typography>
+
             {sideBarListItems.map((item) => (
               <ListItem
                 key={item.text}
                 disablePadding
                 sx={{
+                  pl: 0,
                   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
                   // '&:hover': {
                   //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
@@ -315,17 +311,17 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <ListItemIcon
                     sx={{
                       mr: 2,
-                      color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                     }}
                   >
-                    {item.icon ? <item.icon /> : null}
+                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
                   </ListItemIcon>
                   <ListItemText
                     primary={
                       <Typography
-                        variant="h6"
+                        variant="caption"
                         sx={{
-                          color: item.linkRoute === pathName ? 'primary.main' : 'text.primary',
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                           // fontWeight: item.linkRoute === pathName ? 600 : 550,
                         }}
                       >
@@ -336,8 +332,94 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-          </List>
-        )}
+
+            {/* SubList which will be activated in the assessement view for both  */}
+          </>
+          {showAssessmentListSideBar && (
+            <>
+              <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+                Assessment menu
+              </Typography>
+              {PlantAssessmentMenuList.map((item) => (
+                <ListItem
+                  key={item.text}
+                  disablePadding
+                  sx={{
+                    pl: 0,
+                    backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                    // '&:hover': {
+                    //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
+                    // },
+                  }}
+                >
+                  <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                    <ListItemIcon
+                      sx={{
+                        mr: 2,
+                        color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
+                      }}
+                    >
+                      {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color:
+                              item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
+                            // fontWeight: item.linkRoute === pathName ? 600 : 550,
+                          }}
+                        >
+                          {item.text}
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </>
+          )}
+
+          {/* The below list will be used for the  report org info edit etc for organisation or for the assessor */}
+          {sideBarListItems.map((item) => (
+            <ListItem
+              key={item.text}
+              disablePadding
+              sx={{
+                pl: 0,
+                backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                // '&:hover': {
+                //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
+                // },
+              }}
+            >
+              <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                <ListItemIcon
+                  sx={{
+                    mr: 2,
+                    color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                  }}
+                >
+                  {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        // fontWeight: item.linkRoute === pathName ? 600 : 550,
+                      }}
+                    >
+                      {item.text}
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </Box>
         {/* Main menu to add the edit preview and the reports to view also the org info*/}
         <Box sx={{ flexGrow: 1 }} />
         <Box

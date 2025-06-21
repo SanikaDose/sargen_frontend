@@ -7,7 +7,8 @@ const initialState = {
   InfoBoxToShow: false,
   organizationId: '',
   sideBarDrawerList: [],
-  showAssessmentListSideBar: false,
+  showAssessmentListSideBar: true,
+  sideBarListItemsForAssessment: [],
   pageNameHeader: 'Page heading',
 };
 
@@ -17,6 +18,10 @@ const globalSlice = createSlice({
   reducers: {
     setSideBarListItem: (state, action) => {
       state.SideBarListItem = action.payload;
+    },
+
+    setSideBarListItemsForAssessment: (state, action) => {
+      state.sideBarListItemsForAssessment = action.payload;
     },
     setPersonDetails: (state, action) => {
       state.personDetails = action.payload;
@@ -45,6 +50,7 @@ export const {
   resetGlobalState,
   setPageNameHeader,
   setShowAssessmentListSideBar,
+  setSideBarListItemsForAssessment,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

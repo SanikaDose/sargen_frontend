@@ -7,7 +7,7 @@ export interface SidebarItem {
 export const organisationOnboardedMenuList: SidebarItem[] = [
   {
     text: 'Plant',
-    icon: 'HomeRoundedIcon',
+    icon: 'FactoryIcon',
     linkRoute: '/PlantOverview',
 
     show: false,
@@ -17,31 +17,31 @@ export const organisationOnboardedMenuList: SidebarItem[] = [
 export const plantAssessmentMenuList: SidebarItem[] = [
   {
     text: 'Industry selection',
-    icon: 'HomeRoundedIcon',
+    icon: 'DomainIcon',
     linkRoute: '/IndustrySelection',
     show: false,
   },
   {
     text: 'Planning Horizon',
-    icon: 'HomeRoundedIcon',
+    icon: 'TimelineIcon',
     linkRoute: '/IndustrySelection',
     show: false,
   },
   {
     text: 'KPI Defination',
-    icon: 'HomeRoundedIcon',
+    icon: 'SpeedIcon',
     linkRoute: '/IndustrySelection',
     show: false,
   },
   {
     text: 'Cost Profile',
-    icon: 'HomeRoundedIcon',
+    icon: 'MonetizationOnIcon',
     linkRoute: '/IndustrySelection',
     show: false,
   },
   {
     text: 'Questions',
-    icon: 'HomeRoundedIcon',
+    icon: 'QuizIcon',
     linkRoute: '/IndustrySelection',
     show: false,
   },
