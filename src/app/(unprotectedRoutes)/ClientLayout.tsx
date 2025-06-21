@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './style.module.css';
 import { Props } from './unprotected.types';
+import Image from 'next/image';
 
 const ClientLayout = ({ children }: Props) => {
   const chip = [
@@ -49,7 +50,7 @@ const ClientLayout = ({ children }: Props) => {
       <nav className={styles.navbar}>
         <div className={styles.nav_container}>
           <div className={styles.nav_brand}>
-            <h2>Logo</h2>
+            <Image src="/sargen-png-logo.png" alt="logo" className={styles.logo} width={100} height={100} />
           </div>
           <div className={styles.nav_links}>
             {getNavItems().map((item, index) => (
