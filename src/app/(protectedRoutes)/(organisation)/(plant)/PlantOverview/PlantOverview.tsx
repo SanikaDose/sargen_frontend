@@ -21,9 +21,11 @@ export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  console.log('showAssessmentListSideBar', showAssessmentListSideBar);
 
   // when ever the user will be there in plant overview then setShowAssessmentListSideBar will be always false
-  dispatch(setShowAssessmentListSideBar(false));
+  // dispatch(setShowAssessmentListSideBar(false));
   const [searchValue, setSearchValue] = useState('');
   const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
   const [statusLoading, setStatusLoading] = useState(false);
@@ -31,6 +33,11 @@ export default function PlantOverview() {
   // Set page header
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.organisationOnboardedPlantOverView));
+  }, [dispatch]);
+
+  // Reset sidebar visibility when entering PlantOverview page
+  useEffect(() => {
+    dispatch(setShowAssessmentListSideBar(false));
   }, [dispatch]);
 
   const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({
@@ -69,12 +76,9 @@ export default function PlantOverview() {
   };
 
   const handleButtonClick = (tenantId: string, plantId: string) => {
-    router.push(`CostProfile/${tenantId}/${plantId}`);
+    router.push(`IndustrySelection/${tenantId}/${plantId}`);
     dispatch(setShowAssessmentListSideBar(true));
   };
-
-  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
-  console.log('showAssessmentListSideBar', showAssessmentListSideBar);
 
   return (
     <div className={styles.wrapper}>
