@@ -357,7 +357,7 @@ const RegisterPage = () => {
                 showPasswordToggle
                 showStrengthIndicator
                 error={!!fieldState.error}
-                helperText={fieldState.error?.message}
+                helperText={<span style={{ minHeight: 24, display: 'block' }}>{fieldState.error?.message || ' '}</span>}
                 sx={{
                   height: '40px',
                   '& .MuiOutlinedInput-root': {
@@ -392,7 +392,7 @@ const RegisterPage = () => {
                 placeholder="Re-enter your password"
                 showPasswordToggle
                 error={!!fieldState.error}
-                helperText={fieldState.error?.message}
+                helperText={<span style={{ minHeight: 24, display: 'block' }}>{fieldState.error?.message || ' '}</span>}
                 sx={{
                   height: '40px',
                   '& .MuiOutlinedInput-root': {
