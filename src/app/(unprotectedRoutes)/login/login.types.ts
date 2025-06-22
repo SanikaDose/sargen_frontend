@@ -64,6 +64,7 @@ export type Token = {
   userId: string;
   userRole: string[];
   userType: UserType[];
+  accessToken: string;
 };
 
 export type RawToken = {

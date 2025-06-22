@@ -16,6 +16,9 @@ import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 const steps = [
   'Research',
   'Selling',
@@ -31,6 +34,11 @@ const steps = [
 const PlanningHorizon = () => {
   const params = useParams();
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
@@ -111,7 +119,6 @@ const PlanningHorizon = () => {
     }
   };
 
-  const dispatch = useDispatch();
   const stepperState = useSelector((state: RootState) => state.stepper);
 
   useEffect(() => {
@@ -120,114 +127,114 @@ const PlanningHorizon = () => {
     dispatch(markStepIncomplete(3)); // coming back from Industry
   }, [dispatch]);
   return (
-    <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
-      <Box className={styles.stepperContainer}>
-        <Stepper
-          steps={stepperState.steps}
-          activeStep={stepperState.activeStep}
-          completedSteps={stepperState.completedSteps}
-        />
-      </Box>
-      <Paper
-        className={styles.formSection}
-        elevation={2}
-        sx={{
-          mt: 2,
-          borderRadius: '16px',
-          backgroundColor: 'white',
-          border: '1px solid rgb(216, 216, 216)',
-        }}
-      >
-        <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-          <Box component="form" className={styles.formContainer}>
-            <Typography
-              variant="h6"
-              sx={{
-                color: 'black',
-                textAlign: 'left',
-                width: '100%',
-              }}
-            >
-              Planning Horizon
-            </Typography>
-
-            {isLoadingGet || isLoadingAdd ? (
-              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
-                <Loader loading />
-              </Box>
-            ) : (
-              <Grid
-                container
-                spacing={2}
-                sx={{
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  mt: 2,
-                }}
-              >
-                <Controller
-                  name="selectedHorizonId"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      {horizonOptions.map((option) => {
-                        const isSelected = field.value === option.id;
-
-                        return (
-                          <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
-                            <Card
-                              label={option.planningHorizon}
-                              isSelected={isSelected}
-                              onToggle={() => field.onChange(option.id)}
-                            />
-                          </Grid>
-                        );
-                      })}
-                    </>
-                  )}
-                />
-              </Grid>
-            )}
-          </Box>
-
-          <Box className={styles.rightSection}>
-            <Box className={styles.aboutSection}>
-              <InfoBox
-                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                heading="About Industry"
-              />
-            </Box>
-
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              p={1}
-              mt={3}
-              ml={5}
-              mr={5}
-              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
-              className={styles.buttonSection}
-            >
-              <CustomButton
-                children="Back"
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => router.back()}
-              />
-              <CustomButton
-                children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
-                variant="contained"
-                icon="save"
-                type="submit"
-              />
-            </Box>
-          </Box>
+    <Box sx={{ width: '100%', height: '100%' }}>
+      {isLoadingGet || isLoadingAdd ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
         </Box>
-      </Paper>
+      ) : (
+        <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
+          <Box className={styles.stepperContainer}>
+            <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
+          </Box>
+          <Paper
+            className={styles.formSection}
+            elevation={2}
+            sx={{
+              mt: 2,
+              borderRadius: '16px',
+              backgroundColor: 'white',
+              border: '1px solid rgb(216, 216, 216)',
+            }}
+          >
+            <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+              <Box component="form" className={styles.formContainer}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: 'black',
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
+                  Planning Horizon
+                </Typography>
+
+                {isLoadingGet || isLoadingAdd ? (
+                  <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                    <Loader loading />
+                  </Box>
+                ) : (
+                  <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                      height: '100%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      mt: 2,
+                    }}
+                  >
+                    <Controller
+                      name="selectedHorizonId"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          {horizonOptions.map((option) => {
+                            const isSelected = field.value === option.id;
+
+                            return (
+                              <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+                                <Card label={option.planningHorizon} isSelected={isSelected} onToggle={() => field.onChange(option.id)} />
+                              </Grid>
+                            );
+                          })}
+                        </>
+                      )}
+                    />
+                  </Grid>
+                )}
+              </Box>
+
+              <Box className={styles.rightSection}>
+                <Box className={styles.aboutSection}>
+                  <InfoBox
+                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
+                    heading="About Industry"
+                  />
+                </Box>
+
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  p={1}
+                  mt={3}
+                  ml={5}
+                  mr={5}
+                  sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+                  className={styles.buttonSection}
+                >
+                  <CustomButton
+                    children="Back"
+                    variant="contained"
+                    color="primary"
+                    icon="left"
+                    type="button"
+                    onClick={() => router.back()}
+                  />
+                  <CustomButton
+                    children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    variant="contained"
+                    icon="save"
+                    type="submit"
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+      )}
     </Box>
   );
 };

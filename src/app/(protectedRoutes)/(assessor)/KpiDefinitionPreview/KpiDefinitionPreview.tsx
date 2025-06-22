@@ -1,0 +1,275 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import styles from './KpiDefinitionPreview.module.css';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import InfoBox from '@/components/InfoBox/InfoBox';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import Stepper from '@/components/Stepper/Stepper';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import Card from '@/components/Card/Card';
+import Loader from '@/components/Loader/Loader';
+import { Kpi, KpiFormValues } from '../../(plantAssessment)/plantAssement.model';
+import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../../(plantAssessment)/plantAssementApi';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+
+const KpiDefinitionPreview = () => {
+  const params = useParams();
+  const router = useRouter();
+  const organisationId = params.organisationId as string;
+  const plantId = params.plantId as string;
+  const tenantId = getValueLocalStorage('tenantId');
+  const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
+  const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
+  const [kpiList, setKpiList] = useState<Kpi[]>([]);
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorKpiDefinitionPreview));
+
+  // Edit state management
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialFormState, setInitialFormState] = useState<KpiFormValues>({ kpis: [] });
+
+  const { control, handleSubmit, reset, watch } = useForm<KpiFormValues>({
+    defaultValues: { kpis: [] },
+  });
+
+  const selectedKpis = useWatch({ control, name: 'kpis' });
+  const selectedCount = selectedKpis?.filter((k) => k.isselected)?.length || 0;
+
+  // Watch for form changes to detect unsaved changes
+  const watchedValues = watch();
+
+  // Fixed change detection with proper dependency array and comparison
+  useEffect(() => {
+    if (isEditMode && initialFormState.kpis.length > 0 && watchedValues.kpis.length > 0) {
+      // Deep comparison of the arrays
+      const hasChanges =
+        JSON.stringify(watchedValues.kpis.map((k) => k.isselected)) !== JSON.stringify(initialFormState.kpis.map((k) => k.isselected));
+      setHasUnsavedChanges(hasChanges);
+    } else if (!isEditMode) {
+      // Reset unsaved changes when not in edit mode
+      setHasUnsavedChanges(false);
+    }
+  }, [watchedValues.kpis, isEditMode, initialFormState.kpis]);
+
+  const fetchKpis = async () => {
+    try {
+      const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
+      const cleaned = response.map((k: Kpi) => ({
+        ...k,
+        kpi: k.kpi.trim(),
+      }));
+      setKpiList(cleaned);
+
+      const formData = {
+        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+      };
+
+      // Reset form with fetched data
+      reset(formData);
+
+      // Set initial state after form is reset - this is crucial
+      setTimeout(() => {
+        setInitialFormState(formData);
+        setHasUnsavedChanges(false);
+      }, 0);
+    } catch (error) {
+      console.error('Failed to fetch KPIs:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchKpis();
+  }, []);
+
+  const handleEditClick = () => {
+    setIsEditMode(true);
+    // Don't update initialFormState here - keep the original fetched state
+    // This allows change detection to work properly
+    setHasUnsavedChanges(false);
+  };
+
+  const handleSave = async (formData: KpiFormValues) => {
+    try {
+      const payload = {
+        tenantId,
+        plantId,
+        kpiDefinitions: formData.kpis.map((item, index) => ({
+          id: kpiList[index].id,
+          kpi: kpiList[index].kpi,
+          isselected: item.isselected,
+        })),
+      };
+
+      const kpisSaveSuccesfully = await selectKPIDefinition(payload).unwrap();
+      if (kpisSaveSuccesfully) {
+        setIsEditMode(false);
+        setHasUnsavedChanges(false);
+        // Update initial state to current saved state
+        setInitialFormState(formData);
+      }
+    } catch (error) {
+      console.error('Failed to save KPIs:', error);
+    }
+  };
+
+  const handleNextClick = () => {
+    router.push(`/PlanningHorizonPreview/${organisationId}/${plantId}`);
+  };
+
+  const stepperState = useSelector((state: RootState) => state.stepper);
+
+  useEffect(() => {
+    dispatch(setActiveStep(1));
+    dispatch(markStepCompleted(0));
+    dispatch(markStepIncomplete(2)); // If coming back from Planning
+  }, [dispatch]);
+
+  // Button state logic - simplified and clearer
+  const isSaveDisabled = !isEditMode || isLoadingAdd;
+  const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
+
+  return (
+    <>
+      {isLoadingGet || isLoadingAdd ? (
+        <Loader loading={true} />
+      ) : (
+        <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
+          <Box className={styles.stepperContainer}>
+            <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
+          </Box>
+          <Paper
+            className={styles.formSection}
+            elevation={2}
+            sx={{
+              mt: 2,
+              borderRadius: '16px',
+              backgroundColor: 'white',
+              border: '1px solid rgb(216, 216, 216)',
+            }}
+          >
+            <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+              <Box component="form" className={styles.formContainer}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: 'black',
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
+                  KPIs Selection
+                </Typography>
+                <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                  {kpiList.map((field, index) => (
+                    <Grid
+                      size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }}
+                      key={field.id}
+                      sx={{
+                        height: '10%',
+                        '& *': {
+                          cursor: isEditMode ? 'inherit' : 'not-allowed !important',
+                        },
+                      }}
+                    >
+                      <Controller
+                        name={`kpis.${index}.isselected`}
+                        control={control}
+                        render={({ field: controllerField }) => {
+                          const isSelected = controllerField.value;
+                          const isDisabled = (!isSelected && selectedCount >= 5) || !isEditMode;
+
+                          return (
+                            <Card
+                              key={field.id}
+                              label={field.kpi}
+                              isSelected={isSelected}
+                              isDisabled={isDisabled}
+                              onToggle={() => {
+                                if (isEditMode) {
+                                  controllerField.onChange(!isSelected);
+                                }
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+
+              <Box className={styles.rightSection}>
+                <Box className={styles.aboutSection}>
+                  <InfoBox
+                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id"
+                    heading="About Industry"
+                  />
+                </Box>
+
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  p={1}
+                  mt={3}
+                  ml={5}
+                  mr={5}
+                  sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+                  className={styles.buttonSection}
+                >
+                  <CustomButton
+                    variant="contained"
+                    color="primary"
+                    icon="left"
+                    type="button"
+                    onClick={() => router.back()}
+                    disabled={isLoadingAdd}
+                  >
+                    Back
+                  </CustomButton>
+
+                  <CustomButton
+                    variant="contained"
+                    color="primary"
+                    icon="edit"
+                    type="button"
+                    onClick={handleEditClick}
+                    disabled={isEditDisabled}
+                  >
+                    Edit
+                  </CustomButton>
+
+                  <CustomButton variant="contained" icon="save" type="submit" disabled={isSaveDisabled}>
+                    {isLoadingAdd ? 'Saving...' : 'Save'}
+                  </CustomButton>
+
+                  <CustomButton
+                    variant="contained"
+                    color="primary"
+                    icon="right"
+                    type="button"
+                    onClick={handleNextClick}
+                    disabled={isNextDisabled}
+                  >
+                    Next
+                  </CustomButton>
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+      )}
+    </>
+  );
+};
+
+export default KpiDefinitionPreview;

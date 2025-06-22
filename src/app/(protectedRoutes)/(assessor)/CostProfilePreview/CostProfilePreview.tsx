@@ -1,11 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useAddCostCategoriesMutation, useGetAssesmentStatusMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { CostInputPercentage, FormValues, MultipleSections, RawCostCategory } from '../plantAssement.model';
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
-import styles from './costProfile.module.css';
+import styles from './CostProfilePreview.module.css';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProfileCard';
 import InfoBox from '@/components/InfoBox/InfoBox';
@@ -13,41 +11,29 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Loader from '@/components/Loader/Loader';
-import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../../(plantAssessment)/plantAssementApi';
+import { FormValues, RawCostCategory } from '../../(plantAssessment)/plantAssement.model';
+import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPlantAssessmentDepartment } from '../plantAssementSlice';
-const CostProfile = () => {
+
+const CostProfilePreview = () => {
   const params = useParams();
   const router = useRouter();
-
-  const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
-  const steps = [
-    'Research',
-    'Selling',
-    'RTransport',
-    'Utilities',
-    'Aftermarket',
-    'Description',
-    'Labour',
-    'maintainance',
-    'Raw Material',
-    'Rental',
-  ].map((label) => ({ label }));
-
-  const organisationId = params.OrganisationId as string;
-  const plantId = params.PlantId as string;
-
+  const organisationId = params.organisationId as string;
+  const plantId = params.plantId as string;
   const tenantId = getValueLocalStorage('tenantId');
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
-  // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.assessorCostProfilePreview));
 
-  const { control, handleSubmit, reset } = useForm<FormValues>({
+  // Edit state management
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: { costs: [] },
   });
 
@@ -55,6 +41,15 @@ const CostProfile = () => {
     control,
     name: 'costs',
   });
+
+  // Watch for form changes to detect unsaved changes
+  const watchedValues = watch();
+
+  useEffect(() => {
+    if (isEditMode) {
+      setHasUnsavedChanges(true);
+    }
+  }, [watchedValues, isEditMode]);
 
   // Calculate overall cost profile
   const overAllCostProfile =
@@ -85,17 +80,21 @@ const CostProfile = () => {
       }));
 
       replace(formattedData);
+      setHasUnsavedChanges(false);
     } catch (error) {
       console.error('Failed to fetch cost categories', error);
     }
   };
 
-  const handleFormSubmit = async (data: FormValues) => {
-    console.log('hello');
+  const handleEditClick = () => {
+    setIsEditMode(true);
+    setHasUnsavedChanges(false);
+  };
 
+  const handleFormSubmit = async (data: FormValues) => {
     if (!organisationId || !plantId) return;
+
     try {
-      console.log('hello api is cakling');
       const payload = {
         tenantId,
         plantId: plantId,
@@ -108,11 +107,16 @@ const CostProfile = () => {
 
       const costProfileSaveResponse = await addCostCategories(payload).unwrap();
       if (costProfileSaveResponse) {
-        router.push(`/KpiDefinition/${organisationId}/${plantId}`);
+        setIsEditMode(false);
+        setHasUnsavedChanges(false);
       }
     } catch (error) {
-      alert('cannot fetch api');
+      console.error('Failed to save cost categories', error);
     }
+  };
+
+  const handleNextClick = () => {
+    router.push(`/KpiDefinitionPreview/${organisationId}/${plantId}`);
   };
 
   useEffect(() => {
@@ -122,15 +126,18 @@ const CostProfile = () => {
   const stepperState = useSelector((state: RootState) => state.stepper);
   useEffect(() => {
     dispatch(setActiveStep(0));
-    dispatch(markStepIncomplete(1)); // Back navigation from step 1
+    dispatch(markStepIncomplete(1));
   }, [dispatch]);
 
+  // Button state logic
+  const isSaveDisabled = !isEditMode || !hasUnsavedChanges || isLoadingAdd;
+  const isNextDisabled = isEditMode && hasUnsavedChanges;
+  const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
+
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <>
       {isLoadingGet || isLoadingAdd ? (
-        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
-          <Loader loading />
-        </Box>
+        <Loader loading={true} />
       ) : (
         <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
           <Box className={styles.stepperContainer}>
@@ -151,7 +158,7 @@ const CostProfile = () => {
               {/* Left Section */}
               <Box className={styles.formContainer}>
                 <Typography
-                  variant="h6"
+                  variant="h4"
                   sx={{
                     color: 'black',
                     textAlign: 'left',
@@ -160,34 +167,44 @@ const CostProfile = () => {
                 >
                   Cost Profile
                 </Typography>
-
-                {/* Loader inside left section */}
-                {isLoadingGet || isLoadingAdd ? (
-                  <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
-                    <Loader loading />
-                  </Box>
-                ) : (
-                  <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-                    {fields.length > 0
-                      ? fields.map((field, index) => (
-                          <Box key={field.id} className={styles.costInputCards}>
-                            <Controller
-                              name={`costs.${index}.costAsAPercentageOfRevenue`}
-                              control={control}
-                              render={({ field: controllerField }) => (
-                                <OverallCostProfileCard
-                                  fieldName={field.costCategory}
-                                  costValue={controllerField.value}
-                                  onChange={(val) => controllerField.onChange(val)}
-                                  readonly={false}
-                                />
-                              )}
-                            />
-                          </Box>
-                        ))
-                      : 'No cost Profile'}
-                  </Grid>
-                )}
+                <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                  {fields.length > 0
+                    ? fields.map((field, index) => (
+                        <Box
+                          key={field.id}
+                          className={styles.costInputCards}
+                          sx={{
+                            '& input': {
+                              cursor: isEditMode ? 'text' : 'not-allowed !important',
+                              pointerEvents: isEditMode ? 'auto' : 'none !important',
+                            },
+                            '& input:hover': {
+                              cursor: isEditMode ? 'text' : 'not-allowed !important',
+                            },
+                            '& input:focus': {
+                              cursor: isEditMode ? 'text' : 'not-allowed !important',
+                            },
+                            '& *': {
+                              cursor: isEditMode ? 'inherit' : 'not-allowed !important',
+                            },
+                          }}
+                        >
+                          <Controller
+                            name={`costs.${index}.costAsAPercentageOfRevenue`}
+                            control={control}
+                            render={({ field: controllerField }) => (
+                              <OverallCostProfileCard
+                                fieldName={field.costCategory}
+                                costValue={controllerField.value}
+                                onChange={(val) => controllerField.onChange(val)}
+                                readonly={!isEditMode} // Make readonly when not in edit mode
+                              />
+                            )}
+                          />
+                        </Box>
+                      ))
+                    : 'No cost Profile'}
+                </Grid>
 
                 {/* Always show overall cost summary */}
                 <Box className={styles.OverallCostProfileCard}>
@@ -223,27 +240,49 @@ const CostProfile = () => {
                   className={styles.buttonSection}
                 >
                   <CustomButton
-                    children="Back"
                     variant="contained"
                     color="primary"
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                  />
+                    disabled={isLoadingAdd}
+                  >
+                    Back
+                  </CustomButton>
+
                   <CustomButton
-                    children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
                     variant="contained"
-                    icon="save"
-                    type="submit"
-                  />
+                    color="primary"
+                    icon="edit"
+                    type="button"
+                    onClick={handleEditClick}
+                    disabled={isEditDisabled}
+                  >
+                    Edit
+                  </CustomButton>
+
+                  <CustomButton variant="contained" icon="save" type="submit" disabled={isSaveDisabled}>
+                    {isLoadingAdd ? 'Saving...' : 'Save'}
+                  </CustomButton>
+
+                  <CustomButton
+                    variant="contained"
+                    color="primary"
+                    icon="right"
+                    type="button"
+                    onClick={handleNextClick}
+                    disabled={isNextDisabled}
+                  >
+                    Next
+                  </CustomButton>
                 </Box>
               </Box>
             </Box>
           </Paper>
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 
-export default CostProfile;
+export default CostProfilePreview;

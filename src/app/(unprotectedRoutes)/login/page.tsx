@@ -6,13 +6,14 @@ import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './login.types';
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
+import { decodeAndStoreToken } from '@/app/utils/auth';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
@@ -37,17 +38,15 @@ const LoginPage = () => {
       if (!result.success) throw new Error('Login unsuccessful');
 
       const token = result.accessToken;
+      console.log('token', token);
+
       const rawDecoded = jwtDecode<RawToken>(token);
+      console.log('rawDecoded', rawDecoded);
       const { tenantId, userType } = rawDecoded;
 
-      localStorage.setItem('accessToken', result.accessToken);
-      localStorage.setItem('Authorization', token);
-      localStorage.setItem('tenantId', tenantId);
-      localStorage.setItem('userType', userType[0] || '');
-      const typedToken: Token = {
-        ...rawDecoded,
-        userType: rawDecoded.userType.map((type: string) => type as UserType),
-      };
+      const typedToken = decodeAndStoreToken(token);
+      console.log('typedToken', typedToken);
+
       dispatch(setDecodedToken(typedToken));
 
       if (userType[0] === 'ASSESSOR') {
