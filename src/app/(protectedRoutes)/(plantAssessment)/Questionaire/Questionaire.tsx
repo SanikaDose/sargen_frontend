@@ -150,6 +150,7 @@ const Questionaire = () => {
 
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
+  console.log('currentGroup', currentGroup);
 
   // Calculate completed steps
   const completedSteps = groupKeys.reduce<number[]>((acc, key, index) => {
@@ -245,7 +246,7 @@ const Questionaire = () => {
           {/* Right section */}
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
-              <InfoBox heading="About Industry" content="Lorem ipsum dolor sit amet, consectetur adipiscing elit..." />
+              <InfoBox heading="About Industry" content={currentGroup[0].context} />
             </Box>
 
             <Box
