@@ -235,29 +235,35 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     dispatch(setSideBarListItem(updatedList));
   };
   const assementSideBarListItemOnClick = (link: string) => {
+    console.log('link', link);
     const isDepartment = DEPARTMENT_LINKS.includes(link);
 
     // ✅ Set department if applicable
-    if (isDepartment) {
-      dispatch(setPlantAssessmentDepartment(link));
-    }
+    // if (isDepartment) {
+
+    // }
 
     // ✅ Determine navigation path
     let navigationPath = '';
 
     if (isDepartment) {
+      dispatch(setPlantAssessmentDepartment(link));
       if (tenantId && plantId) {
         navigationPath = `/Questionaire/${tenantId}/${plantId}`;
       }
     } else {
       if (tenantId && plantId) {
+        console.log('link', link);
+        console.log(`${link}/${tenantId}/${plantId}`);
         navigationPath = `${link}/${tenantId}/${plantId}`;
+        router.push(`${link}/${tenantId}/${plantId}`);
       } else {
+        console.log('slse link', link);
         navigationPath = `${link}`; // fallback for normal navigation
       }
     }
 
-    router.push(navigationPath);
+    // router.push(navigationPath);
 
     // ✅ Update sidebar state
     const updatedList = sideBarListItems.map((item) => ({
