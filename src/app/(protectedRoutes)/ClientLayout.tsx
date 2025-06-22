@@ -147,6 +147,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         setDecodedToken(decoded);
       }
 
+      if (!token) {
+        router.push('login');
+      }
+
       if (storedTenantId) {
         setTenantId(storedTenantId);
         setIsInitialized(true);
