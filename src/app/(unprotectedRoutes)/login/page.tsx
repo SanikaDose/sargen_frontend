@@ -110,51 +110,6 @@ const LoginPage = () => {
             Sign in to access your industry roadmap
           </Typography>
         </section>
-
-        {/* <Box component="form" onSubmit={handleSubmit(handleLogin)} noValidate className={styles.form}>
-          <Controller
-            name="email"
-            control={control}
-            defaultValue=""
-            rules={{ required: 'Email is required' }}
-            render={({ field }) => (
-              <InputWithLabel {...field} label="Email Address" name="email" placeholder="Enter your email" type="email" />
-            )}
-          />
-
-          <Controller
-            name="password"
-            control={control}
-            defaultValue=""
-            rules={{ required: 'Password is required' }}
-            render={({ field }) => (
-              <PasswordTextField
-                {...field}
-                autoComplete="new-password"
-                fullWidth={true}
-                label="Password"
-                placeholder="Enter your password"
-                showLockIcon={false}
-                showPasswordToggle
-                showStrengthIndicator
-                sx={{
-                  height: '40px',
-                  '& .MuiOutlinedInput-root': {
-                    height: '40px',
-                    borderRadius: '18px',
-                  },
-                  '& .MuiInputBase-input': {
-                    padding: '0 14px',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: 'black',
-                    fontWeight: '700',
-                    fontSize: '16px',
-                  },
-                }}
-              />
-            )}
-          /> */}
         <Box component="form" onSubmit={handleSubmit(handleLogin)} noValidate className={styles.form}>
           <Controller
             name="email"

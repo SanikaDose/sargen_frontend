@@ -1,17 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import {
-  Box,
-  Button,
-  Container,
-  Typography,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
+import { Box, Button, Container, Typography, FormControl, FormControlLabel, FormHelperText, Radio, RadioGroup } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
@@ -128,7 +118,7 @@ const RegisterPage = () => {
             <FormHelperText>{errors.user_type?.message}</FormHelperText>
           </FormControl>
 
-          {typeOfUser === 'PLATFORMUSER' && (
+          {/* {typeOfUser === 'PLATFORMUSER' && (
             <Box id={styles.platFormUser}>
               <Controller
                 name="firstName"
@@ -256,17 +246,175 @@ const RegisterPage = () => {
                 }}
               />
             )}
+          /> */}
+          {typeOfUser === 'PLATFORMUSER' && (
+            <Box id={styles.platFormUser}>
+              <Controller
+                name="firstName"
+                control={control}
+                rules={{
+                  required: 'First name is required',
+                  minLength: { value: 2, message: 'First name must be at least 2 characters' },
+                  maxLength: { value: 50, message: 'First name must be at most 50 characters' },
+                  pattern: { value: /^[A-Za-z\s'-]+$/, message: 'First name can only contain letters, spaces, apostrophes, and hyphens' },
+                }}
+                render={({ field, fieldState }) => (
+                  <InputWithLabel
+                    {...field}
+                    value={field.value || ''}
+                    label="First Name"
+                    name="firstName"
+                    placeholder="Enter first name"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="lastName"
+                control={control}
+                rules={{
+                  required: 'Last name is required',
+                  minLength: { value: 2, message: 'Last name must be at least 2 characters' },
+                  maxLength: { value: 50, message: 'Last name must be at most 50 characters' },
+                  pattern: { value: /^[A-Za-z\s'-]+$/, message: 'Last name can only contain letters, spaces, apostrophes, and hyphens' },
+                }}
+                render={({ field, fieldState }) => (
+                  <InputWithLabel
+                    {...field}
+                    value={field.value || ''}
+                    label="Last Name"
+                    name="lastName"
+                    placeholder="Enter last name"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </Box>
+          )}
+
+          {typeOfUser === 'organisation' && (
+            <Controller
+              name="organisationName"
+              control={control}
+              rules={{
+                required: 'Organisation name is required',
+                minLength: { value: 2, message: 'Organisation name must be at least 2 characters' },
+                maxLength: { value: 100, message: 'Organisation name must be at most 100 characters' },
+              }}
+              render={({ field, fieldState }) => (
+                <InputWithLabel
+                  {...field}
+                  value={field.value || ''}
+                  label="Organisation Name"
+                  name="organisationName"
+                  placeholder="Enter organisation name"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+          )}
+
+          <Controller
+            name="email"
+            control={control}
+            rules={{
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Enter a valid email address',
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <InputWithLabel
+                {...field}
+                value={field.value || ''}
+                label="Email Address"
+                name="email"
+                placeholder="Enter your email"
+                type="email"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={control}
+            rules={{
+              required: 'Password is required',
+              validate: validatePassword,
+            }}
+            render={({ field, fieldState }) => (
+              <PasswordTextField
+                {...field}
+                value={field.value || ''}
+                label="Password"
+                placeholder="Enter your password"
+                showPasswordToggle
+                showStrengthIndicator
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                sx={{
+                  height: '40px',
+                  '& .MuiOutlinedInput-root': {
+                    height: '40px',
+                    borderRadius: '18px',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '0 14px',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                  },
+                }}
+              />
+            )}
+          />
+
+          <Controller
+            name="rePassword"
+            control={control}
+            rules={{
+              required: 'Please confirm your password',
+              validate: (value) => value === getValues('password') || 'Passwords do not match',
+            }}
+            render={({ field, fieldState }) => (
+              <PasswordTextField
+                {...field}
+                value={field.value || ''}
+                label="Confirm Password"
+                placeholder="Re-enter your password"
+                showPasswordToggle
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                sx={{
+                  height: '40px',
+                  '& .MuiOutlinedInput-root': {
+                    height: '40px',
+                    borderRadius: '18px',
+                  },
+                  '& .MuiInputBase-input': {
+                    padding: '0 14px',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                  },
+                }}
+              />
+            )}
           />
 
           <Button type="submit" fullWidth variant="contained" className={styles.button}>
             {loading ? (
-              <ButtonWithLoader
-                label="Create Account"
-                backgroundColor="inherit"
-                loaderColor="white"
-                loading={true}
-                height="30px"
-              />
+              <ButtonWithLoader label="Create Account" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
             ) : (
               'Create Account'
             )}
