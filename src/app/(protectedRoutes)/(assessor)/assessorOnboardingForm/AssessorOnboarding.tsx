@@ -3,21 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  OutlinedInput,
-} from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, OutlinedInput } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
@@ -66,8 +52,8 @@ const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City',
   (label) => ({ label }),
 );
 
-//const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
+const tenantId = getValueLocalStorage('tenantId');
+// const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
 function AssessorOnboarding() {
   const dispatch = useDispatch();
 
@@ -141,7 +127,7 @@ function AssessorOnboarding() {
     }),
       setViewableFiles(filesMap); // set state for viewable files
   };
-  const { data: logoData } = useGetLogoQuery({ tenantId });
+  const { data: logoData } = useGetLogoQuery({ tenantId: tenantId ?? '' });
   console.log(logoData);
   useEffect(() => {
     if (logoData?.logoUrl) {

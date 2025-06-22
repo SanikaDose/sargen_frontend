@@ -6,7 +6,6 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
-import { setPageNameHeader } from '@/store/globalSlice';
 import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -15,9 +14,6 @@ import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
-import Loader from '@/components/Loader/Loader';
-import styles from './OrganisationOnboarding.module.css';
-import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 const steps = [
@@ -32,6 +28,7 @@ const steps = [
 ].map((label) => ({ label }));
 
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 

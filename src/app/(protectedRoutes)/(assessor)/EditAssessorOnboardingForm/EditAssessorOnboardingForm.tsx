@@ -63,19 +63,12 @@ import { Dropdown } from '@/components/Dropdown/Dropdown';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 
-const steps = [
-  'First Name',
-  'Last Name',
-  'E-Mail Id',
-  'Contact Number',
-  'City',
-  'Country',
-  'Year Of Experience',
-  'Certification Year',
-].map((label) => ({ label }));
+const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
+  (label) => ({ label }),
+);
 
-//const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
+const tenantId = getValueLocalStorage('tenantId');
+//const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
 function AssessorOnboarding() {
   const dispatch = useDispatch();
 
@@ -168,7 +161,7 @@ function AssessorOnboarding() {
     }),
       setViewableFiles(filesMap); // set state for viewable files
   };
-  const { data: logoData } = useGetLogoQuery({ tenantId });
+  const { data: logoData } = useGetLogoQuery({ tenantId: tenantId ?? '' });
   console.log(logoData);
   useEffect(() => {
     if (logoData?.logoUrl) {
@@ -507,9 +500,7 @@ function AssessorOnboarding() {
                                       label="Upload"
                                       width="50px"
                                       showIcon
-                                      color={
-                                        uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'green' : '#1976d2'
-                                      }
+                                      color={uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'green' : '#1976d2'}
                                       onClick={() => {
                                         setCurrentUploadKey(backendKey);
                                         fileInputRef.current?.click();
@@ -524,8 +515,7 @@ function AssessorOnboarding() {
                                     //   opacity: uploadedFiles[backendKey] ? 1 : 0.5,
                                     // }}
                                     style={{
-                                      pointerEvents:
-                                        uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'auto' : 'none',
+                                      pointerEvents: uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'auto' : 'none',
                                       opacity: uploadedFiles[backendKey] || viewableFiles[backendKey] ? 1 : 0.5,
                                     }}
                                   >
