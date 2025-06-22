@@ -21,7 +21,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useParams } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
@@ -239,31 +239,26 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const isDepartment = DEPARTMENT_LINKS.includes(link);
 
     // ✅ Set department if applicable
-    // if (isDepartment) {
-
-    // }
+    if (isDepartment) {
+      dispatch(setPlantAssessmentDepartment(link));
+    }
 
     // ✅ Determine navigation path
     let navigationPath = '';
 
     if (isDepartment) {
-      dispatch(setPlantAssessmentDepartment(link));
       if (tenantId && plantId) {
         navigationPath = `/Questionaire/${tenantId}/${plantId}`;
       }
     } else {
       if (tenantId && plantId) {
-        console.log('link', link);
-        console.log(`${link}/${tenantId}/${plantId}`);
         navigationPath = `${link}/${tenantId}/${plantId}`;
-        router.push(`${link}/${tenantId}/${plantId}`);
       } else {
-        console.log('slse link', link);
         navigationPath = `${link}`; // fallback for normal navigation
       }
     }
 
-    // router.push(navigationPath);
+    router.push(navigationPath);
 
     // ✅ Update sidebar state
     const updatedList = sideBarListItems.map((item) => ({
@@ -378,7 +373,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <ListItemIcon
                     sx={{
                       mr: 2,
-                      color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                     }}
                   >
                     {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
@@ -388,7 +383,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       <Typography
                         variant="caption"
                         sx={{
-                          color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                         }}
                       >
                         {item.text}
@@ -462,7 +457,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <ListItemIcon
                     sx={{
                       mr: 2,
-                      color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                     }}
                   >
                     {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
@@ -472,7 +467,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       <Typography
                         variant="caption"
                         sx={{
-                          color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                         }}
                       >
                         {item.text}
