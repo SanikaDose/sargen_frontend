@@ -72,7 +72,7 @@ const steps = [
 ].map((label) => ({ label }));
 
 //const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
+const tenantId = 'ASSESSOR-26327b7b-2e01-49c1-9948-1373c7e1a8e1';
 function AssessorOnboarding() {
   const dispatch = useDispatch();
 
@@ -125,26 +125,30 @@ function AssessorOnboarding() {
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
   //function to view the metadata files
-  const handleViewClick = async (fileName: string) => {
-    if (!fileName) {
-      triggerToast('Invalid file name.', 'warning');
-      return;
+const handleViewClick = async (fileName: string) => {
+  if (!fileName) {
+    triggerToast('Invalid file name.', 'warning');
+    return;
+  }
+
+  try {
+    const response = await viewMetadataFile({
+      tenantId: tenantId,
+      fileName: fileName,
+    }).unwrap();
+
+    if (response?.url) {
+      const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(response.url)}`;
+      window.open(viewerUrl, '_blank');
+    } else {
+      triggerToast('File URL not found.', 'error');
     }
-    try {
-      const response = await viewMetadataFile({
-        tenantId: tenantId,
-        fileName: fileName,
-      }).unwrap();
-      if (response?.url) {
-        window.open(response.url, '_blank');
-      } else {
-        triggerToast('File URL not found.', 'error');
-      }
-    } catch (err) {
-      console.log('error', err);
-      //  triggerToast('Failed to view file', 'error');
-    }
-  };
+  } catch (err) {
+    console.error('error', err);
+    triggerToast('Failed to view file', 'error');
+  }
+};
+
 
   const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => Promise<any>> = {
     questionnaires_: uploadQuestionnaries,

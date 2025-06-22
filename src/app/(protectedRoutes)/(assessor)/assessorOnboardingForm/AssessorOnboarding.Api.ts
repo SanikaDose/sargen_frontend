@@ -280,23 +280,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         });
       },
     }),
-    // getMetadataFileTemplate: builder.mutation<Response, { userType: string; fileName: string }>({
-    //   query: ({ userType, fileName }) => ({
-    //     url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
-    //     method: 'POST',
-    //     body: { userType, fileName },
-    //     responseHandler: (response) => Promise.resolve(response),
-    //     cache: 'no-cache',
-    //   }),
-    //   invalidatesTags: (_result, _error, { fileName }) => [{ type: 'Assessor', id: fileName }],
-    //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-    //     await rtkAPIToast(queryFulfilled, dispatch, {
-    //       successMessage: 'file template downloaded successfully!',
-    //       errorMessage: 'Failed to download file template!',
-    //       duration: 4000,
-    //     });
-    //   },
-    // }),
+ 
 
  getMetadataFileTemplate: builder.mutation<{ success: boolean }, { userType: string; fileName: string }>({
   query: ({ userType, fileName }) => ({
@@ -306,7 +290,6 @@ export const assessorApi = protectedApi.injectEndpoints({
     responseHandler: async (response) => {
       const blob = await response.blob();
 
-      // Trigger file download manually here
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
