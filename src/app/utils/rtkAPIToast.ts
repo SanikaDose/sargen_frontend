@@ -25,7 +25,9 @@ export async function rtkAPIToast<T>(
 ) {
   try {
     const result = (await queryFulfilled) as rtkInbuilt;
-    const { message, error } = result.data;
+    // const { message, error } = result.data;
+    const message = result?.data?.message ?? successMessage;
+
 
     const dynamicMessage = message || successMessage;
 

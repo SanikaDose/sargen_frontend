@@ -365,6 +365,22 @@ export const assessorApi = protectedApi.injectEndpoints({
         });
       },
     }),
+    getLogo: builder.query<{ logoUrl: string }, { tenantId: string }>({
+      query: ({ tenantId }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.getLogo}/${tenantId}`,
+        method: 'GET',
+      }),
+
+      providesTags: (result, error, { tenantId }) => [{ type: 'AssessorLogo', id: tenantId }],
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Logo Fetch successfully!',
+          errorMessage: 'Failed to Fetch logo!',
+          duration: 4000,
+        });
+      },
+    }),
   }),
 
   overrideExisting: false,
@@ -388,6 +404,6 @@ export const {
   useUploadIndustryAssessmentMatrixMutation,
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
-
+  useGetLogoQuery,
   useViewMetadataFileMutation,
 } = assessorApi;
