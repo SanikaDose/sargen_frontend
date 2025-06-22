@@ -51,6 +51,15 @@ const LoginPage = () => {
 
       if (userType[0] === 'ASSESSOR') {
         hasNavigatedRef.current = true;
+
+        const response = await getOnboardingStatus(tenantId);
+        console.log(response);
+
+        const onboardingData = response.data;
+
+        localStorage.setItem('onboardingStatus', response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED);
+
+        dispatch(setOnboardingStatus(response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED));
         //TODO:route hard code change
         router.push('/assessorOnboardingForm');
         return;
