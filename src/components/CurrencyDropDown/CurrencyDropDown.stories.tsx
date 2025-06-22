@@ -79,7 +79,15 @@ export const CurrencyDropdown: Story = {
   render: (args) => {
     const [value, setValue] = useState('');
 
-    return <DropdownWithLabel {...args} value={value} onChange={(e) => setValue(e.target.value)} />;
+    return (
+      <DropdownWithLabel
+        {...args}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
+      />
+    );
   },
   args: {
     label: 'Select Currency',

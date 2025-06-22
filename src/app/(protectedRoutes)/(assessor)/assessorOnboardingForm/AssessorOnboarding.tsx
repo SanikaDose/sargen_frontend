@@ -48,6 +48,7 @@ import {
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
   useViewMetadataFileMutation,
+  useGetLogoQuery,
 } from './AssessorOnboarding.Api';
 
 import { fileUploadKeyMap, fileTypes } from './FormConfig/fileInput';
@@ -60,6 +61,7 @@ import { setPageNameHeader } from '@/store/globalSlice';
 import { Dropdown } from '@/components/Dropdown/Dropdown';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
+
 const steps = [
   'First Name',
   'Last Name',
@@ -97,6 +99,7 @@ function AssessorOnboarding() {
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
+  const router = useRouter();
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
   const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate, { isLoading: isUploadLoading }] = useGetMetadataFileTemplateMutation();
@@ -109,27 +112,60 @@ function AssessorOnboarding() {
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
 
-  const [uploadQuestionnaries, { isLoading: qloading }] = useUploadQuestionnariesMutation();
-  const [uploadCostProfile, { isLoading: cloading }] = useUploadCostProfileMutation();
-  const [uploadKPI, { isLoading: kloading }] = useUploadKPIMutation();
-  const [uploadPlanningHorizon, { isLoading: ploading }] = useUploadPlanningHorizonMutation();
-  const [uploadIndustrySelection, { isLoading: iloading }] = useUploadIndustrySelectionMutation();
-  const [uploadCostProfileLookup, { isLoading: clloading }] = useUploadCostProfileLookupMutation();
-  const [uploadIndustrySelectionLookup, { isLoading: illoading }] = useUploadIndustrySelectionLookupMutation();
-  const [uploadKPILookup, { isLoading: klloading }] = useUploadKPILookupMutation();
-  const [uploadIndustryAssessmentMatrix, { isLoading: ialoading }] = useUploadIndustryAssessmentMatrixMutation();
-  const [uploadSolutionMetadata, { isLoading: sloading }] = useUploadSolutionMetadataMutation();
-  const [uploadBandDefinition, { isLoading: bloading }] = useUploadBandDefinitionMutation();
-  const [viewMetadataFile, { isLoading: vloading }] = useViewMetadataFileMutation();
-
+  const [uploadQuestionnaries] = useUploadQuestionnariesMutation();
+  const [uploadCostProfile] = useUploadCostProfileMutation();
+  const [uploadKPI] = useUploadKPIMutation();
+  const [uploadPlanningHorizon] = useUploadPlanningHorizonMutation();
+  const [uploadIndustrySelection] = useUploadIndustrySelectionMutation();
+  const [uploadCostProfileLookup] = useUploadCostProfileLookupMutation();
+  const [uploadIndustrySelectionLookup] = useUploadIndustrySelectionLookupMutation();
+  const [uploadKPILookup] = useUploadKPILookupMutation();
+  const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
+  const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
+  const [uploadBandDefinition] = useUploadBandDefinitionMutation();
+  const [viewMetadataFile] = useViewMetadataFileMutation();
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
+
+  //reload view
+  const [viewableFiles, setViewableFiles] = useState<Record<string, string>>({});
+  const fetchFileAvailability = async () => {
+    const filesMap: Record<string, string> = {};
+
+    fileValues.map(async (key) => {
+      try {
+        const response = await viewMetadataFile({
+          tenantId,
+          fileName: key,
+        }).unwrap();
+
+        if (response?.url) {
+          filesMap[key] = response.url; // Store key and URL
+        }
+      } catch (err) {
+        // File doesn't exist — skip it
+      }
+    }),
+      setViewableFiles(filesMap); // set state for viewable files
+  };
+  const { data: logoData } = useGetLogoQuery({ tenantId });
+  console.log(logoData);
+  useEffect(() => {
+    if (logoData?.logoUrl) {
+      setLogoUrl(logoData.logoUrl);
+    }
+  });
+  useEffect(() => {
+    fetchFileAvailability();
+  }, []);
+
+  console.log('vieablefile', viewableFiles);
   //function to view the metadata files
   const handleViewClick = async (fileName: string) => {
-    if (!fileName) {
-      triggerToast('Invalid file name.', 'warning');
-      return;
-    }
+    // if (!fileName) {
+    //   triggerToast('Invalid file name.', 'warning');
+    //   return;
+    // }
     try {
       const response = await viewMetadataFile({
         tenantId: tenantId,
@@ -217,6 +253,7 @@ function AssessorOnboarding() {
         data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
+      router.push('/AssignedPlantsList');
     } catch (error) {
       console.log('error', error);
     }
@@ -286,7 +323,7 @@ function AssessorOnboarding() {
           </Box>
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
-              <Typography variant="h6" className={styles.heading}>
+              <Typography variant="h4" className={styles.heading}>
                 Assessor Profile
               </Typography>
 
@@ -300,7 +337,7 @@ function AssessorOnboarding() {
                     <section className={styles.formFieldsInner}>
                       <Grid container spacing={1} className={styles.FormContainer}>
                         {AssessorFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
+                          <Grid size={{ xs: 12, md: 3 }} key={input.name}>
                             <Controller
                               name={input.name as keyof AssessorFormType}
                               control={control}
@@ -316,7 +353,7 @@ function AssessorOnboarding() {
                                         placeholder={input.placeholder}
                                         options={CountryOptions.map(({ name, code }) => ({
                                           label: name,
-                                          value: code,
+                                          value: name,
                                         }))}
                                         onFocus={() => setFocusedField(input.name)}
                                       />
@@ -355,7 +392,7 @@ function AssessorOnboarding() {
 
                 <Box className={styles.secondContainer}>
                   <Grid className={styles.btnContainer}>
-                    <Box className={styles.fileUploadContainer} sx={{ marginTop: 5, marginBottom: 5 }}>
+                    <Box className={styles.fileUploadContainer} sx={{ mt: 5, mb: 5 }}>
                       <FileUploadButton
                         label="Certificate"
                         size="large"
@@ -388,7 +425,6 @@ function AssessorOnboarding() {
                       component={Paper}
                       sx={{
                         maxHeight: 400,
-
                         overflowX: 'auto',
                       }}
                     >
@@ -451,7 +487,9 @@ function AssessorOnboarding() {
                                       label="Upload"
                                       width="50px"
                                       showIcon
-                                      color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
+                                      color={
+                                        uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'green' : '#1976d2'
+                                      }
                                       onClick={() => {
                                         setCurrentUploadKey(backendKey);
                                         fileInputRef.current?.click();
@@ -461,9 +499,14 @@ function AssessorOnboarding() {
                                 </TableCell>
                                 <TableCell sx={{ textAlign: 'left', padding: 1 }}>
                                   <span
+                                    // style={{
+                                    //   pointerEvents: uploadedFiles[backendKey] ? 'auto' : 'none',
+                                    //   opacity: uploadedFiles[backendKey] ? 1 : 0.5,
+                                    // }}
                                     style={{
-                                      pointerEvents: uploadedFiles[backendKey] ? 'auto' : 'none',
-                                      opacity: uploadedFiles[backendKey] ? 1 : 0.5,
+                                      pointerEvents:
+                                        uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'auto' : 'none',
+                                      opacity: uploadedFiles[backendKey] || viewableFiles[backendKey] ? 1 : 0.5,
                                     }}
                                   >
                                     <FileActionButton
@@ -473,6 +516,10 @@ function AssessorOnboarding() {
                                       showIcon
                                       showLabel={false}
                                       onClick={() => handleViewClick(backendKey)}
+                                      // onClick={() => {
+                                      //   const url = viewableFiles[backendKey];
+                                      //   if (url) window.open(url, '_blank');
+                                      // }}
                                     />
                                   </span>
                                 </TableCell>

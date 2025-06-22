@@ -76,7 +76,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
           }
         >
           <MenuItem disabled value="">
-            <em style={{ fontWeight: 500, color: '#888' }}>{placeholder}</em>
+            <span style={{ fontWeight: 500, color: '#888' }}>{placeholder}</span>
           </MenuItem>
           {options.map((opt) => (
             <MenuItem key={opt.value} value={opt.value}>

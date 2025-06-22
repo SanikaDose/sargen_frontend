@@ -58,6 +58,23 @@ export const onboardingApi = protectedApi.injectEndpoints({
         });
       },
     }),
+
+    getOrganizationLogo: builder.mutation<void, { tenantId: string; formData: FormData }>({
+      query: ({ tenantId, formData }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadLogo}/${tenantId}`,
+        method: 'POST',
+        body: formData,
+      }),
+
+      invalidatesTags: (result, error, { tenantId }) => [{ type: 'PlantLogo', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Logo uploaded successfully!',
+          errorMessage: 'Failed to upload logo!',
+          duration: 4000,
+        });
+      },
+    }),
   }),
 });
 

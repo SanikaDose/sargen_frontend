@@ -22,6 +22,7 @@ import Loader from '@/components/Loader/Loader';
 import styles from './OrganisationOnboarding.module.css';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 const steps = [
   'Company Name',
   'Company website',
@@ -131,7 +132,7 @@ function OrganizationOnbording() {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h6" className={styles.heading}>
+                <Typography variant="h4" className={styles.heading}>
                   Organization Details
                 </Typography>
 
@@ -153,38 +154,30 @@ function OrganizationOnbording() {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.isCountry || input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        {input.label}
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
+                                    <>
+                                      <CurrencyValueSelector
                                         {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '8px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('country')}
-                                      >
-                                        <MenuItem disabled value="">
-                                          <em>Select From Dropdown</em>
-                                        </MenuItem>
-                                        {(input.isCountry ? CountryOptions : currencyOptions).map((option) => (
-                                          <MenuItem key={option.code} value={option.name}>
-                                            {option.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
+                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        placeholder={input.placeholder}
+                                        options={
+                                          input.isCountry
+                                            ? CountryOptions.map(({ name, code }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                            : currencyOptions.map(({ name, code }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                        }
+                                        onFocus={() => setFocusedField(input.name)}
+                                      />
                                       {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
+                                        <Typography variant="caption" color="red">
                                           {fieldState.error.message}
                                         </Typography>
                                       )}
-                                    </FormControl>
+                                    </>
                                   ) : (
                                     <>
                                       <InputWithLabel

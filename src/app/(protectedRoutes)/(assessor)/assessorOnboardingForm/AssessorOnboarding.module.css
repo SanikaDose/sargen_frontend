@@ -3,9 +3,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   /* align-items: center; */
   padding: 1px;
+ 
 }
 .paperContainer {
   border-radius: 16px;
@@ -15,57 +16,45 @@
   width: 100%;
   display: flex;
   gap: 3;
-  min-height: 87%;
+  /* min-height: 87%; */
+  height: 87%;
 }
 .heading {
   font-weight: 600;
-  padding: 00 1rem 0 1rem;
+  padding: 1rem 0 0 1rem;
 }
+
 
 .stepperContainer {
   display: flex;
   justify-content: center;
-  margin: 10px 0px 10px 0px;
+  margin: 10px 0;
 }
-
 .formContainer {
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
   gap: 20;
-  /* border: 1px solid red; */
   padding: 0% 1%;
+   margin-top: '23px';
 }
 
-
-/* .imageBox {
-  display: flex;
-  width: 20vw;
-  
-  justify-content: center;
-  align-items: center;
- 
-} */
 .imageBox {
   display: flex;
   width: 200px;
   height: 200px;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid rgb(0, 17, 255); */
   margin: auto;
   
 }
 
 .formFieldsInner {
   width: 100%;
-  /* border: 1px solid rgb(78, 47, 255); */
- 
 }
 .formFieldsBox {
   width: 80%;
-  /* border: 1px solid rgb(255, 47, 203); */
 }
 
 
@@ -73,6 +62,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  
   width: 20vw; 
 }
 
@@ -83,9 +73,11 @@
   gap: 25;
   width: 100%;
 padding:0% 1%;
+
 }
 .tableContainer{
   width: 100%;
+  margin-top: 5;
     /* border: 1px solid rgb(20, 133, 209);
     background-color:antiquewhite;
     padding: 10; */
@@ -97,7 +89,8 @@ padding:0% 1%;
   /* align-items: center; */
   height: 40%;
   width: 100%;
-  
+     
+
 }
 .buttonSection {
   width: 100%;
@@ -111,7 +104,7 @@ padding:0% 1%;
 .saveBtn{
   width: 100%;
   margin: 1% 0%;
-  
+ 
 }
 .actionBtnContainer{
   display: flex;
@@ -149,8 +142,10 @@ margin: 0px;
 @media (max-width: 900px) {
   .formContainer {
     flex-direction: column;
+   
     width: 100%;
     padding: 0;
+   
   }
 
   .secondContainer{
@@ -165,10 +160,7 @@ margin: 0px;
       gap: 5;
     padding: 0;
   }
-   .FormContainer{
-  width: 100%;
-  padding: 0;
-}
+
 .tableContainer{
   overflow-x: auto;
 }
@@ -183,4 +175,10 @@ margin: 0px;
     .paperContainer {
     height: auto;
   }
+
+}
+@media (min-width: 1000px) and (max-width: 1500px) {
+.paperContainer{
+  height: 85%;
+}
 }

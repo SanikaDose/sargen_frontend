@@ -77,5 +77,6 @@ export const protectedApi = createApi({
     'Solutions',
     'PlantLogo',
     'ProfilePic',
+    'AssessorLogo',
   ],
 });
