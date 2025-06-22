@@ -1,6 +1,6 @@
 export const apiControllerPath = {
   main: {
-    baseUrl: 'http://localhost:3004/api/v1',
+    baseUrl: 'http://localhost:3001/api/v1',
   },
   authentication: {
     root: '/authentication',
