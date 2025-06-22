@@ -6,7 +6,7 @@ import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './login.types';
@@ -109,15 +109,28 @@ const LoginPage = () => {
             Sign in to access your industry roadmap
           </Typography>
         </section>
-
         <Box component="form" onSubmit={handleSubmit(handleLogin)} noValidate className={styles.form}>
           <Controller
             name="email"
             control={control}
             defaultValue=""
-            rules={{ required: 'Email is required' }}
-            render={({ field }) => (
-              <InputWithLabel {...field} label="Email Address" name="email" placeholder="Enter your email" type="email" />
+            rules={{
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Enter a valid email address',
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <InputWithLabel
+                {...field}
+                label="Email Address"
+                name="email"
+                placeholder="Enter your email"
+                type="email"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
             )}
           />
 
@@ -125,8 +138,17 @@ const LoginPage = () => {
             name="password"
             control={control}
             defaultValue=""
-            rules={{ required: 'Password is required' }}
-            render={({ field }) => (
+            rules={{
+              required: 'Password is required',
+              minLength: { value: 8, message: 'Password must be at least 8 characters' },
+              maxLength: { value: 32, message: 'Password must be at most 32 characters' },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message: 'Password must include uppercase, lowercase, number, and special character',
+              },
+              // Add more rules as needed (e.g., pattern for complexity)
+            }}
+            render={({ field, fieldState }) => (
               <PasswordTextField
                 {...field}
                 autoComplete="new-password"
@@ -136,6 +158,8 @@ const LoginPage = () => {
                 showLockIcon={false}
                 showPasswordToggle
                 showStrengthIndicator
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
                 sx={{
                   height: '40px',
                   '& .MuiOutlinedInput-root': {
