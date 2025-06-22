@@ -16,8 +16,9 @@ import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 
 const KpiDefinition = () => {
   const params = useParams();
@@ -25,6 +26,8 @@ const KpiDefinition = () => {
 
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
@@ -85,11 +88,7 @@ const KpiDefinition = () => {
   return (
     <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
       <Box className={styles.stepperContainer}>
-        <Stepper
-          steps={stepperState.steps}
-          activeStep={stepperState.activeStep}
-          completedSteps={stepperState.completedSteps}
-        />
+        <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
       </Box>
       <Paper
         className={styles.formSection}
@@ -118,11 +117,7 @@ const KpiDefinition = () => {
                 <Loader loading />
               </Box>
             ) : (
-              <Grid
-                container
-                spacing={2}
-                sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}
-              >
+              <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                 {kpiList.map((field, index) => (
                   <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} key={field.id} sx={{ height: '10%' }}>
                     <Controller
@@ -168,20 +163,8 @@ const KpiDefinition = () => {
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
-              <CustomButton
-                children="Back"
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => router.back()}
-              />
-              <CustomButton
-                children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
-                variant="contained"
-                icon="save"
-                type="submit"
-              />
+              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()} />
+              <CustomButton children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
             </Box>
           </Box>
         </Box>

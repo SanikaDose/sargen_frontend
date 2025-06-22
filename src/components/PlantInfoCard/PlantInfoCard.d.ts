@@ -13,7 +13,7 @@ export interface PlantData {
   assessmentStartDate: string;
   debriefDate: string;
   assessmentCompletionPercentage: number;
-  assesmentStatus?: any;
+  assessmentCompletionStage: string;
 }
 
 export interface PlantInfoCardProps {
@@ -21,5 +21,4 @@ export interface PlantInfoCardProps {
   editPlantOnClick?: () => void;
   viewPlantOnClick?: () => void;
   onClick?: () => void;
-  assesmentStatus?: any;
 }

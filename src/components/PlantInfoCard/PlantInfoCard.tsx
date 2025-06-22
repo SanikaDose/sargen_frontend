@@ -6,9 +6,11 @@ import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
 import ImageUploader from '../ImageUpload/ImageUpload';
 import { CustomButton } from '../CustomButton/CustomButton';
+import { AsseessmentStatus } from '@/constants/enums';
 
-const PlantInfoCard = ({ data, editPlantOnClick, onClick, assesmentStatus }: PlantInfoCardProps) => {
+const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
+  console.log('data?.assessmentCompletionStage', data?.assessmentCompletionStage);
 
   return (
     <Box className={styles.card}>
@@ -56,8 +58,12 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, assesmentStatus }: Pla
         <Typography className={styles.datesTitle}>Dates</Typography>
         <Divider sx={{ marginBottom: 1 }} />
         <Box>
-          <Typography className={styles.textLabel}>Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString()}</Typography>
-          <Typography className={styles.textLabel}>Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString()}</Typography>
+          <Typography className={styles.textLabel}>
+            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString('en-GB')}
+          </Typography>
+          <Typography className={styles.textLabel}>
+            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString('en-GB')}
+          </Typography>
         </Box>
       </Box>
 
@@ -66,34 +72,33 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, assesmentStatus }: Pla
         <Box>
           <Divider sx={{ marginBottom: 1 }} />
           <Typography className={styles.statusLabel}>Status</Typography>
-          {/* <Button
-            startIcon={<OndemandVideoIcon />}
-            children={'Start Assessment'}
-            color={'secondary'}
-            variant={'text'}
-            onClick={onClick}
-          /> */}
+
           <CustomButton
             icon="startAssesment"
             children={
-              assesmentStatus?.assesorCompletionStage === 'NOT_STARTED'
+              data?.assessmentCompletionStage === 'NOT_STARTED'
                 ? 'Request for Assessment'
-                : assesmentStatus?.assesorCompletionStage === 'STARTED'
+                : data?.assessmentCompletionStage === 'STARTED' // chnage according to newe enum or dump
                   ? 'Assessment Started'
-                  : assesmentStatus?.assesorCompletionStage === 'FINISH_ASSESSMENT'
-                    ? 'Download Report'
+                  : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
+                    ? 'Assessor Assigning ...'
                     : 'Status Unknown'
             }
             variant="contained"
             color="primary"
             width="100%"
             height="30px"
-            disabled={assesmentStatus?.assesorCompletionStage === 'NOT_STARTED'}
+            disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT}
             onClick={onClick}
           />
         </Box>
         <Box className={styles.progressCircle}>
-          <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
+          {data?.assessmentCompletionStage &&
+          [AsseessmentStatus.REQUESTED_ASSESSMENT, AsseessmentStatus.NOT_STARTED].includes(
+            data.assessmentCompletionStage as AsseessmentStatus,
+          ) ? null : (
+            <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
+          )}
         </Box>
       </Box>
     </Box>

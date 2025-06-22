@@ -16,8 +16,9 @@ import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 const steps = [
   'Research',
   'Selling',
@@ -36,6 +37,8 @@ const PlanningHorizon = () => {
   const dispatch = useDispatch();
 
   dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
@@ -126,11 +129,7 @@ const PlanningHorizon = () => {
   return (
     <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
-        <Stepper
-          steps={stepperState.steps}
-          activeStep={stepperState.activeStep}
-          completedSteps={stepperState.completedSteps}
-        />
+        <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
       </Box>
       <Paper
         className={styles.formSection}
@@ -180,11 +179,7 @@ const PlanningHorizon = () => {
 
                         return (
                           <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
-                            <Card
-                              label={option.planningHorizon}
-                              isSelected={isSelected}
-                              onToggle={() => field.onChange(option.id)}
-                            />
+                            <Card label={option.planningHorizon} isSelected={isSelected} onToggle={() => field.onChange(option.id)} />
                           </Grid>
                         );
                       })}
@@ -214,20 +209,8 @@ const PlanningHorizon = () => {
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
-              <CustomButton
-                children="Back"
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => router.back()}
-              />
-              <CustomButton
-                children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
-                variant="contained"
-                icon="save"
-                type="submit"
-              />
+              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()} />
+              <CustomButton children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
             </Box>
           </Box>
         </Box>

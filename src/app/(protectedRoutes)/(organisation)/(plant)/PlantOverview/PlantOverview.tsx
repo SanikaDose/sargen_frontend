@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './PlantOverview.module.css';
 import AddPlantCard from '@/components/AddPlantCard/AddPlantCard';
 import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
-import { useGetAllPlantInfoQuery } from './PlantOverviewApi';
+import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
 import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
@@ -16,18 +16,18 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
 import Loader from '@/components/Loader/Loader';
 import { RootState } from '@/store/store';
+import { AsseessmentStatus } from '@/constants/enums';
 
 export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
   const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
-  console.log('showAssessmentListSideBar', showAssessmentListSideBar);
 
   // when ever the user will be there in plant overview then setShowAssessmentListSideBar will be always false
   // dispatch(setShowAssessmentListSideBar(false));
   const [searchValue, setSearchValue] = useState('');
-  const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
+  // const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
   const [statusLoading, setStatusLoading] = useState(false);
 
   // Set page header
@@ -45,39 +45,32 @@ export default function PlantOverview() {
     search: searchValue,
   });
 
-  const [getAssesmentStatus, { isLoading: assesmentStatusLoading }] = useGetAssesmentStatusMutation();
-
-  useEffect(() => {
-    const fetchAssessmentStatuses = async () => {
-      if (!Array.isArray(plantInfo?.data) || plantInfo.data.length === 0) return;
-
-      setStatusLoading(true);
-      const statuses: Record<string, any> = {};
-
-      for (const plant of plantInfo.data) {
-        try {
-          const res = await getAssesmentStatus({ tenantId, plantId: plant.id }).unwrap();
-          statuses[plant.id] = res;
-        } catch (error) {
-          console.error(`Failed to fetch status for plant ${plant.id}`, error);
-          statuses[plant.id] = null;
-        }
-      }
-
-      setAssessmentStatuses(statuses);
-      setStatusLoading(false);
-    };
-
-    fetchAssessmentStatuses();
-  }, [plantInfo?.data, getAssesmentStatus, tenantId]);
+  const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
 
-  const handleButtonClick = (tenantId: string, plantId: string) => {
-    router.push(`IndustrySelection/${tenantId}/${plantId}`);
-    dispatch(setShowAssessmentListSideBar(true));
+  const handleButtonClick = async (tenantId: string, plantId: string, assessmentStage: string) => {
+    if (assessmentStage === AsseessmentStatus.NOT_STARTED || assessmentStage === AsseessmentStatus.REQUESTED_ASSESSMENT) {
+      try {
+        await postAssesmentStatus({
+          tenantId,
+          plantId,
+          assessment: AsseessmentStatus.REQUESTED_ASSESSMENT,
+        }).unwrap();
+
+        return;
+      } catch (error) {
+        console.error('Failed to change assessment status:', error);
+        return;
+      }
+    }
+
+    if (assessmentStage === AsseessmentStatus.START_ASSESSMENT) {
+      router.push(`IndustrySelection/${tenantId}/${plantId}`);
+      dispatch(setShowAssessmentListSideBar(true));
+    }
   };
 
   return (
@@ -142,7 +135,7 @@ export default function PlantOverview() {
                     age: plant.age,
                     assessmentCompletionPercentage: plant.assessmentCompletion,
                     assessmentStartDate: plant.assessmentDate,
-                    createdAt: plant.assessmentDate,
+                    createdAt: plant.createdAt,
                     debriefDate: plant.debriefDate,
                     gstin: plant.gstin,
                     location: plant.location,
@@ -153,10 +146,10 @@ export default function PlantOverview() {
                     registrationNo: plant.registrationNo,
                     revenue: plant.revenue,
                     updatedAt: plant.debriefDate,
+                    assessmentCompletionStage: plant?.assessmentCompletionStage,
                   }}
-                  assesmentStatus={assessmentStatuses[plant.id]}
                   editPlantOnClick={() => router.push(`EditPlant/${tenantId}/${plant.id}`)}
-                  onClick={() => handleButtonClick(tenantId, plant.id)}
+                  onClick={() => handleButtonClick(tenantId, plant.id, plant?.assessmentCompletionStage)}
                 />
               </Grid>
             ))}

@@ -11,8 +11,8 @@ export interface Plant {
   numberOfLines: number;
   assessmentStartDate: string;
   debriefDate: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   createdBy: string | null;
   updatedBy: string | null;
   tenantId: string;

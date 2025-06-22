@@ -1,3 +1,4 @@
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
 
@@ -58,13 +59,13 @@ export const plantAssessmentApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: payload,
       }),
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   await rtkAPIToast(queryFulfilled, dispatch, {
-      //     successMessage: 'Got Planning Horizon Data successfully!',
-      //     errorMessage: 'Planning Horizon Data failed to GET!',
-      //     duration: 4000,
-      //   });
-      // },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Got Planning Horizon Data successfully!',
+          errorMessage: 'Planning Horizon Data failed to GET!',
+          duration: 4000,
+        });
+      },
     }),
     selectPlanningHorizonList: builder.mutation({
       query: (payload) => ({
@@ -72,13 +73,13 @@ export const plantAssessmentApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: payload,
       }),
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   await rtkAPIToast(queryFulfilled, dispatch, {
-      //     successMessage: 'Posted Planning Horizon Data successfully!',
-      //     errorMessage: 'Planning Horizon Data failed to Post!',
-      //     duration: 4000,
-      //   });
-      // },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Posted Planning Horizon Data successfully!',
+          errorMessage: 'Planning Horizon Data failed to Post!',
+          duration: 4000,
+        });
+      },
     }),
     getIndustrySelectionList: builder.mutation({
       query: (payload) => ({
@@ -86,13 +87,13 @@ export const plantAssessmentApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: payload,
       }),
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   await rtkAPIToast(queryFulfilled, dispatch, {
-      //     successMessage: 'Got Industry Selection List Data successfully!',
-      //     errorMessage: 'Industry Selection List Data failed to Post!',
-      //     duration: 4000,
-      //   });
-      // },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Got Industry Selection List Data successfully!',
+          errorMessage: 'Industry Selection List Data failed to Post!',
+          duration: 4000,
+        });
+      },
     }),
     selectIndustrySelectionList: builder.mutation({
       query: (payload) => ({
@@ -100,13 +101,13 @@ export const plantAssessmentApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: payload,
       }),
-      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      //   await rtkAPIToast(queryFulfilled, dispatch, {
-      //     successMessage: 'Posted Industry SelectionList Data successfully!',
-      //     errorMessage: 'Industry SelectionList Data failed to Post!',
-      //     duration: 4000,
-      //   });
-      // },
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Posted Industry SelectionList Data successfully!',
+          errorMessage: 'Industry SelectionList Data failed to Post!',
+          duration: 4000,
+        });
+      },
     }),
     getQuestionnairesList: builder.mutation({
       query: (payload) => ({
