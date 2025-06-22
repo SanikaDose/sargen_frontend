@@ -33,10 +33,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
-  const { data, isFetching, isError } = useGetSpecificPlantInfoQuery(
-    { organisationId, plantId },
-    { skip: !organisationId || !plantId },
-  );
+  const { data, isFetching, isError } = useGetSpecificPlantInfoQuery({ organisationId, plantId }, { skip: !organisationId || !plantId });
 
   const plant = data?.data?.data;
 
@@ -109,7 +106,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                 borderRadius: '16px',
                 '&:hover': { bgcolor: '#0356b0' },
               }}
-              onClick={() => router.push(`/UserAssessmentPreview/${organisationId}/${plantId}`)}
+              onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
             >
               Review Assessment
             </Button>
