@@ -159,6 +159,8 @@ export const plantFormInputs: PlantFormInput[] = [
     required: true,
     rules: {
       required: 'Contact number is required',
+      maxLength: { value: 10, message: 'Minimum 10 characters required' },
+      minLength: { value: 10, message: 'Minimum 10 characters required' },
       pattern: {
         value: /^[0-9]+$/,
         message: 'Enter a valid number',

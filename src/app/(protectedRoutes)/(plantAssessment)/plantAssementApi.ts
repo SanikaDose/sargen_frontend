@@ -122,6 +122,13 @@ export const plantAssessmentApi = protectedApi.injectEndpoints({
         body: payload,
       }),
     }),
+    getAssesmentStatus: builder.mutation({
+      query: (payload) => ({
+        url: `${apiControllerPath.plantAssessment.root}${apiControllerPath.plantAssessment.getAssessmentStatus}`,
+        method: 'POST',
+        body: payload,
+      }),
+    }),
   }),
 });
 export const {
@@ -135,4 +142,5 @@ export const {
   useSelectIndustrySelectionListMutation,
   useGetQuestionnairesListMutation,
   useSelectQuestionnairesAnswerMutation,
+  useGetAssesmentStatusMutation,
 } = plantAssessmentApi;
