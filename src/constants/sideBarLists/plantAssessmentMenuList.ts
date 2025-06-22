@@ -123,6 +123,13 @@ const PlantAssessmentMenuList: SidebarItem[] = [
     matchKeyword: 'HR',
     show: false,
   },
+  {
+    text: 'Preview',
+    icon: 'VisibilityIcon',
+    linkRoute: 'HR',
+    matchKeyword: 'HR',
+    show: false,
+  },
 ];
 
 export const platformUserAssessmentList = [...plantAssessmentConfigurationList, ...PlantAssessmentMenuList];

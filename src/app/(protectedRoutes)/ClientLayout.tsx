@@ -21,7 +21,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
-import { usePathname, useRouter, useParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
@@ -372,7 +372,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <ListItemIcon
                     sx={{
                       mr: 2,
-                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
                     }}
                   >
                     {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
@@ -382,7 +382,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       <Typography
                         variant="caption"
                         sx={{
-                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
                         }}
                       >
                         {item.text}
@@ -456,7 +456,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <ListItemIcon
                     sx={{
                       mr: 2,
-                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
                     }}
                   >
                     {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
@@ -466,7 +466,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       <Typography
                         variant="caption"
                         sx={{
-                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
                         }}
                       >
                         {item.text}
