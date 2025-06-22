@@ -460,7 +460,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>{children}</Box>
+        {children}
       </Main>
     </Box>
   );

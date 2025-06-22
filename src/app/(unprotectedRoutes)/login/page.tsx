@@ -1,5 +1,6 @@
 'use client';
 
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, Typography } from '@mui/material';
@@ -12,7 +13,6 @@ import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
-import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
@@ -118,13 +118,7 @@ const LoginPage = () => {
             defaultValue=""
             rules={{ required: 'Email is required' }}
             render={({ field }) => (
-              <InputWithLabel
-                {...field}
-                label="Email Address"
-                name="email"
-                placeholder="Enter your email"
-                type="email"
-              />
+              <InputWithLabel {...field} label="Email Address" name="email" placeholder="Enter your email" type="email" />
             )}
           />
 
@@ -164,13 +158,7 @@ const LoginPage = () => {
 
           <Button type="submit" fullWidth variant="contained" className={styles.button}>
             {loading ? (
-              <ButtonWithLoader
-                label="Sign In"
-                backgroundColor="inherit"
-                loaderColor="white"
-                loading={true}
-                height="30px"
-              />
+              <ButtonWithLoader label="Sign In" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
             ) : (
               'Sign In'
             )}
