@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './KpiDefinitionPreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
@@ -24,7 +23,6 @@ const KpiDefinitionPreview = () => {
   const router = useRouter();
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
   const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
@@ -61,7 +59,7 @@ const KpiDefinitionPreview = () => {
 
   const fetchKpis = async () => {
     try {
-      const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
+      const response = await getKPIDefinition({ organisationId, plantId }).unwrap();
       const cleaned = response.map((k: Kpi) => ({
         ...k,
         kpi: k.kpi.trim(),
@@ -99,7 +97,7 @@ const KpiDefinitionPreview = () => {
   const handleSave = async (formData: KpiFormValues) => {
     try {
       const payload = {
-        tenantId,
+        organisationId,
         plantId,
         kpiDefinitions: formData.kpis.map((item, index) => ({
           id: kpiList[index].id,

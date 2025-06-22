@@ -55,13 +55,29 @@ const LoginPage = () => {
         const response = await getOnboardingStatus(tenantId);
         console.log(response);
 
-        const onboardingData = response.data;
+        // const onboardingData = response.data;
 
         localStorage.setItem('onboardingStatus', response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED);
 
         dispatch(setOnboardingStatus(response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED));
         //TODO:route hard code change
-        router.push('/assessorOnboardingForm');
+        hasNavigatedRef.current = true;
+        switch (response.data?.onboardingStatus) {
+          case 'NOT_STARTED':
+            router.push('/assessorOnboardingForm');
+            break;
+          case 'STARTED':
+            console.log('Push to onboarding');
+            router.push('/assessorOnboardingForm');
+            break;
+          case 'COMPLETED':
+            console.log('Push to preview');
+            router.push('/AssignedPlantsList');
+            break;
+          default:
+            console.warn('Unhandled onboarding status:', response.data?.onboardingStatus);
+            break;
+        }
         return;
       }
 

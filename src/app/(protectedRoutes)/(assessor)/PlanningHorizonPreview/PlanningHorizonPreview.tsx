@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizonPreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import Stepper from '@/components/Stepper/Stepper';
@@ -26,7 +25,6 @@ const PlanningHorizonPreview = () => {
   const plantId = params.plantId as string;
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
 
@@ -59,7 +57,7 @@ const PlanningHorizonPreview = () => {
   const fetchHorizonOptions = async () => {
     try {
       const requestPayload = {
-        tenantId,
+        organisationId,
         plantId: plantId || '',
       };
       const result = await getHorizonOptions(requestPayload).unwrap();
@@ -122,7 +120,7 @@ const PlanningHorizonPreview = () => {
       if (!selectedOption) return;
 
       const payload = {
-        tenantId,
+        organisationId,
         plantId: plantId || '',
         selectedPlan: {
           id: selectedOption.id,

@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './IndustrySelectionPreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
@@ -26,7 +25,7 @@ const IndustrySelectionPreview = () => {
   const plantId = params.plantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
   const [selectIndustrySelectionList, { isLoading: isLoadingAdd }] = useSelectIndustrySelectionListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
+  // const tenantId = getValueLocalStorage('tenantId');
   const [industryData, setIndustryData] = useState<Industry[]>([]);
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
@@ -58,7 +57,7 @@ const IndustrySelectionPreview = () => {
   const fetchIndustryData = async () => {
     try {
       const obj = {
-        tenantId,
+        organisationId,
         plantId: plantId || '',
       };
       const result = await getIndustrySelectionList(obj).unwrap();
@@ -104,7 +103,7 @@ const IndustrySelectionPreview = () => {
       if (!selectedIndustry) return;
 
       const payload = {
-        tenantId,
+        organisationId,
         plantId: plantId || '',
         selectedIndustry: {
           id: selectedIndustry.id,
