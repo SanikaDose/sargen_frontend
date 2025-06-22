@@ -67,7 +67,8 @@ export default function PlantOverview() {
       }
     }
 
-    if (assessmentStage === AsseessmentStatus.START_ASSESSMENT) {
+    if (assessmentStage === 'STARTED') {
+      //AsseessmentStatus.START_ASSESSMENT
       router.push(`IndustrySelection/${tenantId}/${plantId}`);
       dispatch(setShowAssessmentListSideBar(true));
     }
