@@ -14,14 +14,14 @@ type FormValues = {
 };
 
 const inputSx = {
-  backgroundColor: '#fff',
+  backgroundColor: 'transparent ',
   borderRadius: '16px',
   fontSize: '0.9rem',
-  padding: '10px 14px',
+  // padding: '10px 14px',
   height: '35px',
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderRadius: '16px',
-  },
+  // '& .MuiOutlinedInput-notchedOutline': {
+  //   borderRadius: '16px',
+  // },
 };
 
 const ForgotPasswordPage = ({ setForgotPassword }: { setForgotPassword: (val: boolean) => void }) => {
