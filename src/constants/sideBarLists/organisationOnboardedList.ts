@@ -12,7 +12,7 @@ export const organisationExtraMenuList: SidebarItem[] = [
   {
     text: 'Organisation info',
     icon: 'FactoryIcon',
-    linkRoute: '/organisationsInfo',
+    linkRoute: '/organisationOnboarding',
     show: false,
   },
   {

@@ -13,7 +13,7 @@ import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import TextArea from '@/components/textArea/TextArea';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { triggerToast } from '@/app/utils/toast';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
@@ -23,6 +23,7 @@ export default function Preview() {
   const params = useParams();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
+  dispatch(setShowAssessmentListSideBar(true));
   const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
 
@@ -144,7 +145,7 @@ export default function Preview() {
 
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
-  console.log('currentGroup', currentGroup);
+
   if (!currentGroup) return null;
 
   const questionText = currentGroup[0]?.question ?? '';
@@ -173,13 +174,7 @@ export default function Preview() {
                   <Skeleton variant="rectangular" width="100%" height={60} sx={{ mb: 3, borderRadius: '8px' }} />
                   <Box className={styles.answerSection}>
                     {[1, 2, 3].map((_, i) => (
-                      <Skeleton
-                        key={i}
-                        variant="rectangular"
-                        width="100%"
-                        height={48}
-                        sx={{ mb: 1.5, borderRadius: '8px' }}
-                      />
+                      <Skeleton key={i} variant="rectangular" width="100%" height={48} sx={{ mb: 1.5, borderRadius: '8px' }} />
                     ))}
                   </Box>
                 </Box>
@@ -298,8 +293,6 @@ export default function Preview() {
                   if (currentIndex < groupKeys.length - 1) {
                     setCurrentIndex((prev) => prev + 1);
                   } else if (currentIndex == groupKeys.length - 1) {
-                    console.log('currentIndex == groupKeys.length - 1', groupKeys.length);
-
                     setFinalSubmitModel(true);
                   }
                 }}

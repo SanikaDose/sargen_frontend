@@ -8,9 +8,6 @@ const AnswerCard = ({
   isSelected = false,
   onClick = () => {},
 }: AnswerCardProps) => {
-  console.log('isSelected', isSelected);
-  console.log('answerText', answerText);
-
   return (
     <Box
       onClick={onClick}
