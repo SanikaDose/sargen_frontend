@@ -11,13 +11,13 @@ export const organisationOnboardedMenuList: SidebarItem[] = [
 export const organisationExtraMenuList: SidebarItem[] = [
   {
     text: 'Organisation info',
-    icon: 'FactoryIcon',
+    icon: 'BusinessIcon', // or 'BusinessIcon'
     linkRoute: '/organisationOnboarding',
     show: false,
   },
   {
     text: 'Report',
-    icon: 'FactoryIcon',
+    icon: 'AssessmentIcon', // or 'DescriptionIcon'
     linkRoute: '/report',
     show: false,
   },
