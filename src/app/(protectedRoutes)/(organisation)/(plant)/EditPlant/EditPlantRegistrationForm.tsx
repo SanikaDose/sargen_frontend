@@ -17,6 +17,9 @@ import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { triggerToast } from '@/app/utils/toast';
 import Loader from '@/components/Loader/Loader';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const steps = [
   'Name',
@@ -37,6 +40,8 @@ const steps = [
 const EditPlantRegistrationForm = () => {
   const router = useRouter();
   const params = useParams();
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantEditOnboarding));
 
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;

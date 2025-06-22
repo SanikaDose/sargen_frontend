@@ -18,6 +18,10 @@ import { plantFormInputs } from './FormConfig/formInputStep';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { triggerToast } from '@/app/utils/toast';
 import Loader from '@/components/Loader/Loader';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -40,6 +44,8 @@ const steps = [
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantOnboarding));
   const {
     control,
     handleSubmit,

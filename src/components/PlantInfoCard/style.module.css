@@ -40,11 +40,12 @@
 }
 
 .plantImage {
-  width: 50%;
-  height: 50%;
+  width: 30%;
+  height: 30%;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: auto;
 }
 
 .infoGrid {
@@ -138,6 +139,14 @@
   .card {
     height: auto;
   }
+  .plantImage {
+    width: 25%;
+    height: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+  }
 
   .titleSm,
   .titleMd,
@@ -162,6 +171,14 @@
 @media (min-width: 900px) and (max-width: 1000px) {
   .title {
     font-size: 2vw;
+  }
+  .plantImage {
+    width: 40%;
+    height: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
   }
 
   .titleSm,

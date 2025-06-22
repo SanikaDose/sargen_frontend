@@ -21,7 +21,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useParams } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
@@ -34,6 +34,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { ICONS } from '../utils/iconsMap';
+import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
+import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
+
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -96,18 +99,100 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  // ALL HOOKS MUST BE CALLED AT THE TOP LEVEL - NO CONDITIONALS
   const theme = useTheme();
   const router = useRouter();
-
-  // Media queries to detect device type
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-960px
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >=960px
-
-  // For desktop/laptop, sidebar is always open; for mobile/tablet, it's controlled by state
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const open = isDesktop ? true : mobileOpen;
   const dispatch = useDispatch();
+  const pathName = usePathname();
+  const params = useParams();
+
+  // Media queries
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+  // All useState hooks
+  const [tenantId, setTenantId] = React.useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
+
+  // All useSelector hooks
+  const onboardingStatus: string = useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || '';
+  const userTypeFromRedux = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType);
+  const sideBarListItems: SidebarItem[] = useSelector((state: RootState) => state.global.SideBarListItem);
+  const sideBarListItemsForAssessment: SidebarItem[] = useSelector((state: RootState) => state.global.sideBarListItemsForAssessment);
+  const extraListItems: SidebarItem[] = useSelector((state: RootState) => state.global.extraListItems);
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
+  const currentDepartment = useSelector((state: RootState) => state.plantAssessmentGlobal.questionnairesDeparment);
+
+  // Derived values
+  const open = isDesktop ? true : mobileOpen;
+  const plantId = params?.PlantId as string;
+  const userTypeFromLocalStorage = decodedToken?.userType;
+  const userType = userTypeFromRedux || userTypeFromLocalStorage;
+
+  // Initialize component with localStorage values
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('Authorization');
+      const storedTenantId = getValueLocalStorage('tenantId');
+
+      console.log('token:', token);
+      console.log('storedTenantId:', storedTenantId);
+
+      if (token) {
+        const decoded: Token = jwtDecode(token);
+        setDecodedToken(decoded);
+      }
+
+      if (storedTenantId) {
+        setTenantId(storedTenantId);
+        setIsInitialized(true);
+      } else {
+        router.push('/login');
+        return;
+      }
+    }
+  }, [router]);
+
+  // Set sidebar items based on onboarding status and user type
+  React.useEffect(() => {
+    if (!userType || !onboardingStatus) return;
+
+    if (onboardingStatus === OnboardingStatus.NOT_STARTED || onboardingStatus === OnboardingStatus.STARTED) {
+      if (userType[0] === UserType.PLATFORMUSER) {
+        dispatch(setSideBarListItem(organisationOnboardingMenuList));
+      } else if (userType[0] === UserType.ASSESSOR) {
+        dispatch(setSideBarListItem(assessorOnboardingMenuList));
+      }
+    } else if (onboardingStatus === OnboardingStatus.COMPLETED) {
+      if (userType[0] === UserType.PLATFORMUSER) {
+        dispatch(setSideBarListItem(organisationOnboardedMenuList));
+        dispatch(setExtraListItems(organisationExtraMenuList));
+      } else if (userType[0] === UserType.ASSESSOR) {
+        dispatch(setSideBarListItem(assessorOnboardedMenuList));
+        dispatch(setExtraListItems(assessorExtraList));
+      }
+    }
+  }, [userType, onboardingStatus, dispatch]);
+
+  // Set assessment list items
+  React.useEffect(() => {
+    if (onboardingStatus === OnboardingStatus.COMPLETED && showAssessmentListSideBar && userType) {
+      if (userType[0] === UserType.PLATFORMUSER) {
+        dispatch(setSideBarListItemsForAssessment(platformUserAssessmentList));
+      } else if (userType[0] === UserType.ASSESSOR) {
+        dispatch(setSideBarListItemsForAssessment(assessorUserAssessmentList));
+      }
+    }
+  }, [onboardingStatus, userType, showAssessmentListSideBar, dispatch]);
+
+  // Early return if not initialized
+  if (!isInitialized) {
+    return null;
+  }
 
   const handleDrawerOpen = () => {
     if (!isDesktop) {
@@ -120,49 +205,23 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setMobileOpen(false);
     }
   };
-  const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
 
-  // Only one useEffect is needed
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('Authorization');
-      console.log(token);
-      if (token) {
-        const decoded: Token = jwtDecode(token);
-        setDecodedToken(decoded);
-      }
-    }
-  }, []);
+  const DEPARTMENT_LINKS = [
+    'R&D',
+    'Planning',
+    'Production',
+    'Quality',
+    'Maintenance',
+    'supply_chain_sales',
+    'supply_chain_purchase',
+    'Finance',
+    'Utilities',
+    'IT',
+    'L&D',
+    'Management',
+    'HR',
+  ];
 
-  // Safe destructuring with fallback
-  const userRoleFromLocalStorage = decodedToken?.userRole;
-  const userTypeFromLocalStorage = decodedToken?.userType;
-
-  const onboardingStatus: OnboardingStatus =
-    useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || userRoleFromLocalStorage;
-
-  const userType = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
-
-  //Side bar list items states
-  const sideBarListItems: SidebarItem[] = useSelector((state: RootState) => state.global.SideBarListItem);
-  const sideBarListItemsForAssessment: SidebarItem[] = useSelector((state: RootState) => state.global.sideBarListItemsForAssessment);
-  const extraListItems: SidebarItem[] = useSelector((state: RootState) => state.global.extraListItems);
-
-  //Side bar assessment state mangament
-  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
-  const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
-
-  // For showing the assesment list
-  // For organisation
-  if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.PLATFORMUSER && showAssessmentListSideBar) {
-    dispatch(setSideBarListItemsForAssessment(platformUserAssessmentList));
-  }
-  // For assessor
-  if (onboardingStatus === OnboardingStatus.COMPLETED && userType && userType[0] === UserType.ASSESSOR && showAssessmentListSideBar) {
-    dispatch(setSideBarListItemsForAssessment(assessorUserAssessmentList));
-  }
-
-  //For assessor
   const sideBarListItemOnClick = (link: string) => {
     router.push(link);
 
@@ -175,44 +234,42 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // Dispatch to global state
     dispatch(setSideBarListItem(updatedList));
   };
+  const assementSideBarListItemOnClick = (link: string) => {
+    const isDepartment = DEPARTMENT_LINKS.includes(link);
 
-  const pathName = usePathname();
+    // ✅ Set department if applicable
+    if (isDepartment) {
+      dispatch(setPlantAssessmentDepartment(link));
+    }
 
-  // Component mount and change in the dependency the component will remount
-  console.log('onboarding', onboardingStatus);
-  React.useEffect(() => {
-    if (!userType || !onboardingStatus) return;
+    // ✅ Determine navigation path
+    let navigationPath = '';
 
-    if (onboardingStatus === OnboardingStatus.NOT_STARTED || onboardingStatus === OnboardingStatus.STARTED) {
-      // Not completed: show onboarding list
-      if (userType[0] === UserType.PLATFORMUSER) {
-        dispatch(setSideBarListItem(organisationOnboardingMenuList));
-      } else if (userType[0] === UserType.ASSESSOR) {
-        dispatch(setSideBarListItem(assessorOnboardingMenuList));
+    if (isDepartment) {
+      if (tenantId && plantId) {
+        navigationPath = `/Questionaire/${tenantId}/${plantId}`;
       }
     } else {
-      // COMPLETED: show onboarded + extra list
-      if (userType[0] === UserType.PLATFORMUSER) {
-        dispatch(setSideBarListItem(organisationOnboardedMenuList));
-        dispatch(setExtraListItems(organisationExtraMenuList));
-      } else if (userType[0] === UserType.ASSESSOR) {
-        dispatch(setSideBarListItem(assessorOnboardedMenuList));
-        dispatch(setExtraListItems(assessorExtraList));
+      if (tenantId && plantId) {
+        navigationPath = `${link}/${tenantId}/${plantId}`;
+      } else {
+        navigationPath = `${link}`; // fallback for normal navigation
       }
     }
-  }, [userType, onboardingStatus, dispatch]);
 
-  // Separate useEffect for assessment lists
-  React.useEffect(() => {
-    if (onboardingStatus === OnboardingStatus.COMPLETED && showAssessmentListSideBar && userType) {
-      if (userType[0] === UserType.PLATFORMUSER) {
-        dispatch(setSideBarListItemsForAssessment(platformUserAssessmentList));
-      } else if (userType[0] === UserType.ASSESSOR) {
-        dispatch(setSideBarListItemsForAssessment(assessorUserAssessmentList));
-      }
-    }
-    console.log('extraListItems:', extraListItems);
-  }, [onboardingStatus, userType, showAssessmentListSideBar, dispatch]);
+    router.push(navigationPath);
+
+    // ✅ Update sidebar state
+    const updatedList = sideBarListItems.map((item) => ({
+      ...item,
+      isActive: item.linkRoute === link,
+    }));
+
+    dispatch(setSideBarListItem(updatedList));
+  };
+
+  console.log('sideBarListItemsForAssessment', sideBarListItemsForAssessment);
+  console.log('sideBarListItems', sideBarListItems);
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -309,9 +366,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 sx={{
                   pl: 0,
                   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
-                  // '&:hover': {
-                  //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
-                  // },
                 }}
               >
                 <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
@@ -329,7 +383,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         variant="caption"
                         sx={{
                           color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
-                          // fontWeight: item.linkRoute === pathName ? 600 : 550,
                         }}
                       >
                         {item.text}
@@ -339,51 +392,54 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-
-            {/* SubList which will be activated in the assessement view for both  */}
           </>
           {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
             <>
               <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
                 Assessment menu
               </Typography>
-              {sideBarListItemsForAssessment.map((item) => (
-                <ListItem
-                  key={item.text}
-                  disablePadding
-                  sx={{
-                    pl: 0,
-                    backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
-                    // '&:hover': {
-                    //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
-                    // },
-                  }}
-                >
-                  <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
-                    <ListItemIcon
-                      sx={{
-                        mr: 2,
-                        color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
-                      }}
-                    >
-                      {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: item.linkRoute === pathName ? theme.palette.primary.main : theme.palette.secondary[100],
-                            // fontWeight: item.linkRoute === pathName ? 600 : 550,
-                          }}
-                        >
-                          {item.text}
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
+              {sideBarListItemsForAssessment.map((item) => {
+                // Check if the current pathname contains the matchKeyword
+                const activeSegment = pathName.split('/')[1]?.toLowerCase();
+                const isDepartment = !item.linkRoute.startsWith('/');
+
+                const isActive = isDepartment
+                  ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
+                  : activeSegment === item.matchKeyword?.toLowerCase();
+                return (
+                  <ListItem
+                    key={item.text}
+                    disablePadding
+                    sx={{
+                      pl: 0,
+                      backgroundColor: isActive ? 'secondary.main' : 'transparent',
+                    }}
+                  >
+                    <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                      <ListItemIcon
+                        sx={{
+                          mr: 2,
+                          color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                        }}
+                      >
+                        {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                            }}
+                          >
+                            {item.text}
+                          </Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
             </>
           )}
           {extraListItems &&
@@ -394,9 +450,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 sx={{
                   pl: 0,
                   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
-                  // '&:hover': {
-                  //   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'grey.100',
-                  // },
                 }}
               >
                 <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
@@ -414,7 +467,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         variant="caption"
                         sx={{
                           color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
-                          // fontWeight: item.linkRoute === pathName ? 600 : 550,
                         }}
                       >
                         {item.text}
@@ -424,9 +476,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-          {/* The below list will be used for the  report org info edit etc for organisation or for the assessor */}
         </Box>
-        {/* Main menu to add the edit preview and the reports to view also the org info*/}
         <Box sx={{ flexGrow: 1 }} />
         <Box
           sx={{

@@ -1,42 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { OnboardingStatus, Token } from './login.types';
-
-/**
- * Redux slice for managing decoded JWT token after login.
- *
- * - Stores token details in Redux state after successful authentication.
- * - Exposes `setDecodedToken` action to update token.
- * - Helps in role-based routing and conditional rendering.
- *
- * @author Pranay Mahalle
- * @date 2025-04-09
- */
+import { getInitialDecodedToken } from '@/app/utils/auth';
 
 type LoginState = {
   decodedToken: Token | null;
-  onboardingStatus: OnboardingStatus;
+  onboardingStatus: string;
 };
 
 const initialState: LoginState = {
-  decodedToken: null,
-  onboardingStatus: OnboardingStatus.NOT_STARTED,
+  decodedToken: getInitialDecodedToken(),
+  onboardingStatus: localStorage.getItem('onboardingStatus') || '',
 };
-
-/**
- * Stores the decoded JWT token into Redux state after successful login.
- *
- * @param {Token} payload - Decoded JWT token containing user identity and roles.
- */
 
 const LoginSlice = createSlice({
   name: 'tokenDecode',
   initialState,
   reducers: {
-    setDecodedToken: (state, actions: PayloadAction<Token>) => {
-      state.decodedToken = actions.payload;
+    setDecodedToken: (state, action: PayloadAction<Token>) => {
+      state.decodedToken = action.payload;
+      localStorage.setItem('accessToken', action.payload.accessToken);
+      localStorage.setItem('Authorization', action.payload.accessToken);
+      localStorage.setItem('tenantId', action.payload.tenantId);
+      localStorage.setItem('userType', action.payload.userType[0] || '');
     },
-    setOnboardingStatus: (state, actions: PayloadAction<OnboardingStatus>) => {
-      state.onboardingStatus = actions.payload;
+    setOnboardingStatus: (state, action: PayloadAction<OnboardingStatus>) => {
+      state.onboardingStatus = action.payload;
+      localStorage.setItem('onboardingStatus', action.payload);
     },
   },
 });

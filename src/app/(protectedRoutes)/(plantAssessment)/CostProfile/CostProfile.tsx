@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
+import { useAddCostCategoriesMutation, useGetAssesmentStatusMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { CostInputPercentage, FormValues, MultipleSections, RawCostCategory } from '../plantAssement.model';
 import { Box, Button, Grid, Paper, Typography } from '@mui/material';
@@ -15,9 +15,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 const CostProfile = () => {
   const params = useParams();
   const router = useRouter();
+
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const steps = [
     'Research',
     'Selling',
@@ -37,6 +45,7 @@ const CostProfile = () => {
   const tenantId = getValueLocalStorage('tenantId');
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
+  // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
 
   const { control, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: { costs: [] },
@@ -110,7 +119,6 @@ const CostProfile = () => {
     fetchCostProfileData();
   }, [params]);
 
-  const dispatch = useDispatch();
   const stepperState = useSelector((state: RootState) => state.stepper);
   useEffect(() => {
     dispatch(setActiveStep(0));
@@ -120,11 +128,7 @@ const CostProfile = () => {
   return (
     <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
       <Box className={styles.stepperContainer}>
-        <Stepper
-          steps={stepperState.steps}
-          activeStep={stepperState.activeStep}
-          completedSteps={stepperState.completedSteps}
-        />
+        <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
       </Box>
 
       <Paper
@@ -157,11 +161,7 @@ const CostProfile = () => {
                 <Loader loading />
               </Box>
             ) : (
-              <Grid
-                container
-                spacing={2}
-                sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}
-              >
+              <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                 {fields.length > 0
                   ? fields.map((field, index) => (
                       <Box key={field.id} className={styles.costInputCards}>
@@ -199,10 +199,7 @@ const CostProfile = () => {
           {/* Right Section */}
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
-              <InfoBox
-                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..."
-                heading="About Industry"
-              />
+              <InfoBox content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..." heading="About Industry" />
             </Box>
 
             <Box
@@ -216,20 +213,8 @@ const CostProfile = () => {
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
-              <CustomButton
-                children="Back"
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => router.back()}
-              />
-              <CustomButton
-                children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
-                variant="contained"
-                icon="save"
-                type="submit"
-              />
+              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()} />
+              <CustomButton children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
             </Box>
           </Box>
         </Box>
