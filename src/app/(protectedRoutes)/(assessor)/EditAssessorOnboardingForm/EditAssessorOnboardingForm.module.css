@@ -7,16 +7,7 @@
   /* align-items: center; */
   padding: 1px;
 }
-.paperContainer {
-  border-radius: 16px;
-  padding: 2;
-  background-color: white;
-  border: 1px solid rgb(216, 216, 216);
-  width: 100%;
-  display: flex;
-  gap: 3;
-  min-height: 87%;
-}
+
 .heading {
   font-weight: 600;
   padding: 00 1rem 0 1rem;
@@ -38,24 +29,13 @@
   padding: 0% 1%;
 }
 
-
-/* .imageBox {
-  display: flex;
-  width: 20vw;
-  
-  justify-content: center;
-  align-items: center;
- 
-} */
 .imageBox {
   display: flex;
-  width: 200px;
-  height: 200px;
+  width: 20vw;
+  /* height: 70%; */
   justify-content: center;
   align-items: center;
   /* border: 1px solid rgb(0, 17, 255); */
-  margin: auto;
-  
 }
 
 .formFieldsInner {
@@ -64,7 +44,7 @@
  
 }
 .formFieldsBox {
-  width: 80%;
+  width: 100%;
   /* border: 1px solid rgb(255, 47, 203); */
 }
 
@@ -78,7 +58,6 @@
 
 .secondContainer{
   display: flex;
-
   /* justify-content: space-evenly; */
   gap: 25;
   width: 100%;
@@ -95,9 +74,8 @@ padding:0% 1%;
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  height: 40%;
+  height: 45%;
   width: 100%;
-  
 }
 .buttonSection {
   width: 100%;
@@ -106,12 +84,10 @@ padding:0% 1%;
  display: flex;
  justify-content: center;
  align-items: center;
-
 }
 .saveBtn{
   width: 100%;
   margin: 1% 0%;
-  
 }
 .actionBtnContainer{
   display: flex;
@@ -142,9 +118,6 @@ margin: 0px;
   .fileUploadContainer{
     width: 100%;
   }
-   .paperContainer {
-    height: auto;
-  }
 }
 @media (max-width: 900px) {
   .formContainer {
@@ -172,15 +145,10 @@ margin: 0px;
 .tableContainer{
   overflow-x: auto;
 }
- .paperContainer {
-    height: auto;
-  }
+
 }
 @media (min-width: 280px) and (max-width: 800px) {
   .stepperContainer{
     display: none;
-  }
-    .paperContainer {
-    height: auto;
   }
 }
