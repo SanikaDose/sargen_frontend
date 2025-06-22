@@ -1,48 +1,24 @@
-export interface SidebarItem {
-  text: string;
-  icon: string; // This is the type for MUI icons
-  linkRoute: string;
-  show: boolean;
-}
+import { SidebarItem } from './sideBarList.type';
+
 export const organisationOnboardedMenuList: SidebarItem[] = [
   {
-    text: 'Plant',
+    text: 'Plant overview',
     icon: 'FactoryIcon',
     linkRoute: '/PlantOverview',
-
     show: false,
   },
 ];
-
-export const plantAssessmentMenuList: SidebarItem[] = [
+export const organisationExtraMenuList: SidebarItem[] = [
   {
-    text: 'Industry selection',
-    icon: 'DomainIcon',
-    linkRoute: '/IndustrySelection',
+    text: 'Organisation info',
+    icon: 'FactoryIcon',
+    linkRoute: '/organisationOnboarding',
     show: false,
   },
   {
-    text: 'Planning Horizon',
-    icon: 'TimelineIcon',
-    linkRoute: '/IndustrySelection',
-    show: false,
-  },
-  {
-    text: 'KPI Defination',
-    icon: 'SpeedIcon',
-    linkRoute: '/IndustrySelection',
-    show: false,
-  },
-  {
-    text: 'Cost Profile',
-    icon: 'MonetizationOnIcon',
-    linkRoute: '/IndustrySelection',
-    show: false,
-  },
-  {
-    text: 'Questions',
-    icon: 'QuizIcon',
-    linkRoute: '/IndustrySelection',
+    text: 'Report',
+    icon: 'FactoryIcon',
+    linkRoute: '/report',
     show: false,
   },
 ];

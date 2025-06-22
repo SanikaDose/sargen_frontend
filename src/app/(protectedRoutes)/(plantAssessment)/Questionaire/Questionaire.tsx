@@ -10,36 +10,44 @@ import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { Question } from './Questionaire.type';
 import TextArea from '@/components/textArea/TextArea';
 import { showToast } from '@/components/toaster/toasterSlice';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import Toaster from '@/components/toaster/Toaster';
+import { triggerToast } from '@/app/utils/toast';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 
 const Questionaire = () => {
-  const departmentName = [
+  const DEPARTMENT_LINKS = [
     'R&D',
-    // 'Planning',
+    'Planning',
     'Production',
-    // 'Quality',
-    // 'Maintenance',
-    // 'Supply Chain Sales',
-    // 'Supply Chain Purchase',
+    'Quality',
+    'Maintenance',
+    'supply_chain_sales',
+    'supply_chain_purchase',
     'Finance',
-    // 'Utilities',
+    'Utilities',
     'IT',
-    // 'L&D',
-    // 'Management',
+    'L&D',
+    'Management',
     'HR',
   ];
   const router = useRouter();
   const params = useParams();
-
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
+  dispatch(setShowAssessmentListSideBar(true));
   const plantId = params.PlantId as string;
-  // const department = useSelector(
-  //   (state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment,
-  // );
+  const departmentName = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
+
+  console.log('department name ', departmentName);
+
   const tenantId = getValueLocalStorage('tenantId');
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -85,10 +93,10 @@ const Questionaire = () => {
   };
 
   useEffect(() => {
-    if (departmentName.length > 0) {
-      fetchQuestions(departmentName[departmentIndex]);
+    if (departmentName && departmentName.trim().length > 0) {
+      fetchQuestions(departmentName);
     }
-  }, [departmentIndex]);
+  }, [departmentName]);
 
   const handleAnswerClick = (answerId: string) => {
     const currentKey = groupKeys[currentIndex];
@@ -172,75 +180,67 @@ const Questionaire = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           {/* Left section */}
-          <Box className={styles.formContainer}>
-            {isLoading || isSaving ? (
-              <Skeleton variant="text" width="40%" height={40} />
-            ) : (
-              <Typography
-                variant="h6"
-                sx={{
-                  color: 'black',
-                  textAlign: 'left',
-                  width: '100%',
-                }}
-              >
-                {currentGroup && currentGroup[0]?.department}
-              </Typography>
-            )}
 
-            {isLoading || isSaving ? (
-              <Box className={styles.questionAnsweresSection}>
-                <Skeleton variant="rectangular" height={60} width="100%" sx={{ mb: 2, borderRadius: '8px' }} />
-                <Box className={styles.answerSection}>
-                  {[1, 2, 3].map((_, i) => (
-                    <Skeleton
-                      key={i}
-                      variant="rectangular"
-                      height={48}
-                      width="100%"
-                      sx={{ mb: 1, borderRadius: '8px' }}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            ) : (
-              <Box className={styles.questionAnsweresSection}>
-                <Box className={styles.questionSection}>
-                  <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
-                </Box>
-
-                <Box className={styles.answerSection}>
-                  {currentGroup.map((option, idx) => (
-                    <AnswerCard
-                      key={option.id}
-                      answerNumber={idx + 1}
-                      answerText={option.answer ?? ''}
-                      isSelected={option.isselected}
-                      onClick={() => handleAnswerClick(option.id)}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            )}
-
-            <Box className={styles.justification}>
+          {groupKeys.length > 0 ? (
+            <Box className={styles.formContainer}>
               {isLoading || isSaving ? (
-                <Skeleton variant="rectangular" height={120} width="100%" sx={{ borderRadius: '8px' }} />
+                <Skeleton variant="text" width="40%" height={40} />
               ) : (
-                <TextArea
-                  value={justificationMap[currentGroup[0]?.question_uid] || ''}
-                  onChange={(val) => {
-                    setJustificationMap((prev) => ({
-                      ...prev,
-                      [currentGroup[0]?.question_uid]: val,
-                    }));
-                  }}
-                  placeholder="Enter justification"
-                  readOnly={false}
-                />
+                <Typography variant="h4" sx={{ marginBottom: 1 }}>
+                  {currentGroup && currentGroup[0]?.department}
+                </Typography>
               )}
+
+              {isLoading || isSaving ? (
+                <Box className={styles.questionAnsweresSection}>
+                  <Skeleton variant="rectangular" height={60} width="100%" sx={{ mb: 2, borderRadius: '8px' }} />
+                  <Box className={styles.answerSection}>
+                    {[1, 2, 3].map((_, i) => (
+                      <Skeleton key={i} variant="rectangular" height={48} width="100%" sx={{ mb: 1, borderRadius: '8px' }} />
+                    ))}
+                  </Box>
+                </Box>
+              ) : (
+                <Box className={styles.questionAnsweresSection}>
+                  <Box className={styles.questionSection}>
+                    <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
+                  </Box>
+
+                  <Box className={styles.answerSection}>
+                    {currentGroup.map((option, idx) => (
+                      <AnswerCard
+                        key={option.id}
+                        answerNumber={idx + 1}
+                        answerText={option.answer ?? ''}
+                        isSelected={option.isselected}
+                        onClick={() => handleAnswerClick(option.id)}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              <Box className={styles.justification}>
+                {isLoading || isSaving ? (
+                  <Skeleton variant="rectangular" height={120} width="100%" sx={{ borderRadius: '8px' }} />
+                ) : (
+                  <TextArea
+                    value={justificationMap[currentGroup[0]?.question_uid] || ''}
+                    onChange={(val) => {
+                      setJustificationMap((prev) => ({
+                        ...prev,
+                        [currentGroup[0]?.question_uid]: val,
+                      }));
+                    }}
+                    placeholder="Enter justification"
+                    readOnly={false}
+                  />
+                )}
+              </Box>
             </Box>
-          </Box>
+          ) : (
+            'No questions for this department '
+          )}
 
           {/* Right section */}
           <Box className={styles.rightSection}>
@@ -275,14 +275,26 @@ const Questionaire = () => {
                 type="button"
                 onClick={async () => {
                   const success = await submitQuestionnaireAnswer();
-                  if (success) {
-                    if (currentIndex < groupKeys.length - 1) {
-                      setCurrentIndex((prev) => prev + 1);
-                    } else if (departmentIndex < departmentName.length - 1) {
-                      setDepartmentIndex((prev) => prev + 1);
-                    } else {
-                      alert('🎉 All department questions submitted!');
-                    }
+                  if (!success) return;
+
+                  // Move to next question in current department
+                  if (currentIndex < groupKeys.length - 1) {
+                    setCurrentIndex((prev) => prev + 1);
+                    return;
+                  }
+
+                  // Move to next department
+                  const currentDeptIndex = DEPARTMENT_LINKS.indexOf(departmentName);
+                  const nextDept = DEPARTMENT_LINKS[currentDeptIndex + 1];
+
+                  if (nextDept) {
+                    dispatch(setPlantAssessmentDepartment(nextDept)); // ✅ Set next department in global state
+                    setCurrentIndex(0); // ✅ Reset question index
+                    triggerToast(`Moved to ${nextDept} department`, 'success');
+                  } else {
+                    // ✅ No more departments - navigate to preview
+                    triggerToast('🎉 All department questions submitted!', 'success');
+                    router.push(`/Preview/${tenantId}/${plantId}`);
                   }
                 }}
                 disabled={isSaving}

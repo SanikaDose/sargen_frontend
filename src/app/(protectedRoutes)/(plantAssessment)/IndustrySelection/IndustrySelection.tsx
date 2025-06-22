@@ -16,10 +16,17 @@ import { RootState } from '@/store/store';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 
 const IndustrySelection = () => {
   const router = useRouter();
   const params = useParams();
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantAssessmentIndustrySelection));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
@@ -78,7 +85,6 @@ const IndustrySelection = () => {
     }
   };
 
-  const dispatch = useDispatch();
   const stepperState = useSelector((state: RootState) => state.stepper);
 
   useEffect(() => {
@@ -88,11 +94,7 @@ const IndustrySelection = () => {
   return (
     <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
       <Box className={styles.stepperContainer}>
-        <Stepper
-          steps={stepperState.steps}
-          activeStep={stepperState.activeStep}
-          completedSteps={stepperState.completedSteps}
-        />
+        <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
       </Box>
       <Paper
         className={styles.formSection}
@@ -177,20 +179,8 @@ const IndustrySelection = () => {
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
-              <CustomButton
-                children="Back"
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => router.back()}
-              />
-              <CustomButton
-                children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
-                variant="contained"
-                icon="save"
-                type="submit"
-              />
+              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()} />
+              <CustomButton children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
             </Box>
           </Box>
         </Box>

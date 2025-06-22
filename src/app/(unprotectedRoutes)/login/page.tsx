@@ -1,5 +1,6 @@
 'use client';
 
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, Typography } from '@mui/material';
@@ -12,6 +13,7 @@ import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
+import { decodeAndStoreToken } from '@/app/utils/auth';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
@@ -36,17 +38,15 @@ const LoginPage = () => {
       if (!result.success) throw new Error('Login unsuccessful');
 
       const token = result.accessToken;
+      console.log('token', token);
+
       const rawDecoded = jwtDecode<RawToken>(token);
+      console.log('rawDecoded', rawDecoded);
       const { tenantId, userType } = rawDecoded;
 
-      localStorage.setItem('accessToken', result.accessToken);
-      localStorage.setItem('Authorization', token);
-      localStorage.setItem('tenantId', tenantId);
-      localStorage.setItem('userType', userType[0] || '');
-      const typedToken: Token = {
-        ...rawDecoded,
-        userType: rawDecoded.userType.map((type: string) => type as UserType),
-      };
+      const typedToken = decodeAndStoreToken(token);
+      console.log('typedToken', typedToken);
+
       dispatch(setDecodedToken(typedToken));
 
       if (userType[0] === 'ASSESSOR') {
@@ -117,13 +117,7 @@ const LoginPage = () => {
             defaultValue=""
             rules={{ required: 'Email is required' }}
             render={({ field }) => (
-              <InputWithLabel
-                {...field}
-                label="Email Address"
-                name="email"
-                placeholder="Enter your email"
-                type="email"
-              />
+              <InputWithLabel {...field} label="Email Address" name="email" placeholder="Enter your email" type="email" />
             )}
           />
 
@@ -162,7 +156,11 @@ const LoginPage = () => {
           />
 
           <Button type="submit" fullWidth variant="contained" className={styles.button}>
-            Sign In
+            {loading ? (
+              <ButtonWithLoader label="Sign In" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
+            ) : (
+              'Sign In'
+            )}
           </Button>
 
           <Typography variant="body2" className={styles.forgotPassword}>

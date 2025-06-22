@@ -9,4 +9,6 @@ export interface ButtonWithLoaderProps {
   height?: string;
   backgroundColor?: string;
   disabled?: boolean;
+  fullWidth?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }

@@ -62,19 +62,12 @@ import { Dropdown } from '@/components/Dropdown/Dropdown';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 
-const steps = [
-  'First Name',
-  'Last Name',
-  'E-Mail Id',
-  'Contact Number',
-  'City',
-  'Country',
-  'Year Of Experience',
-  'Certification Year',
-].map((label) => ({ label }));
+const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
+  (label) => ({ label }),
+);
 
 //const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
+const tenantId = 'ASSESSOR-26327b7b-2e01-49c1-9948-1373c7e1a8e1';
 function AssessorOnboarding() {
   const dispatch = useDispatch();
 
@@ -162,23 +155,26 @@ function AssessorOnboarding() {
   console.log('vieablefile', viewableFiles);
   //function to view the metadata files
   const handleViewClick = async (fileName: string) => {
-    // if (!fileName) {
-    //   triggerToast('Invalid file name.', 'warning');
-    //   return;
-    // }
+    if (!fileName) {
+      triggerToast('Invalid file name.', 'warning');
+      return;
+    }
+
     try {
       const response = await viewMetadataFile({
         tenantId: tenantId,
         fileName: fileName,
       }).unwrap();
+
       if (response?.url) {
-        window.open(response.url, '_blank');
+        const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(response.url)}`;
+        window.open(viewerUrl, '_blank');
       } else {
         triggerToast('File URL not found.', 'error');
       }
     } catch (err) {
-      console.log('error', err);
-      //  triggerToast('Failed to view file', 'error');
+      console.error('error', err);
+      triggerToast('Failed to view file', 'error');
     }
   };
 
@@ -288,22 +284,14 @@ function AssessorOnboarding() {
 
     try {
       setdownloadKey(fileName);
-      const response = await getMetadataFileTemplate({
+
+      // This will internally trigger the file download via responseHandler
+      await getMetadataFileTemplate({
         userType: 'ASSESSOR',
         fileName,
       }).unwrap();
 
-      const blob = await response.blob();
-      const suggestedFileName = `${fileName}.xlsx`;
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', suggestedFileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      console.log('downloaded sucessfully', url);
+      console.log('Download triggered successfully.');
     } catch (err) {
       console.error('Error downloading file:', err);
     } finally {
@@ -487,9 +475,7 @@ function AssessorOnboarding() {
                                       label="Upload"
                                       width="50px"
                                       showIcon
-                                      color={
-                                        uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'green' : '#1976d2'
-                                      }
+                                      color={uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'green' : '#1976d2'}
                                       onClick={() => {
                                         setCurrentUploadKey(backendKey);
                                         fileInputRef.current?.click();
@@ -504,8 +490,7 @@ function AssessorOnboarding() {
                                     //   opacity: uploadedFiles[backendKey] ? 1 : 0.5,
                                     // }}
                                     style={{
-                                      pointerEvents:
-                                        uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'auto' : 'none',
+                                      pointerEvents: uploadedFiles[backendKey] || viewableFiles[backendKey] ? 'auto' : 'none',
                                       opacity: uploadedFiles[backendKey] || viewableFiles[backendKey] ? 1 : 0.5,
                                     }}
                                   >

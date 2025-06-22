@@ -1,22 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
-import Stepper from '@/components/Stepper/Stepper';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
-import {
-  useSubmitOrganizationInfoMutation,
-  useUploadOrganizationLogoMutation,
-  useGetOrganizationInfoQuery,
-} from './OrganisationOnboardingAPi';
+import Loader from '@/components/Loader/Loader';
+import Stepper from '@/components/Stepper/Stepper';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
-import { CountryOptions } from '@/app/utils/CountryOptions';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
+import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
 import Loader from '@/components/Loader/Loader';
 import styles from './OrganisationOnboarding.module.css';
@@ -34,7 +31,6 @@ const steps = [
   'About Organization',
 ].map((label) => ({ label }));
 
-import { triggerToast } from '@/app/utils/toast';
 import InfoBox from '@/components/InfoBox/InfoBox';
 function OrganizationOnbording() {
   const dispatch = useDispatch();

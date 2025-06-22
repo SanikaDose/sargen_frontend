@@ -1,35 +1,29 @@
 'use client';
 
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { Box, Container, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { showToast } from '@/components/toaster/toasterSlice';
-import Toaster from '@/components/toaster/Toaster';
 import styles from './style.module.css'; // ✅ Use your existing CSS
-
-interface EnquiryFormInputs {
-  name: string;
-  email: string;
-  phone?: string;
-  message: string;
-}
+import { EnquiryRequest } from './enquiry.types';
+import { useSubmitEnquiryMutation } from './enquiryApi';
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 
 const EnquiryPage = () => {
-  const { control, handleSubmit, reset } = useForm<EnquiryFormInputs>();
-  const dispatch = useDispatch();
+  const { control, handleSubmit, reset } = useForm<EnquiryRequest>();
+  const [submitEnquiry, { isLoading }] = useSubmitEnquiryMutation();
 
-  const onSubmit = (data: EnquiryFormInputs) => {
-    // Example: submit data to API or handle it
-    console.log('Enquiry Submitted:', data);
-    dispatch(showToast({ message: 'Enquiry submitted successfully!', severity: 'success' }));
-    reset();
+  const onSubmit = async (data: EnquiryRequest) => {
+    try {
+      await submitEnquiry(data).unwrap();
+      reset();
+    } catch (error) {
+      // Error is handled by the toast in rtkAPIToast
+      console.error('Failed to submit enquiry:', error);
+    }
   };
 
   return (
     <Container maxWidth="sm" className={styles.enquiryContainer}>
-      <Toaster />
       <Box className={styles.enquiryPaper}>
         <section className={styles.textContainer}>
           <Typography className={styles.welcomeBackText} variant="h3" fontWeight="bold">
@@ -101,10 +95,15 @@ const EnquiryPage = () => {
             )}
           />
 
-          <Box mt={2}>
-            <CustomButton type="submit" width="100%" icon="submit" height="5vh">
-              Submit Enquiry
-            </CustomButton>
+          <Box mt={-1.5}>
+            <ButtonWithLoader
+              label="Submit Enquiry"
+              type="submit"
+              loading={isLoading}
+              fullWidth
+              height="5vh"
+              disabled={isLoading}
+            />
           </Box>
         </Box>
       </Box>
