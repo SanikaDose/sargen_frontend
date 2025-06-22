@@ -126,6 +126,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('Authorization');
+      console.log(token);
       if (token) {
         const decoded: Token = jwtDecode(token);
         setDecodedToken(decoded);
@@ -139,6 +140,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const onboardingStatus: OnboardingStatus =
     useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || userRoleFromLocalStorage;
+
   const userType = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType) || userTypeFromLocalStorage;
 
   //Side bar list items states
@@ -177,11 +179,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const pathName = usePathname();
 
   // Component mount and change in the dependency the component will remount
-
+  console.log('onboarding', onboardingStatus);
   React.useEffect(() => {
     if (!userType || !onboardingStatus) return;
 
-    if (onboardingStatus !== OnboardingStatus.COMPLETED) {
+    if (onboardingStatus === OnboardingStatus.NOT_STARTED || onboardingStatus === OnboardingStatus.STARTED) {
       // Not completed: show onboarding list
       if (userType[0] === UserType.PLATFORMUSER) {
         dispatch(setSideBarListItem(organisationOnboardingMenuList));
@@ -450,9 +452,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           </Typography>
         </Box>
       </Drawer>
-      <Main open={open} sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Main open={open}>
         <DrawerHeader />
-        <Box sx={{ flexGrow: 1, overflow: 'auto' }}>{children}</Box>
+        {children}
       </Main>
     </Box>
   );

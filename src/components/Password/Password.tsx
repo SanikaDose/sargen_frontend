@@ -1,8 +1,8 @@
 'use client';
 
+import { Lock, Visibility, VisibilityOff } from '@mui/icons-material';
+import { FormControl, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { TextField, FormControl, FormLabel, InputAdornment, IconButton, Box, FormHelperText } from '@mui/material';
-import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 import styles from './password.module.css';
 import { PasswordTextFieldProps } from './Password.types';
 
@@ -47,7 +47,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
 
   return (
     <FormControl fullWidth margin="normal">
-      <FormLabel htmlFor={name} className={styles.formLabel}>
+      <FormLabel htmlFor={name} className={styles.formLabel} color="primary">
         {label}
         {required ? ' *' : ''}
       </FormLabel>
@@ -71,13 +71,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
           ) : undefined,
           endAdornment: showPasswordToggle ? (
             <InputAdornment position="end">
-              <IconButton
-                onClick={handleToggleVisibility}
-                edge="end"
-                tabIndex={-1}
-                size="small"
-                aria-label="toggle password visibility"
-              >
+              <IconButton onClick={handleToggleVisibility} edge="end" tabIndex={-1} size="small" aria-label="toggle password visibility">
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>

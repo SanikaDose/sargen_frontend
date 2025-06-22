@@ -1,27 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
-import Stepper from '@/components/Stepper/Stepper';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
-import {
-  useSubmitOrganizationInfoMutation,
-  useUploadOrganizationLogoMutation,
-  useGetOrganizationInfoQuery,
-} from './OrganisationOnboardingAPi';
-import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
-import { CountryOptions } from '@/app/utils/CountryOptions';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
-import { OrgFormInputs } from './FormConfig/formInputStep';
-import { OrgOnboardType } from './OrganisationOnboarding.types';
 import Loader from '@/components/Loader/Loader';
-import styles from './OrganisationOnboarding.module.css';
-import { useDispatch } from 'react-redux';
+import Stepper from '@/components/Stepper/Stepper';
 import { setPageNameHeader } from '@/store/globalSlice';
+import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { OrgFormInputs } from './FormConfig/formInputStep';
+import styles from './OrganisationOnboarding.module.css';
+import { OrgOnboardType } from './OrganisationOnboarding.types';
+import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
 const steps = [
   'Company Name',
   'Company website',
@@ -33,7 +27,6 @@ const steps = [
   'About Organization',
 ].map((label) => ({ label }));
 
-import { triggerToast } from '@/app/utils/toast';
 import InfoBox from '@/components/InfoBox/InfoBox';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
@@ -131,7 +124,7 @@ function OrganizationOnbording() {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h6" className={styles.heading}>
+                <Typography variant="h4" className={styles.heading}>
                   Organization Details
                 </Typography>
 

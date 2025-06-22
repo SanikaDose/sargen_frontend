@@ -6,29 +6,14 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
-import {
-  Box,
-  FormControl,
-  FormHelperText,
-  Grid,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-  useMediaQuery,
-} from '@mui/material';
+import { Box, FormControl, FormHelperText, Grid, MenuItem, Paper, Select, Typography, useMediaQuery } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
 import styles from './ContactPerson.module.css';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
-import {
-  useAddPointOfContactMutation,
-  useGetPointOfContactQuery,
-  useUploadPocProfilePicMutation,
-} from './ContactPersonApi';
-
+import { useAddPointOfContactMutation, useGetPointOfContactQuery, useUploadPocProfilePicMutation } from './ContactPersonApi';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader } from '@/store/globalSlice';
@@ -46,28 +31,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     skip: !editMode,
   });
   const dispatch = useDispatch();
-
-  // Enhanced media queries for different screen sizes
   const isMobile = useMediaQuery('(max-width: 600px)');
   const isTablet = useMediaQuery('(max-width: 900px)');
-  const isMacBook = useMediaQuery('(min-width: 901px) and (max-width: 1440px)');
-  const isLargeScreen = useMediaQuery('(min-width: 1441px)');
-
-  // Calculate paper height based on screen size
-  const getPaperHeight = () => {
-    if (isMobile || isTablet) return 'auto';
-    if (isMacBook) return '75vh'; // Reduced height for MacBook
-    if (isLargeScreen) return '78vh'; // Original height for large screens
-    return '70vh'; // Default fallback
-  };
-
-  // Calculate container height based on screen size
-  const getContainerHeight = () => {
-    if (isMobile || isTablet) return 'auto';
-    if (isMacBook) return '61vh'; // Adjusted for MacBook
-    if (isLargeScreen) return '74.5vh'; // Original height for large screens
-    return '66vh'; // Default fallback
-  };
 
   useEffect(() => {
     if (editMode) {
@@ -207,10 +172,10 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
               p: 2,
               backgroundColor: 'white',
               border: '1px solid #D8D8D8',
-              height: getPaperHeight(),
+              height: isMobile || isTablet ? 'auto' : '78vh',
             }}
           >
-            <Grid container spacing={2} alignItems="stretch" sx={{ height: getContainerHeight() }}>
+            <Grid container spacing={2} alignItems="stretch" sx={{ height: isMobile || isTablet ? 'auto' : '74.5vh' }}>
               <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
                 <Typography variant="h4" fontWeight={600} className={styles.heading}>
                   User Profile
@@ -222,15 +187,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                   <Box className={styles.formFieldsBox}>
                     <Grid container spacing={1}>
                       {(
-                        [
-                          'firstName',
-                          'lastName',
-                          'employeeId',
-                          'email',
-                          'designation',
-                          'jobRole',
-                          'contactNumber',
-                        ] as (keyof PocPayload)[]
+                        ['firstName', 'lastName', 'employeeId', 'email', 'designation', 'jobRole', 'contactNumber'] as (keyof PocPayload)[]
                       ).map((fieldName) => (
                         <Grid key={fieldName} size={{ xs: 12, sm: 6 }}>
                           <Controller
@@ -241,9 +198,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                               <InputWithLabel
                                 {...field}
                                 label={fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
-                                placeholder={`Enter ${fieldName
-                                  .replace(/([A-Z])/g, ' $1')
-                                  .replace(/^./, (str) => str.toUpperCase())}`}
+                                placeholder={`Enter ${fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}`}
                                 onFocus={handleFocus}
                                 required
                                 error={!!errors[fieldName]}
@@ -267,7 +222,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                                 <Select
                                   {...field}
                                   displayEmpty
-                                  sx={{ borderRadius: '16px', height: '38.2px' }}
+                                  sx={{ borderRadius: '16px', height: '38.5px' }}
                                   onOpen={() => handleFocus({ target: { name: 'country' } })}
                                   error={!!errors.country}
                                 >
@@ -281,9 +236,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                                   ))}
                                 </Select>
                                 {errors.country && (
-                                  <FormHelperText sx={{ color: 'red', fontSize: '12px' }}>
-                                    {errors.country.message}
-                                  </FormHelperText>
+                                  <FormHelperText sx={{ color: 'red', fontSize: '12px' }}>{errors.country.message}</FormHelperText>
                                 )}
                               </>
                             )}
@@ -299,7 +252,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                   justifyContent="space-between"
                   alignItems="center"
                   p={1}
-                  mt={isMacBook ? 3 : 5} // Reduced margin for MacBook
+                  mt={5}
                   ml={5}
                   mr={5}
                   sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
@@ -307,13 +260,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                   <CustomButton variant="contained" icon="left" onClick={() => router.push('/organisationOnboarding')}>
                     Back
                   </CustomButton>
-                  <CustomButton
-                    type="button"
-                    variant="contained"
-                    icon="save"
-                    disabled={isLoading}
-                    onClick={handleSaveClick}
-                  >
+                  <CustomButton type="button" variant="contained" icon="save" disabled={isLoading} onClick={handleSaveClick}>
                     {isLoading ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
@@ -324,11 +271,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                   <InfoBox
                     content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
                     heading="About Contact Person"
-                    sx={{
-                      height: getPaperHeight() === 'auto' ? 'auto' : `calc(${getPaperHeight()} - 32px)`,
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
                   />
                 </Grid>
               )}
