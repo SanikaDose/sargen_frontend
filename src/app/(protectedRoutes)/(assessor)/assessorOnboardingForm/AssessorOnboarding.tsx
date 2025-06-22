@@ -67,7 +67,7 @@ const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City',
 );
 
 //const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'ASSESSOR-26327b7b-2e01-49c1-9948-1373c7e1a8e1';
+const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';
 function AssessorOnboarding() {
   const dispatch = useDispatch();
 
@@ -450,7 +450,7 @@ function AssessorOnboarding() {
                                   }}
                                 >
                                   {downloadKey === backendKey ? (
-                                    <ButtonWithLoader loading={true} width="50px" label="" />
+                                    <ButtonWithLoader loading={true} width="50px" label="" height="40px" />
                                   ) : (
                                     <FileActionButton
                                       icon="download"
@@ -468,7 +468,7 @@ function AssessorOnboarding() {
                                   }}
                                 >
                                   {uploadingKey === backendKey ? (
-                                    <ButtonWithLoader loading={true} width="50px" label="" />
+                                    <ButtonWithLoader loading={true} width="50px" label="" height="40px" />
                                   ) : (
                                     <FileActionButton
                                       icon="upload"
