@@ -3,6 +3,7 @@ export interface EnquiryRequest {
   email: string;
   phone?: string;
   message: string;
+  orgName: string;
 }
 
 export interface EnquiryResponse {
