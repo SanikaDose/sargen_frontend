@@ -7,13 +7,21 @@ import { useRouter } from 'next/navigation';
 import styles from './style.module.css';
 import { useForgotPasswordApiMutation } from '../login/loginApi';
 import { pageRoutes } from '@/constants/pagesRoutes';
+import { Height } from '@mui/icons-material';
 
 type FormValues = {
   email: string;
 };
 
 const inputSx = {
-  backgroundColor: '#fff',
+  backgroundColor: 'transparent ',
+  borderRadius: '16px',
+  fontSize: '0.9rem',
+  // padding: '10px 14px',
+  height: '35px',
+  // '& .MuiOutlinedInput-notchedOutline': {
+  //   borderRadius: '16px',
+  // },
 };
 
 const ForgotPasswordPage = ({ setForgotPassword }: { setForgotPassword: (val: boolean) => void }) => {

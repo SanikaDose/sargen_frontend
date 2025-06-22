@@ -16,7 +16,7 @@ const ButtonWithLoader: React.FC<ButtonWithLoaderProps> = ({
   loaderColor = 'green',
   width,
   height,
-  backgroundColor = '#1976d2',
+  backgroundColor = 'rgba(29, 140, 252, 0.781)',
   disabled = false,
   fullWidth = false,
   type,
