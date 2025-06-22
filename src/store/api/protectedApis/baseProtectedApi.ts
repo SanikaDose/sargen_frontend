@@ -9,11 +9,7 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-  args,
-  api,
-  extraOptions,
-) => {
+export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
   // if (result.data === null) {
@@ -67,6 +63,7 @@ export const protectedApi = createApi({
   reducerPath: 'protectedApi',
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}), // Placeholder, will inject endpoints later
+  tagTypes: ['SpecificPlantInfo', 'Assessor', 'AssessorMetadata', 'Plant', 'Organisation', 'Poc', 'Solutions', 'PlantLogo', 'ProfilePic'],
   tagTypes: [
     'SpecificPlantInfo',
     'Assessor',

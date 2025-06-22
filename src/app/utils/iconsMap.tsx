@@ -33,6 +33,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TuneIcon from '@mui/icons-material/Tune';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 export const ICONS: Record<string, React.ElementType> = {
   HomeRoundedIcon: HomeRoundedIcon,
@@ -70,4 +71,5 @@ export const ICONS: Record<string, React.ElementType> = {
   QuizIcon: QuizRoundedIcon,
   CorporateFareIcon: CorporateFareRoundedIcon,
   PermContactCalendarIcon: PermContactCalendarRoundedIcon,
+  VisibilityIcon: VisibilityIcon,
 };

@@ -17,6 +17,7 @@ import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalS
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { triggerToast } from '@/app/utils/toast';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
+import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 
 export default function Preview() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function Preview() {
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
   dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const plantId = params.PlantId as string;
   const tenantId = getValueLocalStorage('tenantId');
 

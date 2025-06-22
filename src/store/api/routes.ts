@@ -108,6 +108,6 @@ export const apiControllerPath = {
     getMetadataFile: '/download',
   },
   enquiry: {
-    root: '/enquiry',
+    root: '/enquiries',
   },
 };

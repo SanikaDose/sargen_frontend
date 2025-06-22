@@ -147,6 +147,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         setDecodedToken(decoded);
       }
 
+      if (!token) {
+        router.push('login');
+      }
+
       if (storedTenantId) {
         setTenantId(storedTenantId);
         setIsInitialized(true);
@@ -235,6 +239,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     dispatch(setSideBarListItem(updatedList));
   };
   const assementSideBarListItemOnClick = (link: string) => {
+    console.log('link', link);
     const isDepartment = DEPARTMENT_LINKS.includes(link);
 
     // ✅ Set department if applicable
