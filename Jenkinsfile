@@ -76,26 +76,103 @@
 // }
 
 
+// pipeline {
+//   agent any
+
+//   environment {
+//     GIT_SSH_COMMAND = "ssh -o StrictHostKeyChecking=no"
+//     PROJECT_KEY = 'sargen_frontend'
+//     CONTABO_HOST = 'YOUR_CONTABO_SERVER_IP'
+//     DEPLOY_DIR = '/var/www/sargen-frontend'
+//   }
+
+//   stages {
+
+//     stage('Clean Workspace') {
+//       steps {
+//         cleanWs()
+//       }
+//     }
+
+//     stage('Checkout') {
+//       steps {
+//         sshagent(credentials: ['gitea-ssh']) {
+//           checkout scm
+//         }
+//       }
+//     }
+
+
+//     stage('Mirror to GitHub') {
+//       steps {
+//         sshagent(credentials: ['github-ssh']) {
+//           sh '''
+//             git remote add github git@github.com:elansol/sargen_frontend.git || true
+//             git push github HEAD:production --force
+//           '''
+//         }
+//       }
+//     }
+
+//     stage('Deploy to Contabo') {
+//       steps {
+//         sshagent(credentials: ['contabo-ssh']) {
+//           sh """
+//             ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} << 'ENDSSH'
+//               set -e
+
+//               echo '🔄 Pulling latest frontend code...'
+//               cd ${DEPLOY_DIR}
+//               git pull origin production
+
+//               echo '📦 Installing dependencies...'
+//               // npm install --omit=dev
+//               npm install
+
+//               echo '🏗️ Building frontend...'
+//               npm run build
+
+//               echo '🚀 Restarting Nginx (or custom server)...'
+//               systemctl restart nginx
+
+//               echo '✅ Deployment complete.'
+//             ENDSSH
+//           """
+//         }
+//       }
+//     }
+//   }
+
+//   post {
+//     failure {
+//       echo '❌ Build failed.'
+//     }
+//     success {
+//       echo '✅ Build succeeded.'
+//     }
+//   }
+// }
+
+
 pipeline {
   agent any
 
   environment {
     GIT_SSH_COMMAND = "ssh -o StrictHostKeyChecking=no"
     PROJECT_KEY = 'sargen_frontend'
-    CONTABO_HOST = '109.199.109.4'         // your Contabo IP
+    CONTABO_HOST = '109.199.109.4'
     DEPLOY_DIR = '/var/www/sargen-frontend'
     REPO_URL = 'git@github.com:elansol/sargen_frontend.git'
   }
 
   stages {
-
     stage('Clean Workspace') {
       steps {
         cleanWs()
       }
     }
 
-    stage('Checkout') {
+    stage('Checkout from Gitea') {
       steps {
         sshagent(credentials: ['gitea-ssh']) {
           checkout scm
@@ -118,27 +195,29 @@ pipeline {
       steps {
         sshagent(credentials: ['contabo-ssh']) {
           sh """
-            ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} << 'ENDSSH'
-              set -e
-              echo '🧹 Cleaning deployment directory...'
-              rm -rf ${DEPLOY_DIR}
-              mkdir -p ${DEPLOY_DIR}
-              cd ${DEPLOY_DIR}
-
-              echo '📦 Cloning latest frontend code from GitHub...'
-              git clone -b production ${REPO_URL} .
+            ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} '
+              # Clean and install dependencies
+              echo "🧹 Cleaning and installing dependencies..."
+              cd ${DEPLOY_DIR} || exit 1
+              rm -rf node_modules .next
+              npm install
               
-              echo '🛠 Installing dependencies...'
-              npm install --omit=dev
-
-              echo '🏗 Building production frontend...'
+              # Build application
+              echo "🏗️ Building Next.js application..."
               npm run build
-
-              echo '🚀 Restarting Nginx...'
+              
+              # Restart PM2 process
+              echo "🔄 Restarting application..."
+              pm2 delete sargen-frontend || true
+              pm2 start npm --name "sargen-frontend" -- start
+              pm2 save
+              
+              # Restart Nginx
+              echo "🔁 Restarting Nginx..."
               nginx -t && systemctl reload nginx
-
-              echo '✅ Deployment completed successfully.'
-            ENDSSH
+              
+              echo "✅ Deployment completed successfully"
+            '
           """
         }
       }
