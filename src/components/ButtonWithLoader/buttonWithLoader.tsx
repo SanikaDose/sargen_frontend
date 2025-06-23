@@ -20,19 +20,22 @@ const ButtonWithLoader: React.FC<ButtonWithLoaderProps> = ({
   disabled = false,
   fullWidth = false,
   type,
+  variant = 'contained',
+  className,
 }) => {
   return (
     <Button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      variant="contained"
+      variant={variant}
       style={{
         width: fullWidth ? '100%' : width,
         height,
         backgroundColor,
       }}
       fullWidth={fullWidth}
+      className={clsx(className, styles.buttonContent)}
     >
       <div className={clsx(styles.buttonContent)}>
         {loading && <CircularProgress size={loaderSize} thickness={loaderThickness} sx={{ color: loaderColor }} />}

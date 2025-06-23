@@ -56,7 +56,7 @@ export const apiRoutes = {
     getQuestionnairesList: 'get-questionnaires-list',
     selectQuestionnairesAnswer: 'select-questionnaires-answer',
     editQuestionnairesAnswer: 'edit-questionnaires-answer',
-    startAssessmentRuleEngine: 'start-assessment-rule-engine',
+    startAssessmentRuleEngine: '/start-assessment-rule-engine',
     getPlanningHorizon: 'get-planning-horizon',
     selectPlanningHorizon: 'select-planning-horizon',
     changeAssessmentStatus: 'change-assessment-status',
