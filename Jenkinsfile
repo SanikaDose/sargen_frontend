@@ -131,8 +131,8 @@ pipeline {
 //              echo '🛠 Installing dependencies...'
 //              npm install --omit=dev
 
-              echo '🏗 Building production frontend...'
-              npm run build
+//              echo '🏗 Building production frontend...'
+//              npm run build
 
               echo '🚀 Restarting Nginx...'
               nginx -t && systemctl reload nginx
