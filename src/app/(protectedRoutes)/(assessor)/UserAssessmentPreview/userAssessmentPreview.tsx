@@ -6,7 +6,6 @@ import { Box, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import {
   useGetQuestionnairesListMutation,
@@ -19,23 +18,26 @@ import TextArea from '@/components/TextArea/TextArea';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { useStartAssessmentRuleEngineMutation } from './userAssessmentPreviewApi';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();
   const plantId = params.plantId as string;
   const organisationId = params.organisationId as string;
-  const tenantId = getValueLocalStorage('tenantId');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
+  const [isFinishing, setIsFinishing] = useState(false);
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer] = useSelectQuestionnairesAnswerMutation();
+  const [startAssessmentRuleEngine] = useStartAssessmentRuleEngineMutation();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
+  console.log(organisationId);
 
   const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
 
@@ -46,7 +48,7 @@ const UserAssessmentPreview = () => {
 
         for (const dept of departmentName) {
           const result = await getQuestionnairesList({
-            tenantId,
+            tenantId: organisationId,
             plantId: plantId || '',
             department: dept,
           }).unwrap();
@@ -115,7 +117,7 @@ const UserAssessmentPreview = () => {
     const question_uid = currentQuestionGroup[0]?.question_uid;
 
     const payload = {
-      tenantId,
+      tenantId: organisationId,
       plantId,
       questionnariesData: {
         id: selectedOption?.id ?? '',
@@ -140,6 +142,34 @@ const UserAssessmentPreview = () => {
       return false;
     }
   };
+
+  const handleFinishAssessment = async () => {
+    try {
+      setIsFinishing(true);
+
+      // First save the current answer
+      const saveSuccess = await submitQuestionnaireAnswer();
+      if (!saveSuccess) {
+        setIsFinishing(false);
+        return;
+      }
+
+      // Then start the rule engine
+      const ruleEnginePayload = {
+        tenantId: organisationId,
+        plantId: plantId,
+      };
+
+      await startAssessmentRuleEngine(ruleEnginePayload).unwrap();
+
+      // Redirect to impact values page after successful rule engine start
+      router.push(`/AssessmentBasedImpactValues/${organisationId}/${plantId}`);
+    } catch (error) {
+      console.error('Failed to finish assessment:', error);
+      setIsFinishing(false);
+    }
+  };
+
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
 
@@ -147,6 +177,7 @@ const UserAssessmentPreview = () => {
 
   const questionText = currentGroup[0].question;
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
+  const isLastQuestion = currentIndex === groupKeys.length - 1;
 
   const handlePrimaryClick = () => {
     setIsModalOpen(false);
@@ -249,27 +280,23 @@ const UserAssessmentPreview = () => {
                   onSecondaryClick={handleSecondaryClick}
                 />
               )}
-              <CustomButton
-                variant="contained"
-                icon="alert"
-                type="button"
-                color="warning"
-                onClick={() => setIsModalOpen(true)}
-              >
+              <CustomButton variant="contained" icon="alert" type="button" color="warning" onClick={() => setIsModalOpen(true)}>
                 Query
               </CustomButton>
               <CustomButton
                 variant="contained"
                 icon="save"
                 type="button"
-                onClick={async () => {
-                  const success = await submitQuestionnaireAnswer();
-                  if (success && currentIndex === groupKeys.length - 1) {
-                    router.push(`/AssessmentBasedImpactValues/${organisationId}/${plantId}`);
-                  }
-                }}
+                onClick={
+                  isLastQuestion
+                    ? handleFinishAssessment
+                    : async () => {
+                        await submitQuestionnaireAnswer();
+                      }
+                }
+                disabled={isFinishing}
               >
-                {isLoading ? 'Saving...' : currentIndex === groupKeys.length - 1 ? 'Finish' : 'Save'}
+                {isFinishing ? 'Processing...' : isLoading ? 'Saving...' : isLastQuestion ? 'Finish' : 'Save'}
               </CustomButton>
 
               <CustomButton
