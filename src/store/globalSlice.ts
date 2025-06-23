@@ -7,7 +7,7 @@ const initialState = {
   InfoBoxToShow: false,
   organizationId: '',
   sideBarDrawerList: [],
-  showAssessmentListSideBar: true,
+  showAssessmentListSideBar: false,
   sideBarListItemsForAssessment: [],
   extraListItems: [],
   pageNameHeader: 'Page heading',

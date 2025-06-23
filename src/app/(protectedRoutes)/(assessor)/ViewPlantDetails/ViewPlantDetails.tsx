@@ -1,21 +1,22 @@
 'use client';
 
-import { Box, CircularProgress, Typography, Grid, Paper, Divider, Chip, Avatar, Button } from '@mui/material';
-import { useParams, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import Loader from '@/components/Loader/Loader';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { RootState } from '@/store/store';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import FactoryIcon from '@mui/icons-material/Factory';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import NumbersIcon from '@mui/icons-material/Numbers';
-import FactoryIcon from '@mui/icons-material/Factory';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import { PopupModal } from '@/components/PopupModal/PopupModal';
-import { AssessorProps } from './Assessor.types';
+import { Avatar, Box, Button, Chip, CircularProgress, Divider, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetSpecificPlantInfoQuery } from '../AssignedPlantsList/AssignedPlantsListApi';
+import { AssessorProps } from './Assessor.types';
 import { useGetAssessorMetadataQuery, usePostAssessorMetadataToPlantMutation } from './AssessorApi';
-import Loader from '@/components/Loader/Loader';
 
 const excludeKeys = [
   'plantLogo',
@@ -35,13 +36,16 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const params = useParams();
   const router = useRouter();
   const organisationId = params?.organisationId as string;
+  const assessorId = useSelector((state: RootState) => state.tokenDecode.decodedToken?.tenantId);
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
+  }, [dispatch]);
 
   const { data, isFetching, isError } = useGetSpecificPlantInfoQuery({ organisationId, plantId }, { skip: !organisationId || !plantId });
 
@@ -50,9 +54,14 @@ const ViewPlantDetails = ({}: AssessorProps) => {
     data: metadataData,
     isFetching: isMetadataFetching,
     isError: isMetadataError,
-  } = useGetAssessorMetadataQuery(organisationId, {
+  } = useGetAssessorMetadataQuery(assessorId, {
     skip: !organisationId,
   });
+  let metadataToUpload = [];
+  if (metadataData) {
+    metadataToUpload = metadataData.map((md: any) => md?.tableName);
+    console.log('metadata', metadataToUpload);
+  }
 
   // POST API mutation
   const [postAssessorMetadata, { isLoading: isPostingMetadata }] = usePostAssessorMetadataToPlantMutation();
@@ -77,8 +86,9 @@ const ViewPlantDetails = ({}: AssessorProps) => {
 
     try {
       await postAssessorMetadata({
-        organisationId,
+        tenantId: assessorId,
         plantId,
+        metaDataIds: metadataToUpload,
         // Add any additional data needed for the metadata assignment
         // You might need to modify this based on your API requirements
       }).unwrap();

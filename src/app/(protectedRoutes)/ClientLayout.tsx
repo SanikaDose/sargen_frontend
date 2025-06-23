@@ -21,7 +21,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { jwtDecode } from 'jwt-decode';
-import { usePathname, useRouter, useParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
@@ -216,12 +216,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     'Production',
     'Quality',
     'Maintenance',
-    'supply_chain_sales',
-    'supply_chain_purchase',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
     'Finance',
     'Utilities',
     'IT',
-    'L&D',
+    'Learning & Development',
     'Management',
     'HR',
   ];

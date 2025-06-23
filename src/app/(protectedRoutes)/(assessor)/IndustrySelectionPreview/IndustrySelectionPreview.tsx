@@ -1,22 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import styles from './IndustrySelectionPreview.module.css';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
-import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../../(plantAssessment)/plantAssementApi';
-import { Industry, IndustryFormValues } from '../../(plantAssessment)/plantAssement.model';
-import { setPageNameHeader } from '@/store/globalSlice';
+import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
+import { RootState } from '@/store/store';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { Industry, IndustryFormValues } from '../../(plantAssessment)/plantAssement.model';
+import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../../(plantAssessment)/plantAssementApi';
+import styles from './IndustrySelectionPreview.module.css';
 
 const IndustrySelectionPreview = () => {
   const router = useRouter();
@@ -57,7 +57,7 @@ const IndustrySelectionPreview = () => {
   const fetchIndustryData = async () => {
     try {
       const obj = {
-        organisationId,
+        tenantId: organisationId,
         plantId: plantId || '',
       };
       const result = await getIndustrySelectionList(obj).unwrap();

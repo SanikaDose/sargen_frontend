@@ -1,22 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import styles from './PlanningHorizonPreview.module.css';
+import Card from '@/components/Card/Card';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
-import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
+import Stepper from '@/components/Stepper/Stepper';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { RootState } from '@/store/store';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { HorizonFormValues, HorizonOption } from '../../(plantAssessment)/plantAssement.model';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../../(plantAssessment)/plantAssementApi';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
+import styles from './PlanningHorizonPreview.module.css';
 
 const PlanningHorizonPreview = () => {
   const params = useParams();
@@ -57,7 +57,7 @@ const PlanningHorizonPreview = () => {
   const fetchHorizonOptions = async () => {
     try {
       const requestPayload = {
-        organisationId,
+        tenantId: organisationId,
         plantId: plantId || '',
       };
       const result = await getHorizonOptions(requestPayload).unwrap();
