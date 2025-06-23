@@ -6,7 +6,6 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
-import { setPageNameHeader } from '@/store/globalSlice';
 import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -15,7 +14,8 @@ import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
-import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
+import { setPageNameHeader } from '@/store/globalSlice';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 const steps = [
   'Company Name',
   'Company website',
@@ -28,6 +28,7 @@ const steps = [
 ].map((label) => ({ label }));
 
 import InfoBox from '@/components/InfoBox/InfoBox';
+import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -146,38 +147,30 @@ function OrganizationOnbording() {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.isCountry || input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        {input.label}
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
+                                    <>
+                                      <CurrencyValueSelector
                                         {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '8px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('country')}
-                                      >
-                                        <MenuItem disabled value="">
-                                          <em>Select From Dropdown</em>
-                                        </MenuItem>
-                                        {(input.isCountry ? CountryOptions : currencyOptions).map((option) => (
-                                          <MenuItem key={option.code} value={option.name}>
-                                            {option.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
+                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        placeholder={input.placeholder}
+                                        options={
+                                          input.isCountry
+                                            ? CountryOptions.map(({ name, code }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                            : currencyOptions.map(({ name, code }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                        }
+                                        onFocus={() => setFocusedField(input.name)}
+                                      />
                                       {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
+                                        <Typography variant="caption" color="red">
                                           {fieldState.error.message}
                                         </Typography>
                                       )}
-                                    </FormControl>
+                                    </>
                                   ) : (
                                     <>
                                       <InputWithLabel

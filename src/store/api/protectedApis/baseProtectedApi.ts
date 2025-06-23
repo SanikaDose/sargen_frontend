@@ -64,4 +64,16 @@ export const protectedApi = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}), // Placeholder, will inject endpoints later
   tagTypes: ['SpecificPlantInfo', 'Assessor', 'AssessorMetadata', 'Plant', 'Organisation', 'Poc', 'Solutions', 'PlantLogo', 'ProfilePic'],
+  tagTypes: [
+    'SpecificPlantInfo',
+    'Assessor',
+    'AssessorMetadata',
+    'Plant',
+    'Organisation',
+    'Poc',
+    'Solutions',
+    'PlantLogo',
+    'ProfilePic',
+    'AssessorLogo',
+  ],
 });
