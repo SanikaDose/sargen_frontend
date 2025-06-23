@@ -4,15 +4,14 @@ import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
 export const AssessorApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAssessorMetadata: builder.query<any, string>({
+    getAssessorMetadata: builder.query({
       query: (tenantId) => ({
         url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.getAllMetaData}/${tenantId}`,
         method: 'GET',
       }),
       providesTags: ['AssessorMetadata'],
     }),
-
-    postAssessorMetadataToPlant: builder.mutation<any, any>({
+    postAssessorMetadataToPlant: builder.mutation({
       query: (body) => ({
         url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.assignMetadata}`,
         method: 'POST',
@@ -23,7 +22,6 @@ export const AssessorApi = protectedApi.injectEndpoints({
         await rtkAPIToast(queryFulfilled, dispatch, {
           successMessage: 'Metadata Assigned Successfully!',
           errorMessage: 'Failed To Assign Metadata!',
-          duration: 4000,
         });
       },
     }),

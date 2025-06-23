@@ -15,7 +15,7 @@ import {
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
-import TextArea from '@/components/textArea/TextArea';
+import TextArea from '@/components/TextArea/TextArea';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';

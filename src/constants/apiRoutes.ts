@@ -74,7 +74,7 @@ export const apiRoutes = {
     getAssignedPlants: '/get-assigned-plants',
     getAllAssignedPlants: '/get-all-assigned-plants',
     getAssignedPlantinfo: '/assigned-plants-info',
-    getAllMetaData: '/get-all-metadata/:tenantId',
+    getAllMetaData: '/get-all-metadata',
     assignMetadata: '/assign-metadata',
     getImpactValues: '/get-impact-values',
     selectImpactValues: '/select-impact-values',
