@@ -37,22 +37,22 @@ pipeline {
     }
 
     stage('Deploy to Contabo') {
-      steps {
-        sshagent(credentials: ['contabo-ssh']) {
-          sh '''
-            ssh -o StrictHostKeyChecking=no root@109.199.109.4 <<EOF
-    echo '🔄 Navigating to deployment directory...'
-    cd /path/to/your/project
-
-    echo '🔁 Restarting Nginx...'
-    nginx -t && systemctl reload nginx
-
-    echo '✅ Deployment completed successfully.'
-    EOF
-          '''
-        }
+    steps {
+      sshagent(credentials: ['contabo-ssh']) {
+        sh """
+          ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} '
+            echo "🔄 Navigating to deployment directory..."
+            cd ${DEPLOY_DIR} || exit 1
+            
+            echo "🔁 Restarting Nginx..."
+            nginx -t && systemctl reload nginx
+            
+            echo "✅ Deployment completed successfully."
+          '
+        """
       }
     }
+  }
 }
 
   post {
