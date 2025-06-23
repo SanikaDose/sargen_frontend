@@ -11,4 +11,6 @@ export interface ButtonWithLoaderProps {
   disabled?: boolean;
   fullWidth?: boolean;
   type?: 'button' | 'submit' | 'reset';
+  variant?: 'text' | 'outlined' | 'contained';
+  className?: string;
 }
