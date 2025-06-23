@@ -30,7 +30,7 @@
 //         sshagent(credentials: ['github-ssh']) {
 //           sh '''
 //             git remote add github git@github.com:elansol/sargen_frontend.git || true
-//             git push github HEAD:development --force
+//             git push github HEAD:production --force
 //           '''
 //         }
 //       }
@@ -119,17 +119,17 @@ pipeline {
         sshagent(credentials: ['contabo-ssh']) {
           sh """
             ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} << 'ENDSSH'
-              set -e
-              echo '🧹 Cleaning deployment directory...'
-              rm -rf ${DEPLOY_DIR}
-              mkdir -p ${DEPLOY_DIR}
+//              set -e
+//              echo '🧹 Cleaning deployment directory...'
+//              rm -rf ${DEPLOY_DIR}
+//              mkdir -p ${DEPLOY_DIR}
               cd ${DEPLOY_DIR}
 
-              echo '📦 Cloning latest frontend code from GitHub...'
-              git clone -b production ${REPO_URL} .
+//              echo '📦 Cloning latest frontend code from GitHub...'
+//              git clone -b production ${REPO_URL} .
               
-              echo '🛠 Installing dependencies...'
-              npm install --omit=dev
+//              echo '🛠 Installing dependencies...'
+//              npm install --omit=dev
 
               echo '🏗 Building production frontend...'
               npm run build
