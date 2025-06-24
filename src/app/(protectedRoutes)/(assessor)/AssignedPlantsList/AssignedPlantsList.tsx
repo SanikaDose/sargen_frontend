@@ -77,7 +77,7 @@ export default function AssignedPlantsList() {
                         plantName: plant.plantName,
                         organisationName,
                         organisationId: plant.organisationId,
-                        assesorCompletionStage: plant.assesorCompletionStage,
+                        assessmentCompletionStage: plant.assessmentCompletionStage,
                         createdAt: plant.createdAt,
                         updatedAt: plant.updatedAt,
                       }}

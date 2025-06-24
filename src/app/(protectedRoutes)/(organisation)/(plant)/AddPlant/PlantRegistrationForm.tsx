@@ -149,9 +149,9 @@ const PlantRegistrationForm = () => {
             <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
           </Box>
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
-            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
+            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h6" className={styles.heading}>
+                <Typography variant="h4" className={styles.heading}>
                   Plant Registration
                 </Typography>
 
@@ -174,7 +174,7 @@ const PlantRegistrationForm = () => {
                                 <>
                                   {input.isCurrency ? (
                                     <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
+                                      <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#000000' }}>
                                         Currency Type
                                         {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
                                       </Typography>
@@ -183,7 +183,7 @@ const PlantRegistrationForm = () => {
                                         displayEmpty
                                         value={field.value || ''}
                                         sx={{
-                                          borderRadius: '8px',
+                                          borderRadius: '16px',
                                           height: 36,
                                           fontWeight: 500,
                                           fontfamily: 'Inter, sans-serif',
@@ -209,7 +209,8 @@ const PlantRegistrationForm = () => {
                                     <>
                                       <InputWithLabel
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        required
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
                                         onFocus={() => setFocusedField(input.name)}

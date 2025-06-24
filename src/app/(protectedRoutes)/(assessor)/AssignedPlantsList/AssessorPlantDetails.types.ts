@@ -3,7 +3,7 @@ export type AssessorPlantData = {
   plantId: string;
   organisationId: string;
   organisationName: string;
-  assesorCompletionStage: string;
+  assessmentCompletionStage: string;
   createdAt: string;
   updatedAt: string;
 };
