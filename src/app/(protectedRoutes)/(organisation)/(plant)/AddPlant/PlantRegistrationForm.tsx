@@ -151,7 +151,7 @@ const PlantRegistrationForm = () => {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h6" className={styles.heading}>
+                <Typography variant="h4" className={styles.heading}>
                   Plant Registration
                 </Typography>
 
