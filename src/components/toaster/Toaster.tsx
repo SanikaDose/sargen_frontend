@@ -23,6 +23,7 @@ export default function Toaster() {
   };
   return (
     <div>
+      {open && (
       <Slide in={open} direction={isSmallScreen ? 'left' : 'right'} mountOnEnter unmountOnExit>
         <Snackbar
           className={styles.outerSnackbar}
@@ -49,6 +50,8 @@ export default function Toaster() {
               fontSize: '0.690rem !important',
               padding: '2px 4px  !important',
               color: '#FFFFFF !important',
+              border: 'none !important',
+
 
               width: {
                 sm: '300px',
@@ -66,6 +69,7 @@ export default function Toaster() {
           </Alert>
         </Snackbar>
       </Slide>
+      )}
     </div>
   );
 }
