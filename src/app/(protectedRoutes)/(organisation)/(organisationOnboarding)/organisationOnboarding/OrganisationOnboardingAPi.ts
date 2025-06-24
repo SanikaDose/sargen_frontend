@@ -21,19 +21,8 @@ interface getOrgPayload {
     revenue: string;
     about: string;
     numberOfEmployees: string;
-  };
-}
-
-export interface PocPayload {
-  message: string;
-  success: boolean;
-  data: {
-    firstName: string;
-    lastName: string;
-    employeeId: string;
-    email: string;
-    contactNumber: string;
-    designation: string;
+    country: string;
+    uom: string;
   };
 }
 
@@ -57,25 +46,6 @@ export const onboardingApi = protectedApi.injectEndpoints({
       },
     }),
 
-    // Submit Point of Contact (invalidates the corresponding cache)
-    submitPointOfContact: builder.mutation<void, { tenantId: string; body: PocPayload }>({
-      query: ({ tenantId, body }) => ({
-        url: `${apiControllerPath.onboarding.root}/${tenantId}${apiControllerPath.onboarding.addPointOfContact}`,
-        method: 'POST',
-        body,
-      }),
-
-      // Invalidate the Point of Contact tag when new data is submitted
-      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Poc', id: tenantId }],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Point of Contact submitted successfully!',
-          errorMessage: 'Failed to submit Point of Contact!',
-          duration: 4000,
-        });
-      },
-    }),
-
     // Get Organization Info (provides a tag)
     getOrganizationInfo: builder.query<getOrgPayload, string>({
       query: (tenantId) => ({
@@ -84,31 +54,15 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
       // Provide a tag so that the cache can be updated later when necessary
       providesTags: (result, error, tenantId) => [{ type: 'Organisation', id: tenantId }],
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Fetched organization details successfully!',
-          errorMessage: 'Failed to fetch organization details!',
-          duration: 4000,
-        });
-      },
+      // async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+      //   await rtkAPIToast(queryFulfilled, dispatch, {
+      //     successMessage: 'Fetched organization details successfully!',
+      //     errorMessage: 'Failed to fetch organization details!',
+      //     duration: 4000,
+      //   });
+      // },
     }),
 
-    // Get Point of Contact Info (provides a tag)
-    getPointOfConnectInfo: builder.query<PocPayload, string>({
-      query: (tenantId) => ({
-        url: `${apiControllerPath.onboarding.root}/${tenantId}${apiControllerPath.onboarding.getPointOfContact}`,
-        method: 'GET',
-      }),
-      // Provide a tag so that the cache can be updated later when necessary
-      providesTags: (result, error, tenantId) => [{ type: 'Poc', id: tenantId }],
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Fetched Point of Contact details successfully!',
-          errorMessage: 'Failed to fetch Point of Contact details!',
-          duration: 4000,
-        });
-      },
-    }),
     // 📤 Upload Plant Logo
     uploadOrganizationLogo: builder.mutation<void, { tenantId: string; formData: FormData }>({
       query: ({ tenantId, formData }) => ({
@@ -126,13 +80,26 @@ export const onboardingApi = protectedApi.injectEndpoints({
         });
       },
     }),
+
+    //get user logo
+    getLogo: builder.query<{ logoUrl: string }, { tenantId: string }>({
+      query: ({ tenantId }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.getLogo}/${tenantId}`,
+        method: 'GET',
+      }),
+
+      providesTags: (result, error, { tenantId }) => [{ type: 'OrganizationLogo', id: tenantId }],
+
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   await rtkAPIToast(queryFulfilled, dispatch, {
+      //     successMessage: 'Logo Fetch successfully!',
+      //     errorMessage: 'Failed to Fetch logo!',
+      //     duration: 4000,
+      //   });
+      // },
+    }),
   }),
 });
 
-export const {
-  useSubmitOrganizationInfoMutation,
-  useSubmitPointOfContactMutation,
-  useGetOrganizationInfoQuery,
-  useGetPointOfConnectInfoQuery,
-  useUploadOrganizationLogoMutation,
-} = onboardingApi;
+export const { useSubmitOrganizationInfoMutation, useGetOrganizationInfoQuery, useUploadOrganizationLogoMutation, useGetLogoQuery } =
+  onboardingApi;

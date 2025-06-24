@@ -148,7 +148,7 @@ const CostProfile = () => {
               {/* Left Section */}
               <Box className={styles.formContainer}>
                 <Typography
-                  variant="h6"
+                  variant="h4"
                   sx={{
                     color: 'black',
                     textAlign: 'left',

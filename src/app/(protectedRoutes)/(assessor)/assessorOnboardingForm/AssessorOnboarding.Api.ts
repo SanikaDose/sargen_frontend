@@ -1,17 +1,15 @@
 import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
-interface getOrgPayload {
-  firstName: string;
-  lastName: string;
-  email: string;
-  contactNumber: number;
-  city: string;
-  country: string;
-  yearOfExperience: number;
-  certificationYear: number;
-  siriCertificate: File;
-}
+import {
+  OnboardingStatusResponse,
+  getAssessorPayload,
+  UploadResponse,
+  UploadArgs,
+  RawUploadResponse,
+  uploadResponse,
+  UploadFileMetadata,
+} from './AssessorOnboarding.types';
 
 export const assessorApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -39,7 +37,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadQuestionnaries: builder.mutation({
+    uploadQuestionnaries: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -49,6 +47,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadQuestionnaires}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -61,7 +66,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadCostProfile: builder.mutation({
+    uploadCostProfile: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -71,6 +76,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadCostProfile}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -83,7 +95,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadKPI: builder.mutation({
+    uploadKPI: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -93,6 +105,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadKPI}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -105,7 +124,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadPlanningHorizon: builder.mutation({
+    uploadPlanningHorizon: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -115,6 +134,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadPlanningHorizon}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -127,7 +153,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadIndustrySelection: builder.mutation({
+    uploadIndustrySelection: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -137,6 +163,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustrySelection}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -149,7 +182,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadCostProfileLookup: builder.mutation({
+    uploadCostProfileLookup: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -159,6 +192,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadCostProfileLookup}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -171,7 +211,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadIndustrySelectionLookup: builder.mutation({
+    uploadIndustrySelectionLookup: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -181,6 +221,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustrySelectionLookup}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -193,7 +240,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadKPILookup: builder.mutation({
+    uploadKPILookup: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -203,6 +250,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadKPILookup}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -215,7 +269,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadIndustryAssessmentMatrix: builder.mutation({
+    uploadIndustryAssessmentMatrix: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -225,6 +279,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustryAssessmentMatrix}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -237,7 +298,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadSolutionMetadata: builder.mutation({
+    uploadSolutionMetadata: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -247,6 +308,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadSolutionMetadata}${tenantId}`,
           method: 'POST',
           body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -259,7 +327,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    uploadBandDefinition: builder.mutation({
+    uploadBandDefinition: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
@@ -271,6 +339,13 @@ export const assessorApi = protectedApi.injectEndpoints({
           body: formData,
         };
       },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
+        };
+      },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
@@ -280,18 +355,37 @@ export const assessorApi = protectedApi.injectEndpoints({
         });
       },
     }),
-    getMetadataFileTemplate: builder.mutation<Response, { userType: string; fileName: string }>({
+
+    getMetadataFileTemplate: builder.mutation<{ success: boolean }, { userType: string; fileName: string }>({
       query: ({ userType, fileName }) => ({
         url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
         method: 'POST',
         body: { userType, fileName },
-        responseHandler: (response) => Promise.resolve(response),
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+
+          // Trigger file download manually here
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+
+          return { success: true };
+        },
         cache: 'no-cache',
       }),
+
+      transformResponse: (response: { success: boolean }) => response,
+
       invalidatesTags: (_result, _error, { fileName }) => [{ type: 'Assessor', id: fileName }],
+
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'file template downloaded successfully!',
+          successMessage: 'File template downloaded successfully!',
           errorMessage: 'Failed to download file template!',
           duration: 4000,
         });
@@ -332,10 +426,6 @@ export const assessorApi = protectedApi.injectEndpoints({
 
     viewMetadataFile: builder.mutation({
       query: ({ tenantId, fileName }) => {
-        // const formData = new FormData();
-        // if (file) {
-        //   formData.append('kpiSelectionLookUpTable', file);
-        // }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.viewMetadataFile}`,
           method: 'POST',
@@ -351,19 +441,54 @@ export const assessorApi = protectedApi.injectEndpoints({
         });
       },
     }),
-    getAssessorInfo: builder.query<getOrgPayload & { id: number; createdAt: string; updatedAt: string }, string>({
+    getAssessorInfo: builder.query<
+      {
+        status: boolean;
+        message?: string;
+        data: {
+          formData: getAssessorPayload;
+          metadata_information: UploadFileMetadata[];
+          id: string;
+          createdAt: string;
+          updatedAt: string;
+        }[];
+      },
+      string
+    >({
       query: (tenantId) => ({
         url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.getAssessorInformation}${tenantId}`,
         method: 'GET',
       }),
       providesTags: (result, error, tenantId) => [{ type: 'Assessor', id: tenantId }],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Assessor information fetched successfully.',
-          errorMessage: 'Failed to fetch assessor information.',
-          duration: 4000,
-        });
-      },
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   await rtkAPIToast(queryFulfilled, dispatch, {
+      //     successMessage: 'Assessor information fetched successfully.',
+      //     errorMessage: 'Failed to fetch assessor information.',
+      //     duration: 4000,
+      //   });
+      // },
+    }),
+    getLogo: builder.query<{ logoUrl: string }, { tenantId: string }>({
+      query: ({ tenantId }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.getLogo}/${tenantId}`,
+        method: 'GET',
+      }),
+
+      providesTags: (result, error, { tenantId }) => [{ type: 'AssessorLogo', id: tenantId }],
+
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   await rtkAPIToast(queryFulfilled, dispatch, {
+      //     successMessage: 'Logo Fetch successfully!',
+      //     errorMessage: 'Failed to Fetch logo!',
+      //     duration: 4000,
+      //   });
+      // },
+    }),
+    getOnboardingStatus: builder.query<OnboardingStatusResponse, string>({
+      query: (tenantId) => ({
+        url: `${apiControllerPath.onboardingStatus.root}/${tenantId}${apiControllerPath.onboardingStatus.getOnboardingStatus}`,
+        method: 'GET',
+      }),
     }),
   }),
 
@@ -390,4 +515,6 @@ export const {
   useUploadBandDefinitionMutation,
 
   useViewMetadataFileMutation,
+  useGetLogoQuery,
+  useGetOnboardingStatusQuery,
 } = assessorApi;

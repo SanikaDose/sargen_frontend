@@ -1,29 +1,28 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
-import styles from './CostProfilePreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProfileCard';
-import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
-import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../../(plantAssessment)/plantAssementApi';
-import { FormValues, RawCostCategory } from '../../(plantAssessment)/plantAssement.model';
-import { setPageNameHeader } from '@/store/globalSlice';
+import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { RootState } from '@/store/store';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { FormValues, RawCostCategory } from '../../(plantAssessment)/plantAssement.model';
+import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../../(plantAssessment)/plantAssementApi';
+import styles from './CostProfilePreview.module.css';
 
 const CostProfilePreview = () => {
   const params = useParams();
   const router = useRouter();
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
+  // const tenantId = getValueLocalStorage('tenantId');
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   const dispatch = useDispatch();
@@ -66,7 +65,7 @@ const CostProfilePreview = () => {
     if (!organisationId || !plantId) return;
 
     const payload = {
-      tenantId,
+      tenantId: organisationId,
       plantId: plantId,
     };
 
@@ -96,7 +95,7 @@ const CostProfilePreview = () => {
 
     try {
       const payload = {
-        tenantId,
+        tenantId: organisationId,
         plantId: plantId,
         costProfileData: data.costs.map((cost) => ({
           id: cost.id,

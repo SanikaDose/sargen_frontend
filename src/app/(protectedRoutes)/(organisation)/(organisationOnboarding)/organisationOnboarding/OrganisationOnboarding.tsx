@@ -6,7 +6,6 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
-import { setPageNameHeader } from '@/store/globalSlice';
 import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -15,7 +14,9 @@ import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
-import { OrgPayload, useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
+import { setPageNameHeader } from '@/store/globalSlice';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
+import { triggerToast } from '@/app/utils/toast';
 const steps = [
   'Company Name',
   'Company website',
@@ -28,6 +29,12 @@ const steps = [
 ].map((label) => ({ label }));
 
 import InfoBox from '@/components/InfoBox/InfoBox';
+import {
+  useGetOrganizationInfoQuery,
+  useSubmitOrganizationInfoMutation,
+  useUploadOrganizationLogoMutation,
+  useGetLogoQuery,
+} from './OrganisationOnboardingAPi';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -52,10 +59,30 @@ function OrganizationOnbording() {
       numberOfEmployees: '',
       about: '',
     },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
-  // const { data } = useGetOrganizationInfoQuery(tenantId || '', {
-  //   skip: !tenantId,
-  // });
+  useEffect(() => {
+    if (tenantId && existingData?.data && !isFetching) {
+      const org = existingData.data;
+      reset({
+        companyName: org.name || '',
+        website: org.website || '',
+        gstin: org.gstin || '',
+        country: org.country || '',
+        revenue: org.revenue || '',
+        uom: org.uom || '',
+        numberOfEmployees: org.numberOfEmployees || '',
+        about: org.about || '',
+      });
+      triggerToast('Organization info fetched successfully', 'success');
+    }
+    if (tenantId && logoData?.logoUrl) {
+      setLogoUrl(logoData.logoUrl);
+      triggerToast('Organization Logo fetched successfully', 'success');
+    }
+  }, [existingData, isFetching, logoData, reset]);
+
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
@@ -72,9 +99,13 @@ function OrganizationOnbording() {
   const completedSteps = useMemo(() => {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
-      if (typeof value === 'string' && value.length > 1) {
+
+      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+      if (isFilled) {
         acc.push(index);
       }
+
       return acc;
     }, []);
   }, [watchedValues]);
@@ -137,53 +168,68 @@ function OrganizationOnbording() {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.isCountry || input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        {input.label}
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
+                                    <>
+                                      <CurrencyValueSelector
                                         {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '8px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('country')}
-                                      >
-                                        <MenuItem disabled value="">
-                                          <em>Select From Dropdown</em>
-                                        </MenuItem>
-                                        {(input.isCountry ? CountryOptions : currencyOptions).map((option) => (
-                                          <MenuItem key={option.code} value={option.name}>
-                                            {option.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                      {fieldState?.error?.message && (
+                                        label={input.label}
+                                        placeholder={input.placeholder}
+                                        options={
+                                          input.isCountry
+                                            ? CountryOptions.map(({ name, code }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                            : currencyOptions.map(({ name, code }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                        }
+                                        required={true}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                      />
+                                      {/* {fieldState?.error?.message && (
                                         <Typography variant="caption" color="error">
                                           {fieldState.error.message}
                                         </Typography>
-                                      )}
-                                    </FormControl>
+                                      )} */}
+                                    </>
                                   ) : (
                                     <>
                                       <InputWithLabel
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees'].includes(input.name)
+                                            ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+
+                                          if (['numberOfEmployees'].includes(input.name)) {
+                                            const rawValue = value.replace(/,/g, '');
+                                            if (/^\d*$/.test(rawValue)) {
+                                              field.onChange(rawValue);
+                                            }
+                                          } else {
+                                            field.onChange(value); // ✅ Ensures companyName, website, revenue are editable
+                                          }
+                                        }}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
+                                      {/* {fieldState?.error?.message && (
                                         <Typography variant="caption" color="error">
                                           {fieldState.error.message}
                                         </Typography>
-                                      )}
+                                      )} */}
                                     </>
                                   )}
                                 </>

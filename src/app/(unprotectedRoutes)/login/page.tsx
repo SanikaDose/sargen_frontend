@@ -204,13 +204,25 @@ const LoginPage = () => {
             )}
           />
 
-          <Button type="submit" fullWidth variant="contained" className={styles.button}>
+          {/* <Button type="submit" fullWidth variant="contained" className={styles.button}>
             {loading ? (
               <ButtonWithLoader label="Sign In" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
             ) : (
               'Sign In'
             )}
-          </Button>
+          </Button> */}
+
+          <ButtonWithLoader
+            type="submit"
+            fullWidth
+            variant="contained"
+            className={styles.button}
+            label="Sign In"
+            // backgroundColor="inherit"
+            loaderColor="white"
+            loading={loading}
+            height="40px" // Adjust height to match PasswordTextField
+          />
 
           <Typography variant="body2" className={styles.forgotPassword}>
             <Button

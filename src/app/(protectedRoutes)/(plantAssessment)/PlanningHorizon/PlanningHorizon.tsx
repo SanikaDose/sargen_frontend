@@ -150,7 +150,7 @@ const PlanningHorizon = () => {
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box component="form" className={styles.formContainer}>
                 <Typography
-                  variant="h6"
+                  variant="h4"
                   sx={{
                     color: 'black',
                     textAlign: 'left',

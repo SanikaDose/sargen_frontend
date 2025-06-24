@@ -16,7 +16,7 @@ import { AssessorPlantData } from './AssessorPlantDetails.types';
 
 export default function AssignedPlantsList() {
   const router = useRouter();
-  const assessorId = getValueLocalStorage('assessorId');
+  const assessorId = getValueLocalStorage('tenantId') || '';
   const [searchValue, setSearchValue] = useState('');
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorAssignedPlants));
@@ -78,7 +78,7 @@ export default function AssignedPlantsList() {
                         plantName: plant.plantName,
                         organisationName,
                         organisationId: plant.organisationId,
-                        assesorCompletionStage: plant.assesorCompletionStage,
+                        assessmentCompletionStage: plant.assessmentCompletionStage,
                         createdAt: plant.createdAt,
                         updatedAt: plant.updatedAt,
                       }}

@@ -93,7 +93,7 @@ export default function PlantPointOfContact() {
           <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
         </Box>
 
-        <Typography variant="h6" className={styles.heading}>
+        <Typography variant="h4" className={styles.heading}>
           Plant Point of Contact
         </Typography>
         <section className={styles.section}>
@@ -198,21 +198,8 @@ export default function PlantPointOfContact() {
               </Grid>
             </Box>
             <Box className={styles.buttonSection}>
-              <CustomButton
-                children="Back"
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => router.back()}
-              />
-              <CustomButton
-                children={isLoading ? 'Saving...' : 'Save'}
-                variant="contained"
-                color="primary"
-                icon="save"
-                type="submit"
-              />
+              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()} />
+              <CustomButton children={isLoading ? 'Saving...' : 'Save'} variant="contained" color="primary" icon="save" type="submit" />
             </Box>
           </section>
         </section>

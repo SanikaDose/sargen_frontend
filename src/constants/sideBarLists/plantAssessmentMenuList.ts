@@ -68,17 +68,17 @@ const PlantAssessmentMenuList: SidebarItem[] = [
     show: false,
   },
   {
-    text: 'Supply Chain Sales',
+    text: 'Supply Chain - Sales',
     icon: 'TrendingUpIcon',
-    linkRoute: 'supply_chain_sales',
-    matchKeyword: 'supply_chain_sales',
+    linkRoute: 'Supply Chain - Sales',
+    matchKeyword: 'Supply Chain - Sales',
     show: false,
   },
   {
-    text: 'Supply Chain Purchase',
+    text: 'Supply Chain - Purchase',
     icon: 'ShoppingCartIcon',
-    linkRoute: 'supply_chain_purchase',
-    matchKeyword: 'supply_chain_purchase',
+    linkRoute: 'Supply Chain - Purchase',
+    matchKeyword: 'Supply Chain - Purchase',
     show: false,
   },
   {

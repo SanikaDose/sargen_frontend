@@ -13,13 +13,19 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
 import styles from './ContactPerson.module.css';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
-import { useAddPointOfContactMutation, useGetPointOfContactQuery, useUploadPocProfilePicMutation } from './ContactPersonApi';
+import {
+  useAddPointOfContactMutation,
+  useGetPointOfContactQuery,
+  useLazyGetOnboardingStatusQuery,
+  useUploadPocProfilePicMutation,
+} from './ContactPersonApi';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { useDispatch } from 'react-redux';
 import Loader from '@/components/Loader/Loader';
 import { contactPersonValidationRules } from './ContactPerson.validations';
+import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -27,6 +33,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
+  const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
   const { data: existingData, isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
     skip: !editMode,
   });
@@ -63,7 +70,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       contactNumber: '',
       jobRole: '',
     },
-    mode: 'onSubmit', // Changed to onSubmit so errors only show after form submission
+    mode: 'onSubmit',
   });
 
   const watchedValues = useWatch({ control });
@@ -133,21 +140,22 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
   const onSubmit = async (data: PocPayload) => {
     try {
-      // Trigger validation for all fields
       const isValid = await trigger();
-
       if (!isValid) {
         console.log('Form has validation errors');
         return;
       }
 
       await submitPointOfContact({ tenantId: tenantId ?? '', body: data }).unwrap();
+      const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
+      console.log('Status response:', status);
+      dispatch(setOnboardingStatus(status?.onboardingStatus));
       router.push('/PlantOverview');
     } catch (err) {
       console.error('Error submitting form', err);
     }
   };
-
+                                                                                              
   const handleSaveClick = async () => {
     // Trigger validation for all fields when save is clicked
     await trigger();
@@ -227,7 +235,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                                   error={!!errors.country}
                                 >
                                   <MenuItem value="">
-                                    <span style={{ color: 'grey' }}>Select Country</span>
+                                    <span style={{ color: '#cdcdcd' }}>Select Country</span>
                                   </MenuItem>
                                   {CountryOptions.map((country) => (
                                     <MenuItem key={country.code} value={country.name}>

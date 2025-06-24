@@ -1,13 +1,19 @@
 'use client';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { triggerToast } from '@/app/utils/toast';
+import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
-import Stepper from '@/components/Stepper/Stepper';
-import styles from './Questionaire.module.css';
-import { Box, Paper, Skeleton, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import AnswerCard from '@/components/AnswerCard/AnswerCard';
+import Stepper from '@/components/Stepper/Stepper';
+import TextArea from '@/components/TextArea/TextArea';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { RootState } from '@/store/store';
+import { Box, Paper, Skeleton, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +25,8 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 
 import { triggerToast } from '@/app/utils/toast';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import styles from './Questionaire.module.css';
+import { Question } from './Questionaire.type';
 
 const Questionaire = () => {
   const DEPARTMENT_LINKS = [
@@ -27,12 +35,12 @@ const Questionaire = () => {
     'Production',
     'Quality',
     'Maintenance',
-    'supply_chain_sales',
-    'supply_chain_purchase',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
     'Finance',
     'Utilities',
     'IT',
-    'L&D',
+    'Learning & Development',
     'Management',
     'HR',
   ];
@@ -128,7 +136,7 @@ const Questionaire = () => {
         department: currentQuestionGroup[0]?.department,
         context: currentQuestionGroup[0]?.context,
         question: currentQuestionGroup[0]?.question,
-        answerOption: selectedOption?.answer ?? '',
+        answerOption: selectedOption?.answerOption ?? '',
         answer: selectedOption?.answer ?? '',
         bandWeight: selectedOption?.bandWeight ?? '',
         bandName: selectedOption?.bandName ?? '',
@@ -209,7 +217,7 @@ const Questionaire = () => {
                       <AnswerCard
                         key={option.id}
                         answerNumber={idx + 1}
-                        answerText={option.answer ?? ''}
+                        answerText={option.answerOption ?? ''}
                         isSelected={option.isselected}
                         onClick={() => handleAnswerClick(option.id)}
                       />

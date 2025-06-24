@@ -2,9 +2,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   /* align-items: center; */
   padding: 1px;
+ 
 }
 .paperContainer {
   border-radius: 16px;
@@ -18,22 +19,21 @@
 }
 .heading {
   font-weight: 600;
-  padding: 00 1rem 0 1rem;
+  padding: 0 0 1rem 1rem;
 }
+
 
 .stepperContainer {
   display: flex;
   justify-content: center;
-  margin: 10px 0px 10px 0px;
+  margin: 10px 0;
 }
-
 .formContainer {
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
   gap: 20;
-  /* border: 1px solid red; */
   padding: 0% 1%;
 }
 
@@ -51,7 +51,6 @@
   height: 200px;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid rgb(0, 17, 255); */
   margin: auto;
 }
 
@@ -61,7 +60,6 @@
 }
 .formFieldsBox {
   width: 80%;
-  /* border: 1px solid rgb(255, 47, 203); */
 }
 
 .btnContainer {
@@ -137,8 +135,10 @@
 @media (max-width: 900px) {
   .formContainer {
     flex-direction: column;
+   
     width: 100%;
     padding: 0;
+   
   }
 
   .secondContainer {

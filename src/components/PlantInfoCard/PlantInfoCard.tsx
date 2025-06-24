@@ -3,9 +3,6 @@ import { Box, Divider, Typography } from '@mui/material';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
-import ImageUploader from '../ImageUpload/ImageUpload';
-import { CustomButton } from '../CustomButton/CustomButton';
-import { AsseessmentStatus } from '@/constants/enums';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;

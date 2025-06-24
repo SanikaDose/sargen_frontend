@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, SelectChangeEvent } from '@mui/material';
+import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, InputAdornment, SelectChangeEvent } from '@mui/material';
 
 export type DropdownOption = {
   label: string;
@@ -15,7 +15,9 @@ export interface DropdownWithLabelProps {
   value: string;
   onChange: (event: SelectChangeEvent<string>) => void;
   onFocus?: () => void;
-  inputRef?: React.Ref<string>;
+  inputRef?: React.Ref<any>;
+  error?: boolean;
+  helperText?: React.ReactNode;
 }
 
 const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
@@ -28,6 +30,8 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
   onChange,
   onFocus,
   inputRef,
+  error,
+  helperText,
 }) => {
   return (
     <Box sx={{ width: '100%' }}>
@@ -44,6 +48,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
           {label}
           {required && <span style={{ color: 'red' }}> *</span>}
         </FormLabel>
+
         <Select
           id={name}
           name={name}
@@ -53,6 +58,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
           size="small"
           displayEmpty
           inputRef={inputRef}
+          error={error} // ✅ Only here
           input={
             <OutlinedInput
               placeholder={placeholder}
@@ -67,7 +73,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
           }
         >
           <MenuItem disabled value="">
-            <em style={{ fontWeight: 500, color: '#888' }}>{placeholder}</em>
+            <span style={{ fontWeight: 500, color: '#888' }}>{placeholder}</span>
           </MenuItem>
           {options.map((opt) => (
             <MenuItem key={opt.value} value={opt.value}>
@@ -75,6 +81,12 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
             </MenuItem>
           ))}
         </Select>
+
+        {helperText && (
+          <Box mt={0.5} ml={0.5}>
+            <span style={{ color: 'red', fontSize: '0.75rem' }}>{helperText}</span>
+          </Box>
+        )}
       </FormControl>
     </Box>
   );
