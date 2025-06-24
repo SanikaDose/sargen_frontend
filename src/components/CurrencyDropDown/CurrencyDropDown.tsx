@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, InputAdornment, SelectChangeEvent } from '@mui/material';
+import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, SelectChangeEvent } from '@mui/material';
 
 export type DropdownOption = {
   label: string;
@@ -15,7 +15,7 @@ export interface DropdownWithLabelProps {
   value: string;
   onChange: (event: SelectChangeEvent<string>) => void;
   onFocus?: () => void;
-  inputRef?: React.Ref<any>;
+  inputRef?: React.Ref<HTMLInputElement>;
   error?: boolean;
   helperText?: React.ReactNode;
 }

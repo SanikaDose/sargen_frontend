@@ -1,7 +1,5 @@
-import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import Loader from './Loader';
-import { LoaderProps } from './Loader.types';
 
 const meta: Meta<typeof Loader> = {
   title: 'Components/Loader',
@@ -26,7 +24,6 @@ export const Default: Story = {
 export const NotLoading: Story = {
   args: {
     loading: false,
-    
   },
 };
 
