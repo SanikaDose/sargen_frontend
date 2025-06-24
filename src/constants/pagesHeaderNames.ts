@@ -1,5 +1,7 @@
 // Add your page name here. Take the refrence of the figma
 
+import { report } from 'process';
+
 export const pagesNames = {
   organisationOnboardingInfo: 'Onboarding/ Organisation',
   plantOnboarding: 'Onboarding/ Plant Registration',
@@ -24,4 +26,5 @@ export const pagesNames = {
   assessorDimenasionSelection: 'Assessor / Dimension selection ',
   assessorSolutionSelection: 'Assessor / Solution selection ',
   assessorReportData: 'Assessor / Report Data ',
+  reportHistory: 'Reports / Report History',
 };

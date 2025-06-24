@@ -7,6 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import DownloadIcon from '@mui/icons-material/Download';
 import { reportRows } from './ReportData';
 import { Box, Typography, TextField } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
 
 const ReportHistory = () => {
   const [searchText, setSearchText] = React.useState('');
@@ -24,6 +27,8 @@ const ReportHistory = () => {
     );
     setFilteredRows(filtered);
   };
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.reportHistory));
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'Sr. No.', width: 90 },
@@ -52,7 +57,7 @@ const ReportHistory = () => {
 
   return (
     <>
-      <Typography variant="h5" fontSize={20} fontWeight="bold" mt={2} mb={2}>
+      <Typography variant="h4" mt={2} mb={2}>
         Report History
       </Typography>
 

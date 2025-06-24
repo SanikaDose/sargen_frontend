@@ -24,7 +24,7 @@ export const apiRoutes = {
   },
   onboardingStatus: {
     root: 'onboarding-status',
-    getOnboardingStatus: '/:tenantId/onboarding-status',
+    getOnboardingStatus: '/onboarding-status',
   },
   onboarding: {
     root: '/onboarding',

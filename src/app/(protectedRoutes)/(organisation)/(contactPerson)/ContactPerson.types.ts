@@ -8,6 +8,8 @@ export type PocPayload = {
   contactNumber: string;
   jobRole?: string;
   profilePicUrl?: string;
+  onboardingCompletionPercentage?: number;
+  onboardingStatus?: string;
 };
 
 export interface ContactPersonFormProps {
@@ -21,6 +23,11 @@ export interface ContactPersonFormProps {
   jobRole?: string;
   tenantId: string;
   editMode?: boolean;
+}
+
+export interface OnboardingStatusResponse {
+  onboardingCompletionPercentage: number;
+  onboardingStatus: string;
 }
 
 export interface ContactPersonApiResponse<T> {

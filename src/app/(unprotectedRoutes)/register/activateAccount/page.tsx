@@ -1,13 +1,13 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useActiveAccountMutation } from "../registerApi";
-import InformativeComponent from "@/components/InformativeComponent/InformativeComponent";
-import { pageRoutes } from "@/constants/pagesRoutes";
+'use client';
+import { useRouter } from 'next/navigation';
+import { useActiveAccountMutation } from '../registerApi';
+import InformativeComponent from '@/components/InformativeComponent/InformativeComponent';
+import { pageRoutes } from '@/constants/pagesRoutes';
 
 const page = () => {
   const router = useRouter();
   const [activeAccount] = useActiveAccountMutation();
-  const text = "To Actiavte Account Click Below";
+  const text = 'To Activate Account Click Below';
 
   async function handleActivateAccount() {
     const sidObj = {
