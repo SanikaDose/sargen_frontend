@@ -183,7 +183,7 @@ const PlantRegistrationForm = () => {
                                         displayEmpty
                                         value={field.value || ''}
                                         sx={{
-                                          borderRadius: '8px',
+                                          borderRadius: '16px',
                                           height: 36,
                                           fontWeight: 500,
                                           fontfamily: 'Inter, sans-serif',
