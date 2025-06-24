@@ -7,7 +7,6 @@ import {
   UploadResponse,
   UploadArgs,
   RawUploadResponse,
-  uploadResponse,
   UploadFileMetadata,
 } from './AssessorOnboarding.types';
 

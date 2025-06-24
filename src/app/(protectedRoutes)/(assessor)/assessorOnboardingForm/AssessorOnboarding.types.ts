@@ -59,6 +59,7 @@ export type UploadResponse = {
   message?: string;
   data?: UploadFileMetadata[];
 };
+
 export type MutationTrigger<T extends (...args: any[]) => any> = ReturnType<ReturnType<T>>;
 
 export type UploadArgs = {
@@ -73,6 +74,10 @@ export type RawUploadResponse = {
   data?: UploadFileMetadata[];
 };
 
-export type uploadResponse = Promise<{ data: { status: boolean } }>;
+// export type uploadResponse = Promise<{ data: { status: boolean } }>;
 
-export type UploadFunction = MutationTrigger<typeof useUploadQuestionnariesMutation>;
+// export type UploadFunction = MutationTrigger<typeof useUploadQuestionnariesMutation>;
+
+export type UploadFunction = (args: UploadArgs) => {
+  unwrap: () => Promise<UploadResponse>;
+};
