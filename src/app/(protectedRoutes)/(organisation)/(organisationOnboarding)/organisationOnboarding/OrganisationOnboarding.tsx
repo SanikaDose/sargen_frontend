@@ -16,6 +16,7 @@ import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
 import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
+import { triggerToast } from '@/app/utils/toast';
 const steps = [
   'Company Name',
   'Company website',
@@ -28,7 +29,12 @@ const steps = [
 ].map((label) => ({ label }));
 
 import InfoBox from '@/components/InfoBox/InfoBox';
-import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
+import {
+  useGetOrganizationInfoQuery,
+  useSubmitOrganizationInfoMutation,
+  useUploadOrganizationLogoMutation,
+  useGetLogoQuery,
+} from './OrganisationOnboardingAPi';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -41,7 +47,17 @@ function OrganizationOnbording() {
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
 
-  const tenantId = getValueLocalStorage('tenantId');
+  //const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = 'abc-1f804b89-5107-412b-b163-d81d81eaa90e';
+  const { data: existingData, isFetching } = useGetOrganizationInfoQuery(tenantId ?? '');
+  const { data: logoData } = useGetLogoQuery({ tenantId: tenantId ?? '' });
+  console.log(logoData);
+  // useEffect(() => {
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // });
+  console.log('existingdata', existingData);
   const {
     control,
     handleSubmit,
@@ -58,10 +74,30 @@ function OrganizationOnbording() {
       numberOfEmployees: '',
       about: '',
     },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
-  // const { data } = useGetOrganizationInfoQuery(tenantId || '', {
-  //   skip: !tenantId,
-  // });
+  useEffect(() => {
+    if (tenantId && existingData?.data && !isFetching) {
+      const org = existingData.data;
+      reset({
+        companyName: org.name || '',
+        website: org.website || '',
+        gstin: org.gstin || '',
+        country: org.country || '',
+        revenue: org.revenue || '',
+        uom: org.uom || '',
+        numberOfEmployees: org.numberOfEmployees || '',
+        about: org.about || '',
+      });
+      triggerToast('Organization info fetched successfully', 'success');
+    }
+    if (tenantId && logoData?.logoUrl) {
+      setLogoUrl(logoData.logoUrl);
+      triggerToast('Organization Logo fetched successfully', 'success');
+    }
+  }, [existingData, isFetching, logoData, reset]);
+
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
@@ -78,9 +114,13 @@ function OrganizationOnbording() {
   const completedSteps = useMemo(() => {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
-      if (typeof value === 'string' && value.length > 1) {
+
+      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+      if (isFilled) {
         acc.push(index);
       }
+
       return acc;
     }, []);
   }, [watchedValues]);
@@ -150,7 +190,7 @@ function OrganizationOnbording() {
                                     <>
                                       <CurrencyValueSelector
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         options={
                                           input.isCountry
@@ -163,29 +203,52 @@ function OrganizationOnbording() {
                                                 value: name,
                                               }))
                                         }
+                                        required={true}
                                         onFocus={() => setFocusedField(input.name)}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="red">
+                                      {/* {fieldState?.error?.message && (
+                                        <Typography variant="caption" color="error">
                                           {fieldState.error.message}
                                         </Typography>
-                                      )}
+                                      )} */}
                                     </>
                                   ) : (
                                     <>
                                       <InputWithLabel
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees'].includes(input.name)
+                                            ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+
+                                          if (['numberOfEmployees'].includes(input.name)) {
+                                            const rawValue = value.replace(/,/g, '');
+                                            if (/^\d*$/.test(rawValue)) {
+                                              field.onChange(rawValue);
+                                            }
+                                          } else {
+                                            field.onChange(value); // ✅ Ensures companyName, website, revenue are editable
+                                          }
+                                        }}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
+                                      {/* {fieldState?.error?.message && (
                                         <Typography variant="caption" color="error">
                                           {fieldState.error.message}
                                         </Typography>
-                                      )}
+                                      )} */}
                                     </>
                                   )}
                                 </>

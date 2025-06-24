@@ -1,189 +1,16 @@
-// import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
-// import { apiControllerPath } from '@/store/api/routes';
-// // import { rtkAPIToast } from "@/utils/rtkAPIToast";
-
-// interface getOrgPayload {
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   contactNumber: number;
-//   city: string;
-//   country: string;
-//   yearOfExperience: number;
-//   certificationYear: number;
-//   siriCertificate: File;
-// }
-
-// export const assessorApi = protectedApi.injectEndpoints({
-//   endpoints: (builder) => ({
-//     addAssessorInformation: builder.mutation({
-//       query: ({ tenantId, data, siriCertificate }) => {
-//         const formData = new FormData();
-//         formData.append('data', JSON.stringify(data));
-
-//         if (siriCertificate) {
-//           formData.append('siriCertificate', siriCertificate);
-//         }
-//         return {
-//           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.addAssessorInformation}${tenantId}`,
-//           method: 'POST',
-//           body: formData,
-//         };
-//       },
-//       //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-//       //     await rtkAPIToast(queryFulfilled, dispatch, {
-//       //       successMessage: "Assessor Information added successfully!",
-//       //       errorMessage: "Assessor info failed!",
-//       //       duration: 4000,
-//       //     });
-//       //   },
-//     }),
-//     // updateAssessorInformation: builder.mutation({
-//     //   query: ({ tenantId, data, siriCertificate }) => {
-//     //     const formData = new FormData();
-//     //     formData.append("data", JSON.stringify(data));
-
-//     //     if (siriCertificate) {
-//     //       formData.append("siriCertificate", siriCertificate);
-//     //     }
-//     //     return {
-//     //       url: ${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.updateAssessorInformation}${tenantId},
-//     //       method: "POST",
-//     //       body: formData,
-//     //     };
-//     //   },
-//     //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-//     //     await rtkAPIToast(queryFulfilled, dispatch, {
-//     //       successMessage: "Assessor Information added successfully!",
-//     //       errorMessage: "Assessor info failed!",
-//     //       duration: 4000,
-//     //     });
-//     //   },
-//     // }),
-
-//     //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-//     //     await rtkAPIToast(queryFulfilled, dispatch, {
-//     //       successMessage: "Assessor Information added successfully!",
-//     //       errorMessage: "Assessor info failed!",
-//     //       duration: 4000,
-//     //     });
-//     //   },
-
-//     uploadQuestionnaries: builder.mutation({
-//       query: ({ tenantId, file }) => {
-//         const formData = new FormData();
-
-//         if (file.questionnaires) {
-//           formData.append('questionnaires', file.questionnaires);
-//         }
-
-//         return {
-//           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadQuestionnaires}${tenantId}`,
-//           method: 'POST',
-//           body: formData,
-//         };
-//       },
-//       //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-//       //     await rtkAPIToast(queryFulfilled, dispatch, {
-//       //       successMessage: "Metadata uploaded successful!",
-//       //       errorMessage: "Metadata Upload failed!",
-//       //       duration: 4000,
-//       //     });
-//       //   },
-//     }),
-
-//     getMetadataFileTemplate: builder.mutation<Response, { userType: string; fileName: string }>({
-//       query: ({ userType, fileName }) => ({
-//         url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
-//         method: 'POST',
-//         body: { userType, fileName },
-//         responseHandler: (response) => Promise.resolve(response),
-//         cache: 'no-cache',
-//       }),
-//       //   async onQueryStarted({ fileName }, { dispatch, queryFulfilled }) {
-//       //     await rtkAPIToast(queryFulfilled, dispatch, {
-//       //       successMessage: ${fileName}.xlsx File Template downloaded successfully!,
-//       //       errorMessage: "Failed to download!",
-//       //       // duration: 8000,
-//       //     });
-//       //   },
-//     }),
-
-//     getMetadataInformation: builder.query({
-//       query: (tenantId: string) => ({
-//         url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.getMetadataInformation}`,
-//         method: 'POST',
-//         body: { tenantId },
-//       }),
-//       //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-//       //     await rtkAPIToast(queryFulfilled, dispatch, {
-//       //       successMessage: "Fetched Metadata Information successfully!",
-//       //       errorMessage: "Fetching Metadata Information failed!",
-//       //       duration: 4000,
-//       //     });
-//       //   },
-//     }),
-
-//     uploadAssessorLogo: builder.mutation<void, { tenantId: string; formData: FormData }>({
-//       query: ({ tenantId, formData }) => ({
-//         url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadLogo}/${tenantId}`,
-//         method: 'POST',
-//         body: formData,
-//       }),
-
-//       //  invalidatesTags: (result, error, { tenantId }) => [{ type: 'PlantLogo', id: tenantId }],
-//     }),
-
-//     getAssessorInfo: builder.query<getOrgPayload & { id: number; createdAt: string; updatedAt: string }, string>({
-//       query: (tenantId) => ({
-//         url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.getAssessorInformation}${tenantId}`,
-//         method: 'GET',
-//       }),
-//     }),
-//   }),
-
-//   overrideExisting: false,
-// });
-
-// export const {
-//   useAddAssessorInformationMutation,
-//   useGetMetadataFileTemplateMutation,
-//   useUploadQuestionnariesMutation,
-//   useGetMetadataInformationQuery,
-//   useGetAssessorInfoQuery,
-
-//   useUploadAssessorLogoMutation,
-// } = assessorApi;
-
 import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
-interface getOrgPayload {
-  firstName: string;
-  lastName: string;
-  email: string;
-  contactNumber: number;
-  city: string;
-  country: string;
-  yearOfExperience: number;
-  certificationYear: number;
-  siriCertificate: File;
-}
-type UploadResponse = {
-  status: boolean;
-  message?: string;
-};
+import {
+  OnboardingStatusResponse,
+  getAssessorPayload,
+  UploadResponse,
+  UploadArgs,
+  RawUploadResponse,
+  uploadResponse,
+  UploadFileMetadata,
+} from './AssessorOnboarding.types';
 
-type UploadArgs = {
-  tenantId: string;
-  file: File;
-};
-
-// If you know what your backend returns, define that exact structure
-type RawUploadResponse = {
-  status: boolean;
-  message?: string;
-};
 export const assessorApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
     addAssessorInformation: builder.mutation({
@@ -226,6 +53,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -254,6 +82,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -282,6 +111,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -310,6 +140,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -338,6 +169,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -366,6 +198,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -394,6 +227,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -422,6 +256,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -450,6 +285,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -478,6 +314,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -506,6 +343,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         return {
           status: response.status,
           message: response.message ?? '',
+          data: response.data,
         };
       },
       invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
@@ -517,62 +355,42 @@ export const assessorApi = protectedApi.injectEndpoints({
         });
       },
     }),
-    // getMetadataFileTemplate: builder.mutation<Response, { userType: string; fileName: string }>({
-    //   query: ({ userType, fileName }) => ({
-    //     url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
-    //     method: 'POST',
-    //     body: { userType, fileName },
-    //     responseHandler: (response) => Promise.resolve(response),
-    //     cache: 'no-cache',
-    //   }),
-    //   invalidatesTags: (_result, _error, { fileName }) => [{ type: 'Assessor', id: fileName }],
-    //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-    //     await rtkAPIToast(queryFulfilled, dispatch, {
-    //       successMessage: 'file template downloaded successfully!',
-    //       errorMessage: 'Failed to download file template!',
-    //       duration: 4000,
-    //     });
-    //   },
-    // }),
 
- getMetadataFileTemplate: builder.mutation<{ success: boolean }, { userType: string; fileName: string }>({
-  query: ({ userType, fileName }) => ({
-    url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
-    method: 'POST',
-    body: { userType, fileName },
-    responseHandler: async (response) => {
-      const blob = await response.blob();
+    getMetadataFileTemplate: builder.mutation<{ success: boolean }, { userType: string; fileName: string }>({
+      query: ({ userType, fileName }) => ({
+        url: `${apiControllerPath.metadataFileTemplate.root}${apiControllerPath.metadataFileTemplate.getMetadataFile}`,
+        method: 'POST',
+        body: { userType, fileName },
+        responseHandler: async (response) => {
+          const blob = await response.blob();
 
-      // Trigger file download manually here
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+          // Trigger file download manually here
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
 
-      return { success: true }; 
-    },
-    cache: 'no-cache',
-  }),
+          return { success: true };
+        },
+        cache: 'no-cache',
+      }),
 
-  transformResponse: (response: { success: boolean }) => response,
+      transformResponse: (response: { success: boolean }) => response,
 
-  invalidatesTags: (_result, _error, { fileName }) => [
-    { type: 'Assessor', id: fileName },
-  ],
+      invalidatesTags: (_result, _error, { fileName }) => [{ type: 'Assessor', id: fileName }],
 
-  async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-    await rtkAPIToast(queryFulfilled, dispatch, {
-      successMessage: 'File template downloaded successfully!',
-      errorMessage: 'Failed to download file template!',
-      duration: 4000,
-    });
-  },
-}),
-
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'File template downloaded successfully!',
+          errorMessage: 'Failed to download file template!',
+          duration: 4000,
+        });
+      },
+    }),
 
     getMetadataInformation: builder.query({
       query: (tenantId: string) => ({
@@ -608,10 +426,6 @@ export const assessorApi = protectedApi.injectEndpoints({
 
     viewMetadataFile: builder.mutation({
       query: ({ tenantId, fileName }) => {
-        // const formData = new FormData();
-        // if (file) {
-        //   formData.append('kpiSelectionLookUpTable', file);
-        // }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.viewMetadataFile}`,
           method: 'POST',
@@ -627,19 +441,32 @@ export const assessorApi = protectedApi.injectEndpoints({
         });
       },
     }),
-    getAssessorInfo: builder.query<getOrgPayload & { id: number; createdAt: string; updatedAt: string }, string>({
+    getAssessorInfo: builder.query<
+      {
+        status: boolean;
+        message?: string;
+        data: {
+          formData: getAssessorPayload;
+          metadata_information: UploadFileMetadata[];
+          id: string;
+          createdAt: string;
+          updatedAt: string;
+        }[];
+      },
+      string
+    >({
       query: (tenantId) => ({
         url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.getAssessorInformation}${tenantId}`,
         method: 'GET',
       }),
       providesTags: (result, error, tenantId) => [{ type: 'Assessor', id: tenantId }],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Assessor information fetched successfully.',
-          errorMessage: 'Failed to fetch assessor information.',
-          duration: 4000,
-        });
-      },
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   await rtkAPIToast(queryFulfilled, dispatch, {
+      //     successMessage: 'Assessor information fetched successfully.',
+      //     errorMessage: 'Failed to fetch assessor information.',
+      //     duration: 4000,
+      //   });
+      // },
     }),
     getLogo: builder.query<{ logoUrl: string }, { tenantId: string }>({
       query: ({ tenantId }) => ({
@@ -649,13 +476,19 @@ export const assessorApi = protectedApi.injectEndpoints({
 
       providesTags: (result, error, { tenantId }) => [{ type: 'AssessorLogo', id: tenantId }],
 
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Logo Fetch successfully!',
-          errorMessage: 'Failed to Fetch logo!',
-          duration: 4000,
-        });
-      },
+      // async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      //   await rtkAPIToast(queryFulfilled, dispatch, {
+      //     successMessage: 'Logo Fetch successfully!',
+      //     errorMessage: 'Failed to Fetch logo!',
+      //     duration: 4000,
+      //   });
+      // },
+    }),
+    getOnboardingStatus: builder.query<OnboardingStatusResponse, string>({
+      query: (tenantId) => ({
+        url: `${apiControllerPath.onboardingStatus.root}/${tenantId}${apiControllerPath.onboardingStatus.getOnboardingStatus}`,
+        method: 'GET',
+      }),
     }),
   }),
 
@@ -683,4 +516,5 @@ export const {
 
   useViewMetadataFileMutation,
   useGetLogoQuery,
+  useGetOnboardingStatusQuery,
 } = assessorApi;
