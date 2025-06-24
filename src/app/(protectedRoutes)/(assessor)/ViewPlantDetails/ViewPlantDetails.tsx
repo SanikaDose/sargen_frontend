@@ -168,8 +168,15 @@ const ViewPlantDetails = ({}: AssessorProps) => {
             </Box>
           </Box>
 
-          {/* Action buttons aligned to the right */}
-          <Box display="flex" flexDirection="column" alignItems="flex-end" ml={{ xs: 0, sm: 'auto' }} gap={2}>
+          {/* Action buttons aligned to the right - NOW SIDE BY SIDE */}
+          <Box
+            display="flex"
+            flexDirection={{ xs: 'column', sm: 'row' }}
+            alignItems="center"
+            ml={{ xs: 0, sm: 'auto' }}
+            gap={2}
+            marginTop={2}
+          >
             <Button
               startIcon={<CheckCircleIcon />}
               color="primary"
@@ -178,10 +185,10 @@ const ViewPlantDetails = ({}: AssessorProps) => {
               sx={{
                 color: '#FFFFFF',
                 bgcolor: '#28a745',
-                fontSize: '16px',
-                mr: { xs: 0, sm: 4 },
+                fontSize: '14px',
                 p: 1,
                 borderRadius: '16px',
+                minWidth: '180px',
                 '&:hover': { bgcolor: '#218838' },
                 '&:disabled': { bgcolor: '#6c757d' },
               }}
@@ -193,14 +200,14 @@ const ViewPlantDetails = ({}: AssessorProps) => {
             <Button
               startIcon={<OndemandVideoIcon />}
               color="secondary"
-              variant="text"
+              variant="contained"
               sx={{
                 color: '#FFFFFF',
                 bgcolor: '#047af2',
-                fontSize: '16px',
-                mr: { xs: 0, sm: 4 },
+                fontSize: '14px',
                 p: 1,
                 borderRadius: '16px',
+                minWidth: '180px',
                 '&:hover': { bgcolor: '#0356b0' },
               }}
               onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
