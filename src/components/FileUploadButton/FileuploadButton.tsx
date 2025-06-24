@@ -4,6 +4,7 @@ import AssignmentAddIcon from '@mui/icons-material/AssignmentAdd';
 import { Button, Grid } from '@mui/material';
 import React from 'react';
 import { FileUploadButtonProps } from './FileUploadButton.types';
+import theme from '@/theme/theme';
 
 const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   onFileSelect,

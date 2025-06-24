@@ -32,7 +32,7 @@ export const AssessorFormInputs: AssessorFormInput[] = [
       required: 'Last Name is required',
       pattern: {
         value: /^[A-Za-z ]+$/, // Only letters and spaces
-        message: 'Only letters allowed (no special characters)',
+        message: 'Only letters allowed',
       },
     },
   },

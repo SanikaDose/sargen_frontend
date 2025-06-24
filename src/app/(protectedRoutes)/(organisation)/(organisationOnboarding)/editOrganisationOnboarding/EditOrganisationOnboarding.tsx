@@ -133,8 +133,7 @@ function OrganizationOnbording() {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
 
-      const isFilled =
-        (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
 
       if (isFilled) {
         acc.push(index);
