@@ -12,7 +12,7 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
  * Built on top of MUI's TextField and FormControl.
  */
 export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelProps>(
-  ({ label, name, required = false, ...textFieldProps }, ref) => {
+  ({ label, name, required = false, InputProps, ...textFieldProps }, ref) => {
     return (
       <FormControl fullWidth margin="normal">
         <FormLabel htmlFor={name} sx={{ fontWeight: 600, mb: 0, color: '#313131' }}>
@@ -34,7 +34,10 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
             },
           }}
           {...textFieldProps}
-          InputProps={{ inputProps: { min: 0 } }}
+          InputProps={{
+            ...InputProps,
+            inputProps: { min: 0 }, // ⬅️ allow readOnly, disabled etc. to pass through
+          }}
           inputRef={ref}
         />
       </FormControl>
