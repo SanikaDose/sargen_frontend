@@ -29,10 +29,18 @@ export const OrgFormInputs: OrgFormInput[] = [
     placeholder: 'Enter GST IN no',
     required: true,
     rules: {
-      required: 'Gstin is required',
+      required: 'GSTIN is required',
+      minLength: {
+        value: 15,
+        message: 'GSTIN must be exactly 15 characters',
+      },
+      maxLength: {
+        value: 15,
+        message: 'GSTIN must be exactly 15 characters',
+      },
       pattern: {
-        value: /^[0-9]+$/,
-        message: 'Enter valid GSTIN',
+        value: /^[A-Za-z0-9]{15}$/,
+        message: 'Enter a valid GSTIN (only letters and numbers allowed)',
       },
     },
   },
