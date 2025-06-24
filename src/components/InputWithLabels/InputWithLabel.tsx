@@ -97,7 +97,7 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
       <FormControl fullWidth margin="normal">
         <FormLabel htmlFor={name} sx={{ fontWeight: 600, mb: 0, color: '#313131' }}>
           {label}
-          {required && <span style={{ color: 'red' }}>*</span>}
+          {required && <span style={{ color: 'red' }}> *</span>}
         </FormLabel>
         <TextField
           id={name}

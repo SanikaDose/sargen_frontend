@@ -7,7 +7,7 @@ import styles from './AssessorPlantInfoCard.module.css';
 const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProps) => {
   const plantName = data?.plantName ?? '';
   const organisationName = data?.organisationName ?? '';
-  const assesorCompletionStage = data?.assesorCompletionStage ?? '';
+  const assessmentCompletionStage = data?.assessmentCompletionStage ?? '';
   const createdAt = data?.createdAt ?? '';
   const updatedAt = data?.updatedAt ?? '';
 
@@ -27,7 +27,7 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
           Organisation: <span className={styles.value}>{organisationName}</span>
         </Typography>
         <Typography className={styles.label}>
-          Stage: <span className={styles.value}>{assesorCompletionStage}</span>
+          Stage: <span className={styles.value}>{assessmentCompletionStage}</span>
         </Typography>
       </Box>
 
@@ -42,7 +42,7 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
       </Box>
 
       {/* Bottom Badge */}
-      <Box className={styles.statusBadge}>{assesorCompletionStage}</Box>
+      <Box className={styles.statusBadge}>{assessmentCompletionStage}</Box>
     </Box>
   );
 };
