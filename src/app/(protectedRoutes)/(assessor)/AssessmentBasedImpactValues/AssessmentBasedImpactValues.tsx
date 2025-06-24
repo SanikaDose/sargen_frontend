@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import styles from './AssessmentBasedImpactValues.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import {
@@ -16,13 +15,13 @@ import Card from '@/components/Card/Card';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import Loader from '@/components/Loader/Loader';
 
 const AssessmentBasedImpactValues = () => {
   const params = useParams();
   const router = useRouter();
-  const organisationId = params.organisationId as string;
+  const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
-  const tenantId = getValueLocalStorage('tenantId') ?? '';
   const [dimensionData, setDimensionData] = useState<{ dimension: string; value: number }[]>([]);
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>([]);
   const dispatch = useDispatch();
@@ -62,9 +61,9 @@ const AssessmentBasedImpactValues = () => {
     );
   };
 
-  const [getImpactValues] = useGetImpactValuesMutation();
-  const [getSelectedImpactValues] = useGetSelectedImpactValuesMutation();
-  const [selectImpactValues] = useSelectImpactValuesMutation();
+  const [getImpactValues, { isLoading: isGetLoading }] = useGetImpactValuesMutation();
+  const [getSelectedImpactValues, { isLoading: isGetSelectLoading }] = useGetSelectedImpactValuesMutation();
+  const [selectImpactValues, { isLoading: isSelectLoading }] = useSelectImpactValuesMutation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,7 +131,7 @@ const AssessmentBasedImpactValues = () => {
       const response = await selectImpactValues(payload).unwrap();
 
       if (response) {
-        router.push(`/AssessmentSolution/${organisationId}/${plantId}`);
+        router.push(`/AssessmentSolution/${tenantId}/${plantId}`);
       }
     } catch (error) {
       console.error('Save failed:', error);
@@ -141,106 +140,108 @@ const AssessmentBasedImpactValues = () => {
   };
 
   return (
-    <Box
-      sx={{ height: '99%' }}
-      component="form"
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSave();
-      }}
-    >
-      <Paper
-        className={styles.formSection}
-        elevation={2}
-        sx={{
-          mt: 2,
-          borderRadius: '16px',
-          backgroundColor: 'white',
-          border: '1px solid rgb(216, 216, 216)',
-        }}
-      >
-        <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-          <Box className={styles.formContainer}>
-            <Typography variant="h4">Assessment Based Impact Values</Typography>
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                mt: 2,
-              }}
-            >
-              {dimensionData.map(({ dimension, value }) => {
-                const isSelected = selectedDimensions.includes(dimension); // Direct comparison
-                return (
-                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={dimension}>
-                    <Card
-                      label={
-                        <Box textAlign="center">
-                          <Typography fontSize={'14px'} marginLeft={2}>
-                            {formatDimensionName(dimension)}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            mt={0.5}
-                            color="textSecondary"
-                            sx={{
-                              fontSize: '1.25rem',
-                              fontWeight: 'bold',
-                              color: 'black',
-                              textAlign: 'left',
-                              ml: 2,
-                            }}
-                          >
-                            <span
-                              style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'black', alignItems: 'start' }}
-                            >
-                              {value}
-                            </span>
-                          </Typography>
-                        </Box>
-                      }
-                      isSelected={isSelected}
-                      onToggle={() => toggleSelection(dimension)}
-                    />
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Box>
+    <>
+      {isGetLoading || isGetSelectLoading || isSelectLoading ? (
+        <Loader loading={true} />
+      ) : (
+        <Box
+          sx={{ height: '99%' }}
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
+        >
+          <Paper
+            className={styles.formSection}
+            elevation={2}
+            sx={{
+              mt: 2,
+              borderRadius: '16px',
+              backgroundColor: 'white',
+              border: '1px solid rgb(216, 216, 216)',
+            }}
+          >
+            <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+              <Box className={styles.formContainer}>
+                <Typography variant="h4">Assessment Based Impact Values</Typography>
+                <Grid
+                  container
+                  spacing={2}
+                  sx={{
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    mt: 2,
+                  }}
+                >
+                  {dimensionData.map(({ dimension, value }) => {
+                    const isSelected = selectedDimensions.includes(dimension); // Direct comparison
+                    return (
+                      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={dimension}>
+                        <Card
+                          label={
+                            <Box textAlign="center">
+                              <Typography fontSize={'14px'} marginLeft={2}>
+                                {formatDimensionName(dimension)}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                mt={0.5}
+                                color="textSecondary"
+                                sx={{
+                                  fontSize: '1.25rem',
+                                  fontWeight: 'bold',
+                                  color: 'black',
+                                  textAlign: 'left',
+                                  ml: 2,
+                                }}
+                              >
+                                <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'black', alignItems: 'start' }}>{value}</span>
+                              </Typography>
+                            </Box>
+                          }
+                          isSelected={isSelected}
+                          onToggle={() => toggleSelection(dimension)}
+                        />
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </Box>
 
-          <Box className={styles.rightSection}>
-            <Box className={styles.aboutSection}>
-              <InfoBox
-                content="This section evaluates impact values like vertical and horizontal integration from the assessment results."
-                heading="About Impact Values"
-              />
-            </Box>
+              <Box className={styles.rightSection}>
+                <Box className={styles.aboutSection}>
+                  <InfoBox
+                    content="This section evaluates impact values like vertical and horizontal integration from the assessment results."
+                    heading="About Impact Values"
+                  />
+                </Box>
 
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              p={1}
-              mt={3}
-              ml={5}
-              mr={5}
-              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
-              className={styles.buttonSection}
-            >
-              <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()}>
-                Back
-              </CustomButton>
-              <CustomButton variant="contained" icon="save" type="submit">
-                Save
-              </CustomButton>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  p={1}
+                  mt={3}
+                  ml={5}
+                  mr={5}
+                  sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+                  className={styles.buttonSection}
+                >
+                  <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()}>
+                    Back
+                  </CustomButton>
+                  <CustomButton variant="contained" icon="save" type="submit">
+                    Save
+                  </CustomButton>
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          </Paper>
         </Box>
-      </Paper>
-    </Box>
+      )}
+    </>
   );
 };
 
