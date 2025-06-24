@@ -1,13 +1,12 @@
 'use client';
 
 import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { Box, Button, FormControl, FormHelperText, OutlinedInput, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import styles from './style.module.css';
 import { useForgotPasswordApiMutation } from '../login/loginApi';
 import { pageRoutes } from '@/constants/pagesRoutes';
-import { Height } from '@mui/icons-material';
 
 type FormValues = {
   email: string;

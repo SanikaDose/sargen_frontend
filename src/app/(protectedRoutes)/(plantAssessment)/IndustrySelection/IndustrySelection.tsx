@@ -79,10 +79,10 @@ const IndustrySelection = () => {
       },
     };
 
-    const industrySaveSuccesfully = await selectIndustrySelectionList(payload).unwrap();
-    if (industrySaveSuccesfully) {
-      router.push(`/Questionaire/${organisationId}/${plantId}`);
-    }
+    await selectIndustrySelectionList(payload).unwrap();
+    // if (industrySaveSuccesfully) {
+    router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
+    // }
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -181,19 +181,23 @@ const IndustrySelection = () => {
                   className={styles.buttonSection}
                 >
                   <CustomButton
-                    children="Back"
+                    // children="Back"
                     variant="contained"
                     color="primary"
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                  />
+                  >
+                    Back
+                  </CustomButton>
                   <CustomButton
-                    children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
                     variant="contained"
                     icon="save"
                     type="submit"
-                  />
+                  >
+                    {isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                  </CustomButton>
                 </Box>
               </Box>
             </Box>

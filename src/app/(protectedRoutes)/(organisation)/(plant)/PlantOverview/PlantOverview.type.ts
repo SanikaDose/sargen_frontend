@@ -1,22 +1,33 @@
 // Define the structure of the payload for getAllPlant info
-export interface Plant {
-  id: number;
+export type Plant = {
+  assessmentDate: string;
+  id: string;
   name: string;
   location: string;
   registrationNo: string;
   revenue: string;
+  currencyType: string;
   type: string;
   age: number;
   numberOfEmployees: number;
   numberOfLines: number;
-  assessmentStartDate: string;
-  debriefDate: string;
-  createdAt: Date;
-  updatedAt: Date;
+  gstin: string;
+  createdAt: string;
+  updatedAt: string;
   createdBy: string | null;
   updatedBy: string | null;
-  tenantId: string;
-}
+  assessmentStartDate: string;
+  debriefDate: string;
+  about: string;
+  assessor: string;
+  assessmentTableAssignedList: string[];
+  assessmentCompletionPercentage: number;
+  assessmentCompletionStage: 'NOT_STARTED' | 'STARTED' | 'START_ASSESSMENT' | 'REQUESTED_ASSESSMENT' | 'COMPLETED' | string; // include `string` fallback if values may vary
+  plantLogo: string | null;
+  pocFullName: string;
+  pocEmail: string;
+  pocContactNo: string;
+};
 
 export interface PlantInfoResponse {
   message: string;

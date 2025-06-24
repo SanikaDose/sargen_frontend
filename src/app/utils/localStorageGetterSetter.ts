@@ -21,6 +21,7 @@ export const decodeToken = (token: string) => {
   try {
     return jwtDecode<Token>(token);
   } catch (e) {
+    console.log('e', e);
     return null;
   }
 };

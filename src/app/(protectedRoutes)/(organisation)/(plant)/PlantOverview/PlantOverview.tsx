@@ -10,25 +10,25 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
 import { pageRoutes } from '@/constants/pagesRoutes';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
-import Loader from '@/components/Loader/Loader';
-import { RootState } from '@/store/store';
+// import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
+
 import { AsseessmentStatus } from '@/constants/enums';
+import { Plant } from './PlantOverview.type';
 
 export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
-  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  // const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
 
   // when ever the user will be there in plant overview then setShowAssessmentListSideBar will be always false
   // dispatch(setShowAssessmentListSideBar(false));
   const [searchValue, setSearchValue] = useState('');
   // const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
-  const [statusLoading, setStatusLoading] = useState(false);
+  // const [statusLoading, setStatusLoading] = useState(false);
 
   // Set page header
   useEffect(() => {
@@ -96,7 +96,7 @@ export default function PlantOverview() {
           </Paper>
         </Box>
       </Typography>
-      {plantsLoading || statusLoading ? (
+      {plantsLoading || assesmentStatusLoading ? (
         <Grid
           container
           spacing={{ xs: 1.5, md: 1.5 }}
@@ -129,12 +129,12 @@ export default function PlantOverview() {
 
           {/* Plant Info Cards */}
           {Array.isArray(plantInfo?.data) &&
-            plantInfo.data.map((plant: any) => (
+            plantInfo.data.map((plant: Plant) => (
               <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
                 <PlantInfoCard
                   data={{
                     age: plant.age,
-                    assessmentCompletionPercentage: plant.assessmentCompletion,
+                    assessmentCompletionPercentage: plant.assessmentCompletionPercentage,
                     assessmentStartDate: plant.assessmentDate,
                     createdAt: plant.createdAt,
                     debriefDate: plant.debriefDate,
@@ -143,7 +143,7 @@ export default function PlantOverview() {
                     name: plant.name,
                     numberOfEmployees: plant.numberOfEmployees,
                     numberOfLines: plant.numberOfLines,
-                    plantLogo: plant.plantLogo,
+                    plantLogo: plant.plantLogo || '',
                     registrationNo: plant.registrationNo,
                     revenue: plant.revenue,
                     updatedAt: plant.debriefDate,

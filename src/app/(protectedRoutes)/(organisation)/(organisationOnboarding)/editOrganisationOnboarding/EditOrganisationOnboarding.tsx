@@ -11,11 +11,11 @@ import {
   useGetOrganizationInfoQuery,
 } from './EditOrganisationOnboardingApi';
 import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
+import { MenuItem, FormControl, Select } from '@mui/material';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { OrgFormInputs } from './FormConfig/formInputStep';
-import { OrgOnboardType } from './EditOrganisationOnboarding.types';
+import { OrgOnboardType, OrgPayload } from './EditOrganisationOnboarding.types';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import Loader from '@/components/Loader/Loader';
 import styles from './EditOrganisationOnboarding.module.css';
@@ -39,7 +39,7 @@ function OrganizationOnbording() {
   useEffect(() => {
     dispatch(setPageNameHeader('Organization Onboarding'));
   }, [dispatch]);
-  const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+  const [submitOrganizationInfo, { isLoading }] = useSubmitOrganizationInfoMutation();
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
   const tenantId = getValueLocalStorage('tenantId');
@@ -50,12 +50,7 @@ function OrganizationOnbording() {
   });
 
   console.log('if we have tenentid the we get this data', data);
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       companyName: '',
       website: '',
@@ -103,7 +98,7 @@ function OrganizationOnbording() {
   };
 
   //on form submit
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: OrgPayload) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
       router.push('/AddContactPerson');
@@ -112,9 +107,6 @@ function OrganizationOnbording() {
     }
   };
 
-  const onError = (errors: any) => {
-    console.error('Validation Errors:', errors);
-  };
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
   console.log('watched vale for the number of employ', watchedValues.numberOfEmployees);
@@ -132,8 +124,7 @@ function OrganizationOnbording() {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
 
-      const isFilled =
-        (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
 
       if (isFilled) {
         acc.push(index);

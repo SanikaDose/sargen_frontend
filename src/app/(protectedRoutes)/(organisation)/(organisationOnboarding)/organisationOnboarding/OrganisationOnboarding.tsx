@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
-import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
+import { OrgPayload, useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
 const steps = [
   'Company Name',
   'Company website',
@@ -35,18 +35,13 @@ function OrganizationOnbording() {
     dispatch(setPageNameHeader('Organization Onboarding'));
   }, [dispatch]);
   const router = useRouter();
-  const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+  const [submitOrganizationInfo, { isLoading }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
 
   const tenantId = getValueLocalStorage('tenantId');
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       companyName: '',
       website: '',
@@ -93,22 +88,18 @@ function OrganizationOnbording() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.log('');
+      console.log('error', error);
     }
   };
 
   //on form submit
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: OrgPayload) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
       router.push('/AddContactPerson');
     } catch (error) {
       console.log('error ', error);
     }
-  };
-
-  const onError = (errors: any) => {
-    console.error('Validation Errors:', errors);
   };
 
   return (

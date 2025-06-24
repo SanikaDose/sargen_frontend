@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import styles from './AddPlant.module.css';
-import { PlantFormType } from './AddPlant.types';
+import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
 import InfoBox from '@/components/InfoBox/InfoBox';
@@ -50,13 +50,13 @@ const PlantRegistrationForm = () => {
     control,
     handleSubmit,
     reset,
-    setFocus,
+
     formState: { errors },
   } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
@@ -71,13 +71,10 @@ const PlantRegistrationForm = () => {
     setSelectedFile(file);
   };
 
-  // Define the expected response type for addPlantInfo
-  type AddPlantInfoResponse = { id: string; [key: string]: any };
-
   //this is an function which will fill the form with the data from the API and then uload the image while getting the plantId from respomse
   const onSubmit = async (data: PlantFormType) => {
     try {
-      const { about, ...body } = data;
+      const { ...body } = data;
       console.log('data from the add plant', data);
       // Convert revenue to number if it's a string
       const bodyWithNumberRevenue = {
@@ -93,7 +90,7 @@ const PlantRegistrationForm = () => {
       console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
-      const newPlantId = response?.data.id;
+      const newPlantId = response?.id;
 
       // ✅ Step 3: Upload image only if user uploaded one
       if (logoUrl && !logoUrl.includes('default-logo-image')) {

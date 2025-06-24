@@ -1,5 +1,3 @@
-// OverallCostProfileCard.stories.tsx
-import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import OverallCostProfileCard from './OverallCostProfileCard';
 

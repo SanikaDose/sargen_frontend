@@ -37,7 +37,7 @@ export interface getOrgPayload {
   data: {
     country: string;
     uom: string;
-    userLogo: any;
+    userLogo: string;
     name: string;
     website: string;
     gstin: string;

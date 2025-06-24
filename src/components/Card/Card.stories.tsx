@@ -15,7 +15,7 @@ const meta: Meta<typeof Card> = {
     },
   },
   argTypes: {
-    kpi: {
+    label: {
       control: 'text',
       description: 'KPI label text displayed next to the checkbox.',
     },
@@ -40,7 +40,7 @@ type Story = StoryObj<typeof Card>;
 // Static examples
 export const Default: Story = {
   args: {
-    kpi: 'Energy Efficiency',
+    label: 'Energy Efficiency',
     isSelected: false,
     isDisabled: false,
   },
@@ -48,7 +48,7 @@ export const Default: Story = {
 
 export const Selected: Story = {
   args: {
-    kpi: 'Water Usage',
+    label: 'Water Usage',
     isSelected: true,
     isDisabled: false,
   },
@@ -56,7 +56,7 @@ export const Selected: Story = {
 
 export const Disabled: Story = {
   args: {
-    kpi: 'Emission Reduction',
+    label: 'Emission Reduction',
     isSelected: false,
     isDisabled: true,
   },
@@ -66,6 +66,6 @@ export const Disabled: Story = {
 export const Interactive: Story = {
   render: () => {
     const [isSelected, setIsSelected] = useState(false);
-    return <Card kpi="Interactive KPI" isSelected={isSelected} onToggle={() => setIsSelected((prev) => !prev)} />;
+    return <Card label="Interactive KPI" isSelected={isSelected} onToggle={() => setIsSelected((prev) => !prev)} />;
   },
 };

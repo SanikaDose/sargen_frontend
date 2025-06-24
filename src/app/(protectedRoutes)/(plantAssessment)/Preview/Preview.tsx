@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
@@ -45,7 +45,7 @@ export default function Preview() {
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
-        let all: Question[] = [];
+        const all: Question[] = [];
 
         for (const dept of departmentName) {
           const result = await getQuestionnairesList({

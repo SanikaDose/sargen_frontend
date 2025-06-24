@@ -3,21 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  OutlinedInput,
-} from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, OutlinedInput } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
@@ -25,9 +11,6 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from './AssessorOnboarding.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { AssessorFormType } from './AssessorOnboarding.types';
-
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useRouter } from 'next/navigation';
 import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
 import { certificateData, fileValues } from './FormConfig/fileInput';
 import FileActionButton from '@/components/FileActionButton/FileActionButton';
@@ -57,19 +40,10 @@ import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
-const steps = [
-  'First Name',
-  'Last Name',
-  'E-Mail Id',
-  'Contact Number',
-  'City',
-  'Country',
-  'Year Of Experience',
-  'Certification Year',
-].map((label) => ({ label }));
+const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
+  (label) => ({ label }),
+);
 
 //const tenantId = getValueLocalStorage('tenantId');
 const tenantId = 'ASSESSOR-773a065d-1e31-4cf3-88f1-57e5d83675e8';

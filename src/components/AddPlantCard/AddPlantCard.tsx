@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Box, CardContent, Typography } from '@mui/material';
 import styles from './style.module.css';
 import { AddPlantCardProps } from './AddPlantCards.types';
 

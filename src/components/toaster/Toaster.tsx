@@ -7,14 +7,12 @@ import { hideToast } from './toasterSlice';
 import { RootState } from '@/store/store';
 import styles from './toaster.module.css';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import { Slide } from '@mui/material';
 
 export default function Toaster() {
   const dispatch = useDispatch();
   const { open, severity, message } = useSelector((state: RootState) => state.toasterGlobal);
 
-  const theme = useTheme();
   const isSmallScreen = useMediaQuery('(max-width:899px)');
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {

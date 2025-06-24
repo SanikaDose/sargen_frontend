@@ -48,7 +48,7 @@ const KpiDefinition = () => {
       }));
       setKpiList(cleaned);
       reset({
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
       });
     } catch (error) {
       console.error('Failed to fetch KPIs:', error);
@@ -70,12 +70,12 @@ const KpiDefinition = () => {
           isselected: item.isselected,
         })),
       };
-      const kpisSaveSuccesfully = await selectKPIDefinition(payload).unwrap();
-      if (kpisSaveSuccesfully) {
-        router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
-      }
+      await selectKPIDefinition(payload).unwrap();
+      // if (kpisSaveSuccesfully) {
+      router.push(`/CostProfile/${organisationId}/${plantId}`);
+      // }
     } catch (error) {
-      alert('something went wrong');
+      console.log('error', error);
     }
   };
 
@@ -170,19 +170,23 @@ const KpiDefinition = () => {
                   className={styles.buttonSection}
                 >
                   <CustomButton
-                    children="Back"
+                    // children="Back"
                     variant="contained"
                     color="primary"
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                  />
+                  >
+                    Back
+                  </CustomButton>
                   <CustomButton
-                    children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
                     variant="contained"
                     icon="save"
                     type="submit"
-                  />
+                  >
+                    {isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                  </CustomButton>
                 </Box>
               </Box>
             </Box>

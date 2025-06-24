@@ -69,7 +69,7 @@ const KpiDefinitionPreview = () => {
       setKpiList(cleaned);
 
       const formData = {
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
       };
 
       // Reset form with fetched data

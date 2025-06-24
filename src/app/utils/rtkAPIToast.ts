@@ -1,5 +1,5 @@
-import { AppDispatch } from "@/store/store";
-import { showToast, hideToast } from "@/components/toaster/toasterSlice";
+import { AppDispatch } from '@/store/store';
+import { showToast, hideToast } from '@/components/toaster/toasterSlice';
 
 export interface rtkInbuilt {
   data: {
@@ -21,7 +21,7 @@ export async function rtkAPIToast<T>(
     successMessage: string;
     errorMessage?: string;
     duration?: number;
-  }
+  },
 ) {
   try {
     const result = (await queryFulfilled) as rtkInbuilt;
@@ -29,13 +29,13 @@ export async function rtkAPIToast<T>(
 
     const dynamicMessage = message || successMessage;
 
-    dispatch(showToast({ message: dynamicMessage, severity: "success" }));
+    dispatch(showToast({ message: dynamicMessage, severity: 'success' }));
   } catch (error: any) {
     dispatch(
       showToast({
-        message: error?.error?.data?.message || errorMessage || "Something went wrong!",
-        severity: "error",
-      })
+        message: error?.error?.data?.message || errorMessage || 'Something went wrong!',
+        severity: 'error',
+      }),
     );
   } finally {
     setTimeout(() => {

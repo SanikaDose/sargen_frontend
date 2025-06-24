@@ -14,11 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { Question } from './Questionaire.type';
 import TextArea from '@/components/textArea/TextArea';
-import { showToast } from '@/components/toaster/toasterSlice';
-import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import Toaster from '@/components/toaster/Toaster';
+
 import { triggerToast } from '@/app/utils/toast';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 
@@ -52,7 +50,6 @@ const Questionaire = () => {
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
-  const [departmentIndex, setDepartmentIndex] = useState<number>(0);
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
   const steps = groupKeys.map((_, index) => ({
@@ -261,16 +258,18 @@ const Questionaire = () => {
               className={styles.buttonSection}
             >
               <CustomButton
-                children="Back"
+                // children="Back"
                 variant="contained"
                 color="primary"
                 icon="left"
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
                 disabled={currentIndex === 0 || isSaving}
-              />
+              >
+                Back
+              </CustomButton>
               <CustomButton
-                children={isSaving ? 'Saving...' : 'Save'}
+                // children={isSaving ? 'Saving...' : 'Save'}
                 variant="contained"
                 icon="save"
                 type="button"
@@ -299,7 +298,9 @@ const Questionaire = () => {
                   }
                 }}
                 disabled={isSaving}
-              />
+              >
+                {isSaving ? 'Saving...' : 'Save'}
+              </CustomButton>
             </Box>
           </Box>
         </Box>

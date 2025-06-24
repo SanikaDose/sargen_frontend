@@ -4,4 +4,4 @@ function KpisDefinationPage() {
   <KpiDefinition />;
 }
 
-export default KpiDefinition;
+export default KpisDefinationPage;

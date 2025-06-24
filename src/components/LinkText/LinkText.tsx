@@ -1,7 +1,7 @@
 // src/components/linkText/LinkText.tsx
 
 import React from 'react';
-import { Link, LinkProps } from '@mui/material';
+import { Link } from '@mui/material';
 
 type LinkTextProps = {
   href: string;
