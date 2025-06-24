@@ -1,0 +1,174 @@
+.mostOuterConatiner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  /* align-items: center; */
+  padding: 1px;
+ 
+}
+.paperContainer {
+  border-radius: 16px;
+  background-color: white;
+  border: 1px solid rgb(216, 216, 216);
+  width: 100%;
+  display: flex;
+  min-height: 87%;
+  padding: 2rem;
+  gap: 3rem;
+}
+.heading {
+  font-weight: 600;
+  padding: 0 0 1rem 1rem;
+}
+
+
+.stepperContainer {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+.formContainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20;
+  padding: 0% 1%;
+}
+
+/* .imageBox {
+  display: flex;
+  width: 20vw;
+  
+  justify-content: center;
+  align-items: center;
+ 
+} */
+.imageBox {
+  display: flex;
+  width: 200px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+
+.formFieldsInner {
+  width: 100%;
+  /* border: 1px solid rgb(78, 47, 255); */
+}
+.formFieldsBox {
+  width: 80%;
+}
+
+.btnContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 20vw;
+}
+
+.secondContainer {
+  display: flex;
+
+  /* justify-content: space-evenly; */
+  gap: 25;
+  width: 100%;
+  padding: 0% 1%;
+}
+.tableContainer {
+  width: 100%;
+  /* border: 1px solid rgb(20, 133, 209);
+    background-color:antiquewhite;
+    padding: 10; */
+}
+.fileUploadContainer {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  height: 40%;
+  width: 100%;
+}
+.buttonSection {
+  width: 100%;
+  /* background-color: aqua; */
+  /* padding: 2%; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.saveBtn {
+  width: 100%;
+  margin: 1% 0%;
+}
+.actionBtnContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /* gap: 50px; */
+
+  padding: 0px;
+  align-content: center;
+  margin: 0px;
+}
+
+.FormContainer {
+  width: 100%;
+}
+
+@media (min-width: 300px) and (max-width: 640px) {
+  .secondContainer {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btnContainer {
+    width: 100%;
+  }
+  .fileUploadContainer {
+    width: 100%;
+  }
+  .paperContainer {
+    height: auto;
+  }
+}
+@media (max-width: 900px) {
+  .formContainer {
+    flex-direction: column;
+   
+    width: 100%;
+    padding: 0;
+   
+  }
+
+  .secondContainer {
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+  }
+  .btnContainer {
+    margin-top: 5;
+    width: 100%;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 0;
+  }
+  .FormContainer {
+    width: 100%;
+    padding: 0;
+  }
+  .tableContainer {
+    overflow-x: auto;
+  }
+  .paperContainer {
+    height: auto;
+  }
+}
+@media (min-width: 280px) and (max-width: 800px) {
+  .stepperContainer {
+    display: none;
+  }
+  .paperContainer {
+    height: auto;
+  }
+}

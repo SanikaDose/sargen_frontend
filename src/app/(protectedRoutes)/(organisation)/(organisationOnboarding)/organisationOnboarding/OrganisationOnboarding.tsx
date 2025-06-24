@@ -139,7 +139,7 @@ function OrganizationOnbording() {
   const onSubmit = async (data: OrgOnboardType) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
-      router.push('/AddContactPerson');
+      router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
     }

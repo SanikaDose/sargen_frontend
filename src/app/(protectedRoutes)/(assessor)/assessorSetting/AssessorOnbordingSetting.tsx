@@ -8,9 +8,9 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
-import styles from './AssessorOnboarding.module.css';
+import styles from './AssessorOnboardingSetting.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { AssessorFormType, UploadFileMetadata, UploadFunction } from './AssessorOnboarding.types';
+import { AssessorFormType, UploadFileMetadata, UploadFunction } from './AssessorOnbordingSetting.types';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useRouter } from 'next/navigation';
 import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
@@ -34,7 +34,7 @@ import {
   useViewMetadataFileMutation,
   useGetAssessorInfoQuery,
   useGetOnboardingStatusQuery,
-} from './AssessorOnboarding.Api';
+} from './AssessorOnbordingSetting.Api';
 
 import { fileUploadKeyMap, fileTypes } from './FormConfig/fileInput';
 import { triggerToast } from '@/app/utils/toast';
@@ -52,7 +52,7 @@ const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City',
 
 const tenantId = getValueLocalStorage('tenantId');
 
-function AssessorOnboarding() {
+function AssessorOnbordingSetting() {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -584,4 +584,4 @@ function AssessorOnboarding() {
   );
 }
 
-export default AssessorOnboarding;
+export default AssessorOnbordingSetting;
