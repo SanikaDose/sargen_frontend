@@ -1,23 +1,23 @@
 'use client';
 
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import styles from './userAssessmentPreview.module.css';
-import { Box, Paper, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import {
   useGetQuestionnairesListMutation,
   useSelectQuestionnairesAnswerMutation,
 } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
-import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
-import TextArea from '@/components/TextArea/TextArea';
-import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
+import QuestionCard from '@/components/QuestionCard/QuestionCard';
+import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
+import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { Box, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import styles from './userAssessmentPreview.module.css';
 import { useStartAssessmentRuleEngineMutation } from './userAssessmentPreviewApi';
 
 const UserAssessmentPreview = () => {
