@@ -200,7 +200,7 @@ const PlantRegistrationForm = () => {
                                         ))}
                                       </Select>
                                       {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
+                                        <Typography variant="caption" color="red">
                                           {fieldState.error.message}
                                         </Typography>
                                       )}
@@ -217,7 +217,7 @@ const PlantRegistrationForm = () => {
                                         size="small"
                                       />
                                       {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
+                                        <Typography variant="caption" color="red">
                                           {fieldState.error.message}
                                         </Typography>
                                       )}
