@@ -22,26 +22,25 @@ export default function Toaster() {
   };
   return (
     <div>
-            {open && (
-
-      <Slide in={open} direction={isSmallScreen ? 'left' : 'right'} mountOnEnter unmountOnExit>
+      <Slide in={open} direction={'left'} mountOnEnter unmountOnExit>
         <Snackbar
           className={styles.outerSnackbar}
           anchorOrigin={{
-            vertical: isSmallScreen ? 'top' : 'bottom',
-            horizontal: isSmallScreen ? 'right' : 'left',
+            vertical: 'top',
+            horizontal: 'right',
           }}
           open={open}
           autoHideDuration={6000}
           onClose={handleClose}
-          sx={
-            !isSmallScreen
-              ? {
-                  bottom: '80px !important',
-                  '& .MuiPaper-root': {},
-                }
-              : {}
-          }
+          sx={{
+            top: '65px',
+            right: '10px',
+            mt: {
+              xs: 1, // e.g., 56px for mobile
+              sm: 8, // e.g., 64px for small screens
+              md: 9, // 72px for medium and above
+            },
+          }}
         >
           <Alert
             severity={severity}
@@ -49,10 +48,20 @@ export default function Toaster() {
             sx={{
               fontSize: '0.690rem !important',
               padding: '2px 4px  !important',
+              display: 'flex',
+              alignItems: 'center',
               color: '#FFFFFF !important',
-              border: 'none !important',
-                  // backgroundColor: severity === 'error' ? '#fdecea' : undefined, 
-
+              '& .MuiAlert-icon': {
+                color: '#FFFFFF !important', // 👈 makes icon white
+              },
+              backgroundColor:
+                severity === 'success'
+                  ? '#5d9981' // pastel green
+                  : severity === 'error'
+                    ? '#e71d36' // pastel red
+                    : severity === 'warning'
+                      ? '#fcca46' // pastel yellow
+                      : '#0353a4', // pastel blue for info
               width: {
                 sm: '300px',
                 md: '220px',
