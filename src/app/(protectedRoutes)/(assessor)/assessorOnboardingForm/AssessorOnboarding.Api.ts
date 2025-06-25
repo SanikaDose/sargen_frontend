@@ -483,11 +483,19 @@ export const assessorApi = protectedApi.injectEndpoints({
       //   });
       // },
     }),
-    getOnboardingStatus: builder.query<OnboardingStatusResponse, string>({
-      query: (tenantId) => ({
+    // getOnboardingStatus: builder.query<OnboardingStatusResponse, string>({
+    //   query: (tenantId) => ({
+
+    //     method: 'GET',
+    //   }),
+    // }),
+
+    getOnboardingStatus: builder.query<OnboardingStatusResponse, { tenantId: string }>({
+      query: ({ tenantId }) => ({
         url: `${apiControllerPath.onboardingStatus.root}/${tenantId}${apiControllerPath.onboardingStatus.getOnboardingStatus}`,
         method: 'GET',
       }),
+      providesTags: (result, error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
     }),
   }),
 

@@ -60,7 +60,7 @@ export type UploadResponse = {
   data?: UploadFileMetadata[];
 };
 
-//export type MutationTrigger<T extends (...args: any[]) => any> = ReturnType<ReturnType<T>>;
+// export type MutationTrigger<T extends (...args: any[]) => any> = ReturnType<ReturnType<T>>;
 
 export type UploadArgs = {
   tenantId: string;

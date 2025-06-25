@@ -52,9 +52,9 @@ const steps = ['Form Data', ...fileValues.map((key, i) => `File ${i + 1}`)].map(
 //   (label) => ({ label }),
 // );
 
-const tenantId = getValueLocalStorage('tenantId');
-
 function AssessorOnboarding() {
+  const tenantId = getValueLocalStorage('tenantId');
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -101,99 +101,10 @@ function AssessorOnboarding() {
 
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
-  // const { data: orgStatus } = useGetOnboardingStatusQuery(tenantId ?? '');
-  // console.log('ornboding status', orgStatus);
-  // const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
-
-  // const readonlyFields = ['firstName', 'lastName', 'email'];
+  const [isuploading, setisuploading] = useState(Boolean);
   const [Status, setStatus] = useState<string | null>(null);
-  const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
-  console.log('existing dataa', existingData);
-  //reload view
-  // useEffect(() => {
-  //   if (existingData && existingData.data[0]?.formData) {
-  //     const { formData, metadata_information } = existingData.data[0];
-  //     console.log('formdatauserlog2', formData.userLogo);
-  //     if (formData.userLogo) {
-  //       setLogoUrl(formData.userLogo);
-  //       //  triggerToast('Assessor Logo Fetch Successfully', 'success');
-  //     }
-  //     if (metadata_information) {
-  //       const preUploadedMap: Record<string, UploadFileMetadata> = {};
+  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
 
-  //       metadata_information.forEach((item) => {
-  //         if (item.tableName) {
-  //           preUploadedMap[item.tableName] = item;
-  //         }
-  //       });
-  //       setUploadedFiles(preUploadedMap);
-  //     }
-  //     reset({
-  //       firstName: formData.firstName || '',
-  //       lastName: formData.lastName || '',
-  //       email: formData.email || '',
-  //       contactNumber: formData.contactNumber || '',
-  //       city: formData.city || '',
-  //       country: formData.country || '',
-  //       yearOfExperience: formData.yearOfExperience || '',
-  //       certificationYear: formData.certificationYear || '',
-  //     });
-  //   }
-  // }, [existingData, reset, isFetching]);
-
-  // useEffect(() => {
-  //   const fetchFile = async () => {
-  //     try {
-  //       const fileUrl = existingData?.data[0]?.formData?.siriCertificate;
-
-  //       if (fileUrl && typeof fileUrl === 'string') {
-  //         const response = await fetch(fileUrl); // ✅ This is valid
-  //         const blob = await response.blob();
-
-  //         const fetchedFile = new File([blob], 'siriCertificate.pdf', {
-  //           type: 'application/pdf',
-  //         });
-
-  //         setSelectedFile(fetchedFile);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching the file:', error);
-  //     }
-  //   };
-
-  //   fetchFile();
-  // }, [existingData]);
-
-  // useEffect(() => {
-  //   if (existingData && existingData.data[0]?.formData) {
-  //     const { formData, metadata_information } = existingData.data[0];
-
-  //     if (formData?.firstName && formData?.email) {
-  //       reset({
-  //         firstName: formData.firstName || '',
-  //         lastName: formData.lastName || '',
-  //         email: formData.email || '',
-  //         contactNumber: formData.contactNumber || '',
-  //         city: formData.city || '',
-  //         country: formData.country || '',
-  //         yearOfExperience: formData.yearOfExperience || '',
-  //         certificationYear: formData.certificationYear || '',
-  //       });
-  //     }
-
-  //     if (formData.userLogo) {
-  //       setLogoUrl(formData.userLogo);
-  //     }
-
-  //     if (metadata_information) {
-  //       const preUploadedMap: Record<string, UploadFileMetadata> = {};
-  //       metadata_information.forEach((item) => {
-  //         if (item.tableName) preUploadedMap[item.tableName] = item;
-  //       });
-  //       setUploadedFiles(preUploadedMap);
-  //     }
-  //   }
-  // }, [existingData, reset, isFetching]);
   useEffect(() => {
     if (existingData && existingData.data[0]?.formData) {
       const formData = existingData.data[0].formData;
@@ -203,66 +114,95 @@ function AssessorOnboarding() {
     }
   }, [existingData]);
 
-  useEffect(() => {
-    const populateFormAndFile = async () => {
-      try {
-        const assessorData = existingData?.data[0];
-        const formData = assessorData?.formData;
-        const metadata_information = assessorData?.metadata_information;
-
-        if (formData) {
-          // Reset form values first
-          reset({
-            firstName: formData.firstName || '',
-            lastName: formData.lastName || '',
-            email: formData.email || '',
-            contactNumber: formData.contactNumber || '',
-            city: formData.city || '',
-            country: formData.country || '',
-            yearOfExperience: formData.yearOfExperience || '',
-            certificationYear: formData.certificationYear || '',
-          });
-
-          // Set logo
-          // if (formData.userLogo) {
-          //   setLogoUrl(formData.userLogo);
-          // }
-
-          // Fetch certificate if available
-          const fileUrl = formData.siriCertificate;
-          if (fileUrl && typeof fileUrl === 'string') {
-            const response = await fetch(fileUrl);
-            const blob = await response.blob();
-
-            const fetchedFile = new File([blob], 'siriCertificate.pdf', {
-              type: 'application/pdf',
-            });
-
-            setSelectedFile(fetchedFile);
-          }
-        }
-
-        // Set metadata file map
-        if (metadata_information) {
-          const preUploadedMap: Record<string, UploadFileMetadata> = {};
-          metadata_information.forEach((item) => {
-            if (item.tableName) {
-              preUploadedMap[item.tableName] = item;
-            }
-          });
-          setUploadedFiles(preUploadedMap);
-        }
-      } catch (error) {
-        console.error('Error populating form or fetching file:', error);
-      }
-    };
-
-    if (existingData && existingData.data[0]?.formData) {
-      populateFormAndFile();
+  const populateFormAndFile = async () => {
+    try {
+      // const assessorData = existingData?.data[0];
+      // const formData = assessorData?.formData;
+      // const metadata_information = assessorData?.metadata_information;
+      // console.log('formdata on the load', formData);
+      // if (formData) {
+      //   // Reset form values first
+      //   reset({
+      //     firstName: formData.firstName || '',
+      //     lastName: formData.lastName || '',
+      //     email: formData.email || '',
+      //     contactNumber: formData.contactNumber || '',
+      //     city: formData.city || '',
+      //     country: formData.country || '',
+      //     yearOfExperience: formData.yearOfExperience || '',
+      //     certificationYear: formData.certificationYear || '',
+      //   });
+      //   // Fetch certificate if available
+      //   const fileUrl = formData.siriCertificate;
+      //   if (fileUrl && typeof fileUrl === 'string') {
+      //     const response = await fetch(fileUrl);
+      //     const blob = await response.blob();
+      //     const fetchedFile = new File([blob], 'siriCertificate.pdf', {
+      //       type: 'application/pdf',
+      //     });
+      //     setSelectedFile(fetchedFile);
+      //   }
+      // }
+      // // Set metadata file map
+      // if (metadata_information) {
+      //   const preUploadedMap: Record<string, UploadFileMetadata> = {};
+      //   metadata_information.forEach((item) => {
+      //     if (item.tableName) {
+      //       preUploadedMap[item.tableName] = item;
+      //     }
+      //   });
+      //   setUploadedFiles(preUploadedMap);
+      // }
+    } catch (error) {
+      console.error('Error populating form or fetching file:', error);
     }
-  }, [existingData, reset]);
+  };
 
-  console.log('selectedfile', selectedFile);
+  useEffect(() => {
+    if (existingData && !isFetching) {
+      const assessorData = existingData?.data[0];
+      const formData = assessorData?.formData;
+      const metadata_information = assessorData?.metadata_information;
+      console.log('formdata on the load', formData);
+      if (formData) {
+        // Reset form values first
+        reset({
+          firstName: formData.firstName || '',
+          lastName: formData.lastName || '',
+          email: formData.email || '',
+          contactNumber: formData.contactNumber || '',
+          city: formData.city || '',
+          country: formData.country || '',
+          yearOfExperience: formData.yearOfExperience || '',
+          certificationYear: formData.certificationYear || '',
+        });
+
+        // Fetch certificate if available
+        const fileUrl = formData.siriCertificate;
+        if (fileUrl && typeof fileUrl === 'string') {
+          const response = await fetch(fileUrl);
+          const blob = await response.blob();
+
+          const fetchedFile = new File([blob], 'siriCertificate.pdf', {
+            type: 'application/pdf',
+          });
+
+          setSelectedFile(fetchedFile);
+        }
+      }
+
+      // Set metadata file map
+      if (metadata_information) {
+        const preUploadedMap: Record<string, UploadFileMetadata> = {};
+        metadata_information.forEach((item) => {
+          if (item.tableName) {
+            preUploadedMap[item.tableName] = item;
+          }
+        });
+        setUploadedFiles(preUploadedMap);
+      }
+    }
+  }, [existingData, isFetching]);
 
   //function to view the metadata files
   const handleViewClick = async (fileName: string) => {
@@ -338,11 +278,12 @@ function AssessorOnboarding() {
   };
 
   //function to handle the profileimage upload
+
   const handleUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
+    const imageFormData = new FormData();
+    imageFormData.append('file', file);
     try {
-      await uploadAssessorLogo({ tenantId: tenantId ?? '', formData }).unwrap();
+      await uploadAssessorLogo({ tenantId: tenantId ?? '', formData: imageFormData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
@@ -365,8 +306,8 @@ function AssessorOnboarding() {
         data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
-      const status = await getOnboardingStatus(tenantId ?? '').unwrap();
-      console.log('Status response:', status);
+      const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
+
       dispatch(setOnboardingStatus(status?.onboardingStatus));
       if (status?.onboardingStatus) {
         setStatus(status.onboardingStatus);

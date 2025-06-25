@@ -347,7 +347,7 @@ function OrganizationOnbording() {
                                           }
 
                                           if (input.name === 'gstin') {
-                                            field.onChange(value.toUpperCase()); // 👈 Force uppercase
+                                            field.onChange(value.toUpperCase());
                                           } else {
                                             field.onChange(value);
                                           }
