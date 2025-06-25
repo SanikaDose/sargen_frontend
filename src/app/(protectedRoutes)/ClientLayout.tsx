@@ -455,7 +455,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-          {/* {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
+          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
             <>
               <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
                 Assessment menu
@@ -504,56 +504,59 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               })}
             </>
           )}
-          {/* 
-          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && userType[0] === UserType.ASSESSOR && (
-            <>
-              <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
-                Assessment menu
-              </Typography>
-              {sideBarListItemsForAssessment.map((item) => {
-                // Check if the current pathname contains the matchKeyword
-                const activeSegment = pathName.split('/')[1]?.toLowerCase();
-                const isDepartment = !item.linkRoute.startsWith('/');
 
-                const isActive = isDepartment
-                  ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
-                  : activeSegment === item.matchKeyword?.toLowerCase();
-                return (
-                  <ListItem
-                    key={item.text}
-                    disablePadding
-                    sx={{
-                      pl: 0,
-                      backgroundColor: isActive ? 'secondary.main' : 'transparent',
-                    }}
-                  >
-                    <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
-                      <ListItemIcon
-                        sx={{
-                          mr: 2,
-                          color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
-                        }}
-                      >
-                        {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
-                            }}
-                          >
-                            {item.text}
-                          </Typography>
-                        }
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </>
-          )} */}
+          {showAssessmentListSideBar &&
+            onboardingStatus === OnboardingStatus.COMPLETED &&
+            userType &&
+            userType[0] === UserType.ASSESSOR && (
+              <>
+                <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+                  Assessment menu
+                </Typography>
+                {sideBarListItemsForAssessment.map((item) => {
+                  // Check if the current pathname contains the matchKeyword
+                  const activeSegment = pathName.split('/')[1]?.toLowerCase();
+                  const isDepartment = !item.linkRoute.startsWith('/');
+
+                  const isActive = isDepartment
+                    ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
+                    : activeSegment === item.matchKeyword?.toLowerCase();
+                  return (
+                    <ListItem
+                      key={item.text}
+                      disablePadding
+                      sx={{
+                        pl: 0,
+                        backgroundColor: isActive ? 'secondary.main' : 'transparent',
+                      }}
+                    >
+                      <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                        <ListItemIcon
+                          sx={{
+                            mr: 2,
+                            color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                          }}
+                        >
+                          {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                              }}
+                            >
+                              {item.text}
+                            </Typography>
+                          }
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
+              </>
+            )}
 
           {extraListItems &&
             extraListItems.map((item) => (
