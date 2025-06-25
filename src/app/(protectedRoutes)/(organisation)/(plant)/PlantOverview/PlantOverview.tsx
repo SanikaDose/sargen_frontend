@@ -78,7 +78,6 @@ export default function PlantOverview() {
         <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
           <Paper
-            component="form"
             sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#ECE6F0', borderRadius: '16px' }}
             className={styles.searchInput}
           >

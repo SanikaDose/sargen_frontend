@@ -18,6 +18,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { triggerToast } from '@/app/utils/toast';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import Loader from '@/components/Loader/Loader';
 
 export default function Preview() {
   const router = useRouter();
@@ -27,7 +28,20 @@ export default function Preview() {
   dispatch(setShowAssessmentListSideBar(true));
   dispatch(setPlantAssessmentDepartment(''));
   const plantId = params.PlantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
+
+  const organisationId = params.OrganisationId as string;
+  const tenantId = organisationId;
+
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -40,7 +54,21 @@ export default function Preview() {
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
-  const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
+  const departmentName = [
+    'R&D',
+    'Planning',
+    'Production',
+    'Quality',
+    'Maintenance',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
+    'Finance',
+    'Utilities',
+    'IT',
+    'Learning & Development',
+    'Management',
+    'HR',
+  ];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
@@ -128,7 +156,7 @@ export default function Preview() {
         department: currentQuestionGroup[0]?.department,
         context: currentQuestionGroup[0]?.context,
         question: currentQuestionGroup[0]?.question,
-        answerOption: selectedOption?.answer ?? '',
+        answerOption: selectedOption?.answerOption ?? '',
         answer: selectedOption?.answer ?? '',
         bandWeight: selectedOption?.bandWeight ?? '',
         bandName: selectedOption?.bandName ?? '',
@@ -168,7 +196,11 @@ export default function Preview() {
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           {/* Left Section */}
           <Box className={styles.formContainer}>
-            {isLoading || isSaving ? (
+            {isMounting ? (
+              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Loader loading={true} />
+              </Box>
+            ) : isLoading || isSaving ? (
               <>
                 <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
@@ -201,7 +233,7 @@ export default function Preview() {
                       <AnswerCard
                         key={option.id}
                         answerNumber={idx + 1}
-                        answerText={option.answer ?? ''}
+                        answerText={option.answerOption ?? ''}
                         isSelected={option.isselected}
                         onClick={() => handleAnswerClick(option.id)}
                       />

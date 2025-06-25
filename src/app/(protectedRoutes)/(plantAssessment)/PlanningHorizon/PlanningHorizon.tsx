@@ -44,7 +44,7 @@ const PlanningHorizon = () => {
 
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = organisationId;
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
 
@@ -126,9 +126,22 @@ const PlanningHorizon = () => {
     dispatch(markStepCompleted(1));
     dispatch(markStepIncomplete(3)); // coming back from Industry
   }, [dispatch]);
+
+  const [isMounting, setIsMounting] = useState(true);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>

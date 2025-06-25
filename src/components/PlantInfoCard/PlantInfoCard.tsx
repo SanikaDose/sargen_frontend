@@ -9,7 +9,6 @@ import ImageUploader from '../ImageUpload/ImageUpload';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
-  console.log('data?.assessmentCompletionStage', data?.assessmentCompletionStage);
 
   return (
     <Box className={styles.card}>

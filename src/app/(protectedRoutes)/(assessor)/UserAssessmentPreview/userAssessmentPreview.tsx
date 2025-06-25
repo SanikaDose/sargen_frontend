@@ -42,7 +42,21 @@ const UserAssessmentPreview = () => {
   dispatch(setPlantAssessmentDepartment(''));
   console.log(organisationId);
 
-  const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
+  const departmentName = [
+    'R&D',
+    'Planning',
+    'Production',
+    'Quality',
+    'Maintenance',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
+    'Finance',
+    'Utilities',
+    'IT',
+    'Learning & Development',
+    'Management',
+    'HR',
+  ];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
@@ -129,7 +143,7 @@ const UserAssessmentPreview = () => {
         department: currentQuestionGroup[0]?.department,
         context: currentQuestionGroup[0]?.context,
         question: currentQuestionGroup[0]?.question,
-        answerOption: selectedOption?.answer ?? '',
+        answerOption: selectedOption?.answerOption ?? '',
         answer: selectedOption?.answer ?? '',
         bandWeight: selectedOption?.bandWeight ?? '',
         bandName: selectedOption?.bandName ?? '',
@@ -218,7 +232,7 @@ const UserAssessmentPreview = () => {
                   <AnswerCard
                     key={option.id}
                     answerNumber={idx + 1}
-                    answerText={option.answer ?? ''}
+                    answerText={option.answerOption ?? ''}
                     isSelected={option.isselected}
                     onClick={() => handleAnswerClick(option.id)}
                   />

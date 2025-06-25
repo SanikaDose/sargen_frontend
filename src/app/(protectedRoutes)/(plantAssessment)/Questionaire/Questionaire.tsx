@@ -18,6 +18,7 @@ import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation
 import { Question } from './Questionaire.type';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 import styles from './Questionaire.module.css';
+import Loader from '@/components/Loader/Loader';
 
 const Questionaire = () => {
   const DEPARTMENT_LINKS = [
@@ -43,13 +44,20 @@ const Questionaire = () => {
   const plantId = params.PlantId as string;
   const organisationId = (params.OrganisationId ?? params.organisationId) as string;
 
-  console.log('organisation i questionaire', organisationId);
   const departmentName = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
 
-  console.log('department name ', departmentName);
+  const tenantId = organisationId;
 
-  const tenantId = getValueLocalStorage('tenantId');
+  const [isMounting, setIsMounting] = useState(true);
 
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
@@ -149,7 +157,6 @@ const Questionaire = () => {
 
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
-  console.log('currentGroup', currentGroup);
 
   // Calculate completed steps
   const completedSteps = groupKeys.reduce<number[]>((acc, key, index) => {
@@ -221,7 +228,11 @@ const Questionaire = () => {
               )}
 
               <Box className={styles.justification}>
-                {isLoading || isSaving ? (
+                {isMounting ? (
+                  <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                    <Loader loading={true} />
+                  </Box>
+                ) : isLoading || isSaving ? (
                   <Skeleton variant="rectangular" height={120} width="100%" sx={{ borderRadius: '8px' }} />
                 ) : (
                   <TextArea

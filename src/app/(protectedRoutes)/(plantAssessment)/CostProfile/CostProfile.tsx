@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { FormValues, RawCostCategory } from '../plantAssement.model';
@@ -26,27 +26,25 @@ const CostProfile = () => {
   dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
   dispatch(setShowAssessmentListSideBar(true));
   dispatch(setPlantAssessmentDepartment(''));
-  // const steps = [
-  //   'Research',
-  //   'Selling',
-  //   'RTransport',
-  //   'Utilities',
-  //   'Aftermarket',
-  //   'Description',
-  //   'Labour',
-  //   'maintainance',
-  //   'Raw Material',
-  //   'Rental',
-  // ].map((label) => ({ label }));
 
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = organisationId;
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
 
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: { costs: [] },
   });
@@ -102,11 +100,10 @@ const CostProfile = () => {
           costAsAPercentageOfRevenue: parseFloat(String(cost.costAsAPercentageOfRevenue)),
         })),
       };
-      const costProfileSaveResponse = await addCostCategories(payload).unwrap();
+      await addCostCategories(payload).unwrap();
       await router.push(`/Questionaire/${organisationId}/${plantId}`);
-      if (costProfileSaveResponse) {
-        await dispatch(setPlantAssessmentDepartment('R&D'));
-      }
+
+      dispatch(setPlantAssessmentDepartment('R&D'));
     } catch (error) {
       console.log(error);
     }
@@ -124,7 +121,11 @@ const CostProfile = () => {
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>

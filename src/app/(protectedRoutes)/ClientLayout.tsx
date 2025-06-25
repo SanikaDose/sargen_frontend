@@ -32,6 +32,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { ICONS } from '../utils/iconsMap';
 import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
 import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
+import Loader from '@/components/Loader/Loader';
 
 const drawerWidth = 240;
 
@@ -137,9 +138,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const token = localStorage.getItem('Authorization');
     const storedTenantId = getValueLocalStorage('tenantId');
 
-    console.log('token:', token);
-    console.log('storedTenantId:', storedTenantId);
-
     if (token) {
       const decoded: Token = jwtDecode(token);
       setDecodedToken(decoded);
@@ -158,9 +156,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setIsInitialized(true);
     }
   }, [router]);
-  console.log('assessor id', tenantId);
-  console.log('userType', userType);
-  console.log('params', params);
 
   // Set sidebar items based on onboarding status and user type
   React.useEffect(() => {
@@ -239,12 +234,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // Dispatch to global state
     dispatch(setSideBarListItem(updatedList));
   };
-  console.log('tenantId and plant id ', tenantId);
-
-  console.log('plantId', plantId);
 
   const assementSideBarListItemOnClick = (link: string) => {
-    console.log('link', link);
     const isDepartment = DEPARTMENT_LINKS.includes(link);
 
     // ✅ Set department if applicable
@@ -278,11 +269,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     dispatch(setSideBarListItem(updatedList));
   };
-  console.log('tenantId', tenantId);
-  console.log('plantID', plantId);
-
-  console.log('userType', userType);
-  console.log('sideBarListItemsForAssessment', sideBarListItemsForAssessment);
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -567,8 +553,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </Box>
       </Drawer>
       <Main open={open}>
-        <DrawerHeader />
-        {children}
+        <>
+          <DrawerHeader />
+          <React.Suspense>{children}</React.Suspense>
+        </>
       </Main>
     </Box>
   );

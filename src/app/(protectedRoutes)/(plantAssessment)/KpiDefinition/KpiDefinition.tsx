@@ -25,7 +25,7 @@ const KpiDefinition = () => {
   const router = useRouter();
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = organisationId;
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
   dispatch(setShowAssessmentListSideBar(true));
@@ -88,14 +88,29 @@ const KpiDefinition = () => {
     dispatch(markStepCompleted(0));
     dispatch(markStepIncomplete(2)); // If coming back from Planning
   }, [dispatch]);
+
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
       ) : (
-        <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
+        <form style={{ height: '99%' }} onSubmit={handleSubmit(handleSave)}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
           </Box>
@@ -194,7 +209,7 @@ const KpiDefinition = () => {
               </Box>
             </Box>
           </Paper>
-        </Box>
+        </form>
       )}
     </Box>
   );

@@ -31,7 +31,7 @@ const IndustrySelection = () => {
   const plantId = params.PlantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
   const [selectIndustrySelectionList, { isLoading: isLoadingAdd }] = useSelectIndustrySelectionListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = organisationId;
   const [industryData, setIndustryData] = useState<Industry[]>([]);
 
   const { handleSubmit, control, reset } = useForm<IndustryFormValues>({
@@ -41,24 +41,36 @@ const IndustrySelection = () => {
   });
 
   const apiCall = async () => {
-    const obj = {
-      tenantId,
-      plantId: plantId || '',
-    };
-    const result = await getIndustrySelectionList(obj).unwrap();
+    try {
+      const obj = {
+        tenantId,
+        plantId: plantId || '',
+      };
+      const result = await getIndustrySelectionList(obj).unwrap();
 
-    const industries = result.map((item: Industry) => ({
-      id: item.id,
-      industry_name: item.industry_name.trim(),
-      isselected: item.isselected,
-    }));
+      // Add null/undefined check and provide fallback
+      if (!result || !Array.isArray(result)) {
+        console.warn('API returned null or invalid data:', result);
+        setIndustryData([]);
+        return;
+      }
 
-    setIndustryData(industries);
+      const industries = result.map((item: Industry) => ({
+        id: item.id,
+        industry_name: item.industry_name.trim(),
+        isselected: item.isselected,
+      }));
 
-    const selected = industries.find((i: Industry) => i.isselected);
-    reset({
-      selectedIndustryId: selected?.id || '',
-    });
+      setIndustryData(industries);
+
+      const selected = industries.find((i: Industry) => i.isselected);
+      reset({
+        selectedIndustryId: selected?.id || '',
+      });
+    } catch (error) {
+      console.error('Error fetching industry selection list:', error);
+      setIndustryData([]);
+    }
   };
 
   useEffect(() => {
@@ -80,9 +92,8 @@ const IndustrySelection = () => {
     };
 
     await selectIndustrySelectionList(payload).unwrap();
-    // if (industrySaveSuccesfully) {
+
     router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
-    // }
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -91,9 +102,24 @@ const IndustrySelection = () => {
     dispatch(setActiveStep(3));
     dispatch(markStepCompleted(2));
   }, [dispatch]);
+
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
