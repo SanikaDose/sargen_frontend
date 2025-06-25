@@ -25,7 +25,7 @@ const excludeKeys = [
   'registrationNo',
   'asessmentTableAssignedList',
   'assessmentCompletion',
-  'assessorCompletionStage',
+  'assessmentCompletionStage',
   'createdAt',
   'updatedAt',
   'id',
@@ -74,8 +74,8 @@ const ViewPlantDetails = ({}: AssessorProps) => {
 
   // Check if assessment is completed
   const isAssessmentCompleted = useMemo(() => {
-    return plant?.assessorCompletionStage === 'COMPLETED_ASSESSMENT';
-  }, [plant?.assessorCompletionStage]);
+    return plant?.assessmentCompletionStage === 'COMPLETED_ASSESSMENT';
+  }, [plant?.assessmentCompletionStage]);
 
   const filteredPlantInfo = useMemo(() => {
     if (!plant) return [];
