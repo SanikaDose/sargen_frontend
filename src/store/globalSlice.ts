@@ -11,6 +11,9 @@ const initialState = {
   sideBarListItemsForAssessment: [],
   extraListItems: [],
   pageNameHeader: 'Page heading',
+  userFullName: '',
+  userDesignation: '',
+  userLogoUrl: '',
 };
 
 const globalSlice = createSlice({
@@ -42,11 +45,25 @@ const globalSlice = createSlice({
     setExtraListItems: (state, action) => {
       state.extraListItems = action.payload;
     },
+
+    setUserFullName: (state, action) => {
+      state.userFullName = action.payload;
+    },
+    setUserDesignation: (state, action) => {
+      state.userDesignation = action.payload;
+    },
+    setUserLogoUrl: (state, action) => {
+      state.userLogoUrl = action.payload;
+    },
+
     resetGlobalState: () => initialState,
   },
 });
 
 export const {
+  setUserFullName,
+  setUserDesignation,
+  setUserLogoUrl,
   setSideBarListItem,
   setPersonDetails,
   setInfoBoxToShow,

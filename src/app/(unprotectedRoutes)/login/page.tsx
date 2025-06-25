@@ -1,5 +1,6 @@
 'use client';
 
+import { decodeAndStoreToken } from '@/app/utils/auth';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
@@ -13,7 +14,6 @@ import { LoginFormInputs, OnboardingStatus, RawToken } from './login.types';
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
-import { decodeAndStoreToken } from '@/app/utils/auth';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();

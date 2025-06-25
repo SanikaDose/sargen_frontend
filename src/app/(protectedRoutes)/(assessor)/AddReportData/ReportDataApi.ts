@@ -4,6 +4,14 @@ import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 
 export const reportDataApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
+    getReportData: builder.mutation({
+      query: (body) => ({
+        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.getReportData}`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Assessor'],
+    }),
     addAboutTheCompany: builder.mutation({
       query: (body) => ({
         url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.addAboutTheCompany}`,
@@ -78,6 +86,7 @@ export const reportDataApi = protectedApi.injectEndpoints({
 });
 
 export const {
+  useGetReportDataMutation,
   useAddAboutTheCompanyMutation,
   useAddIntroductionMutation,
   useSummaryOfObservationsAndRecommendationsMutation,

@@ -3,7 +3,14 @@ import { assessorExtraList, assessorOnboardedMenuList } from '@/constants/sideBa
 import { assessorOnboardingMenuList } from '@/constants/sideBarLists/assessorOnboardingList';
 import { organisationExtraMenuList, organisationOnboardedMenuList } from '@/constants/sideBarLists/organisationOnboardedList';
 import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
-import { setExtraListItems, setSideBarListItem, setSideBarListItemsForAssessment } from '@/store/globalSlice';
+import {
+  setExtraListItems,
+  setSideBarListItem,
+  setSideBarListItemsForAssessment,
+  setUserDesignation,
+  setUserFullName,
+  setUserLogoUrl,
+} from '@/store/globalSlice';
 import { RootState } from '@/store/store';
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -31,6 +38,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { ICONS } from '../utils/iconsMap';
 import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
+import { useLazyGetPointOfContactQuery } from './(organisation)/(contactPerson)/ContactPersonApi';
 import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
 import Loader from '@/components/Loader/Loader';
 
@@ -124,6 +132,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
   const currentDepartment = useSelector((state: RootState) => state.plantAssessmentGlobal.questionnairesDeparment);
+  const userName = useSelector((state: RootState) => state.global.userFullName);
+  const userDesignation = useSelector((state: RootState) => state.global.userDesignation);
+  const userLogoUrl = useSelector((state: RootState) => state.global.userLogoUrl);
+  const [triggerGetPointOfContact, { data: userPointOfConnectData, isFetching }] = useLazyGetPointOfContactQuery();
 
   // Derived values
   const open = isDesktop ? true : mobileOpen;
@@ -157,6 +169,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   }, [router]);
 
+  React.useEffect(() => {
+    if (tenantId) {
+      triggerGetPointOfContact(tenantId);
+      setIsInitialized(true);
+    }
+  }, [tenantId, triggerGetPointOfContact]);
+
   // Set sidebar items based on onboarding status and user type
   React.useEffect(() => {
     if (!userType || !onboardingStatus) return;
@@ -188,6 +207,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       }
     }
   }, [onboardingStatus, userType, showAssessmentListSideBar, dispatch]);
+
+  React.useEffect(() => {
+    if (userPointOfConnectData && userPointOfConnectData.data?.firstName && userPointOfConnectData.data?.lastName) {
+      const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
+      dispatch(setUserFullName(fullName));
+      dispatch(setUserDesignation(userPointOfConnectData.data.designation));
+      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
+      console.log('fullName', userPointOfConnectData.data);
+    }
+  }, [userPointOfConnectData, dispatch]);
 
   // Early return if not initialized
   if (!isInitialized) {
@@ -301,14 +330,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
           <Box display="flex" flexDirection="column" alignItems="flex-end" sx={{ marginLeft: 'auto' }}>
             <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
-              Viren Patil
+              {userName}
             </Typography>
             <Typography variant="body2" sx={{ color: `${theme.palette.text.disabled} !important` }}>
-              Software Engineer
+              {userDesignation}
             </Typography>
           </Box>
           <Button variant="text">
-            <Avatar src="https://avatar.iran.liara.run/public/19" />
+            <Avatar src={userLogoUrl} />
           </Button>
         </Toolbar>
       </AppBar>
@@ -392,7 +421,41 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               </ListItem>
             ))}
           </>
-          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
+          {extraListItems &&
+            extraListItems.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
+                sx={{
+                  pl: 0,
+                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                }}
+              >
+                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                  <ListItemIcon
+                    sx={{
+                      mr: 2,
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                    }}
+                  >
+                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          {/* {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
             <>
               <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
                 Assessment menu

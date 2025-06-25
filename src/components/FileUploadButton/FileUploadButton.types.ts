@@ -1,4 +1,5 @@
 import { ButtonProps } from '@mui/material/Button';
+import { SxProps, Theme } from '@mui/material/styles';
 
 export interface FileUploadButtonProps {
   onFileSelect?: (file: File) => void;
@@ -8,4 +9,5 @@ export interface FileUploadButtonProps {
   iconSize?: string;
   buttonVariant?: ButtonProps['variant'];
   buttonColor?: ButtonProps['color'];
+  sx?: SxProps<Theme>;
 }

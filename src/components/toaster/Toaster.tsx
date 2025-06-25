@@ -54,17 +54,17 @@ export default function Toaster() {
               },
               backgroundColor:
                 severity === 'success'
-                  ? '#5d9981' // pastel green
+                  ? '#157759' // pastel green
                   : severity === 'error'
                     ? '#e71d36' // pastel red
                     : severity === 'warning'
                       ? '#fcca46' // pastel yellow
                       : '#0353a4', // pastel blue for info
-              width: {
-                sm: '300px',
-                md: '220px',
-                lg: '200px',
-              },
+              // width: {
+              //   sm: '300px',
+              //   md: '320px',
+              //   lg: '300px',
+              // },
               margin: {
                 xs: ' 0px 0px',
                 sm: '-14px ',
