@@ -1,23 +1,24 @@
 'use client';
 
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { triggerToast } from '@/app/utils/toast';
-import AnswerCard from '@/components/AnswerCard/AnswerCard';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { PopupModal } from '@/components/PopupModal/PopupModal';
-import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import TextArea from '@/components/TextArea/TextArea';
-import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { Box, Paper, Skeleton, Typography } from '@mui/material';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import styles from './Preview.module.css';
+import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { useDispatch } from 'react-redux';
+import { useParams, useRouter } from 'next/navigation';
+import QuestionCard from '@/components/QuestionCard/QuestionCard';
+import AnswerCard from '@/components/AnswerCard/AnswerCard';
+import TextArea from '@/components/textArea/TextArea';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { triggerToast } from '@/app/utils/toast';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
-import styles from './Preview.module.css';
+import Loader from '@/components/Loader/Loader';
 
 export default function Preview() {
   const router = useRouter();
@@ -27,7 +28,20 @@ export default function Preview() {
   dispatch(setShowAssessmentListSideBar(true));
   dispatch(setPlantAssessmentDepartment(''));
   const plantId = params.PlantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
+
+  const organisationId = params.OrganisationId as string;
+  const tenantId = organisationId;
+
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -59,7 +73,7 @@ export default function Preview() {
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
-        let all: Question[] = [];
+        const all: Question[] = [];
 
         for (const dept of departmentName) {
           const result = await getQuestionnairesList({
@@ -182,7 +196,11 @@ export default function Preview() {
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           {/* Left Section */}
           <Box className={styles.formContainer}>
-            {isLoading || isSaving ? (
+            {isMounting ? (
+              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Loader loading={true} />
+              </Box>
+            ) : isLoading || isSaving ? (
               <>
                 <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
@@ -269,7 +287,7 @@ export default function Preview() {
                 icon="left"
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                disabled={currentIndex === 0 || isSaving || isEditMode}
+                disabled={currentIndex === 0}
               >
                 Back
               </CustomButton>

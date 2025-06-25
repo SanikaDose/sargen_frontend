@@ -6,7 +6,7 @@ export const decodeAndStoreToken = (token: string): Token => {
 
   const typedToken: Token = {
     ...decoded,
-    userType: decoded.userType.map((type: any) => type as UserType),
+    userType: decoded.userType.map((type: string) => type as UserType),
     accessToken: token,
   };
 

@@ -6,7 +6,7 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Industry, IndustryFormValues } from '../../(plantAssessment)/plantAssement.model';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../../(plantAssessment)/plantAssementApi';
 import styles from './IndustrySelectionPreview.module.css';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const IndustrySelectionPreview = () => {
   const router = useRouter();
@@ -29,7 +30,8 @@ const IndustrySelectionPreview = () => {
   const [industryData, setIndustryData] = useState<Industry[]>([]);
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
-
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);

@@ -1,5 +1,4 @@
 'use client';
-import * as React from 'react';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +10,9 @@ import { Slide } from '@mui/material';
 export default function Toaster() {
   const dispatch = useDispatch();
   const { open, severity, message } = useSelector((state: RootState) => state.toasterGlobal);
+
+  // const theme = useTheme();
+  // const isSmallScreen = useMediaQuery('(max-width:899px)');
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
     if (reason === 'clickaway') return;

@@ -21,7 +21,7 @@ type Story = StoryObj<typeof LoginForm>;
 export const Default: Story = {
   args: {
     loading: false,
-    onSubmit: async (data: any) => {
+    onSubmit: async () => {
       alert('Heelo');
     },
   },
@@ -30,8 +30,6 @@ export const Default: Story = {
 export const Loading: Story = {
   args: {
     loading: true,
-    onSubmit: async (data: any) => {
-      console.log('Submitted while loading:', data);
-    },
+    onSubmit: async () => {},
   },
 };

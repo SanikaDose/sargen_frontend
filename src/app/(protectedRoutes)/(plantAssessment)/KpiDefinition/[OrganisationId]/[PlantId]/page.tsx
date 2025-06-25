@@ -1,7 +1,7 @@
 import KpiDefinition from '../../KpiDefinition';
 
 function KpisDefinationPage() {
-  <KpiDefinition />;
+  return <KpiDefinition />;
 }
 
-export default KpiDefinition;
+export default KpisDefinationPage;

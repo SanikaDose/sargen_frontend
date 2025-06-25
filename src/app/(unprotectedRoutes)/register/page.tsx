@@ -35,7 +35,7 @@ const RegisterPage = () => {
     shouldUnregister: true,
   });
 
-  const [typeOfUser, setTypeOfUser] = useState<string>('organisation');
+  const [, setTypeOfUser] = useState<string>('organisation');
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{8,16}$/;
   const validatePassword = useCallback(

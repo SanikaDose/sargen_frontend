@@ -6,7 +6,7 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HorizonFormValues, HorizonOption } from '../../(plantAssessment)/plantAssement.model';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../../(plantAssessment)/plantAssementApi';
 import styles from './PlanningHorizonPreview.module.css';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const PlanningHorizonPreview = () => {
   const params = useParams();
@@ -27,7 +28,8 @@ const PlanningHorizonPreview = () => {
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
-
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
 
   // Edit state management

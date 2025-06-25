@@ -3,7 +3,7 @@
 import Loader from '@/components/Loader/Loader';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FactoryIcon from '@mui/icons-material/Factory';
@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useGetSpecificPlantInfoQuery } from '../AssignedPlantsList/AssignedPlantsListApi';
 import { AssessorProps } from './Assessor.types';
 import { useGetAssessorMetadataQuery, usePostAssessorMetadataToPlantMutation } from './AssessorApi';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const excludeKeys = [
   'plantLogo',
@@ -38,7 +39,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const assessorId = useSelector((state: RootState) => state.tokenDecode.decodedToken?.tenantId);
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
-
+  dispatch(setPlantAssessmentDepartment(''));
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -106,6 +107,10 @@ const ViewPlantDetails = ({}: AssessorProps) => {
     }
   };
 
+  const handleClick = () => {
+    router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
+    dispatch(setShowAssessmentListSideBar(true));
+  };
   if (isFetching) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
@@ -228,7 +233,8 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                   color: '#FFFFFF',
                 },
               }}
-              onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
+              // onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
+              onClick={handleClick}
             >
               Review Assessment
             </Button>

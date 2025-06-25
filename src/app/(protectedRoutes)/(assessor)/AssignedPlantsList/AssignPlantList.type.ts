@@ -1,4 +1,3 @@
-// Define the structure of the payload for getAllPlant info
 export type Plant = {
   assessmentDate: string;
   id: string;
@@ -29,8 +28,19 @@ export type Plant = {
   pocContactNo: string;
 };
 
-export interface PlantInfoResponse {
-  message: string;
-  status: number;
-  data: Plant;
-}
+export type AssignedPlant = {
+  id: string;
+  plantId: string;
+  plantName: string;
+  assessmentCompletionStage: 'NOT_STARTED' | 'STARTED' | 'REQUESTED_ASSESSMENT' | 'COMPLETED'; // you can expand this enum
+  organisationId: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  createdBy: string | null;
+  updatedBy: string | null;
+};
+
+export type GetAllAssignedPlantsResponse = {
+  statusCode: number;
+  data: AssignedPlant[];
+};

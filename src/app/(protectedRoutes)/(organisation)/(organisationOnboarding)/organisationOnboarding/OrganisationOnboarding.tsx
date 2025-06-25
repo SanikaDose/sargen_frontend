@@ -106,7 +106,7 @@ function OrganizationOnbording() {
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
-  // ✅ Compute completed steps where value length > 5
+  // ? Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
     const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     return allInputs.reduce((acc: number[], input, index) => {
@@ -228,7 +228,7 @@ function OrganizationOnbording() {
                                               field.onChange(rawValue);
                                             }
                                           } else {
-                                            field.onChange(value); // ✅ Ensures companyName, website, revenue are editable
+                                            field.onChange(value); // ? Ensures companyName, website, revenue are editable
                                           }
                                         }}
                                         onFocus={() => setFocusedField(input.name)}

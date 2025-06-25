@@ -1,15 +1,14 @@
-import { AsseessmentStatus } from '@/constants/enums';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Box, Divider, Typography } from '@mui/material';
-import { CustomButton } from '../CustomButton/CustomButton';
-import ImageUploader from '../ImageUpload/ImageUpload';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
+import { CustomButton } from '../CustomButton/CustomButton';
+import { AsseessmentStatus } from '@/constants/enums';
+import ImageUploader from '../ImageUpload/ImageUpload';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
-  console.log('data?.assessmentCompletionStage', data?.assessmentCompletionStage);
 
   return (
     <Box className={styles.card}>
@@ -74,22 +73,30 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
 
           <CustomButton
             icon="startAssesment"
-            children={
-              data?.assessmentCompletionStage === 'NOT_STARTED'
-                ? 'Request for Assessment'
-                : data?.assessmentCompletionStage === 'START_ASSESSMENT' // chnage according to newe enum or dump
-                  ? 'Assessment Started'
-                  : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
-                    ? 'Assessor Assigning ...'
-                    : 'Status Unknown'
-            }
+            // children={
+            //   data?.assessmentCompletionStage === 'NOT_STARTED'
+            //     ? 'Request for Assessment'
+            //     : data?.assessmentCompletionStage === 'STARTED' //change status according to new enum START_ASSESSMENT
+            //       ? 'Assessment Started'
+            //       : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
+            //         ? 'Assessor Assigning ...'
+            //         : 'Status Unknown'
+            // }
             variant="contained"
             color="primary"
             width="100%"
             height="30px"
             disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT}
             onClick={onClick}
-          />
+          >
+            {data?.assessmentCompletionStage === 'NOT_STARTED'
+              ? 'Request for Assessment'
+              : data?.assessmentCompletionStage === 'START_ASSESSMENT' //change status according to new enum START_ASSESSMENT
+                ? 'Assessment Started'
+                : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
+                  ? 'Assessor Assigning ...'
+                  : 'Status Unknown'}
+          </CustomButton>
         </Box>
         <Box className={styles.progressCircle}>
           {data?.assessmentCompletionStage &&

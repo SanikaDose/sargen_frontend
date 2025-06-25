@@ -11,15 +11,15 @@ export const assessorOnboardedMenuList: SidebarItem[] = [
 
 export const assessorExtraList: SidebarItem[] = [
   {
-    text: 'Assessor Info',
+    text: 'Settings',
     icon: 'FactoryIcon',
-    linkRoute: '/AssignedPlantsList',
+    linkRoute: '/AssessorSetting',
     show: false,
   },
-  {
-    text: 'Assessor metadata',
-    icon: 'FactoryIcon',
-    linkRoute: '/AssignedPlantsList',
-    show: false,
-  },
+  // {
+  //   text: 'Assessor metadata',
+  //   icon: 'FactoryIcon',
+  //   linkRoute: '/AssignedPlantsList',
+  //   show: false,
+  // },
 ];

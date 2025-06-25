@@ -1,20 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import InboxIcon from '@mui/icons-material/Inbox';
-import MailIcon from '@mui/icons-material/Mail';
-import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 
-import {
-  Box,
-  Divider,
-  Drawer,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
+import { Box, Divider, Drawer, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { SideBarProps } from './SideBar.types';
 import { useRouter } from 'next/navigation';
 

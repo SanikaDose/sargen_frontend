@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Button, FormControl, FormControlLabel, Grid, Paper, Radio, RadioGroup, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
-import { HorizonFormValues, HorizonOption, MultipleSections } from '../plantAssement.model';
+import { HorizonFormValues, HorizonOption } from '../plantAssement.model';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
@@ -19,18 +19,18 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
-const steps = [
-  'Research',
-  'Selling',
-  'RTransport',
-  'Utilities',
-  'Aftermarket',
-  'Description',
-  'Labour',
-  'maintainance',
-  'Raw Material',
-  'Rental',
-].map((label) => ({ label }));
+// const steps = [
+//   'Research',
+//   'Selling',
+//   'RTransport',
+//   'Utilities',
+//   'Aftermarket',
+//   'Description',
+//   'Labour',
+//   'maintainance',
+//   'Raw Material',
+//   'Rental',
+// ].map((label) => ({ label }));
 const PlanningHorizon = () => {
   const params = useParams();
   const router = useRouter();
@@ -44,7 +44,7 @@ const PlanningHorizon = () => {
 
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = organisationId;
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
 
@@ -113,10 +113,10 @@ const PlanningHorizon = () => {
       },
     };
 
-    const plannedSaveSuucesfully = await selectHorizonOption(payload).unwrap();
-    if (plannedSaveSuucesfully) {
-      router.push(`/IndustrySelection/${organisationId}/${plantId}`);
-    }
+    await selectHorizonOption(payload).unwrap();
+    // if (plannedSaveSuucesfully) {
+    router.push(`/KpiDefinition/${organisationId}/${plantId}`);
+    // }
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -126,9 +126,22 @@ const PlanningHorizon = () => {
     dispatch(markStepCompleted(1));
     dispatch(markStepIncomplete(3)); // coming back from Industry
   }, [dispatch]);
+
+  const [isMounting, setIsMounting] = useState(true);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
@@ -216,19 +229,23 @@ const PlanningHorizon = () => {
                   className={styles.buttonSection}
                 >
                   <CustomButton
-                    children="Back"
+                    // children="Back"
                     variant="contained"
                     color="primary"
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                  />
+                  >
+                    Back
+                  </CustomButton>
                   <CustomButton
-                    children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    // children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
                     variant="contained"
                     icon="save"
                     type="submit"
-                  />
+                  >
+                    {isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                  </CustomButton>
                 </Box>
               </Box>
             </Box>
