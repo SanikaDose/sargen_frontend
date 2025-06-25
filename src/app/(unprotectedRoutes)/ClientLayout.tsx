@@ -49,9 +49,9 @@ const ClientLayout = ({ children }: Props) => {
       {/* {Nav bar} */}
       <nav className={styles.navbar}>
         <div className={styles.nav_container}>
-          <div className={styles.nav_brand}>
-            <Image src="/sargen-png-logo.png" alt="logo" className={styles.logo} width={100} height={100} />
-          </div>
+          {/* <div className={styles.nav_brand}> */}
+          <Image src="/sargen-png-logo.png" alt="logo" className={styles.logo} width={100} height={100} />
+          {/* </div> */}
           <div className={styles.nav_links}>
             {getNavItems().map((item, index) => (
               <Link key={index} href={item.href} className={styles.nav_link}>
