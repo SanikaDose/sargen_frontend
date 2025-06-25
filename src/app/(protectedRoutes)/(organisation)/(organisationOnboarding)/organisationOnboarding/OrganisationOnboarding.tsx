@@ -79,38 +79,112 @@ function OrganizationOnbording() {
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
+  // useEffect(() => {
+  //   if (existingData?.data && !isFetching) {
+  //     const org = existingData.data;
+  //     console.log('orgnaization get data', org);
+  //     const fullRevenue = Number(org.revenue || 0);
+
+  //     // Default to 1 if no match found
+  //     let unit = 1;
+  //     let normalizedRevenue = fullRevenue;
+
+  //     const revenueUnits = [10000000, 100000, 1000, 1];
+
+  //     for (const u of revenueUnits) {
+  //       if (fullRevenue % u === 0 && fullRevenue / u < 10000) {
+  //         unit = u;
+  //         normalizedRevenue = fullRevenue / u;
+  //         break;
+  //       }
+  //     }
+  //     console.log('uniii', unit);
+  //     reset({
+  //       companyName: org.name || '',
+  //       website: org.website || '',
+  //       gstin: org.gstin || '',
+  //       country: org.country || '',
+  //       revenue: normalizedRevenue.toString() || '',
+  //       uom: org.uom || '',
+  //       numberOfEmployees: org.numberOfEmployees || '',
+  //       revenueUnit: unit.toString(),
+  //       about: org.about || '',
+  //     });
+  //   }
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // }, [existingData, isFetching, logoData, reset]);
+  // useEffect(() => {
+  //   if (existingData?.data && !isFetching) {
+  //     const org = existingData.data;
+  //     const fullRevenue = Number(org.revenue || 0);
+
+  //     const revenueUnits = [10000000, 100000, 1000, 1]; // Crore, Lakh, Thousand, Rupee
+  //     let unit = 1;
+  //     let normalizedRevenue = fullRevenue;
+
+  //     for (const u of revenueUnits) {
+  //       const divided = fullRevenue / u;
+  //       if (divided < 10000) {
+  //         unit = u;
+  //         normalizedRevenue = parseFloat(divided.toFixed(2)); // keep 2 decimals
+  //         break;
+  //       }
+  //     }
+
+  //     console.log('Full revenue from API:', fullRevenue);
+  //     console.log('Normalized:', normalizedRevenue, 'Unit:', unit);
+
+  //     reset({
+  //       companyName: org.name || '',
+  //       website: org.website || '',
+  //       gstin: org.gstin || '',
+  //       country: org.country || '',
+  //       revenue: normalizedRevenue.toString() || '', // "334.34"
+  //       revenueUnit: unit.toString(), // "100000"
+  //       uom: org.uom || '',
+  //       numberOfEmployees: org.numberOfEmployees || '',
+  //       about: org.about || '',
+  //     });
+  //   }
+
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // }, [existingData, isFetching, logoData, reset]);
+
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
-      console.log('orgnaization get data', org);
       const fullRevenue = Number(org.revenue || 0);
 
-      // Default to 1 if no match found
+      const revenueUnits = [100000, 10000000, 1000, 1];
       let unit = 1;
       let normalizedRevenue = fullRevenue;
 
-      const revenueUnits = [10000000, 100000, 1000, 1];
-
       for (const u of revenueUnits) {
-        if (fullRevenue % u === 0 && fullRevenue / u < 10000) {
+        const divided = fullRevenue / u;
+        if (divided < 10000) {
           unit = u;
-          normalizedRevenue = fullRevenue / u;
+          normalizedRevenue = Math.floor(divided); // no toFixed here
           break;
         }
       }
-      console.log('uniii', unit);
+
       reset({
         companyName: org.name || '',
         website: org.website || '',
         gstin: org.gstin || '',
         country: org.country || '',
-        revenue: normalizedRevenue.toString() || '',
+        revenue: normalizedRevenue.toString(), // no forced decimal precision
+        revenueUnit: unit.toString(),
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
-        revenueUnit: unit.toString(),
         about: org.about || '',
       });
     }
+
     if (logoData?.logoUrl) {
       setLogoUrl(logoData.logoUrl);
     }
@@ -270,6 +344,10 @@ function OrganizationOnbording() {
                                             if (/^\d*$/.test(rawValue)) {
                                               field.onChange(rawValue);
                                             }
+                                          }
+
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase()); // 👈 Force uppercase
                                           } else {
                                             field.onChange(value);
                                           }

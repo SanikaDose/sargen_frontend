@@ -109,7 +109,7 @@ function AssessorOnboarding() {
   const [Status, setStatus] = useState<string | null>(null);
   const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
 
-  const readonlyFields = ['firstName', 'lastName', 'email'];
+  const readonlyFields = ['email'];
   //reload view
   // useEffect(() => {
   //   if (existingData && existingData.data[0]?.formData) {
