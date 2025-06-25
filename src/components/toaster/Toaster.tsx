@@ -78,7 +78,6 @@ export default function Toaster() {
           </Alert>
         </Snackbar>
       </Slide>
-            )}
     </div>
   );
 }
