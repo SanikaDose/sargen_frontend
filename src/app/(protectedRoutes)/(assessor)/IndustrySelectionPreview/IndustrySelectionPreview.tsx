@@ -21,7 +21,7 @@ import styles from './IndustrySelectionPreview.module.css';
 const IndustrySelectionPreview = () => {
   const router = useRouter();
   const params = useParams();
-  const organisationId = params.organisationId as string;
+  const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
   const [selectIndustrySelectionList, { isLoading: isLoadingAdd }] = useSelectIndustrySelectionListMutation();
@@ -57,7 +57,7 @@ const IndustrySelectionPreview = () => {
   const fetchIndustryData = async () => {
     try {
       const obj = {
-        tenantId: organisationId,
+        tenantId,
         plantId: plantId || '',
       };
       const result = await getIndustrySelectionList(obj).unwrap();
@@ -103,7 +103,7 @@ const IndustrySelectionPreview = () => {
       if (!selectedIndustry) return;
 
       const payload = {
-        organisationId,
+        tenantId,
         plantId: plantId || '',
         selectedIndustry: {
           id: selectedIndustry.id,
@@ -125,7 +125,7 @@ const IndustrySelectionPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/UserAssessmentPreview/${organisationId}/${plantId}`);
+    router.push(`/UserAssessmentPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -138,6 +138,7 @@ const IndustrySelectionPreview = () => {
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   // Show loader at the top level if loading
@@ -250,7 +251,7 @@ const IndustrySelectionPreview = () => {
                 icon="left"
                 type="button"
                 onClick={() => router.back()}
-                disabled={isLoadingAdd}
+                disabled={isBackDisabled}
               >
                 Back
               </CustomButton>
