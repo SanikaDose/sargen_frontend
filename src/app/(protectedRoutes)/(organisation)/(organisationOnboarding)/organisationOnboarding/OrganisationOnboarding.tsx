@@ -1,13 +1,14 @@
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -15,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
-import { useSubmitOrganizationInfoMutation, useUploadOrganizationLogoMutation } from './OrganisationOnboardingAPi';
+
 const steps = [
   'Company Name',
   'Company website',
@@ -28,6 +29,12 @@ const steps = [
 ].map((label) => ({ label }));
 
 import InfoBox from '@/components/InfoBox/InfoBox';
+import {
+  useGetLogoQuery,
+  useGetOrganizationInfoQuery,
+  useSubmitOrganizationInfoMutation,
+  useUploadOrganizationLogoMutation,
+} from './OrganisationOnboardingAPi';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -35,17 +42,27 @@ function OrganizationOnbording() {
     dispatch(setPageNameHeader('Organization Onboarding'));
   }, [dispatch]);
   const router = useRouter();
-  const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+  const [submitOrganizationInfo, { isLoading }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
 
   const tenantId = getValueLocalStorage('tenantId');
+
+  const { data: existingData, isFetching } = useGetOrganizationInfoQuery(tenantId ?? '');
+  const { data: logoData } = useGetLogoQuery({ tenantId: tenantId ?? '' });
+  console.log(logoData);
+  // useEffect(() => {
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // });
+  console.log('existingdata', existingData);
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    // formState: { errors },
   } = useForm({
     defaultValues: {
       companyName: '',
@@ -57,29 +74,50 @@ function OrganizationOnbording() {
       numberOfEmployees: '',
       about: '',
     },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
-  // const { data } = useGetOrganizationInfoQuery(tenantId || '', {
-  //   skip: !tenantId,
-  // });
+  useEffect(() => {
+    if (existingData?.data && !isFetching) {
+      const org = existingData.data;
+      reset({
+        companyName: org.name || '',
+        website: org.website || '',
+        gstin: org.gstin || '',
+        country: org.country || '',
+        revenue: org.revenue || '',
+        uom: org.uom || '',
+        numberOfEmployees: org.numberOfEmployees || '',
+        about: org.about || '',
+      });
+    }
+    if (logoData?.logoUrl) {
+      setLogoUrl(logoData.logoUrl);
+    }
+  }, [existingData, isFetching, logoData, reset]);
+
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
-  // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
-
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
+    const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
-      if (typeof value === 'string' && value.length > 1) {
+
+      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+      if (isFilled) {
         acc.push(index);
       }
+
       return acc;
     }, []);
   }, [watchedValues]);
@@ -93,22 +131,18 @@ function OrganizationOnbording() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.log('');
+      console.log('error', error);
     }
   };
 
   //on form submit
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: OrgOnboardType) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
-      router.push('/AddContactPerson');
+      router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
     }
-  };
-
-  const onError = (errors: any) => {
-    console.error('Validation Errors:', errors);
   };
 
   return (
@@ -146,53 +180,68 @@ function OrganizationOnbording() {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.isCountry || input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        {input.label}
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
+                                    <>
+                                      <CurrencyValueSelector
                                         {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '8px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('country')}
-                                      >
-                                        <MenuItem disabled value="">
-                                          <em>Select From Dropdown</em>
-                                        </MenuItem>
-                                        {(input.isCountry ? CountryOptions : currencyOptions).map((option) => (
-                                          <MenuItem key={option.code} value={option.name}>
-                                            {option.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                      {fieldState?.error?.message && (
+                                        label={input.label}
+                                        placeholder={input.placeholder}
+                                        options={
+                                          input.isCountry
+                                            ? CountryOptions.map(({ name }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                            : currencyOptions.map(({ name }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                        }
+                                        required={true}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                      />
+                                      {/* {fieldState?.error?.message && (
                                         <Typography variant="caption" color="error">
                                           {fieldState.error.message}
                                         </Typography>
-                                      )}
-                                    </FormControl>
+                                      )} */}
+                                    </>
                                   ) : (
                                     <>
                                       <InputWithLabel
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees'].includes(input.name)
+                                            ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+
+                                          if (['numberOfEmployees'].includes(input.name)) {
+                                            const rawValue = value.replace(/,/g, '');
+                                            if (/^\d*$/.test(rawValue)) {
+                                              field.onChange(rawValue);
+                                            }
+                                          } else {
+                                            field.onChange(value); // ✅ Ensures companyName, website, revenue are editable
+                                          }
+                                        }}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
+                                      {/* {fieldState?.error?.message && (
                                         <Typography variant="caption" color="error">
                                           {fieldState.error.message}
                                         </Typography>
-                                      )}
+                                      )} */}
                                     </>
                                   )}
                                 </>

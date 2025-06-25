@@ -6,4 +6,5 @@ export interface QuillTextAreaProps {
   toolbar?: 'full';
   className?: string;
   style?: React.CSSProperties;
+  disabled?: boolean;
 }

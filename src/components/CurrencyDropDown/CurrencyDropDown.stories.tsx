@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import type { ComponentProps } from 'react';
 import DropdownWithLabel from './CurrencyDropDown';
 
 const meta: Meta<typeof DropdownWithLabel> = {
@@ -11,6 +12,7 @@ const meta: Meta<typeof DropdownWithLabel> = {
 export default meta;
 
 type Story = StoryObj<typeof DropdownWithLabel>;
+type DropdownWithLabelProps = ComponentProps<typeof DropdownWithLabel>;
 
 const currencyOptions = [
   { name: 'Rupee', code: 'rupee' },
@@ -75,12 +77,22 @@ const currencyOptions = [
   { name: 'Som', code: 'som' },
 ];
 
-export const CurrencyDropdown: Story = {
-  render: (args) => {
-    const [value, setValue] = useState('');
+const CurrencyDropdownComponent = (args: DropdownWithLabelProps) => {
+  const [value, setValue] = useState('');
 
-    return <DropdownWithLabel {...args} value={value} onChange={(e) => setValue(e.target.value)} />;
-  },
+  return (
+    <DropdownWithLabel
+      {...args}
+      value={value}
+      onChange={(e) => {
+        setValue(e.target.value);
+      }}
+    />
+  );
+};
+
+export const CurrencyDropdown: Story = {
+  render: CurrencyDropdownComponent,
   args: {
     label: 'Select Currency',
     name: 'currency',

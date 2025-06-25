@@ -27,7 +27,7 @@ const EnquiryPage = () => {
     <Container maxWidth="sm" className={styles.enquiryContainer}>
       <Box className={styles.enquiryPaper}>
         <section className={styles.textContainer}>
-          <Typography className={styles.welcomeBackText} variant="h3" fontWeight="bold">
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold">
             Enquiry Form
           </Typography>
           <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>

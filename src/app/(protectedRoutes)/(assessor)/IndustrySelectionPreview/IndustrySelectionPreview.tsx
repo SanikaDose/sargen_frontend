@@ -1,32 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import styles from './IndustrySelectionPreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
-import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../../(plantAssessment)/plantAssementApi';
-import { Industry, IndustryFormValues } from '../../(plantAssessment)/plantAssement.model';
-import { setPageNameHeader } from '@/store/globalSlice';
+import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
+import { RootState } from '@/store/store';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { Industry, IndustryFormValues } from '../../(plantAssessment)/plantAssement.model';
+import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../../(plantAssessment)/plantAssementApi';
+import styles from './IndustrySelectionPreview.module.css';
 
 const IndustrySelectionPreview = () => {
   const router = useRouter();
   const params = useParams();
-  const organisationId = params.organisationId as string;
+  const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
   const [selectIndustrySelectionList, { isLoading: isLoadingAdd }] = useSelectIndustrySelectionListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
+  // const tenantId = getValueLocalStorage('tenantId');
   const [industryData, setIndustryData] = useState<Industry[]>([]);
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
@@ -126,7 +125,7 @@ const IndustrySelectionPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/UserAssessmentPreview/${organisationId}/${plantId}`);
+    router.push(`/UserAssessmentPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -139,6 +138,7 @@ const IndustrySelectionPreview = () => {
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   // Show loader at the top level if loading
@@ -251,7 +251,7 @@ const IndustrySelectionPreview = () => {
                 icon="left"
                 type="button"
                 onClick={() => router.back()}
-                disabled={isLoadingAdd}
+                disabled={isBackDisabled}
               >
                 Back
               </CustomButton>

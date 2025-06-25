@@ -24,7 +24,7 @@ export const apiRoutes = {
   },
   onboardingStatus: {
     root: 'onboarding-status',
-    getOnboardingStatus: '/:tenantId/onboarding-status',
+    getOnboardingStatus: '/onboarding-status',
   },
   onboarding: {
     root: '/onboarding',
@@ -56,7 +56,7 @@ export const apiRoutes = {
     getQuestionnairesList: 'get-questionnaires-list',
     selectQuestionnairesAnswer: 'select-questionnaires-answer',
     editQuestionnairesAnswer: 'edit-questionnaires-answer',
-    startAssessmentRuleEngine: 'start-assessment-rule-engine',
+    startAssessmentRuleEngine: '/start-assessment-rule-engine',
     getPlanningHorizon: 'get-planning-horizon',
     selectPlanningHorizon: 'select-planning-horizon',
     changeAssessmentStatus: 'change-assessment-status',
@@ -74,7 +74,7 @@ export const apiRoutes = {
     getAssignedPlants: '/get-assigned-plants',
     getAllAssignedPlants: '/get-all-assigned-plants',
     getAssignedPlantinfo: '/assigned-plants-info',
-    getAllMetaData: '/get-all-metadata/:tenantId',
+    getAllMetaData: '/get-all-metadata',
     assignMetadata: '/assign-metadata',
     getImpactValues: '/get-impact-values',
     selectImpactValues: '/select-impact-values',
@@ -86,6 +86,7 @@ export const apiRoutes = {
     addIntroduction: '/add-introduction',
     addComment: '/add-comment',
     addRoi: '/add-roi',
+    getReportData: '/get-report-data',
   },
   assessorEvaluation: {
     root: 'assessor-evaluation',

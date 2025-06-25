@@ -14,7 +14,7 @@ export const decodeAndStoreToken = (token: string): Token => {
   localStorage.setItem('accessToken', token);
   localStorage.setItem('Authorization', token);
   localStorage.setItem('tenantId', decoded.tenantId);
-  localStorage.setItem('userType', typedToken.userType[0] || '');
+  localStorage.setItem('userName', typedToken.userName || '');
 
   return typedToken;
 };

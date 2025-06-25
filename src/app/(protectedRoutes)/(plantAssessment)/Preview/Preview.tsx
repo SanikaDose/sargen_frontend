@@ -1,23 +1,23 @@
 'use client';
 
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { triggerToast } from '@/app/utils/toast';
+import AnswerCard from '@/components/AnswerCard/AnswerCard';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
+import QuestionCard from '@/components/QuestionCard/QuestionCard';
+import TextArea from '@/components/TextArea/TextArea';
+import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { Box, Paper, Skeleton, Typography } from '@mui/material';
-import styles from './Preview.module.css';
-import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useRouter } from 'next/navigation';
-import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import AnswerCard from '@/components/AnswerCard/AnswerCard';
-import TextArea from '@/components/textArea/TextArea';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
-import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import { triggerToast } from '@/app/utils/toast';
-import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import styles from './Preview.module.css';
 
 export default function Preview() {
   const router = useRouter();
@@ -40,7 +40,21 @@ export default function Preview() {
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
-  const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
+  const departmentName = [
+    'R&D',
+    'Planning',
+    'Production',
+    'Quality',
+    'Maintenance',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
+    'Finance',
+    'Utilities',
+    'IT',
+    'Learning & Development',
+    'Management',
+    'HR',
+  ];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
@@ -128,7 +142,7 @@ export default function Preview() {
         department: currentQuestionGroup[0]?.department,
         context: currentQuestionGroup[0]?.context,
         question: currentQuestionGroup[0]?.question,
-        answerOption: selectedOption?.answer ?? '',
+        answerOption: selectedOption?.answerOption ?? '',
         answer: selectedOption?.answer ?? '',
         bandWeight: selectedOption?.bandWeight ?? '',
         bandName: selectedOption?.bandName ?? '',
@@ -201,7 +215,7 @@ export default function Preview() {
                       <AnswerCard
                         key={option.id}
                         answerNumber={idx + 1}
-                        answerText={option.answer ?? ''}
+                        answerText={option.answerOption ?? ''}
                         isSelected={option.isselected}
                         onClick={() => handleAnswerClick(option.id)}
                       />
@@ -255,7 +269,7 @@ export default function Preview() {
                 icon="left"
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                disabled={currentIndex === 0}
+                disabled={currentIndex === 0 || isSaving || isEditMode}
               >
                 Back
               </CustomButton>

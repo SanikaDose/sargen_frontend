@@ -1,6 +1,6 @@
 .outerContainer {
   width: 30vw;
-  height: 60vh;
+  /* height: 60vh; */
   backdrop-filter: blur(12px) saturate(200%);
   -webkit-backdrop-filter: blur(12px) saturate(200%);
   background-color: rgba(255, 255, 255, 0.47);
@@ -35,4 +35,13 @@
   font-weight: 500;
   margin-bottom: 0.3rem;
   color: #444;
+}
+
+@media (width <= 768px) {
+  .outerContainer {
+    width: 80vw;
+    /* height: 70vh; */
+    padding: 10%;
+    margin-bottom: 20px;
+  }
 }

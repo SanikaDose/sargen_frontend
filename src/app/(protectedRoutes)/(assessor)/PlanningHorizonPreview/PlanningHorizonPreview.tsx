@@ -1,32 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import styles from './PlanningHorizonPreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import Card from '@/components/Card/Card';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
-import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
+import Stepper from '@/components/Stepper/Stepper';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { RootState } from '@/store/store';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { HorizonFormValues, HorizonOption } from '../../(plantAssessment)/plantAssement.model';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../../(plantAssessment)/plantAssementApi';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
+import styles from './PlanningHorizonPreview.module.css';
 
 const PlanningHorizonPreview = () => {
   const params = useParams();
   const router = useRouter();
-  const organisationId = params.organisationId as string;
+  const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
-  const tenantId = getValueLocalStorage('tenantId');
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
 
@@ -147,7 +145,7 @@ const PlanningHorizonPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
+    router.push(`/IndustrySelectionPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -161,6 +159,7 @@ const PlanningHorizonPreview = () => {
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   return (
@@ -269,7 +268,7 @@ const PlanningHorizonPreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled}
                   >
                     Back
                   </CustomButton>

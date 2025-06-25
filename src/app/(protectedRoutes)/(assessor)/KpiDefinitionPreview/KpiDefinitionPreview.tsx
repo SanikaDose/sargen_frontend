@@ -1,30 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import styles from './KpiDefinitionPreview.module.css';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import Stepper from '@/components/Stepper/Stepper';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
-import { Kpi, KpiFormValues } from '../../(plantAssessment)/plantAssement.model';
-import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../../(plantAssessment)/plantAssementApi';
+import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader } from '@/store/globalSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { RootState } from '@/store/store';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { Kpi, KpiFormValues } from '../../(plantAssessment)/plantAssement.model';
+import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../../(plantAssessment)/plantAssementApi';
+import styles from './KpiDefinitionPreview.module.css';
 
 const KpiDefinitionPreview = () => {
   const params = useParams();
   const router = useRouter();
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
   const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
@@ -61,7 +59,7 @@ const KpiDefinitionPreview = () => {
 
   const fetchKpis = async () => {
     try {
-      const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
+      const response = await getKPIDefinition({ tenantId: organisationId, plantId }).unwrap();
       const cleaned = response.map((k: Kpi) => ({
         ...k,
         kpi: k.kpi.trim(),
@@ -69,7 +67,7 @@ const KpiDefinitionPreview = () => {
       setKpiList(cleaned);
 
       const formData = {
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
       };
 
       // Reset form with fetched data
@@ -99,7 +97,7 @@ const KpiDefinitionPreview = () => {
   const handleSave = async (formData: KpiFormValues) => {
     try {
       const payload = {
-        tenantId,
+        tenantId: organisationId,
         plantId,
         kpiDefinitions: formData.kpis.map((item, index) => ({
           id: kpiList[index].id,
@@ -135,8 +133,8 @@ const KpiDefinitionPreview = () => {
   // Button state logic - simplified and clearer
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
-
   return (
     <>
       {isLoadingGet || isLoadingAdd ? (
@@ -232,7 +230,7 @@ const KpiDefinitionPreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled}
                   >
                     Back
                   </CustomButton>

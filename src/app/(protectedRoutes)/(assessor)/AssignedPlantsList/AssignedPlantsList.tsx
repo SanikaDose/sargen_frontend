@@ -15,7 +15,7 @@ import Loader from '@/components/Loader/Loader';
 
 export default function AssignedPlantsList() {
   const router = useRouter();
-  const assessorId = getValueLocalStorage('assessorId');
+  const assessorId = getValueLocalStorage('tenantId') || '';
   const [searchValue, setSearchValue] = useState('');
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorAssignedPlants));
@@ -29,10 +29,8 @@ export default function AssignedPlantsList() {
   };
 
   const filteredPlants =
-    plantInfo?.data?.filter((plant: any) =>
-      (plant.plantName ?? '').toLowerCase().includes(searchValue.toLowerCase()),
-    ) ?? [];
-
+    plantInfo?.data?.filter((plant: any) => (plant.plantName ?? '').toLowerCase().includes(searchValue.toLowerCase())) ?? [];
+  console.log('filteredPlants', filteredPlants);
   return (
     <div className={styles.wrapper}>
       <Typography className={styles.headingSection}>
@@ -69,9 +67,7 @@ export default function AssignedPlantsList() {
           <Grid container spacing={1.5} className={styles.gridContainer}>
             {filteredPlants.length > 0 ? (
               filteredPlants.map((plant: any) => {
-                const organisationName = plant.organisationId
-                  ? plant.organisationId.split('-').slice(0, 2).join('-')
-                  : 'N/A';
+                const organisationName = plant.organisationId ? plant.organisationId.split('-').slice(0, 2).join('-') : 'N/A';
 
                 return (
                   <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
@@ -81,7 +77,7 @@ export default function AssignedPlantsList() {
                         plantName: plant.plantName,
                         organisationName,
                         organisationId: plant.organisationId,
-                        assesorCompletionStage: plant.assesorCompletionStage,
+                        assessmentCompletionStage: plant.assessmentCompletionStage,
                         createdAt: plant.createdAt,
                         updatedAt: plant.updatedAt,
                       }}

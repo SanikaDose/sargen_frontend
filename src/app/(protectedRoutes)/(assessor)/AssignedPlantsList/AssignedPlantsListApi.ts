@@ -17,27 +17,7 @@ export const assessorAsignPlantApi = protectedApi.injectEndpoints({
       }),
       providesTags: ['SpecificPlantInfo'],
     }),
-    getAssessorMetadata: builder.query({
-      query: (tenantId) => ({
-        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.getAllMetaData}/${tenantId}`,
-        method: 'GET',
-      }),
-      providesTags: ['AssessorMetadata'],
-    }),
-    postAssessorMetadataToPlant: builder.mutation({
-      query: (body) => ({
-        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.assignMetadata}`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: ['AssessorMetadata', 'SpecificPlantInfo'],
-    }),
   }),
 });
 
-export const {
-  useGetSpecificPlantInfoQuery,
-  useGetAssessorMetadataQuery,
-  usePostAssessorMetadataToPlantMutation,
-  useGetAllAssignPlantQuery,
-} = assessorAsignPlantApi;
+export const { useGetSpecificPlantInfoQuery, useGetAllAssignPlantQuery } = assessorAsignPlantApi;
