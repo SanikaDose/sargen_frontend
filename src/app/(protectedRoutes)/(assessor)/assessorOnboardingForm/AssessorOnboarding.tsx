@@ -282,14 +282,14 @@ function AssessorOnboarding() {
     }
   };
 
-  // ✅ Compute activeStep based on focused field index
+  // Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
     const allInputs = [...AssessorFormInputs];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
-  // ✅ Compute completed steps where value length > 5
+  //  Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
     const allInputs = [...AssessorFormInputs];
     return allInputs.reduce((acc: number[], input, index) => {
