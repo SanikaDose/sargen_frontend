@@ -6,7 +6,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import Stepper from '@/components/Stepper/Stepper';
-import TextArea from '@/components/TextArea/TextArea';
+import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
@@ -15,18 +15,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
 import { Question } from './Questionaire.type';
-import TextArea from '@/components/textArea/TextArea';
-import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-
-import { triggerToast } from '@/app/utils/toast';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 import styles from './Questionaire.module.css';
-import { Question } from './Questionaire.type';
 
 const Questionaire = () => {
   const DEPARTMENT_LINKS = [
@@ -50,6 +41,9 @@ const Questionaire = () => {
   dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
   dispatch(setShowAssessmentListSideBar(true));
   const plantId = params.PlantId as string;
+  const organisationId = (params.OrganisationId ?? params.organisationId) as string;
+
+  console.log('organisation i questionaire', organisationId);
   const departmentName = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
 
   console.log('department name ', departmentName);
@@ -68,7 +62,7 @@ const Questionaire = () => {
   const fetchQuestions = async (dept: string) => {
     try {
       const result = await getQuestionnairesList({
-        tenantId,
+        tenantId: organisationId,
         plantId: plantId || '',
         department: dept,
       }).unwrap();
@@ -127,7 +121,7 @@ const Questionaire = () => {
     const question_uid = currentQuestionGroup[0]?.question_uid;
 
     const payload = {
-      tenantId,
+      tenantId: organisationId,
       plantId,
       questionnariesData: {
         id: selectedOption?.id ?? '',

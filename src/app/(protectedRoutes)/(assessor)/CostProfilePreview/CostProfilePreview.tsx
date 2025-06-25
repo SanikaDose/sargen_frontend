@@ -5,7 +5,7 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormValues, RawCostCategory } from '../../(plantAssessment)/plantAssement.model';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../../(plantAssessment)/plantAssementApi';
 import styles from './CostProfilePreview.module.css';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const CostProfilePreview = () => {
   const params = useParams();
@@ -27,7 +28,8 @@ const CostProfilePreview = () => {
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorCostProfilePreview));
-
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -35,6 +37,7 @@ const CostProfilePreview = () => {
   const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: { costs: [] },
   });
+  console.log('organisation id', organisationId);
 
   const formValues = useWatch({
     control,

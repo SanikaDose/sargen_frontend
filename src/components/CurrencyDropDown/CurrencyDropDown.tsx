@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, InputAdornment, SelectChangeEvent } from '@mui/material';
+import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, SelectChangeEvent } from '@mui/material';
 
 export type DropdownOption = {
   label: string;

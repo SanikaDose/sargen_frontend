@@ -3,6 +3,9 @@ import { Box, Divider, Typography } from '@mui/material';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
+import { CustomButton } from '../CustomButton/CustomButton';
+import { AsseessmentStatus } from '@/constants/enums';
+import ImageUploader from '../ImageUpload/ImageUpload';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
@@ -89,7 +92,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
           >
             {data?.assessmentCompletionStage === 'NOT_STARTED'
               ? 'Request for Assessment'
-              : data?.assessmentCompletionStage === 'STARTED' //change status according to new enum START_ASSESSMENT
+              : data?.assessmentCompletionStage === 'START_ASSESSMENT' //change status according to new enum START_ASSESSMENT
                 ? 'Assessment Started'
                 : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
                   ? 'Assessor Assigning ...'

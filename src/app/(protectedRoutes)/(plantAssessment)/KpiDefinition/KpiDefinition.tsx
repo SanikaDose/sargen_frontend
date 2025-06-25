@@ -23,14 +23,14 @@ import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 const KpiDefinition = () => {
   const params = useParams();
   const router = useRouter();
-
+  const organisationId = params.OrganisationId as string;
+  const plantId = params.PlantId as string;
+  const tenantId = getValueLocalStorage('tenantId');
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
   dispatch(setShowAssessmentListSideBar(true));
   dispatch(setPlantAssessmentDepartment(''));
-  const organisationId = params.OrganisationId as string;
-  const plantId = params.PlantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
+
   const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
@@ -42,6 +42,9 @@ const KpiDefinition = () => {
   const fetchKpis = async () => {
     try {
       const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
+
+      console.log('response', response);
+
       const cleaned = response.map((k: Kpi) => ({
         ...k,
         kpi: k.kpi.trim(),
@@ -57,7 +60,7 @@ const KpiDefinition = () => {
 
   useEffect(() => {
     fetchKpis();
-  }, []);
+  }, [router]);
 
   const handleSave = async (formData: KpiFormValues) => {
     try {

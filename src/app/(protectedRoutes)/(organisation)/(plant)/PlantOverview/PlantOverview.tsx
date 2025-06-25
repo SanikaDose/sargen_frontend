@@ -6,15 +6,16 @@ import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
 import { AsseessmentStatus } from '@/constants/enums';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { pageRoutes } from '@/constants/pagesRoutes';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
 // import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
-
-import { AsseessmentStatus } from '@/constants/enums';
 import { Plant } from './PlantOverview.type';
-
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
+import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
+import { GridSearchIcon } from '@mui/x-data-grid';
+import styles from './PlantOverview.module.css';
 export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function PlantOverview() {
               onChange={(e) => handleSearch(e.target.value)}
             />
             <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-              <SearchIcon />
+              <GridSearchIcon />
             </IconButton>
           </Paper>
         </Box>

@@ -5,17 +5,14 @@ import { organisationExtraMenuList, organisationOnboardedMenuList } from '@/cons
 import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
 import { setExtraListItems, setSideBarListItem, setSideBarListItemsForAssessment } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
-
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-
 import ListItemText from '@mui/material/ListItemText';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
@@ -25,7 +22,6 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
-
 import { assessorUserAssessmentList, platformUserAssessmentList } from '@/constants/sideBarLists/plantAssessmentMenuList';
 import { SidebarItem } from '@/constants/sideBarLists/sideBarList.type';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -105,6 +101,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const dispatch = useDispatch();
   const pathName = usePathname();
   const params = useParams();
+  // console.log('params', params.plantId);
 
   // Media queries
   // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -129,37 +126,41 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   // Derived values
   const open = isDesktop ? true : mobileOpen;
-  const plantId = params?.PlantId as string;
+
+  const plantId = (params?.plantId ?? params?.PlantId) as string;
+
   const userTypeFromLocalStorage = decodedToken?.userType;
   const userType = userTypeFromRedux || userTypeFromLocalStorage;
 
   // Initialize component with localStorage values
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('Authorization');
-      const storedTenantId = getValueLocalStorage('tenantId');
+    const token = localStorage.getItem('Authorization');
+    const storedTenantId = getValueLocalStorage('tenantId');
 
-      console.log('token:', token);
-      console.log('storedTenantId:', storedTenantId);
+    console.log('token:', token);
+    console.log('storedTenantId:', storedTenantId);
 
-      if (token) {
-        const decoded: Token = jwtDecode(token);
-        setDecodedToken(decoded);
-      }
+    if (token) {
+      const decoded: Token = jwtDecode(token);
+      setDecodedToken(decoded);
+    }
 
-      if (!token) {
-        router.push('login');
-      }
-
-      if (storedTenantId) {
-        setTenantId(storedTenantId);
-        setIsInitialized(true);
-      } else {
-        router.push('/login');
-        return;
-      }
+    if (!token) {
+      router.push('login');
+    }
+    if (storedTenantId && userType && userType[0] === 'PLATFORMUSER') {
+      setTenantId(storedTenantId);
+      setIsInitialized(true);
+      return;
+    }
+    if (storedTenantId && userType && userType[0] === 'ASSESSOR') {
+      setTenantId((params.OrganisationId ?? params.organisationId) as string);
+      setIsInitialized(true);
     }
   }, [router]);
+  console.log('assessor id', tenantId);
+  console.log('userType', userType);
+  console.log('params', params);
 
   // Set sidebar items based on onboarding status and user type
   React.useEffect(() => {
@@ -238,6 +239,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // Dispatch to global state
     dispatch(setSideBarListItem(updatedList));
   };
+  console.log('tenantId and plant id ', tenantId);
+
+  console.log('plantId', plantId);
+
   const assementSideBarListItemOnClick = (link: string) => {
     console.log('link', link);
     const isDepartment = DEPARTMENT_LINKS.includes(link);
@@ -258,9 +263,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       if (tenantId && plantId) {
         navigationPath = `${link}/${tenantId}/${plantId}`;
       } else {
-        navigationPath = `${link}`; // fallback for normal navigation
+        navigationPath = `${link}`;
       }
     }
+    console.log('navigationPath', navigationPath);
 
     router.push(navigationPath);
 
@@ -272,9 +278,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     dispatch(setSideBarListItem(updatedList));
   };
+  console.log('tenantId', tenantId);
+  console.log('plantID', plantId);
 
+  console.log('userType', userType);
   console.log('sideBarListItemsForAssessment', sideBarListItemsForAssessment);
-  console.log('sideBarListItems', sideBarListItems);
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -447,6 +455,57 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               })}
             </>
           )}
+          {/* 
+          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && userType[0] === UserType.ASSESSOR && (
+            <>
+              <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+                Assessment menu
+              </Typography>
+              {sideBarListItemsForAssessment.map((item) => {
+                // Check if the current pathname contains the matchKeyword
+                const activeSegment = pathName.split('/')[1]?.toLowerCase();
+                const isDepartment = !item.linkRoute.startsWith('/');
+
+                const isActive = isDepartment
+                  ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
+                  : activeSegment === item.matchKeyword?.toLowerCase();
+                return (
+                  <ListItem
+                    key={item.text}
+                    disablePadding
+                    sx={{
+                      pl: 0,
+                      backgroundColor: isActive ? 'secondary.main' : 'transparent',
+                    }}
+                  >
+                    <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                      <ListItemIcon
+                        sx={{
+                          mr: 2,
+                          color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                        }}
+                      >
+                        {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                            }}
+                          >
+                            {item.text}
+                          </Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </>
+          )} */}
+
           {extraListItems &&
             extraListItems.map((item) => (
               <ListItem

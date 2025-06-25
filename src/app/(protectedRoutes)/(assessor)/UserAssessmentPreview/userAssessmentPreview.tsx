@@ -12,13 +12,14 @@ import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { Box, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './userAssessmentPreview.module.css';
 import { useStartAssessmentRuleEngineMutation } from './userAssessmentPreviewApi';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
@@ -37,6 +38,8 @@ const UserAssessmentPreview = () => {
   const [startAssessmentRuleEngine] = useStartAssessmentRuleEngineMutation();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   console.log(organisationId);
 
   const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];

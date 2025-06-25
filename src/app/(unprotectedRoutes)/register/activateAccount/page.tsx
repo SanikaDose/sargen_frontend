@@ -7,7 +7,7 @@ import { pageRoutes } from '@/constants/pagesRoutes';
 const page = () => {
   const [activeAccount] = useActiveAccountMutation();
   const text = 'To Activate Account Click Below';
-
+  const router = useRouter();
   async function handleActivateAccount() {
     const sidObj = {
       sid: location.hash.substring(1),
