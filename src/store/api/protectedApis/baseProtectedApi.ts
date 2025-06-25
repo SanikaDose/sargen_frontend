@@ -9,11 +9,7 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-  args,
-  api,
-  extraOptions,
-) => {
+export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
   // if (result.data === null) {
@@ -77,5 +73,7 @@ export const protectedApi = createApi({
     'Solutions',
     'PlantLogo',
     'ProfilePic',
+    'AssessorLogo',
+    'OrganizationLogo',
   ],
 });

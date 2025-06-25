@@ -2,7 +2,7 @@ import InformativeComponent from '@/components/InformativeComponent/InformativeC
 import React from 'react';
 
 const page = () => {
-  const text = 'Check Email Activation Link has been send';
+  const text = 'Check Email Activation Link has been sent to your registered email address.';
   return <InformativeComponent content={text} />;
 };
 

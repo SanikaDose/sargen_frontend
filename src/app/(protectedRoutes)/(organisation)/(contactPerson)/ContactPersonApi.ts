@@ -1,5 +1,5 @@
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
-import { ContactPersonApiResponse, PocPayload } from './ContactPerson.types';
+import { ContactPersonApiResponse, OnboardingStatusResponse, PocPayload } from './ContactPerson.types';
 import { apiRoutes } from '@/constants/apiRoutes';
 import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
@@ -51,6 +51,14 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
       providesTags: (result, error, { tenantId }) => [{ type: 'ProfilePic', id: tenantId }],
     }),
+
+    getOnboardingStatus: builder.query<OnboardingStatusResponse, { tenantId: string }>({
+      query: ({ tenantId }) => ({
+        url: `${apiRoutes.onboardingStatus.root}/${tenantId}${apiRoutes.onboardingStatus.getOnboardingStatus}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, { tenantId }) => [{ type: 'Poc', id: tenantId }],
+    }),
   }),
 });
 
@@ -59,4 +67,5 @@ export const {
   useGetPointOfContactQuery,
   useUploadPocProfilePicMutation,
   useGetPocProfilePicQuery,
+  useLazyGetOnboardingStatusQuery,
 } = onboardingApi;

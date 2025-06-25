@@ -11,17 +11,14 @@ type Props = {
 };
 
 const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
+  console.log({ questions, selectedQuestionId, completedIds, onSelect });
   return (
     <div className={styles.buttonGrid}>
       {questions.map((q) => {
         const isSelected = q.key === selectedQuestionId;
         const isCompleted = completedIds.includes(q.key);
 
-        const classNames = [
-          styles.questionButton,
-          isCompleted ? styles.reviewed : '',
-          isSelected ? styles.selected : '',
-        ]
+        const classNames = [styles.questionButton, isCompleted ? styles.reviewed : '', isSelected ? styles.selected : '']
           .filter(Boolean)
           .join(' ');
 

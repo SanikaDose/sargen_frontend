@@ -3,33 +3,17 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  OutlinedInput,
-} from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from './AssessorOnboarding.module.css';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { AssessorFormType } from './AssessorOnboarding.types';
-
+import { AssessorFormType, UploadFileMetadata, UploadFunction } from './AssessorOnboarding.types';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useRouter } from 'next/navigation';
 import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
-import { certificateData, fileValues } from './FormConfig/fileInput';
 import FileActionButton from '@/components/FileActionButton/FileActionButton';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import {
@@ -48,6 +32,8 @@ import {
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
   useViewMetadataFileMutation,
+  useGetAssessorInfoQuery,
+  useGetOnboardingStatusQuery,
 } from './AssessorOnboarding.Api';
 
 import { fileUploadKeyMap, fileTypes } from './FormConfig/fileInput';
@@ -57,22 +43,15 @@ import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
-const steps = [
-  'First Name',
-  'Last Name',
-  'E-Mail Id',
-  'Contact Number',
-  'City',
-  'Country',
-  'Year Of Experience',
-  'Certification Year',
-].map((label) => ({ label }));
+import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 
-//const tenantId = getValueLocalStorage('tenantId');
-const tenantId = 'ASSESSOR-26327b7b-2e01-49c1-9948-1373c7e1a8e1';
+const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
+  (label) => ({ label }),
+);
+
+const tenantId = getValueLocalStorage('tenantId');
+
 function AssessorOnboarding() {
   const dispatch = useDispatch();
 
@@ -82,7 +61,8 @@ function AssessorOnboarding() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+
+    reset,
   } = useForm({
     defaultValues: {
       firstName: '',
@@ -97,60 +77,120 @@ function AssessorOnboarding() {
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
+  const router = useRouter();
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
   const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
-  const [getMetadataFileTemplate, { isLoading: isUploadLoading }] = useGetMetadataFileTemplateMutation();
+  const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
-
-  const [uploadQuestionnaries, { isLoading: qloading }] = useUploadQuestionnariesMutation();
-  const [uploadCostProfile, { isLoading: cloading }] = useUploadCostProfileMutation();
-  const [uploadKPI, { isLoading: kloading }] = useUploadKPIMutation();
-  const [uploadPlanningHorizon, { isLoading: ploading }] = useUploadPlanningHorizonMutation();
-  const [uploadIndustrySelection, { isLoading: iloading }] = useUploadIndustrySelectionMutation();
-  const [uploadCostProfileLookup, { isLoading: clloading }] = useUploadCostProfileLookupMutation();
-  const [uploadIndustrySelectionLookup, { isLoading: illoading }] = useUploadIndustrySelectionLookupMutation();
-  const [uploadKPILookup, { isLoading: klloading }] = useUploadKPILookupMutation();
-  const [uploadIndustryAssessmentMatrix, { isLoading: ialoading }] = useUploadIndustryAssessmentMatrixMutation();
-  const [uploadSolutionMetadata, { isLoading: sloading }] = useUploadSolutionMetadataMutation();
-  const [uploadBandDefinition, { isLoading: bloading }] = useUploadBandDefinitionMutation();
-  const [viewMetadataFile, { isLoading: vloading }] = useViewMetadataFileMutation();
-
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, UploadFileMetadata>>({});
+  const [uploadQuestionnaries] = useUploadQuestionnariesMutation();
+  const [uploadCostProfile] = useUploadCostProfileMutation();
+  const [uploadKPI] = useUploadKPIMutation();
+  const [uploadPlanningHorizon] = useUploadPlanningHorizonMutation();
+  const [uploadIndustrySelection] = useUploadIndustrySelectionMutation();
+  const [uploadCostProfileLookup] = useUploadCostProfileLookupMutation();
+  const [uploadIndustrySelectionLookup] = useUploadIndustrySelectionLookupMutation();
+  const [uploadKPILookup] = useUploadKPILookupMutation();
+  const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
+  const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
+  const [uploadBandDefinition] = useUploadBandDefinitionMutation();
+  const [viewMetadataFile] = useViewMetadataFileMutation();
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
-  //function to view the metadata files
-const handleViewClick = async (fileName: string) => {
-  if (!fileName) {
-    triggerToast('Invalid file name.', 'warning');
-    return;
-  }
+  const { data: orgStatus } = useGetOnboardingStatusQuery(tenantId ?? '');
+  console.log('ornboding status', orgStatus);
+  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
 
-  try {
-    const response = await viewMetadataFile({
-      tenantId: tenantId,
-      fileName: fileName,
-    }).unwrap();
+  const readonlyFields = ['firstName', 'lastName', 'email'];
+  //reload view
+  useEffect(() => {
+    if (existingData && existingData.data[0]?.formData) {
+      const { formData, metadata_information } = existingData.data[0];
+      console.log('formdatauserlog2', formData.userLogo);
+      if (formData.userLogo) {
+        setLogoUrl(formData.userLogo);
+        //  triggerToast('Assessor Logo Fetch Successfully', 'success');
+      }
+      if (metadata_information) {
+        const preUploadedMap: Record<string, UploadFileMetadata> = {};
 
-    if (response?.url) {
-      const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(response.url)}`;
-      window.open(viewerUrl, '_blank');
-    } else {
-      triggerToast('File URL not found.', 'error');
+        metadata_information.forEach((item) => {
+          if (item.tableName) {
+            preUploadedMap[item.tableName] = item;
+          }
+        });
+        setUploadedFiles(preUploadedMap);
+      }
+      reset({
+        firstName: formData.firstName || '',
+        lastName: formData.lastName || '',
+        email: formData.email || '',
+        contactNumber: formData.contactNumber || '',
+        city: formData.city || '',
+        country: formData.country || '',
+        yearOfExperience: formData.yearOfExperience || '',
+        certificationYear: formData.certificationYear || '',
+      });
     }
-  } catch (err) {
-    console.error('error', err);
-    triggerToast('Failed to view file', 'error');
-  }
-};
+  }, [existingData, reset, isFetching]);
 
+  useEffect(() => {
+    const fetchFile = async () => {
+      try {
+        const fileUrl = existingData?.data[0]?.formData?.siriCertificate;
 
-  const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => Promise<any>> = {
+        if (fileUrl && typeof fileUrl === 'string') {
+          const response = await fetch(fileUrl); // ✅ This is valid
+          const blob = await response.blob();
+
+          const fetchedFile = new File([blob], 'siriCertificate.pdf', {
+            type: 'application/pdf',
+          });
+
+          setSelectedFile(fetchedFile);
+        }
+      } catch (error) {
+        console.error('Error fetching the file:', error);
+      }
+    };
+
+    fetchFile();
+  }, [existingData]);
+
+  console.log('selectedfile', selectedFile);
+
+  //function to view the metadata files
+  const handleViewClick = async (fileName: string) => {
+    if (!fileName) {
+      triggerToast('Invalid file name.', 'warning');
+      return;
+    }
+
+    try {
+      const response = await viewMetadataFile({
+        tenantId: tenantId,
+        fileName: fileName,
+      }).unwrap();
+
+      if (response?.url) {
+        const viewerUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(response.url)}`;
+        window.open(viewerUrl, '_blank');
+      } else {
+        triggerToast('File URL not found.', 'error');
+      }
+    } catch (err) {
+      console.error('error', err);
+      triggerToast('Failed to view file', 'error');
+    }
+  };
+
+  // const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => > = {
+  const uploadFunctionMap: Record<string, UploadFunction> = {
     questionnaires_: uploadQuestionnaries,
     cost_profile_: uploadCostProfile,
     kpi_selection_: uploadKPI,
@@ -175,15 +215,20 @@ const handleViewClick = async (fileName: string) => {
     }
 
     try {
-      const response = await uploadFunction({ tenantId: tenantId ?? '', file });
-      console.log('uploaded resp', response);
-      if (response.data.status === true) {
+      const response = await uploadFunction({ tenantId: tenantId ?? '', file }).unwrap();
+      console.log('uploaded resp', response); // NOW you'll see it
+
+      if (response?.status && response?.data?.[0]) {
+        const fullMetadataObject = response.data[0];
+
         setUploadedFiles((prev) => ({
           ...prev,
-          [fileKey]: file,
+          [fileKey]: fullMetadataObject,
         }));
+
+        // triggerToast(`${fileKey} uploaded successfully`, 'success');
       } else {
-        triggerToast(`Please add a valid ${fileKey} file`, 'error');
+        // triggerToast(`Please add a valid ${fileKey} file`, 'error');
       }
     } catch (error) {
       console.log('catch error', error);
@@ -206,7 +251,7 @@ const handleViewClick = async (fileName: string) => {
   };
   //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
-    console.log('submot button clicked');
+    console.log('submot button clicked--------------------');
     if (!selectedFile) {
       triggerToast('Please add siriCertificate', 'error');
     }
@@ -221,25 +266,37 @@ const handleViewClick = async (fileName: string) => {
         data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
+
+      if (orgStatus?.onboardingStatus) {
+        dispatch(setOnboardingStatus(orgStatus.onboardingStatus));
+      }
+      if (orgStatus?.onboardingStatus === 'COMPLETED') {
+        router.push('/AssignedPlantsList');
+      }
+
+      if (orgStatus?.onboardingStatus === 'STARTED' || orgStatus?.onboardingStatus === 'NOT_STARTED') {
+        triggerToast('Please Fill All The Data', 'error');
+      }
     } catch (error) {
       console.log('error', error);
     }
   };
 
-  // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...AssessorFormInputs];
-
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...AssessorFormInputs];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
+    const allInputs = [...AssessorFormInputs];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof AssessorFormType];
-      if (typeof value === 'string' && value.length > 1) {
+
+      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+      if (isFilled) {
         acc.push(index);
       }
       return acc;
@@ -247,33 +304,37 @@ const handleViewClick = async (fileName: string) => {
   }, [watchedValues]);
   // function to download the file
 
- const handleDownloadClick = async (fileName: string) => {
-  if (!fileName) {
-    triggerToast('Invalid file name.', 'warning');
-    return;
-  }
+  const handleDownloadClick = async (fileName: string) => {
+    if (!fileName) {
+      triggerToast('Invalid file name.', 'warning');
+      return;
+    }
 
-  try {
-    setdownloadKey(fileName);
+    try {
+      setdownloadKey(fileName);
 
-    // This will internally trigger the file download via responseHandler
-    await getMetadataFileTemplate({
-      userType: 'ASSESSOR',
-      fileName,
-    }).unwrap();
+      // This will internally trigger the file download via responseHandler
+      await getMetadataFileTemplate({
+        userType: 'ASSESSOR',
+        fileName,
+      }).unwrap();
 
-    console.log('Download triggered successfully.');
-  } catch (err) {
-    console.error('Error downloading file:', err);
-  } finally {
-    setdownloadKey(null);
-  }
-};
-
+      console.log('Download triggered successfully.');
+    } catch (err) {
+      console.error('Error downloading file:', err);
+    } finally {
+      setdownloadKey(null);
+    }
+  };
+  // to show the created at and update at date in the date format
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return 'NA';
+    return new Date(dateStr).toISOString().split('T')[0]; // "YYYY-MM-DD"
+  };
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && orgStatus?.onboardingStatus === 'COMPLETED' ? (
         <Loader loading={true} />
       ) : (
         <Box sx={{ width: '100%', height: '99.5%' }}>
@@ -283,7 +344,7 @@ const handleViewClick = async (fileName: string) => {
           </Box>
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
-              <Typography variant="h6" className={styles.heading}>
+              <Typography variant="h4" className={styles.heading}>
                 Assessor Profile
               </Typography>
 
@@ -297,51 +358,50 @@ const handleViewClick = async (fileName: string) => {
                     <section className={styles.formFieldsInner}>
                       <Grid container spacing={1} className={styles.FormContainer}>
                         {AssessorFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
+                          <Grid size={{ xs: 12, md: 3 }} key={input.name}>
                             <Controller
                               name={input.name as keyof AssessorFormType}
                               control={control}
-                              defaultValue=""
+                              //  defaultValue=""
                               rules={input.rules}
-                              render={({ field, fieldState }) => (
-                                <>
-                                  {input.iscountry ? (
-                                    <>
+                              render={({ field, fieldState }) => {
+                                const isReadOnly = readonlyFields.includes(input.name);
+
+                                return (
+                                  <>
+                                    {input.iscountry ? (
                                       <CurrencyValueSelector
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
-                                        options={CountryOptions.map(({ name, code }) => ({
+                                        options={CountryOptions.map(({ name }) => ({
                                           label: name,
-                                          value: code,
+                                          value: name,
                                         }))}
                                         onFocus={() => setFocusedField(input.name)}
+                                        required
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="red">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
-                                    </>
-                                  ) : (
-                                    <>
+                                    ) : (
                                       <InputWithLabel
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
+                                        required
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                        InputProps={{
+                                          readOnly: isReadOnly,
+                                        }}
                                       />
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
-                                    </>
-                                  )}
-                                </>
-                              )}
+                                    )}
+                                  </>
+                                );
+                              }}
                             />
                           </Grid>
                         ))}
@@ -352,16 +412,16 @@ const handleViewClick = async (fileName: string) => {
 
                 <Box className={styles.secondContainer}>
                   <Grid className={styles.btnContainer}>
-                    <Box className={styles.fileUploadContainer} sx={{ marginTop: 5, marginBottom: 5 }}>
+                    <Box className={styles.fileUploadContainer} sx={{ mt: 5, mb: 5 }}>
                       <FileUploadButton
                         label="Certificate"
                         size="large"
                         iconSize="100"
                         accept="application/pdf"
                         onFileSelect={(file) => {
-                          console.log('Selected file:', file);
                           setSelectedFile(file);
                         }}
+                        buttonColor={selectedFile ? 'success' : 'primary'}
                       />
                     </Box>
 
@@ -385,7 +445,6 @@ const handleViewClick = async (fileName: string) => {
                       component={Paper}
                       sx={{
                         maxHeight: 400,
-
                         overflowX: 'auto',
                       }}
                     >
@@ -395,10 +454,25 @@ const handleViewClick = async (fileName: string) => {
                             <TableCell sx={{ padding: 1, textAlign: 'left' }}>No.</TableCell>
                             <TableCell sx={{ padding: 0, textAlign: 'left' }}>File Name</TableCell>
                             <TableCell sx={{ padding: 1, textAlign: 'left' }}>Version</TableCell>
-                            <TableCell sx={{ padding: 1, textAlign: 'left' }}>First Uploaded</TableCell>
-                            <TableCell sx={{ padding: 1, textAlign: 'left' }}>Last Uploaded </TableCell>
+                            <TableCell sx={{ padding: 1, textAlign: 'left' }}>
+                              First
+                              <br /> Uploaded
+                            </TableCell>
+                            <TableCell sx={{ padding: 1, textAlign: 'left' }}>
+                              Last
+                              <br /> Uploaded{' '}
+                            </TableCell>
                             {/* <TableCell sx={{padding:1, textAlign:'center'}}></TableCell> */}
-                            <TableCell sx={{ padding: 1, textAlign: 'left' }}>Download Template</TableCell>
+                            <TableCell
+                              sx={{
+                                padding: 1,
+                                textAlign: 'left',
+                                display: 'flex',
+                                flexDirection: 'column',
+                              }}
+                            >
+                              <span>Download</span> <span>Template</span>
+                            </TableCell>
                             <TableCell sx={{ padding: 1, textAlign: 'left' }}>Upload</TableCell>
                             <TableCell sx={{ padding: 1, textAlign: 'left' }}>View</TableCell>
                           </TableRow>
@@ -406,15 +480,18 @@ const handleViewClick = async (fileName: string) => {
                         <TableBody>
                           {fileTypes.map((label, index) => {
                             const backendKey = fileUploadKeyMap[label];
-                            const cert = certificateData[index]; // safely pull from data if exists
 
                             return (
                               <TableRow key={index}>
                                 <TableCell sx={{ textAlign: 'left', padding: 1 }}>{index + 1}</TableCell>
                                 <TableCell sx={{ textAlign: 'left', padding: 0 }}>{label}</TableCell>
-                                <TableCell sx={{ textAlign: 'left', padding: 1 }}>{cert?.version ?? '-'}</TableCell>
-                                <TableCell sx={{ textAlign: 'left', padding: 1 }}>{cert?.createdAt ?? '-'}</TableCell>
-                                <TableCell sx={{ textAlign: 'left', padding: 1 }}>{cert?.updatedAt ?? '-'}</TableCell>
+                                <TableCell sx={{ textAlign: 'left', padding: 1 }}>{uploadedFiles[backendKey]?.version ?? 'NA'}</TableCell>
+                                <TableCell sx={{ textAlign: 'left', padding: 1 }}>
+                                  {formatDate(uploadedFiles[backendKey]?.createdAt)}
+                                </TableCell>
+                                <TableCell sx={{ textAlign: 'left', padding: 1 }}>
+                                  {formatDate(uploadedFiles[backendKey]?.updatedAt)}
+                                </TableCell>
                                 <TableCell
                                   sx={{
                                     textAlign: 'left',
@@ -423,7 +500,7 @@ const handleViewClick = async (fileName: string) => {
                                   }}
                                 >
                                   {downloadKey === backendKey ? (
-                                    <ButtonWithLoader loading={true} width="50px" label="" />
+                                    <ButtonWithLoader loading={true} width="50px" label="" height="40px" loaderColor="white" />
                                   ) : (
                                     <FileActionButton
                                       icon="download"
@@ -441,7 +518,7 @@ const handleViewClick = async (fileName: string) => {
                                   }}
                                 >
                                   {uploadingKey === backendKey ? (
-                                    <ButtonWithLoader loading={true} width="50px" label="" />
+                                    <ButtonWithLoader loading={true} width="50px" label="" height="40px" />
                                   ) : (
                                     <FileActionButton
                                       icon="upload"
@@ -458,6 +535,10 @@ const handleViewClick = async (fileName: string) => {
                                 </TableCell>
                                 <TableCell sx={{ textAlign: 'left', padding: 1 }}>
                                   <span
+                                    // style={{
+                                    //   pointerEvents: uploadedFiles[backendKey] ? 'auto' : 'none',
+                                    //   opacity: uploadedFiles[backendKey] ? 1 : 0.5,
+                                    // }}
                                     style={{
                                       pointerEvents: uploadedFiles[backendKey] ? 'auto' : 'none',
                                       opacity: uploadedFiles[backendKey] ? 1 : 0.5,

@@ -1,22 +1,20 @@
 'use client';
 
-import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import styles from './PlantOverview.module.css';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import AddPlantCard from '@/components/AddPlantCard/AddPlantCard';
 import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
-import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
-import SearchIcon from '@mui/icons-material/Search';
-import { useRouter } from 'next/navigation';
-import { pageRoutes } from '@/constants/pagesRoutes';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
-import Loader from '@/components/Loader/Loader';
-import { RootState } from '@/store/store';
 import { AsseessmentStatus } from '@/constants/enums';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { pageRoutes } from '@/constants/pagesRoutes';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { RootState } from '@/store/store';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styles from './PlantOverview.module.css';
+import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
 
 export default function PlantOverview() {
   const dispatch = useDispatch();
@@ -68,6 +66,7 @@ export default function PlantOverview() {
     }
 
     if (assessmentStage === AsseessmentStatus.START_ASSESSMENT) {
+      //AsseessmentStatus.START_ASSESSMENT
       router.push(`IndustrySelection/${tenantId}/${plantId}`);
       dispatch(setShowAssessmentListSideBar(true));
     }

@@ -1,12 +1,11 @@
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import { AsseessmentStatus } from '@/constants/enums';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
+import { CustomButton } from '../CustomButton/CustomButton';
+import ImageUploader from '../ImageUpload/ImageUpload';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
-import ImageUploader from '../ImageUpload/ImageUpload';
-import { CustomButton } from '../CustomButton/CustomButton';
-import { AsseessmentStatus } from '@/constants/enums';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
   const plantData = data;
@@ -78,7 +77,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
             children={
               data?.assessmentCompletionStage === 'NOT_STARTED'
                 ? 'Request for Assessment'
-                : data?.assessmentCompletionStage === 'STARTED' // chnage according to newe enum or dump
+                : data?.assessmentCompletionStage === 'START_ASSESSMENT' // chnage according to newe enum or dump
                   ? 'Assessment Started'
                   : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
                     ? 'Assessor Assigning ...'

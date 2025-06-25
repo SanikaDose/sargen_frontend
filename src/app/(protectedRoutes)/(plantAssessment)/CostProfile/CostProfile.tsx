@@ -126,99 +126,122 @@ const CostProfile = () => {
   }, [dispatch]);
 
   return (
-    <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
-      <Box className={styles.stepperContainer}>
-        <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
-      </Box>
-
-      <Paper
-        className={styles.formSection}
-        elevation={2}
-        sx={{
-          mt: 2,
-          borderRadius: '16px',
-          backgroundColor: 'white',
-          border: '1px solid rgb(216, 216, 216)',
-        }}
-      >
-        <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-          {/* Left Section */}
-          <Box className={styles.formContainer}>
-            <Typography
-              variant="h6"
-              sx={{
-                color: 'black',
-                textAlign: 'left',
-                width: '100%',
-              }}
-            >
-              Cost Profile
-            </Typography>
-
-            {/* Loader inside left section */}
-            {isLoadingGet || isLoadingAdd ? (
-              <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
-                <Loader loading />
-              </Box>
-            ) : (
-              <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
-                {fields.length > 0
-                  ? fields.map((field, index) => (
-                      <Box key={field.id} className={styles.costInputCards}>
-                        <Controller
-                          name={`costs.${index}.costAsAPercentageOfRevenue`}
-                          control={control}
-                          render={({ field: controllerField }) => (
-                            <OverallCostProfileCard
-                              fieldName={field.costCategory}
-                              costValue={controllerField.value}
-                              onChange={(val) => controllerField.onChange(val)}
-                              readonly={false}
-                            />
-                          )}
-                        />
-                      </Box>
-                    ))
-                  : 'No cost Profile'}
-              </Grid>
-            )}
-
-            {/* Always show overall cost summary */}
-            <Box className={styles.OverallCostProfileCard}>
-              <OverallCostProfileCard
-                fieldName="Overall Cost Profile"
-                costValue={overAllCostProfile}
-                onChange={() => {}}
-                readonly
-                boxBackgroundColor="#10557C"
-                textColor="#FFFFFF"
-              />
-            </Box>
-          </Box>
-
-          {/* Right Section */}
-          <Box className={styles.rightSection}>
-            <Box className={styles.aboutSection}>
-              <InfoBox content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..." heading="About Industry" />
-            </Box>
-
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              p={1}
-              mt={3}
-              ml={5}
-              mr={5}
-              sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
-              className={styles.buttonSection}
-            >
-              <CustomButton children="Back" variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()} />
-              <CustomButton children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'} variant="contained" icon="save" type="submit" />
-            </Box>
-          </Box>
+    <Box sx={{ width: '100%', height: '100%' }}>
+      {isLoadingGet || isLoadingAdd ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
         </Box>
-      </Paper>
+      ) : (
+        <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
+          <Box className={styles.stepperContainer}>
+            <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
+          </Box>
+
+          <Paper
+            className={styles.formSection}
+            elevation={2}
+            sx={{
+              mt: 2,
+              borderRadius: '16px',
+              backgroundColor: 'white',
+              border: '1px solid rgb(216, 216, 216)',
+            }}
+          >
+            <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
+              {/* Left Section */}
+              <Box className={styles.formContainer}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: 'black',
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
+                  Cost Profile
+                </Typography>
+
+                {/* Loader inside left section */}
+                {isLoadingGet || isLoadingAdd ? (
+                  <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                    <Loader loading />
+                  </Box>
+                ) : (
+                  <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
+                    {fields.length > 0
+                      ? fields.map((field, index) => (
+                          <Box key={field.id} className={styles.costInputCards}>
+                            <Controller
+                              name={`costs.${index}.costAsAPercentageOfRevenue`}
+                              control={control}
+                              render={({ field: controllerField }) => (
+                                <OverallCostProfileCard
+                                  fieldName={field.costCategory}
+                                  costValue={controllerField.value}
+                                  onChange={(val) => controllerField.onChange(val)}
+                                  readonly={false}
+                                />
+                              )}
+                            />
+                          </Box>
+                        ))
+                      : 'No cost Profile'}
+                  </Grid>
+                )}
+
+                {/* Always show overall cost summary */}
+                <Box className={styles.OverallCostProfileCard}>
+                  <OverallCostProfileCard
+                    fieldName="Overall Cost Profile"
+                    costValue={overAllCostProfile}
+                    onChange={() => {}}
+                    readonly
+                    boxBackgroundColor="#10557C"
+                    textColor="#FFFFFF"
+                  />
+                </Box>
+              </Box>
+
+              {/* Right Section */}
+              <Box className={styles.rightSection}>
+                <Box className={styles.aboutSection}>
+                  <InfoBox
+                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..."
+                    heading="About Industry"
+                  />
+                </Box>
+
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  p={1}
+                  mt={3}
+                  ml={5}
+                  mr={5}
+                  sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
+                  className={styles.buttonSection}
+                >
+                  <CustomButton
+                    children="Back"
+                    variant="contained"
+                    color="primary"
+                    icon="left"
+                    type="button"
+                    onClick={() => router.back()}
+                  />
+                  <CustomButton
+                    children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    variant="contained"
+                    icon="save"
+                    type="submit"
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+      )}
     </Box>
   );
 };

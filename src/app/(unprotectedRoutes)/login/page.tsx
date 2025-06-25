@@ -6,7 +6,7 @@ import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './login.types';
@@ -51,8 +51,33 @@ const LoginPage = () => {
 
       if (userType[0] === 'ASSESSOR') {
         hasNavigatedRef.current = true;
+
+        const response = await getOnboardingStatus(tenantId);
+        console.log(response);
+
+        // const onboardingData = response.data;
+
+        localStorage.setItem('onboardingStatus', response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED);
+
+        dispatch(setOnboardingStatus(response.data?.onboardingStatus || OnboardingStatus.NOT_STARTED));
         //TODO:route hard code change
-        router.push('/assessorOnboardingForm');
+        hasNavigatedRef.current = true;
+        switch (response.data?.onboardingStatus) {
+          case 'NOT_STARTED':
+            router.push('/assessorOnboardingForm');
+            break;
+          case 'STARTED':
+            console.log('Push to onboarding');
+            router.push('/assessorOnboardingForm');
+            break;
+          case 'COMPLETED':
+            console.log('Push to preview');
+            router.push('/AssignedPlantsList');
+            break;
+          default:
+            console.warn('Unhandled onboarding status:', response.data?.onboardingStatus);
+            break;
+        }
         return;
       }
 
@@ -109,15 +134,28 @@ const LoginPage = () => {
             Sign in to access your industry roadmap
           </Typography>
         </section>
-
         <Box component="form" onSubmit={handleSubmit(handleLogin)} noValidate className={styles.form}>
           <Controller
             name="email"
             control={control}
             defaultValue=""
-            rules={{ required: 'Email is required' }}
-            render={({ field }) => (
-              <InputWithLabel {...field} label="Email Address" name="email" placeholder="Enter your email" type="email" />
+            rules={{
+              required: 'Email is required',
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: 'Enter a valid email address',
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <InputWithLabel
+                {...field}
+                label="Email Address"
+                name="email"
+                placeholder="Enter your email"
+                type="email"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
             )}
           />
 
@@ -125,8 +163,17 @@ const LoginPage = () => {
             name="password"
             control={control}
             defaultValue=""
-            rules={{ required: 'Password is required' }}
-            render={({ field }) => (
+            rules={{
+              required: 'Password is required',
+              minLength: { value: 8, message: 'Password must be at least 8 characters' },
+              maxLength: { value: 32, message: 'Password must be at most 32 characters' },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                message: 'Password must include uppercase, lowercase, number, and special character',
+              },
+              // Add more rules as needed (e.g., pattern for complexity)
+            }}
+            render={({ field, fieldState }) => (
               <PasswordTextField
                 {...field}
                 autoComplete="new-password"
@@ -136,6 +183,8 @@ const LoginPage = () => {
                 showLockIcon={false}
                 showPasswordToggle
                 showStrengthIndicator
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
                 sx={{
                   height: '40px',
                   '& .MuiOutlinedInput-root': {
@@ -155,13 +204,25 @@ const LoginPage = () => {
             )}
           />
 
-          <Button type="submit" fullWidth variant="contained" className={styles.button}>
+          {/* <Button type="submit" fullWidth variant="contained" className={styles.button}>
             {loading ? (
               <ButtonWithLoader label="Sign In" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
             ) : (
               'Sign In'
             )}
-          </Button>
+          </Button> */}
+
+          <ButtonWithLoader
+            type="submit"
+            fullWidth
+            variant="contained"
+            className={styles.button}
+            label="Sign In"
+            // backgroundColor="inherit"
+            loaderColor="white"
+            loading={loading}
+            height="40px" // Adjust height to match PasswordTextField
+          />
 
           <Typography variant="body2" className={styles.forgotPassword}>
             <Button
