@@ -131,6 +131,7 @@ const CostProfilePreview = () => {
   // Button state logic
   const isSaveDisabled = !isEditMode || !hasUnsavedChanges || isLoadingAdd;
   const isNextDisabled = isEditMode && hasUnsavedChanges;
+  const isBackDisabled = isEditMode;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   return (
@@ -244,7 +245,7 @@ const CostProfilePreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled || isLoadingAdd} // Updated to include isBackDisabled
                   >
                     Back
                   </CustomButton>
@@ -270,7 +271,7 @@ const CostProfilePreview = () => {
                     icon="right"
                     type="button"
                     onClick={handleNextClick}
-                    disabled={isNextDisabled}
+                    disabled={isNextDisabled} // This now simply checks if in edit mode
                   >
                     Next
                   </CustomButton>

@@ -67,7 +67,7 @@ const KpiDefinitionPreview = () => {
       setKpiList(cleaned);
 
       const formData = {
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
       };
 
       // Reset form with fetched data
@@ -133,8 +133,8 @@ const KpiDefinitionPreview = () => {
   // Button state logic - simplified and clearer
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
-
   return (
     <>
       {isLoadingGet || isLoadingAdd ? (
@@ -230,7 +230,7 @@ const KpiDefinitionPreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled}
                   >
                     Back
                   </CustomButton>

@@ -1,7 +1,7 @@
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
+import { apiRoutes } from '@/constants/apiRoutes';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { ContactPersonApiResponse, OnboardingStatusResponse, PocPayload } from './ContactPerson.types';
-import { apiRoutes } from '@/constants/apiRoutes';
-import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 
 export const onboardingApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -68,4 +68,5 @@ export const {
   useUploadPocProfilePicMutation,
   useGetPocProfilePicQuery,
   useLazyGetOnboardingStatusQuery,
+  useLazyGetPointOfContactQuery,
 } = onboardingApi;

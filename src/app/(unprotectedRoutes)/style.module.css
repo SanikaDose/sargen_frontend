@@ -77,8 +77,9 @@
 }
 
 .logo {
-  width: 100%;
+  width: 200px;
   height: 100%;
+  object-fit: contain;
 }
 
 .text_outer_container {
@@ -126,6 +127,7 @@
   color: black;
 }
 .videoSetting {
+  margin-top: 1vh;
   height: 20vw;
 }
 
@@ -187,6 +189,15 @@
 }
 
 @media (max-width: 640px) {
+  .logo {
+    width: 100px;
+  }
+
+  /* .nav_container {
+    height: 90vh;
+    padding: 0 2vw;
+  } */
+
   .chip,
   .chip2 {
     display: none;
@@ -307,7 +318,7 @@
 
 @media (max-width: 1024px) {
   .nav_container {
-    height: 7vh;
+    height: 5vh;
   }
 }
 

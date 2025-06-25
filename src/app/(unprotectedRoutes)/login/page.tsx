@@ -1,19 +1,19 @@
 'use client';
 
+import { decodeAndStoreToken } from '@/app/utils/auth';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { LoginFormInputs, OnboardingStatus, RawToken, Token, UserType } from './login.types';
+import { LoginFormInputs, OnboardingStatus, RawToken } from './login.types';
 import { useLazyGetOnboardingStatusQuery, useLoginUserMutation } from './loginApi';
 import { setDecodedToken, setOnboardingStatus } from './loginSlice';
 import styles from './style.module.css';
-import { decodeAndStoreToken } from '@/app/utils/auth';
 
 const LoginPage = () => {
   const { control, handleSubmit } = useForm<LoginFormInputs>();
