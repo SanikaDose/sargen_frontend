@@ -3,7 +3,7 @@
 import Loader from '@/components/Loader/Loader';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader, setShowAssessmentListSideBar, setSideBarListItem } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FactoryIcon from '@mui/icons-material/Factory';

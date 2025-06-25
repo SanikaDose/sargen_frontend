@@ -53,7 +53,6 @@ export const Selected: Story = {
     isDisabled: false,
   },
 };
-
 export const Disabled: Story = {
   args: {
     label: 'Emission Reduction',
@@ -63,9 +62,11 @@ export const Disabled: Story = {
 };
 
 // Interactive example
+const InteractiveComponent = () => {
+  const [isSelected, setIsSelected] = useState(false);
+  return <Card label="Interactive KPI" isSelected={isSelected} onToggle={() => setIsSelected((prev) => !prev)} />;
+};
+
 export const Interactive: Story = {
-  render: () => {
-    const [isSelected, setIsSelected] = useState(false);
-    return <Card label="Interactive KPI" isSelected={isSelected} onToggle={() => setIsSelected((prev) => !prev)} />;
-  },
+  render: () => <InteractiveComponent />,
 };

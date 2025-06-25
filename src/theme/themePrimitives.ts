@@ -394,6 +394,6 @@ export const shape = {
   borderRadius: 8,
 };
 
-// @ts-expect-error
+// @ts-expect-error: Custom shadow value is not part of MUI's default shadow type
 const defaultShadows: Shadows = ['none', 'var(--template-palette-baseShadow)', ...defaultTheme.shadows.slice(2)];
 export const shadows = defaultShadows;

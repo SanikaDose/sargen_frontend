@@ -27,3 +27,20 @@ export type Plant = {
   pocEmail: string;
   pocContactNo: string;
 };
+
+export type AssignedPlant = {
+  id: string;
+  plantId: string;
+  plantName: string;
+  assessmentCompletionStage: 'NOT_STARTED' | 'STARTED' | 'REQUESTED_ASSESSMENT' | 'COMPLETED'; // you can expand this enum
+  organisationId: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  createdBy: string | null;
+  updatedBy: string | null;
+};
+
+export type GetAllAssignedPlantsResponse = {
+  statusCode: number;
+  data: AssignedPlant[];
+};

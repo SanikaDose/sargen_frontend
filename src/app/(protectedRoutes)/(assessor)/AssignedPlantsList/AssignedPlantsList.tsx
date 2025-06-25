@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import Loader from '@/components/Loader/Loader';
-import { AssessorPlantData } from './AssessorPlantDetails.types';
+import { AssignedPlant } from './AssignPlantList.type';
 
 export default function AssignedPlantsList() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function AssignedPlantsList() {
   };
 
   const filteredPlants =
-    plantInfo?.data?.filter((plant: AssessorPlantData) => (plant.plantName ?? '').toLowerCase().includes(searchValue.toLowerCase())) ?? [];
+    plantInfo?.data?.filter((plant: AssignedPlant) => (plant.plantName ?? '').toLowerCase().includes(searchValue.toLowerCase())) ?? [];
 
   return (
     <div className={styles.wrapper}>
@@ -67,7 +67,7 @@ export default function AssignedPlantsList() {
         ) : (
           <Grid container spacing={1.5} className={styles.gridContainer}>
             {filteredPlants.length > 0 ? (
-              filteredPlants.map((plant: any) => {
+              filteredPlants.map((plant: AssignedPlant) => {
                 const organisationName = plant.organisationId ? plant.organisationId.split('-').slice(0, 2).join('-') : 'N/A';
 
                 return (

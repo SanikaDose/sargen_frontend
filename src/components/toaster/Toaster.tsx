@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideToast } from './toasterSlice';
 import { RootState } from '@/store/store';
 import styles from './toaster.module.css';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { Slide } from '@mui/material';
 
 export default function Toaster() {
@@ -14,7 +13,7 @@ export default function Toaster() {
   const { open, severity, message } = useSelector((state: RootState) => state.toasterGlobal);
 
   // const theme = useTheme();
-  const isSmallScreen = useMediaQuery('(max-width:899px)');
+  // const isSmallScreen = useMediaQuery('(max-width:899px)');
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
     if (reason === 'clickaway') return;

@@ -45,7 +45,7 @@ export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
   const theme = useTheme();
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<any>) => {
+  const handleChange = (event: SelectChangeEvent<string | string[]>) => {
     const {
       target: { value },
     } = event;
@@ -53,7 +53,7 @@ export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
     if (multiSelect) {
       setSelectedItems(typeof value === 'string' ? value.split(',') : value);
     } else {
-      setSelectedItems([value]);
+      setSelectedItems([typeof value === 'string' ? value : value[0] || '']);
     }
   };
 
