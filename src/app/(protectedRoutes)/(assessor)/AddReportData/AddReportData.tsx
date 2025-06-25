@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { Box, Paper, Typography, CircularProgress } from '@mui/material';
 import styles from './../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
@@ -32,15 +32,16 @@ const AddReportData = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  // Store content for each question separately
   const [questionContents, setQuestionContents] = useState<string[]>(new Array(questions.length).fill(''));
+  const contentRef = useRef(''); // Always holds latest content
 
-  // Current content is derived from questionContents array
-  const content = questionContents[currentQuestionIndex];
+  // const content = questionContents[currentQuestionIndex];
 
-  dispatch(setPageNameHeader(pagesNames.assessorReportData));
+  // Update page name header once
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorReportData));
+  }, [dispatch]);
 
-  // Mutation hooks
   const [addAbout] = useAddAboutTheCompanyMutation();
   const [addIntro] = useAddIntroductionMutation();
   const [addSummary] = useSummaryOfObservationsAndRecommendationsMutation();
@@ -48,19 +49,14 @@ const AddReportData = () => {
   const [addComment] = useAddCommentMutation();
   const [getReportData] = useGetReportDataMutation();
 
-  // Fetch existing report data on component mount
+  // Fetch report data on mount
   useEffect(() => {
     const fetchReportData = async () => {
       try {
         setIsInitialLoading(true);
-        const payload = {
-          tenantId,
-          plantId,
-        };
-
+        const payload = { tenantId, plantId };
         const response = await getReportData(payload).unwrap();
 
-        // Map the response data to the questions array
         const existingData = [
           response.aboutTheCompany || '',
           response.introduction || '',
@@ -70,21 +66,20 @@ const AddReportData = () => {
         ];
 
         setQuestionContents(existingData);
+        contentRef.current = existingData[0]; // sync first question
       } catch (error) {
         console.error('Failed to fetch report data:', error);
-        // Keep the empty array if fetch fails
       } finally {
         setIsInitialLoading(false);
       }
     };
 
-    if (tenantId && plantId) {
-      fetchReportData();
-    }
+    if (tenantId && plantId) fetchReportData();
   }, [tenantId, plantId, getReportData]);
 
-  // Update content for current question
   const handleContentChange = (newContent: string) => {
+    contentRef.current = newContent;
+
     setQuestionContents((prev) => {
       const updated = [...prev];
       updated[currentQuestionIndex] = newContent;
@@ -100,27 +95,30 @@ const AddReportData = () => {
       plantId,
     };
 
+    // ✅ Log for debugging
+    console.log(`Saving for "${questions[currentQuestionIndex]}":`, contentRef.current);
+
     let mutationFn;
 
     switch (currentQuestionIndex) {
       case 0:
-        payload.aboutTheCompany = content;
+        payload.aboutTheCompany = contentRef.current;
         mutationFn = addAbout;
         break;
       case 1:
-        payload.introduction = content;
+        payload.introduction = contentRef.current;
         mutationFn = addIntro;
         break;
       case 2:
-        payload.summaryOfObservationsAndRecommendations = content;
+        payload.summaryOfObservationsAndRecommendations = contentRef.current;
         mutationFn = addSummary;
         break;
       case 3:
-        payload.comment = content;
+        payload.roi = contentRef.current;
         mutationFn = addROI;
         break;
       case 4:
-        payload.comment = content;
+        payload.comment = contentRef.current;
         mutationFn = addComment;
         break;
       default:
@@ -132,7 +130,11 @@ const AddReportData = () => {
       await mutationFn(payload).unwrap();
 
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex((prev) => prev + 1);
+        setCurrentQuestionIndex((prev) => {
+          const nextIndex = prev + 1;
+          contentRef.current = questionContents[nextIndex]; // update ref to next question content
+          return nextIndex;
+        });
       } else {
         alert('All questions submitted successfully!');
       }
@@ -145,21 +147,17 @@ const AddReportData = () => {
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1);
+      setCurrentQuestionIndex((prev) => {
+        const prevIndex = prev - 1;
+        contentRef.current = questionContents[prevIndex]; // sync ref
+        return prevIndex;
+      });
     }
   };
 
-  // Show loading spinner while fetching initial data
   if (isInitialLoading) {
     return (
-      <Box
-        sx={{
-          height: '99%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <Box sx={{ height: '99%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
           <CircularProgress size={40} />
           <Typography variant="body2" color="text.secondary">
@@ -196,9 +194,13 @@ const AddReportData = () => {
             </Typography>
 
             <Box sx={{ flex: 1, position: 'relative' }}>
-              <QuillTextArea value={content} onChange={handleContentChange} placeholder="Enter your content here..." disabled={isLoading} />
+              <QuillTextArea
+                value={questionContents[currentQuestionIndex]}
+                onChange={handleContentChange}
+                placeholder="Enter your content here..."
+                disabled={isLoading}
+              />
 
-              {/* Loading overlay for the content area */}
               {isLoading && (
                 <Box
                   sx={{
