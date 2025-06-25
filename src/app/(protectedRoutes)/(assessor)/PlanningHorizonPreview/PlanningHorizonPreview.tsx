@@ -21,7 +21,7 @@ import styles from './PlanningHorizonPreview.module.css';
 const PlanningHorizonPreview = () => {
   const params = useParams();
   const router = useRouter();
-  const organisationId = params.organisationId as string;
+  const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
@@ -57,7 +57,7 @@ const PlanningHorizonPreview = () => {
   const fetchHorizonOptions = async () => {
     try {
       const requestPayload = {
-        tenantId: organisationId,
+        tenantId,
         plantId: plantId || '',
       };
       const result = await getHorizonOptions(requestPayload).unwrap();
@@ -120,7 +120,7 @@ const PlanningHorizonPreview = () => {
       if (!selectedOption) return;
 
       const payload = {
-        organisationId,
+        tenantId,
         plantId: plantId || '',
         selectedPlan: {
           id: selectedOption.id,
@@ -145,7 +145,7 @@ const PlanningHorizonPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
+    router.push(`/IndustrySelectionPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -159,6 +159,7 @@ const PlanningHorizonPreview = () => {
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   return (
@@ -267,7 +268,7 @@ const PlanningHorizonPreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled}
                   >
                     Back
                   </CustomButton>
