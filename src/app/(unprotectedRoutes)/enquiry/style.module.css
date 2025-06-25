@@ -94,6 +94,15 @@
   }
 }
 
+@media (width <= 768px) {
+  .enquiryContainer {
+    width: 80vw;
+    /* height: 70vh; */
+    padding: 10%;
+    margin-bottom: 20px;
+  }
+}
+
 @media (max-width: 640px) {
   .enquiryContainer {
     height: auto;
