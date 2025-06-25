@@ -51,7 +51,7 @@ export default function Toaster() {
               padding: '2px 4px  !important',
               color: '#FFFFFF !important',
               border: 'none !important',
-                  backgroundColor: severity === 'error' ? '#fdecea' : undefined, 
+                  // backgroundColor: severity === 'error' ? '#fdecea' : undefined, 
 
               width: {
                 sm: '300px',
