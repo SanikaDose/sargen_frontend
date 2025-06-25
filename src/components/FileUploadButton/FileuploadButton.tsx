@@ -13,6 +13,7 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   buttonVariant = 'contained',
   iconSize,
   buttonColor = 'primary',
+  sx,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -32,7 +33,7 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = ({
   return (
     <>
       <input ref={fileInputRef} type="file" hidden accept={accept} onChange={handleFileChange} />
-      <Button variant={buttonVariant} onClick={handleClick} size={size} color={buttonColor}>
+      <Button variant={buttonVariant} onClick={handleClick} size={size} color={buttonColor} sx={sx}>
         <Grid
           container
           size={{ xs: 12, md: 12 }}
