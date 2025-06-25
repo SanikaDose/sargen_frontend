@@ -86,8 +86,15 @@ function OrganizationOnbording() {
         gstin: org.gstin || '',
         country: org.country || '',
         revenue: org.revenue || '',
+        // revenue:
+        //   org.revenue && parseFloat(org.revenue) !== 0
+        //     ? parseFloat(org.revenue).toString().includes('.')
+        //       ? parseFloat(org.revenue).toString()
+        //       : parseFloat(org.revenue).toFixed(0) // show as "123" instead of "123.00"
+        //     : '',
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
+        //  numberOfEmployees: org.numberOfEmployees && Number(org.numberOfEmployees) !== 0 ? org.numberOfEmployees : '',
         about: org.about || '',
       });
     }

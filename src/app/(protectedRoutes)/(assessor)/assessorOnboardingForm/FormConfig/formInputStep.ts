@@ -44,8 +44,8 @@ export const AssessorFormInputs: AssessorFormInput[] = [
     rules: {
       required: 'Email is required',
       pattern: {
-        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email format
-        message: 'Enter a valid email address',
+        value: /^[^\s@]+@[^\s@]+\.(com)$/, // Must contain @ and end with .com
+        message: 'Enter a valid email ending with .com',
       },
     },
   },
