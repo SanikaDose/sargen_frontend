@@ -86,6 +86,7 @@ export const apiRoutes = {
     addIntroduction: '/add-introduction',
     addComment: '/add-comment',
     addRoi: '/add-roi',
+    getReportData: '/get-report-data',
   },
   assessorEvaluation: {
     root: 'assessor-evaluation',

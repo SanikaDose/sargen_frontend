@@ -35,9 +35,11 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
+  // Hit GET API for both add and edit modes
   const { data: existingData, isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
-    skip: !editMode,
+    skip: !tenantId, // Only skip if no tenantId, always fetch data
   });
+
   const dispatch = useDispatch();
   const isMobile = useMediaQuery('(max-width: 600px)');
   const isTablet = useMediaQuery('(max-width: 900px)');
@@ -93,7 +95,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   );
 
   useEffect(() => {
-    if (editMode && existingData?.data && !isFetching) {
+    if (existingData?.data && !isFetching) {
       const contact = existingData.data;
       reset({
         firstName: contact.firstName || '',
@@ -110,7 +112,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         setProfilePicUrl(contact.profilePicUrl);
       }
     }
-  }, [editMode, existingData, isFetching, reset]);
+  }, [existingData, isFetching, reset]);
 
   const handleUpload = async (file: File) => {
     const formData = new FormData();
