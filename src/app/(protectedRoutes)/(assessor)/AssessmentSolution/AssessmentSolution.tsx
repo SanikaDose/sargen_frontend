@@ -8,9 +8,10 @@ import { useGetSolutionsByImpactQuery, useSelectSolutionsByImpactMutation } from
 import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox, Divider } from '@mui/material';
 import styles from './AssessmentSolution.module.css';
 import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import Loader from '@/components/Loader/Loader';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 interface Solution {
   id: string;
@@ -31,6 +32,8 @@ const AssessmentSolution = () => {
   const [selectedSolutions, setSelectedSolutions] = useState<Set<string>>(new Set());
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
 
   useEffect(() => {
     if (data && Array.isArray(data)) {

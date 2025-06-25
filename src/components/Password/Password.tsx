@@ -11,7 +11,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
   name,
   value,
   onChange,
-  showStrengthIndicator = false,
+  // showStrengthIndicator = false,
   showPasswordToggle = true,
   showLockIcon = true,
   required = false,
@@ -29,9 +29,9 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
     onChange?.(e);
   };
 
-  const calculateStrength = (password: string) => {
-    const checks = [password.length >= 1, /[a-z]/.test(password)];
-  };
+  // const calculateStrength = (password: string) => {
+  //   const checks = [password.length >= 1, /[a-z]/.test(password)];
+  // };
 
   return (
     <FormControl fullWidth margin="normal">

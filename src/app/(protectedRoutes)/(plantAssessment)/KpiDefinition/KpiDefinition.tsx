@@ -23,14 +23,14 @@ import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 const KpiDefinition = () => {
   const params = useParams();
   const router = useRouter();
-
+  const organisationId = params.OrganisationId as string;
+  const plantId = params.PlantId as string;
+  const tenantId = organisationId;
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
   dispatch(setShowAssessmentListSideBar(true));
   dispatch(setPlantAssessmentDepartment(''));
-  const organisationId = params.OrganisationId as string;
-  const plantId = params.PlantId as string;
-  const tenantId = getValueLocalStorage('tenantId');
+
   const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
   const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
@@ -42,13 +42,16 @@ const KpiDefinition = () => {
   const fetchKpis = async () => {
     try {
       const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
+
+      console.log('response', response);
+
       const cleaned = response.map((k: Kpi) => ({
         ...k,
         kpi: k.kpi.trim(),
       }));
       setKpiList(cleaned);
       reset({
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
       });
     } catch (error) {
       console.error('Failed to fetch KPIs:', error);
@@ -57,7 +60,7 @@ const KpiDefinition = () => {
 
   useEffect(() => {
     fetchKpis();
-  }, []);
+  }, [router]);
 
   const handleSave = async (formData: KpiFormValues) => {
     try {
@@ -70,12 +73,12 @@ const KpiDefinition = () => {
           isselected: item.isselected,
         })),
       };
-      const kpisSaveSuccesfully = await selectKPIDefinition(payload).unwrap();
-      if (kpisSaveSuccesfully) {
-        router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
-      }
+      await selectKPIDefinition(payload).unwrap();
+      // if (kpisSaveSuccesfully) {
+      router.push(`/CostProfile/${organisationId}/${plantId}`);
+      // }
     } catch (error) {
-      alert('something went wrong');
+      console.log('error', error);
     }
   };
 
@@ -85,14 +88,29 @@ const KpiDefinition = () => {
     dispatch(markStepCompleted(0));
     dispatch(markStepIncomplete(2)); // If coming back from Planning
   }, [dispatch]);
+
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
       ) : (
-        <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(handleSave)}>
+        <form style={{ height: '99%' }} onSubmit={handleSubmit(handleSave)}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
           </Box>
@@ -170,24 +188,28 @@ const KpiDefinition = () => {
                   className={styles.buttonSection}
                 >
                   <CustomButton
-                    children="Back"
+                    // children="Back"
                     variant="contained"
                     color="primary"
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                  />
+                  >
+                    Back
+                  </CustomButton>
                   <CustomButton
-                    children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
                     variant="contained"
                     icon="save"
                     type="submit"
-                  />
+                  >
+                    {isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                  </CustomButton>
                 </Box>
               </Box>
             </Box>
           </Paper>
-        </Box>
+        </form>
       )}
     </Box>
   );

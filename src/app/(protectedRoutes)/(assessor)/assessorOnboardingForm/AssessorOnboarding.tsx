@@ -378,14 +378,8 @@ function AssessorOnboarding() {
       console.log('error', error);
     }
   };
-  console.log('status stateee', Status);
-  // ✅ Compute activeStep based on focused field index
-  // const activeStep = useMemo(() => {
-  //   const allInputs = [...AssessorFormInputs];
-  //   const index = allInputs.findIndex((input) => input.name === focusedField);
-  //   return index !== -1 ? index : 0;
-  // }, [focusedField]);
 
+  // Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
     // Step 0: If focused on any form field or siriCertificate is selected
     const isFormFieldFocused = AssessorFormInputs.some((input) => input.name === focusedField);
@@ -556,7 +550,15 @@ function AssessorOnboarding() {
                         onFileSelect={(file) => {
                           setSelectedFile(file);
                         }}
-                        buttonColor={selectedFile ? 'success' : 'primary'}
+                        sx={
+                          selectedFile
+                            ? {
+                                backgroundColor: '#4CAF50 !important',
+                                color: '#fff !important',
+                                '&:hover': { backgroundColor: '#388e3c !important' },
+                              }
+                            : {}
+                        }
                       />
                     </Box>
 

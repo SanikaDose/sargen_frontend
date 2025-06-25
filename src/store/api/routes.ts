@@ -82,6 +82,7 @@ export const apiControllerPath = {
     addIntroduction: '/add-introduction',
     addComment: '/add-comment',
     addRoi: '/add-roi',
+    getReportData: '/get-report-data',
   },
   plantAssessment: {
     root: '/plant-assessment',

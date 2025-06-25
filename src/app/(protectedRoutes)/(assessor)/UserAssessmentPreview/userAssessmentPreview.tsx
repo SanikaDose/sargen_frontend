@@ -12,13 +12,14 @@ import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
 import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { Box, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './userAssessmentPreview.module.css';
 import { useStartAssessmentRuleEngineMutation } from './userAssessmentPreviewApi';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
@@ -37,9 +38,25 @@ const UserAssessmentPreview = () => {
   const [startAssessmentRuleEngine] = useStartAssessmentRuleEngineMutation();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   console.log(organisationId);
 
-  const departmentName = ['R&D', 'Production', 'Finance', 'IT', 'HR'];
+  const departmentName = [
+    'R&D',
+    'Planning',
+    'Production',
+    'Quality',
+    'Maintenance',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
+    'Finance',
+    'Utilities',
+    'IT',
+    'Learning & Development',
+    'Management',
+    'HR',
+  ];
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
@@ -126,7 +143,7 @@ const UserAssessmentPreview = () => {
         department: currentQuestionGroup[0]?.department,
         context: currentQuestionGroup[0]?.context,
         question: currentQuestionGroup[0]?.question,
-        answerOption: selectedOption?.answer ?? '',
+        answerOption: selectedOption?.answerOption ?? '',
         answer: selectedOption?.answer ?? '',
         bandWeight: selectedOption?.bandWeight ?? '',
         bandName: selectedOption?.bandName ?? '',
@@ -215,7 +232,7 @@ const UserAssessmentPreview = () => {
                   <AnswerCard
                     key={option.id}
                     answerNumber={idx + 1}
-                    answerText={option.answer ?? ''}
+                    answerText={option.answerOption ?? ''}
                     isSelected={option.isselected}
                     onClick={() => handleAnswerClick(option.id)}
                   />

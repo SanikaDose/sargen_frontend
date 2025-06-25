@@ -6,7 +6,7 @@ export const decodeAndStoreToken = (token: string): Token => {
 
   const typedToken: Token = {
     ...decoded,
-    userType: decoded.userType.map((type: any) => type as UserType),
+    userType: decoded.userType.map((type: string) => type as UserType),
     accessToken: token,
   };
 
@@ -14,7 +14,7 @@ export const decodeAndStoreToken = (token: string): Token => {
   localStorage.setItem('accessToken', token);
   localStorage.setItem('Authorization', token);
   localStorage.setItem('tenantId', decoded.tenantId);
-  localStorage.setItem('userType', typedToken.userType[0] || '');
+  localStorage.setItem('userName', typedToken.userName || '');
 
   return typedToken;
 };

@@ -5,13 +5,7 @@ import React, { useEffect, useRef } from 'react';
 import styles from './style.module.css';
 import { QuillTextAreaProps } from './QuillTextArea.types';
 
-const QuillTextArea: React.FC<QuillTextAreaProps> = ({
-  value,
-  onChange,
-  placeholder = '',
-  readOnly = false,
-  toolbar = 'full',
-}) => {
+const QuillTextArea: React.FC<QuillTextAreaProps> = ({ value, onChange, placeholder = '', readOnly = false, toolbar = 'full' }) => {
   const quillRef = useRef<Quill | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);

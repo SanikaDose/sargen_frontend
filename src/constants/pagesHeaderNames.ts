@@ -1,6 +1,6 @@
 // Add your page name here. Take the refrence of the figma
 
-import { report } from 'process';
+// import { report } from 'process';
 
 export const pagesNames = {
   organisationOnboardingInfo: 'Onboarding/ Organisation',

@@ -15,7 +15,6 @@ import { useEditPlantInfoMutation, useGetPlantByIdQuery, useUploadPlantLogoMutat
 import { useParams, useRouter } from 'next/navigation';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import InfoBox from '@/components/InfoBox/InfoBox';
-import { triggerToast } from '@/app/utils/toast';
 import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
@@ -50,7 +49,6 @@ const EditPlantRegistrationForm = () => {
     control,
     handleSubmit,
     reset,
-    setFocus,
     formState: { errors },
   } = useForm<PlantFormType>();
   const [editPlantInfo, { isLoading }] = useEditPlantInfoMutation();
@@ -105,10 +103,8 @@ const EditPlantRegistrationForm = () => {
 
   const onSubmit = async (data: PlantFormType) => {
     try {
-      const { about, ...body } = data;
       await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
-      // reset();
-      // triggerToast('Plant Updated successfully!', 'success');
+
       router.push('/PlantOverview');
     } catch (error) {
       console.error('Failed to add plant info:', error);
