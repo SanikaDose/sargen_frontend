@@ -1,5 +1,5 @@
 import { RegisterOptions } from 'react-hook-form';
-import { useUploadQuestionnariesMutation } from './AssessorOnboarding.Api';
+import { useUploadQuestionnariesMutation } from './AssessorOnbordingSetting.Api';
 export type AssessorFormType = {
   firstName: string;
   lastName: string;

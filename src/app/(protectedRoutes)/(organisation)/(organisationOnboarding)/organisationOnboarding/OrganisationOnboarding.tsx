@@ -99,7 +99,7 @@ function OrganizationOnbording() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
-  // ? Compute activeStep based on focused field index
+  // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
     const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     const index = allInputs.findIndex((input) => input.name === focusedField);
@@ -139,7 +139,7 @@ function OrganizationOnbording() {
   const onSubmit = async (data: OrgOnboardType) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
-      router.push('/AddContactPerson');
+      router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
     }

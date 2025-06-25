@@ -15,7 +15,7 @@ export interface DropdownWithLabelProps {
   value: string;
   onChange: (event: SelectChangeEvent<string>) => void;
   onFocus?: () => void;
-  inputRef?: React.Ref<any>;
+  inputRef?: React.Ref<HTMLInputElement>;
   error?: boolean;
   helperText?: React.ReactNode;
 }

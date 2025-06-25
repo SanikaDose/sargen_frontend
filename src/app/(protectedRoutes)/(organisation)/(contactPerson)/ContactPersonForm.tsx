@@ -34,6 +34,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
+
   const { data: existingData, isFetching } = useGetPointOfContactQuery(tenantId ?? '', {
     skip: !editMode,
   });
@@ -155,7 +156,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       console.error('Error submitting form', err);
     }
   };
-                                                                                              
+
   const handleSaveClick = async () => {
     // Trigger validation for all fields when save is clicked
     await trigger();

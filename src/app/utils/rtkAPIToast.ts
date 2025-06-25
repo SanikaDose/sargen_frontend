@@ -28,10 +28,10 @@ export async function rtkAPIToast<T>(
     // const { message, error } = result.data;
     const message = result?.data?.message ?? successMessage;
 
-
     const dynamicMessage = message || successMessage;
 
     dispatch(showToast({ message: dynamicMessage, severity: 'success' }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     dispatch(
       showToast({

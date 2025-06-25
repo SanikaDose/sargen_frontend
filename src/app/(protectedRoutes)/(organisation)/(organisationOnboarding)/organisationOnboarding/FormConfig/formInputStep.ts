@@ -21,10 +21,10 @@ export const OrgFormInputs: OrgFormInput[] = [
     required: true,
     rules: {
       required: 'Website is required',
-      pattern: {
-        value: /^https?:\/\/[\w.-]+\.[a-z]{2,}$/i,
-        message: 'Enter a valid website URL (starting with http:// or https://)',
-      },
+      // pattern: {
+      //   value: /^https?:\/\/[\w.-]+\.[a-z]{2,}$/i,
+      //   message: 'Enter a valid website URL (starting with http:// or https://)',
+      // },
     },
   },
   {
