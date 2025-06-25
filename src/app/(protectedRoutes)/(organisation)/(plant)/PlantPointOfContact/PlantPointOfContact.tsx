@@ -98,7 +98,7 @@ export default function PlantPointOfContact() {
             <Box className={styles.formFieldsBox}>
               <Grid container spacing={1}>
                 {plantPointOfContactFormInputs.map((input, index) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
+                  <Grid key={index} size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 6 }}>
                     <Controller
                       name={input.name as keyof PlantPointOfContactType}
                       control={control}
