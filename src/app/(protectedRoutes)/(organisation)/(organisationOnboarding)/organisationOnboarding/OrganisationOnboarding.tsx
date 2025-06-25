@@ -1,11 +1,13 @@
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
+import { setPageNameHeader } from '@/store/globalSlice';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -14,8 +16,6 @@ import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
 import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
-import { setPageNameHeader } from '@/store/globalSlice';
-import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 
 const steps = [
   'Company Name',
@@ -30,10 +30,10 @@ const steps = [
 
 import InfoBox from '@/components/InfoBox/InfoBox';
 import {
+  useGetLogoQuery,
   useGetOrganizationInfoQuery,
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
-  useGetLogoQuery,
 } from './OrganisationOnboardingAPi';
 function OrganizationOnbording() {
   const dispatch = useDispatch();
