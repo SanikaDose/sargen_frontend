@@ -107,7 +107,7 @@ function AssessorOnboarding() {
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
   const [Status, setStatus] = useState<string | null>(null);
-  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
+  const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
 
   const readonlyFields = ['firstName', 'lastName', 'email'];
   //reload view

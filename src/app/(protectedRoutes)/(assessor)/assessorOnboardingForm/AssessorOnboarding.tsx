@@ -60,12 +60,7 @@ function AssessorOnboarding() {
   useEffect(() => {
     dispatch(setPageNameHeader('Assessor Onboarding'));
   }, [dispatch]);
-  const {
-    control,
-    handleSubmit,
-
-    reset,
-  } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -107,8 +102,8 @@ function AssessorOnboarding() {
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
   const [Status, setStatus] = useState<string | null>(null);
-  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
-
+  const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
+  console.log('existing dataa', existingData);
   //reload view
   // useEffect(() => {
   //   if (existingData && existingData.data[0]?.formData) {
@@ -194,6 +189,14 @@ function AssessorOnboarding() {
   //     }
   //   }
   // }, [existingData, reset, isFetching]);
+  useEffect(() => {
+    if (existingData && existingData.data[0]?.formData) {
+      const formData = existingData.data[0].formData;
+      if (formData.userLogo) {
+        setLogoUrl(formData.userLogo);
+      }
+    }
+  }, [existingData]);
 
   useEffect(() => {
     const populateFormAndFile = async () => {
@@ -216,9 +219,9 @@ function AssessorOnboarding() {
           });
 
           // Set logo
-          if (formData.userLogo) {
-            setLogoUrl(formData.userLogo);
-          }
+          // if (formData.userLogo) {
+          //   setLogoUrl(formData.userLogo);
+          // }
 
           // Fetch certificate if available
           const fileUrl = formData.siriCertificate;
@@ -343,7 +346,6 @@ function AssessorOnboarding() {
   };
   //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
-    console.log('submot button clicked--------------------');
     if (!selectedFile) {
       triggerToast('Please add siriCertificate', 'error');
     }

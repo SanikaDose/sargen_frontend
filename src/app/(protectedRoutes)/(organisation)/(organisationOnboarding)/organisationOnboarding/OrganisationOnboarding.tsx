@@ -35,6 +35,7 @@ import {
   useUploadOrganizationLogoMutation,
   useGetLogoQuery,
 } from './OrganisationOnboardingAPi';
+
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -73,6 +74,7 @@ function OrganizationOnbording() {
       uom: '',
       numberOfEmployees: '',
       about: '',
+      revenueUnit: '',
     },
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -80,21 +82,32 @@ function OrganizationOnbording() {
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
+      console.log('orgnaization get data', org);
+      const fullRevenue = Number(org.revenue || 0);
+
+      // Default to 1 if no match found
+      let unit = 1;
+      let normalizedRevenue = fullRevenue;
+
+      const revenueUnits = [10000000, 100000, 1000, 1];
+
+      for (const u of revenueUnits) {
+        if (fullRevenue % u === 0 && fullRevenue / u < 10000) {
+          unit = u;
+          normalizedRevenue = fullRevenue / u;
+          break;
+        }
+      }
+      console.log('uniii', unit);
       reset({
         companyName: org.name || '',
         website: org.website || '',
         gstin: org.gstin || '',
         country: org.country || '',
-        revenue: org.revenue || '',
-        // revenue:
-        //   org.revenue && parseFloat(org.revenue) !== 0
-        //     ? parseFloat(org.revenue).toString().includes('.')
-        //       ? parseFloat(org.revenue).toString()
-        //       : parseFloat(org.revenue).toFixed(0) // show as "123" instead of "123.00"
-        //     : '',
+        revenue: normalizedRevenue.toString() || '',
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
-        //  numberOfEmployees: org.numberOfEmployees && Number(org.numberOfEmployees) !== 0 ? org.numberOfEmployees : '',
+        revenueUnit: unit.toString(),
         about: org.about || '',
       });
     }
@@ -144,8 +157,18 @@ function OrganizationOnbording() {
 
   //on form submit
   const onSubmit = async (data: OrgOnboardType) => {
+    const { revenue, revenueUnit, ...rest } = data;
+
+    const finalRevenue = Number(revenue) * Number(revenueUnit);
+
+    const payload = {
+      ...rest,
+      revenue: finalRevenue.toString(), // Or keep as number if required
+    };
+    console.log('updated addda', payload);
+
     try {
-      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
+      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: payload }).unwrap();
       router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
@@ -208,12 +231,25 @@ function OrganizationOnbording() {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )} */}
                                     </>
+                                  ) : input.isRevenueUnit ? (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={[
+                                        { label: 'Thousand', value: '1000' },
+                                        { label: 'Lakh', value: '100000' },
+                                        { label: 'Crore', value: '10000000' },
+                                      ].map(({ label, value }) => ({
+                                        label: label,
+                                        value: value,
+                                      }))}
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
                                   ) : (
                                     <>
                                       <InputWithLabel
@@ -222,20 +258,20 @@ function OrganizationOnbording() {
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
                                         value={
-                                          ['numberOfEmployees'].includes(input.name)
+                                          ['numberOfEmployees', 'revenue'].includes(input.name)
                                             ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
                                             : field.value
                                         }
                                         onChange={(e) => {
                                           const value = e.target.value;
 
-                                          if (['numberOfEmployees'].includes(input.name)) {
+                                          if (['numberOfEmployees', 'revenue'].includes(input.name)) {
                                             const rawValue = value.replace(/,/g, '');
                                             if (/^\d*$/.test(rawValue)) {
                                               field.onChange(rawValue);
                                             }
                                           } else {
-                                            field.onChange(value); // ✅ Ensures companyName, website, revenue are editable
+                                            field.onChange(value);
                                           }
                                         }}
                                         onFocus={() => setFocusedField(input.name)}
@@ -244,11 +280,6 @@ function OrganizationOnbording() {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )} */}
                                     </>
                                   )}
                                 </>

@@ -64,11 +64,21 @@ export const OrgFormInputs: OrgFormInput[] = [
     placeholder: 'Enter Revenue',
     required: true,
     rules: {
-      required: 'Revenue is required',
+      required: 'Organization Revenue is required',
       pattern: {
         value: /^[0-9]+$/,
         message: 'Enter a valid number',
       },
+    },
+  },
+  {
+    name: 'revenueUnit',
+    label: 'Revenue Unit',
+    placeholder: 'Select Revenue Unit',
+    isRevenueUnit: true,
+    required: true,
+    rules: {
+      required: 'Revenue unit is required',
     },
   },
   {
@@ -94,6 +104,7 @@ export const OrgFormInputs: OrgFormInput[] = [
       },
     },
   },
+
   // {
   //   name: 'about',
   //   label: 'About Organization',

@@ -8,6 +8,7 @@ export type OrgOnboardType = {
   uom: string;
   numberOfEmployees: string;
   about: string;
+  revenueUnit: string;
 };
 
 export interface OrgFormInput {
@@ -18,5 +19,6 @@ export interface OrgFormInput {
   required?: boolean;
   isCountry?: boolean;
   isCurrency?: boolean;
+  isRevenueUnit?: boolean;
   rules?: RegisterOptions<OrgOnboardType, keyof OrgOnboardType>;
 }
