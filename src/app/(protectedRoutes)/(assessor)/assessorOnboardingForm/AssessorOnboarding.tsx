@@ -14,7 +14,6 @@ import { AssessorFormType, UploadFileMetadata, UploadFunction } from './Assessor
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useRouter } from 'next/navigation';
 import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
-import { certificateData, fileValues } from './FormConfig/fileInput';
 import FileActionButton from '@/components/FileActionButton/FileActionButton';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import {
@@ -33,7 +32,6 @@ import {
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
   useViewMetadataFileMutation,
-  useGetLogoQuery,
   useGetAssessorInfoQuery,
   useGetOnboardingStatusQuery,
 } from './AssessorOnboarding.Api';
@@ -46,6 +44,7 @@ import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
+import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 
 const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
   (label) => ({ label }),
@@ -62,7 +61,7 @@ function AssessorOnboarding() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+
     reset,
   } = useForm({
     defaultValues: {
@@ -103,10 +102,10 @@ function AssessorOnboarding() {
   const [viewMetadataFile] = useViewMetadataFileMutation();
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
-
-  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
   const { data: orgStatus } = useGetOnboardingStatusQuery(tenantId ?? '');
   console.log('ornboding status', orgStatus);
+  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
+
   const readonlyFields = ['firstName', 'lastName', 'email'];
   //reload view
   useEffect(() => {
@@ -138,7 +137,7 @@ function AssessorOnboarding() {
         certificationYear: formData.certificationYear || '',
       });
     }
-  }, [existingData, reset, tenantId, isFetching]);
+  }, [existingData, reset, isFetching]);
 
   useEffect(() => {
     const fetchFile = async () => {
@@ -216,9 +215,8 @@ function AssessorOnboarding() {
     }
 
     try {
-      const response = await uploadFunction({ tenantId, file }).unwrap();
+      const response = await uploadFunction({ tenantId: tenantId ?? '', file }).unwrap();
       console.log('uploaded resp', response); // NOW you'll see it
-      console.log('ornboding status', orgStatus);
 
       if (response?.status && response?.data?.[0]) {
         const fullMetadataObject = response.data[0];
@@ -253,7 +251,7 @@ function AssessorOnboarding() {
   };
   //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
-    console.log('submot button clicked');
+    console.log('submot button clicked--------------------');
     if (!selectedFile) {
       triggerToast('Please add siriCertificate', 'error');
     }
@@ -269,29 +267,31 @@ function AssessorOnboarding() {
         siriCertificate: selectedFile,
       }).unwrap();
 
+      if (orgStatus?.onboardingStatus) {
+        dispatch(setOnboardingStatus(orgStatus.onboardingStatus));
+      }
       if (orgStatus?.onboardingStatus === 'COMPLETED') {
         router.push('/AssignedPlantsList');
       }
 
-      if (orgStatus?.onboardingStatus === 'STARTED') {
-        triggerToast('Please Fill All The DAta', 'error');
+      if (orgStatus?.onboardingStatus === 'STARTED' || orgStatus?.onboardingStatus === 'NOT_STARTED') {
+        triggerToast('Please Fill All The Data', 'error');
       }
     } catch (error) {
       console.log('error', error);
     }
   };
 
-  // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...AssessorFormInputs];
-
-  // ✅ Compute activeStep based on focused field index
+  // Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...AssessorFormInputs];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
-  // ✅ Compute completed steps where value length > 5
+  //  Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
+    const allInputs = [...AssessorFormInputs];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof AssessorFormType];
 
@@ -421,7 +421,7 @@ function AssessorOnboarding() {
                         onFileSelect={(file) => {
                           setSelectedFile(file);
                         }}
-                        //    buttonColor={selectedFile ? theme.palette.background.paper : 'primary'}
+                        buttonColor={selectedFile ? 'success' : 'primary'}
                       />
                     </Box>
 
@@ -480,7 +480,6 @@ function AssessorOnboarding() {
                         <TableBody>
                           {fileTypes.map((label, index) => {
                             const backendKey = fileUploadKeyMap[label];
-                            const cert = certificateData[index]; // safely pull from data if exists
 
                             return (
                               <TableRow key={index}>

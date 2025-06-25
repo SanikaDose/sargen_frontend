@@ -6,7 +6,7 @@ import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
-import { Box, FormControl, Grid, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -16,7 +16,7 @@ import styles from './OrganisationOnboarding.module.css';
 import { OrgOnboardType } from './OrganisationOnboarding.types';
 import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
-import { triggerToast } from '@/app/utils/toast';
+
 const steps = [
   'Company Name',
   'Company website',
@@ -42,13 +42,13 @@ function OrganizationOnbording() {
     dispatch(setPageNameHeader('Organization Onboarding'));
   }, [dispatch]);
   const router = useRouter();
-  const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+  const [submitOrganizationInfo, { isLoading }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
 
-  //const tenantId = getValueLocalStorage('tenantId');
-  const tenantId = 'abc-1f804b89-5107-412b-b163-d81d81eaa90e';
+  const tenantId = getValueLocalStorage('tenantId');
+
   const { data: existingData, isFetching } = useGetOrganizationInfoQuery(tenantId ?? '');
   const { data: logoData } = useGetLogoQuery({ tenantId: tenantId ?? '' });
   console.log(logoData);
@@ -62,7 +62,7 @@ function OrganizationOnbording() {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    // formState: { errors },
   } = useForm({
     defaultValues: {
       companyName: '',
@@ -78,7 +78,7 @@ function OrganizationOnbording() {
     reValidateMode: 'onChange',
   });
   useEffect(() => {
-    if (tenantId && existingData?.data && !isFetching) {
+    if (existingData?.data && !isFetching) {
       const org = existingData.data;
       reset({
         companyName: org.name || '',
@@ -90,28 +90,25 @@ function OrganizationOnbording() {
         numberOfEmployees: org.numberOfEmployees || '',
         about: org.about || '',
       });
-      triggerToast('Organization info fetched successfully', 'success');
     }
-    if (tenantId && logoData?.logoUrl) {
+    if (logoData?.logoUrl) {
       setLogoUrl(logoData.logoUrl);
-      triggerToast('Organization Logo fetched successfully', 'success');
     }
   }, [existingData, isFetching, logoData, reset]);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
-  // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
-
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
+    const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
 
@@ -134,22 +131,18 @@ function OrganizationOnbording() {
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.log('');
+      console.log('error', error);
     }
   };
 
   //on form submit
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: OrgOnboardType) => {
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
-      router.push('/AddContactPerson');
+      router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
     }
-  };
-
-  const onError = (errors: any) => {
-    console.error('Validation Errors:', errors);
   };
 
   return (
@@ -194,11 +187,11 @@ function OrganizationOnbording() {
                                         placeholder={input.placeholder}
                                         options={
                                           input.isCountry
-                                            ? CountryOptions.map(({ name, code }) => ({
+                                            ? CountryOptions.map(({ name }) => ({
                                                 label: name,
                                                 value: name,
                                               }))
-                                            : currencyOptions.map(({ name, code }) => ({
+                                            : currencyOptions.map(({ name }) => ({
                                                 label: name,
                                                 value: name,
                                               }))
