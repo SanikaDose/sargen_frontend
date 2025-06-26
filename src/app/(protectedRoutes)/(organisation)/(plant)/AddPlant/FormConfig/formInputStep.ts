@@ -64,6 +64,7 @@ export const plantFormInputs: PlantFormInput[] = [
   },
   {
     name: 'currencyType',
+    placeholder: 'Enter Currency',
     label: 'Currency Type',
     isCurrency: true,
     required: true,
