@@ -5,7 +5,6 @@ import styles from './Preview.module.css';
 import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useDispatch } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';

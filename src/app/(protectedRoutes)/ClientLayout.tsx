@@ -40,7 +40,6 @@ import { ICONS } from '../utils/iconsMap';
 import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
 import { useLazyGetPointOfContactQuery } from './(organisation)/(contactPerson)/ContactPersonApi';
 import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
-import Loader from '@/components/Loader/Loader';
 
 const drawerWidth = 240;
 
@@ -135,7 +134,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const userName = useSelector((state: RootState) => state.global.userFullName);
   const userDesignation = useSelector((state: RootState) => state.global.userDesignation);
   const userLogoUrl = useSelector((state: RootState) => state.global.userLogoUrl);
-  const [triggerGetPointOfContact, { data: userPointOfConnectData, isFetching }] = useLazyGetPointOfContactQuery();
+  const [triggerGetPointOfContact, { data: userPointOfConnectData }] = useLazyGetPointOfContactQuery();
 
   // Derived values
   const open = isDesktop ? true : mobileOpen;

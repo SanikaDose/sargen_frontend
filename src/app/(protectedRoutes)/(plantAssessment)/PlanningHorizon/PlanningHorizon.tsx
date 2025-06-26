@@ -7,7 +7,6 @@ import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption } from '../plantAssement.model';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import Stepper from '@/components/Stepper/Stepper';
@@ -171,10 +170,11 @@ const PlanningHorizon = () => {
                     container
                     spacing={2}
                     sx={{
-                      height: '100%',
-                      justifyContent: 'center',
+                      width: '100%',
+
                       alignItems: 'center',
-                      mt: 2,
+                      display: 'flex',
+                      justifyContent: 'cenetr',
                     }}
                   >
                     <Controller
@@ -186,11 +186,41 @@ const PlanningHorizon = () => {
                             const isSelected = field.value === option.id;
 
                             return (
-                              <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  width: '40%',
+                                  alignItems: 'center',
+                                  marginLeft: '80px',
+                                  marginTop: '15px',
+                                }}
+                              >
                                 <Card label={option.planningHorizon} isSelected={isSelected} onToggle={() => field.onChange(option.id)} />
-                              </Grid>
+                              </Box>
                             );
                           })}
+
+                          {/* <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 4 }} sx={{ height: '10%' }}> */}
+                          {/* <Box
+                            sx={{
+                              display: 'flex',
+                              width: '40%',
+                              gap: 14,
+                              height: '70%',
+                              // marginTop: 5,
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Card label="ABC" isSelected={true} />
+                            <Card label="ABC" isSelected={true} />
+                            <Card label="ABC" isSelected={true} />
+                          </Box> */}
+                          {/* <Box sx={{ display: 'flex', width: '50%', gap: 4, height: '10%', marginTop: 5 }}>
+                         
+                          </Box> */}
+
+                          {/* </Grid> */}
                         </>
                       )}
                     />

@@ -35,7 +35,7 @@ const RegisterPage = () => {
     shouldUnregister: true,
   });
 
-  const [, setTypeOfUser] = useState<string>('organisation');
+  const [typeOfUser, setTypeOfUser] = useState<string>('organisation');
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{8,16}$/;
   const validatePassword = useCallback(
@@ -165,28 +165,28 @@ const RegisterPage = () => {
           </Box>
           {/* )} */}
 
-          {/* {typeOfUser === 'organisation' && ( */}
-          <Controller
-            name="organisationName"
-            control={control}
-            rules={{
-              required: 'Organisation name is required',
-              minLength: { value: 2, message: 'Organisation name must be at least 2 characters' },
-              maxLength: { value: 100, message: 'Organisation name must be at most 100 characters' },
-            }}
-            render={({ field, fieldState }) => (
-              <InputWithLabel
-                {...field}
-                value={field.value || ''}
-                label="Organisation Name"
-                name="organisationName"
-                placeholder="Enter organisation name"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-              />
-            )}
-          />
-          {/* )} */}
+          {typeOfUser === 'organisation' && (
+            <Controller
+              name="organisationName"
+              control={control}
+              rules={{
+                required: 'Organisation name is required',
+                minLength: { value: 2, message: 'Organisation name must be at least 2 characters' },
+                maxLength: { value: 100, message: 'Organisation name must be at most 100 characters' },
+              }}
+              render={({ field, fieldState }) => (
+                <InputWithLabel
+                  {...field}
+                  value={field.value || ''}
+                  label="Organisation Name"
+                  name="organisationName"
+                  placeholder="Enter organisation name"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+          )}
 
           <Controller
             name="email"
