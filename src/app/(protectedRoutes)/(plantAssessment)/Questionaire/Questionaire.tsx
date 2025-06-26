@@ -1,5 +1,4 @@
 'use client';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { triggerToast } from '@/app/utils/toast';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { CustomButton } from '@/components/CustomButton/CustomButton';

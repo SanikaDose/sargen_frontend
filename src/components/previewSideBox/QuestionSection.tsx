@@ -2,12 +2,14 @@
 
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import styles from './questionSection.module.css';
+import { QuestionVerificationStatus } from '@/constants/enums';
 
 type Props = {
   questions: Question[];
   selectedQuestionId?: string;
   completedIds: string[];
   onSelect: (questionId: string) => void;
+  verificationStatus?: string;
 };
 
 const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
@@ -18,7 +20,19 @@ const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, compl
         const isSelected = q.key === selectedQuestionId;
         const isCompleted = completedIds.includes(q.key);
 
-        const classNames = [styles.questionButton, isCompleted ? styles.reviewed : '', isSelected ? styles.selected : '']
+        // Add verification status check
+        const isVerified = q.verificationStatus === QuestionVerificationStatus.ASSESSOR_VERIFIED;
+        const isNotVerified = q.verificationStatus === QuestionVerificationStatus.NOT_VERIFIED;
+        const isFlagged = q.verificationStatus === QuestionVerificationStatus.ASSESSOR_FLAGGED;
+
+        const classNames = [
+          styles.questionButton,
+          isCompleted ? styles.reviewed : '',
+          isSelected ? styles.selected : '',
+          q.verificationStatus && isVerified ? styles.verified : '',
+          q.verificationStatus && isNotVerified ? styles.notVerified : '',
+          q.verificationStatus && isFlagged ? styles.isFlagged : '',
+        ]
           .filter(Boolean)
           .join(' ');
 

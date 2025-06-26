@@ -18,7 +18,21 @@ export const RuleEngineApi = protectedApi.injectEndpoints({
         });
       },
     }),
+    changeQuestionsStatus: builder.mutation({
+      query: (body) => ({
+        url: `${apiRoutes.plantAssessment.root}${apiRoutes.plantAssessment.changeQuestionsStatus}`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['SpecificPlantInfo'],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Question Verified Successfully!',
+          errorMessage: 'Failed to Verify Question!',
+        });
+      },
+    }),
   }),
 });
 
-export const { useStartAssessmentRuleEngineMutation } = RuleEngineApi;
+export const { useStartAssessmentRuleEngineMutation, useChangeQuestionsStatusMutation } = RuleEngineApi;

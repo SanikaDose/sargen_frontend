@@ -60,6 +60,7 @@ export const apiRoutes = {
     getPlanningHorizon: 'get-planning-horizon',
     selectPlanningHorizon: 'select-planning-horizon',
     changeAssessmentStatus: 'change-assessment-status',
+    changeQuestionsStatus: '/change-question-status',
   },
   assessorOnboarding: {
     root: 'assessor-onboarding',
