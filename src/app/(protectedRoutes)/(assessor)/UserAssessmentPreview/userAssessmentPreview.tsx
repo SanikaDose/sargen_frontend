@@ -42,10 +42,12 @@ const UserAssessmentPreview = () => {
   const [startAssessmentRuleEngine] = useStartAssessmentRuleEngineMutation();
   const [changeQuestionsStatus] = useChangeQuestionsStatusMutation();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
-  console.log(organisationId);
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorAssessmentQuestionnairePreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
 
   const departmentName = [
     'R&D',

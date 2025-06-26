@@ -16,6 +16,7 @@ import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './Pl
 import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
 import styles from './PlantOverview.module.css';
+
 export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -74,7 +75,8 @@ export default function PlantOverview() {
 
   return (
     <div className={styles.wrapper}>
-      <Typography className={styles.headingSection}>
+      {/* FIXED: Added component="div" to prevent Typography from rendering as <p> */}
+      <Typography component="div" className={styles.headingSection}>
         <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
           <Paper

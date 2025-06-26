@@ -515,5 +515,5 @@ export const {
 
   useViewMetadataFileMutation,
   useGetLogoQuery,
-  useGetOnboardingStatusQuery,
+  useLazyGetOnboardingStatusQuery,
 } = assessorApi;

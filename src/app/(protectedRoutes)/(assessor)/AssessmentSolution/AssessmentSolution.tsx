@@ -31,9 +31,12 @@ const AssessmentSolution = () => {
   const [groupedSolutions, setGroupedSolutions] = useState<Record<string, Solution[]>>({});
   const [selectedSolutions, setSelectedSolutions] = useState<Set<string>>(new Set());
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, []);
 
   useEffect(() => {
     if (data && Array.isArray(data)) {

@@ -3,6 +3,8 @@ import { assessorExtraList, assessorOnboardedMenuList } from '@/constants/sideBa
 import { assessorOnboardingMenuList } from '@/constants/sideBarLists/assessorOnboardingList';
 import { organisationExtraMenuList, organisationOnboardedMenuList } from '@/constants/sideBarLists/organisationOnboardedList';
 import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
+import { assessorUserAssessmentList, platformUserAssessmentList } from '@/constants/sideBarLists/plantAssessmentMenuList';
+import { SidebarItem } from '@/constants/sideBarLists/sideBarList.type';
 import {
   setExtraListItems,
   setSideBarListItem,
@@ -11,15 +13,23 @@ import {
   setUserFullName,
   setUserLogoUrl,
 } from '@/store/globalSlice';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, List } from '@mui/material';
+
 import { RootState } from '@/store/store';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
@@ -29,18 +39,10 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
-import { assessorUserAssessmentList, platformUserAssessmentList } from '@/constants/sideBarLists/plantAssessmentMenuList';
-import { SidebarItem } from '@/constants/sideBarLists/sideBarList.type';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MenuIcon from '@mui/icons-material/Menu';
-import IconButton from '@mui/material/IconButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import { ICONS } from '../utils/iconsMap';
 import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
 import { useLazyGetPointOfContactQuery } from './(organisation)/(contactPerson)/ContactPersonApi';
 import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
-import Loader from '@/components/Loader/Loader';
 
 const drawerWidth = 240;
 
@@ -213,7 +215,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
       dispatch(setUserFullName(fullName));
       dispatch(setUserDesignation(userPointOfConnectData.data.designation));
-      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
+      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePicUrl));
       console.log('fullName', userPointOfConnectData.data);
     }
   }, [userPointOfConnectData, dispatch]);
@@ -298,6 +300,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     dispatch(setSideBarListItem(updatedList));
   };
+
+  console.log('sidebar list', sideBarListItems);
+  console.log('sideBarListItemsForAssessment', sideBarListItemsForAssessment);
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -420,6 +425,40 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
+
+            {/* {sideBarListItemsForAssessment.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
+                sx={{
+                  pl: 0,
+                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                }}
+              >
+                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                  <ListItemIcon
+                    sx={{
+                      mr: 2,
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                    }}
+                  >
+                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))} */}
           </>
           {extraListItems &&
             extraListItems.map((item) => (
@@ -455,7 +494,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
+          {/* {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
             <>
               <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
                 Assessment menu
@@ -503,95 +542,69 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 );
               })}
             </>
-          )}
+          )} */}
 
-          {showAssessmentListSideBar &&
-            onboardingStatus === OnboardingStatus.COMPLETED &&
-            userType &&
-            userType[0] === UserType.ASSESSOR && (
-              <>
-                <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
-                  Assessment menu
+          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
+            <Accordion
+              defaultExpanded
+              sx={{
+                backgroundColor: 'transparent',
+                boxShadow: 'none', // optional: remove shadow
+                border: 'none',
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+                  Assessment Menu
                 </Typography>
-                {sideBarListItemsForAssessment.map((item) => {
-                  // Check if the current pathname contains the matchKeyword
-                  const activeSegment = pathName.split('/')[1]?.toLowerCase();
-                  const isDepartment = !item.linkRoute.startsWith('/');
+              </AccordionSummary>
+              <AccordionDetails>
+                <List disablePadding>
+                  {sideBarListItemsForAssessment.map((item) => {
+                    const activeSegment = pathName.split('/')[1]?.toLowerCase();
+                    const isDepartment = !item.linkRoute.startsWith('/');
 
-                  const isActive = isDepartment
-                    ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
-                    : activeSegment === item.matchKeyword?.toLowerCase();
-                  return (
-                    <ListItem
-                      key={item.text}
-                      disablePadding
-                      sx={{
-                        pl: 0,
-                        backgroundColor: isActive ? 'secondary.main' : 'transparent',
-                      }}
-                    >
-                      <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
-                        <ListItemIcon
-                          sx={{
-                            mr: 2,
-                            color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
-                          }}
-                        >
-                          {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
-                              }}
-                            >
-                              {item.text}
-                            </Typography>
-                          }
-                        />
-                      </ListItemButton>
-                    </ListItem>
-                  );
-                })}
-              </>
-            )}
+                    const isActive = isDepartment
+                      ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
+                      : activeSegment === item.matchKeyword?.toLowerCase();
 
-          {extraListItems &&
-            extraListItems.map((item) => (
-              <ListItem
-                key={item.text}
-                disablePadding
-                sx={{
-                  pl: 0,
-                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
-                }}
-              >
-                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
-                  <ListItemIcon
-                    sx={{
-                      mr: 2,
-                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
-                    }}
-                  >
-                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography
-                        variant="caption"
+                    return (
+                      <ListItem
+                        key={item.text}
+                        disablePadding
                         sx={{
-                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                          backgroundColor: isActive ? 'secondary.main' : 'transparent',
                         }}
                       >
-                        {item.text}
-                      </Typography>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                        <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                          <ListItemIcon
+                            sx={{
+                              mr: 2,
+                              color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                            }}
+                          >
+                            {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                                }}
+                              >
+                                {item.text}
+                              </Typography>
+                            }
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          )}
         </Box>
         <Box sx={{ flexGrow: 1 }} />
         <Box

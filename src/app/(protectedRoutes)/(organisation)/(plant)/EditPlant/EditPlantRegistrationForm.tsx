@@ -44,6 +44,8 @@ const EditPlantRegistrationForm = () => {
 
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
+  console.log('organisationId', organisationId);
+  console.log('plant id', plantId);
 
   const {
     control,
@@ -93,7 +95,7 @@ const EditPlantRegistrationForm = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPlantLogo({ organisationId, plantId, formData }).unwrap();
+      await uploadPlantLogo({ tenantId: organisationId ?? '', plantId, formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {

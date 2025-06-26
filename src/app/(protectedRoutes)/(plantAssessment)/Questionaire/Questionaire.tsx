@@ -38,8 +38,11 @@ const Questionaire = () => {
   const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
-  dispatch(setShowAssessmentListSideBar(true));
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
+    dispatch(setShowAssessmentListSideBar(true));
+  }, []);
   const plantId = params.PlantId as string;
   const organisationId = (params.OrganisationId ?? params.organisationId) as string;
 

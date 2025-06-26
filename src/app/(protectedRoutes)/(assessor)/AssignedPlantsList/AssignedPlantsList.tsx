@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Divider, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../(organisation)/(plant)/PlantOverview/PlantOverview.module.css';
 import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
@@ -9,7 +9,7 @@ import AssessorPlantInfoCard from './AssessorPlantInfoCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useGetAllAssignPlantQuery } from './AssignedPlantsListApi';
 import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import Loader from '@/components/Loader/Loader';
 import { AssignedPlant } from './AssignPlantList.type';
@@ -19,7 +19,11 @@ export default function AssignedPlantsList() {
   const assessorId = getValueLocalStorage('tenantId') || '';
   const [searchValue, setSearchValue] = useState('');
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorAssignedPlants));
+
+  useEffect(() => {
+    dispatch(setShowAssessmentListSideBar(false));
+    dispatch(setPageNameHeader(pagesNames.assessorAssignedPlants));
+  }, [dispatch]);
 
   const { data: plantInfo, isLoading } = useGetAllAssignPlantQuery(assessorId ?? '', {
     skip: !assessorId,
@@ -34,7 +38,8 @@ export default function AssignedPlantsList() {
 
   return (
     <div className={styles.wrapper}>
-      <Typography className={styles.headingSection}>
+      {/* Changed Typography component to "div" to avoid p > form nesting */}
+      <Typography component="div" className={styles.headingSection}>
         <Box className={styles.heading}>Assigned Plants List</Box>
         <Box sx={{ padding: 1 }}>
           <Paper
