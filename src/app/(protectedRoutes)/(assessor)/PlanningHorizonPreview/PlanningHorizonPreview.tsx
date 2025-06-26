@@ -31,6 +31,9 @@ const PlanningHorizonPreview = () => {
     dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(2));
+    dispatch(markStepCompleted(1));
+    dispatch(markStepIncomplete(3));
   }, [dispatch]);
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
@@ -154,12 +157,6 @@ const PlanningHorizonPreview = () => {
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
-
-  useEffect(() => {
-    dispatch(setActiveStep(2));
-    dispatch(markStepCompleted(1));
-    dispatch(markStepIncomplete(3)); // coming back from Industry
-  }, [dispatch]);
 
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
