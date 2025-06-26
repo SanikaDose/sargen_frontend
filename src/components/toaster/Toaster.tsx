@@ -19,8 +19,8 @@ export default function Toaster() {
     dispatch(hideToast());
   };
   return (
-    <div>
-      <Slide in={open} direction={'left'} mountOnEnter unmountOnExit>
+    <>
+      {/* <Slide in={open} direction={'left'} mountOnEnter unmountOnExit> */}
         <Snackbar
           className={styles.outerSnackbar}
           anchorOrigin={{
@@ -30,6 +30,9 @@ export default function Toaster() {
           open={open}
           autoHideDuration={6000}
           onClose={handleClose}
+  slots={{ transition: Slide }}
+  slotProps={{ transition: { direction: 'left' } }}
+
           sx={{
             top: '65px',
             right: '10px',
@@ -75,7 +78,7 @@ export default function Toaster() {
             {message}
           </Alert>
         </Snackbar>
-      </Slide>
-    </div>
+      {/* </Slide> */}
+    </>
   );
 }
