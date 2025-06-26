@@ -1,4 +1,5 @@
 export interface Question {
+  groupKey: string;
   verificationStatus: string;
   questionNo: number;
   key: string | undefined;
