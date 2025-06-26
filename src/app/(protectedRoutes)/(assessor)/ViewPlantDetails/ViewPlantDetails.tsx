@@ -39,13 +39,17 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const assessorId = useSelector((state: RootState) => state.tokenDecode.decodedToken?.tenantId);
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
-  dispatch(setPlantAssessmentDepartment(''));
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
+    dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // useEffect(() => {
+  //   dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
+  // }, [dispatch]);
 
   const { data, isFetching, isError } = useGetSpecificPlantInfoQuery({ organisationId, plantId }, { skip: !organisationId || !plantId });
 

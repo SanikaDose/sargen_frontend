@@ -13,7 +13,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
@@ -23,16 +23,22 @@ const CostProfile = () => {
   const router = useRouter();
 
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  const stepperState = useSelector((state: RootState) => state.stepper);
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(3));
+    dispatch(markStepCompleted(2)); // KPI Definition completed
+  }, [dispatch]);
 
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
   const tenantId = organisationId;
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
-  const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
+  const [addCostCategories] = useAddCostCategoriesMutation();
   // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
 
   const [isMounting, setIsMounting] = useState(true);
@@ -113,19 +119,13 @@ const CostProfile = () => {
     fetchCostProfileData();
   }, [params]);
 
-  const stepperState = useSelector((state: RootState) => state.stepper);
-  useEffect(() => {
-    dispatch(setActiveStep(0));
-    dispatch(markStepIncomplete(1)); // Back navigation from step 1
-  }, [dispatch]);
-
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
       {isMounting ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
-      ) : isLoadingGet || isLoadingAdd ? (
+      ) : isLoadingGet ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
@@ -160,7 +160,7 @@ const CostProfile = () => {
                 </Typography>
 
                 {/* Loader inside left section */}
-                {isLoadingGet || isLoadingAdd ? (
+                {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                     <Loader loading />
                   </Box>
@@ -194,7 +194,7 @@ const CostProfile = () => {
                     costValue={overAllCostProfile}
                     onChange={() => {}}
                     readonly
-                    boxBackgroundColor="#10557C"
+                    boxBackgroundColor={parseFloat(overAllCostProfile) >= 100 ? '#f15353' : '#10557C'}
                     textColor="#FFFFFF"
                   />
                 </Box>
@@ -236,7 +236,7 @@ const CostProfile = () => {
                     icon="save"
                     type="submit"
                   >
-                    {isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

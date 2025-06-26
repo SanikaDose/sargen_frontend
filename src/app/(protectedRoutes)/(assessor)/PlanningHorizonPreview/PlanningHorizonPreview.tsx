@@ -27,9 +27,12 @@ const PlanningHorizonPreview = () => {
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
+
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
 
   // Edit state management
@@ -147,7 +150,7 @@ const PlanningHorizonPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/IndustrySelectionPreview/${tenantId}/${plantId}`);
+    router.push(`/KpiDefinitionPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -184,7 +187,7 @@ const PlanningHorizonPreview = () => {
             }}
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              <Box component="form" className={styles.formContainer}>
+              <Box className={styles.formContainer}>
                 <Typography
                   variant="h4"
                   sx={{

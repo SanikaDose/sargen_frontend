@@ -29,9 +29,12 @@ const IndustrySelectionPreview = () => {
   // const tenantId = getValueLocalStorage('tenantId');
   const [industryData, setIndustryData] = useState<Industry[]>([]);
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
+
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -127,7 +130,7 @@ const IndustrySelectionPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/UserAssessmentPreview/${tenantId}/${plantId}`);
+    router.push(`/PlanningHorizonPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -168,7 +171,7 @@ const IndustrySelectionPreview = () => {
         }}
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-          <Box component="form" className={styles.formContainer}>
+          <Box className={styles.formContainer}>
             <Typography
               variant="h4"
               sx={{

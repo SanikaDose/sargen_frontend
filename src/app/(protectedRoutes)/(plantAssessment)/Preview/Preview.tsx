@@ -24,9 +24,12 @@ export default function Preview() {
   const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
   const plantId = params.PlantId as string;
 
   const organisationId = params.OrganisationId as string;
@@ -50,7 +53,7 @@ export default function Preview() {
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
-
+  const [getAllQuestionsLoading, setAllQuestionsLoading] = useState(false);
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
 
@@ -69,9 +72,10 @@ export default function Preview() {
     'Management',
     'HR',
   ];
-
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
+      setAllQuestionsLoading(true); // Start loading
+
       try {
         const all: Question[] = [];
 
@@ -88,9 +92,7 @@ export default function Preview() {
         const justification: { [key: string]: string } = {};
 
         all.forEach((q) => {
-          // Create a unique composite key
           const key = `${q.question_uid}__${q.department}__${q.context}`;
-
           if (!grouped[key]) grouped[key] = [];
           grouped[key].push(q);
 
@@ -115,6 +117,8 @@ export default function Preview() {
         setCurrentIndex(0);
       } catch (error) {
         console.error('Failed to load questions:', error);
+      } finally {
+        setAllQuestionsLoading(false); // Always stop loading
       }
     };
 
@@ -200,7 +204,7 @@ export default function Preview() {
               <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Loader loading={true} />
               </Box>
-            ) : isLoading || isSaving ? (
+            ) : isLoading || getAllQuestionsLoading || isSaving ? (
               <>
                 <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
