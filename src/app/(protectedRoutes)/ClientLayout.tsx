@@ -551,6 +551,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 backgroundColor: 'transparent',
                 boxShadow: 'none', // optional: remove shadow
                 border: 'none',
+                padding: 0,
               }}
             >
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -558,7 +559,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   Assessment Menu
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ padding: 0 }}>
                 <List disablePadding>
                   {sideBarListItemsForAssessment.map((item) => {
                     const activeSegment = pathName.split('/')[1]?.toLowerCase();
@@ -573,10 +574,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         key={item.text}
                         disablePadding
                         sx={{
-                          backgroundColor: isActive ? 'secondary.main' : 'transparent',
+                          backgroundColor: 'transparent',
+                          opacity: 1000,
+                          m: 0,
                         }}
                       >
-                        <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                        <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)} sx={{ p: 0 }}>
                           <ListItemIcon
                             sx={{
                               mr: 2,

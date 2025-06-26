@@ -18,6 +18,8 @@ import { triggerToast } from '@/app/utils/toast';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 import Loader from '@/components/Loader/Loader';
+import { useChangeAssessmentStatusMutation } from './PreviewApi';
+import { AsseessmentStatus } from '@/constants/enums';
 
 export default function Preview() {
   const router = useRouter();
@@ -34,7 +36,7 @@ export default function Preview() {
   const organisationId = params.OrganisationId as string;
   const tenantId = organisationId;
 
-  const [isMounting, setIsMounting] = useState(true);
+  const [isMounting, setIsMounting] = useState(false);
 
   //component onmount
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function Preview() {
   const [getAllQuestionsLoading, setAllQuestionsLoading] = useState(false);
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
+  const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
 
   const departmentName = [
     'R&D',
@@ -184,6 +187,25 @@ export default function Preview() {
   const questionText = currentGroup[0]?.question ?? '';
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
 
+  const handleFinalSubmit = async () => {
+    try {
+      await postAssesmentStatus({
+        tenantId,
+        plantId,
+        assessment: AsseessmentStatus.COMPLETED_ASSESSMENT,
+      }).unwrap();
+
+      triggerToast('Assessment submitted successfully!', 'success');
+    } catch (err) {
+      console.error('API failed:', err);
+      triggerToast('Failed to submit assessment', 'error');
+    } finally {
+      setFinalSubmitModel(false);
+
+      // Force a full page reload to the new route
+      window.location.assign('/PlantOverview');
+    }
+  };
   return (
     <Box component="form" sx={{ height: '99%' }}>
       <Paper
@@ -345,14 +367,9 @@ export default function Preview() {
         <PopupModal
           label="Confirm Final Submit"
           text="Are you sure you want to submit?"
-          primaryButtonText="Confirm"
+          primaryButtonText={isLoading ? 'Submitting…' : 'Confirm'}
           secondaryButtonText="Cancel"
-          onPrimaryClick={() => {
-            setFinalSubmitModel(false);
-            setTimeout(() => {
-              router.push('/PlantOverview');
-            }, 100); // slight delay after closing modal
-          }}
+          onPrimaryClick={() => handleFinalSubmit()}
           onSecondaryClick={() => setFinalSubmitModel(false)}
         />
       )}
