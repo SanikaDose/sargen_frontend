@@ -36,9 +36,9 @@ export const plantInfoApi = protectedApi.injectEndpoints({
     }),
 
     // 📤 Upload Plant Logo
-    uploadPlantLogo: builder.mutation<void, { organisationId: string; plantId: string; formData: FormData }>({
-      query: ({ organisationId, plantId, formData }) => ({
-        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadPlantLogo}/${organisationId}/${plantId}`,
+    uploadPlantLogo: builder.mutation<void, { tenantId: string; plantId: string; formData: FormData }>({
+      query: ({ tenantId, plantId, formData }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadPlantLogo}/${tenantId}/${plantId}`,
         method: 'POST',
         body: formData,
       }),

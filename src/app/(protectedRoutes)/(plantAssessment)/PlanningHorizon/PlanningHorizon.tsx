@@ -19,31 +19,28 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
-// const steps = [
-//   'Research',
-//   'Selling',
-//   'RTransport',
-//   'Utilities',
-//   'Aftermarket',
-//   'Description',
-//   'Labour',
-//   'maintainance',
-//   'Raw Material',
-//   'Rental',
-// ].map((label) => ({ label }));
+
 const PlanningHorizon = () => {
   const params = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
 
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+  const stepperState = useSelector((state: RootState) => state.stepper);
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(1));
+    dispatch(markStepCompleted(0)); // Industry Selection completed
+    dispatch(markStepIncomplete(2)); // In case navigating back
+  }, [dispatch]);
+
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
-  const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
+  const [selectHorizonOption] = useSelectPlanningHorizonListMutation();
   const tenantId = organisationId;
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
@@ -119,14 +116,6 @@ const PlanningHorizon = () => {
     // }
   };
 
-  const stepperState = useSelector((state: RootState) => state.stepper);
-
-  useEffect(() => {
-    dispatch(setActiveStep(2));
-    dispatch(markStepCompleted(1));
-    dispatch(markStepIncomplete(3)); // coming back from Industry
-  }, [dispatch]);
-
   const [isMounting, setIsMounting] = useState(true);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -141,7 +130,7 @@ const PlanningHorizon = () => {
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
-      ) : isLoadingGet || isLoadingAdd ? (
+      ) : isLoadingGet ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
@@ -161,7 +150,7 @@ const PlanningHorizon = () => {
             }}
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              <Box component="form" className={styles.formContainer}>
+              <Box className={styles.formContainer}>
                 <Typography
                   variant="h4"
                   sx={{
@@ -173,7 +162,7 @@ const PlanningHorizon = () => {
                   Planning Horizon
                 </Typography>
 
-                {isLoadingGet || isLoadingAdd ? (
+                {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                     <Loader loading />
                   </Box>
@@ -244,7 +233,7 @@ const PlanningHorizon = () => {
                     icon="save"
                     type="submit"
                   >
-                    {isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

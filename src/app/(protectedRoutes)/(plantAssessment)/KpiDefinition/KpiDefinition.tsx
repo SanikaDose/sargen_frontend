@@ -27,12 +27,19 @@ const KpiDefinition = () => {
   const plantId = params.PlantId as string;
   const tenantId = organisationId;
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  const stepperState = useSelector((state: RootState) => state.stepper);
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(2));
+    dispatch(markStepCompleted(1));
+    dispatch(markStepIncomplete(3));
+  }, [dispatch]);
 
   const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
-  const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
+  const [selectKPIDefinition] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
   const { control, handleSubmit, reset } = useForm<KpiFormValues>({
     defaultValues: { kpis: [] },
@@ -82,13 +89,6 @@ const KpiDefinition = () => {
     }
   };
 
-  const stepperState = useSelector((state: RootState) => state.stepper);
-  useEffect(() => {
-    dispatch(setActiveStep(1));
-    dispatch(markStepCompleted(0));
-    dispatch(markStepIncomplete(2)); // If coming back from Planning
-  }, [dispatch]);
-
   const [isMounting, setIsMounting] = useState(true);
 
   //component onmount
@@ -105,7 +105,7 @@ const KpiDefinition = () => {
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
-      ) : isLoadingGet || isLoadingAdd ? (
+      ) : isLoadingGet ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
@@ -125,7 +125,7 @@ const KpiDefinition = () => {
             }}
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              <Box component="form" className={styles.formContainer}>
+              <Box className={styles.formContainer}>
                 <Typography
                   variant="h4"
                   sx={{
@@ -136,7 +136,7 @@ const KpiDefinition = () => {
                 >
                   Kpis Selection
                 </Typography>
-                {isLoadingGet || isLoadingAdd ? (
+                {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                     <Loader loading />
                   </Box>
@@ -203,7 +203,7 @@ const KpiDefinition = () => {
                     icon="save"
                     type="submit"
                   >
-                    {isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                    {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

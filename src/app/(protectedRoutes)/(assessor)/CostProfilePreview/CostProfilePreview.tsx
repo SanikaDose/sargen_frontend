@@ -27,9 +27,11 @@ const CostProfilePreview = () => {
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorCostProfilePreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorCostProfilePreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, []);
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -118,7 +120,7 @@ const CostProfilePreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/KpiDefinitionPreview/${organisationId}/${plantId}`);
+    router.push(`/UserAssessmentPreview/${organisationId}/${plantId}`);
   };
 
   useEffect(() => {

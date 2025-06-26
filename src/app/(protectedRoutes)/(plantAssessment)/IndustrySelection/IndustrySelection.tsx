@@ -13,7 +13,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Card from '@/components/Card/Card';
 import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
@@ -24,13 +24,21 @@ const IndustrySelection = () => {
   const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentIndustrySelection));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  const stepperState = useSelector((state: RootState) => state.stepper);
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentIndustrySelection));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(0));
+    dispatch(markStepIncomplete(1));
+  }, [dispatch]);
+
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
-  const [selectIndustrySelectionList, { isLoading: isLoadingAdd }] = useSelectIndustrySelectionListMutation();
+  const [selectIndustrySelectionList] = useSelectIndustrySelectionListMutation();
   const tenantId = organisationId;
   const [industryData, setIndustryData] = useState<Industry[]>([]);
 
@@ -96,13 +104,6 @@ const IndustrySelection = () => {
     router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
   };
 
-  const stepperState = useSelector((state: RootState) => state.stepper);
-
-  useEffect(() => {
-    dispatch(setActiveStep(3));
-    dispatch(markStepCompleted(2));
-  }, [dispatch]);
-
   const [isMounting, setIsMounting] = useState(true);
 
   //component onmount
@@ -114,17 +115,17 @@ const IndustrySelection = () => {
     return () => clearTimeout(timeout);
   }, []);
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
       {isMounting ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
-      ) : isLoadingGet || isLoadingAdd ? (
+      ) : isLoadingGet ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
       ) : (
-        <Box sx={{ height: '99%' }} component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Box sx={{ height: '99%' }}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={stepperState.steps} activeStep={stepperState.activeStep} completedSteps={stepperState.completedSteps} />
           </Box>
@@ -139,7 +140,7 @@ const IndustrySelection = () => {
             }}
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              <Box component="form" className={styles.formContainer}>
+              <Box className={styles.formContainer}>
                 <Typography
                   variant="h4"
                   sx={{
@@ -222,7 +223,7 @@ const IndustrySelection = () => {
                     icon="save"
                     type="submit"
                   >
-                    {isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
+                    {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>
