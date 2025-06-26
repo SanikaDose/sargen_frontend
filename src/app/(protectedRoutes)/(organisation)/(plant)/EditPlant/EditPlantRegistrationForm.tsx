@@ -81,6 +81,9 @@ const EditPlantRegistrationForm = () => {
         assessmentStartDate: plant.assessmentStartDate || '',
         debriefDate: plant.debriefDate || '',
         about: plant.about || '', // if you have an 'about' field, adjust accordingly
+        pocFullName: plant.pocFullName || '',
+        pocEmail: plant.pocEmail || '',
+        pocContactNo: plant.pocContactNo || '',
       });
 
       if (plant.plantLogo) {
