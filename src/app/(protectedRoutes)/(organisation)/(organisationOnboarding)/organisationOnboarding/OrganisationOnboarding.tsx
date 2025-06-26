@@ -35,6 +35,7 @@ import {
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
 } from './OrganisationOnboardingAPi';
+
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -73,24 +74,118 @@ function OrganizationOnbording() {
       uom: '',
       numberOfEmployees: '',
       about: '',
+      revenueUnit: '',
     },
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
+  // useEffect(() => {
+  //   if (existingData?.data && !isFetching) {
+  //     const org = existingData.data;
+  //     console.log('orgnaization get data', org);
+  //     const fullRevenue = Number(org.revenue || 0);
+
+  //     // Default to 1 if no match found
+  //     let unit = 1;
+  //     let normalizedRevenue = fullRevenue;
+
+  //     const revenueUnits = [10000000, 100000, 1000, 1];
+
+  //     for (const u of revenueUnits) {
+  //       if (fullRevenue % u === 0 && fullRevenue / u < 10000) {
+  //         unit = u;
+  //         normalizedRevenue = fullRevenue / u;
+  //         break;
+  //       }
+  //     }
+  //     console.log('uniii', unit);
+  //     reset({
+  //       companyName: org.name || '',
+  //       website: org.website || '',
+  //       gstin: org.gstin || '',
+  //       country: org.country || '',
+  //       revenue: normalizedRevenue.toString() || '',
+  //       uom: org.uom || '',
+  //       numberOfEmployees: org.numberOfEmployees || '',
+  //       revenueUnit: unit.toString(),
+  //       about: org.about || '',
+  //     });
+  //   }
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // }, [existingData, isFetching, logoData, reset]);
+  // useEffect(() => {
+  //   if (existingData?.data && !isFetching) {
+  //     const org = existingData.data;
+  //     const fullRevenue = Number(org.revenue || 0);
+
+  //     const revenueUnits = [10000000, 100000, 1000, 1]; // Crore, Lakh, Thousand, Rupee
+  //     let unit = 1;
+  //     let normalizedRevenue = fullRevenue;
+
+  //     for (const u of revenueUnits) {
+  //       const divided = fullRevenue / u;
+  //       if (divided < 10000) {
+  //         unit = u;
+  //         normalizedRevenue = parseFloat(divided.toFixed(2)); // keep 2 decimals
+  //         break;
+  //       }
+  //     }
+
+  //     console.log('Full revenue from API:', fullRevenue);
+  //     console.log('Normalized:', normalizedRevenue, 'Unit:', unit);
+
+  //     reset({
+  //       companyName: org.name || '',
+  //       website: org.website || '',
+  //       gstin: org.gstin || '',
+  //       country: org.country || '',
+  //       revenue: normalizedRevenue.toString() || '', // "334.34"
+  //       revenueUnit: unit.toString(), // "100000"
+  //       uom: org.uom || '',
+  //       numberOfEmployees: org.numberOfEmployees || '',
+  //       about: org.about || '',
+  //     });
+  //   }
+
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // }, [existingData, isFetching, logoData, reset]);
+
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
+      console.log('orgg', org);
+      const fullRevenue = Number(org.revenue || 0);
+
+      const revenueUnits = [100000, 10000000, 1000, 1];
+      let unit = 1;
+      let normalizedRevenue = fullRevenue;
+
+      for (const u of revenueUnits) {
+        const divided = fullRevenue / u;
+        if (divided < 10000) {
+          unit = u;
+          normalizedRevenue = Math.floor(divided); // no toFixed here
+          break;
+        }
+      }
+
       reset({
         companyName: org.name || '',
         website: org.website || '',
         gstin: org.gstin || '',
         country: org.country || '',
-        revenue: org.revenue || '',
+        revenue: normalizedRevenue.toString(), // no forced decimal precision
+        revenueUnit: unit.toString(),
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
         about: org.about || '',
       });
     }
+
     if (logoData?.logoUrl) {
       setLogoUrl(logoData.logoUrl);
     }
@@ -137,13 +232,36 @@ function OrganizationOnbording() {
 
   //on form submit
   const onSubmit = async (data: OrgOnboardType) => {
+    const { revenue, revenueUnit, ...rest } = data;
+
+    const finalRevenue = Number(revenue) * Number(revenueUnit);
+
+    const payload = {
+      ...rest,
+      revenue: finalRevenue.toString(), // Or keep as number if required
+    };
+    console.log('updated addda', payload);
+
     try {
-      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
+      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: payload }).unwrap();
       router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
     }
   };
+
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
 
   return (
     <>
@@ -201,12 +319,25 @@ function OrganizationOnbording() {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )} */}
                                     </>
+                                  ) : input.isRevenueUnit ? (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={[
+                                        { label: 'Thousand', value: '1000' },
+                                        { label: 'Lakh', value: '100000' },
+                                        { label: 'Crore', value: '10000000' },
+                                      ].map(({ label, value }) => ({
+                                        label: label,
+                                        value: value,
+                                      }))}
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
                                   ) : (
                                     <>
                                       <InputWithLabel
@@ -215,20 +346,31 @@ function OrganizationOnbording() {
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
                                         value={
-                                          ['numberOfEmployees'].includes(input.name)
-                                            ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                          ['numberOfEmployees', 'revenue'].includes(input.name)
+                                            ? // ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                              // : field.value
+                                              formatWithIndianCommas(field.value)
                                             : field.value
                                         }
                                         onChange={(e) => {
                                           const value = e.target.value;
 
-                                          if (['numberOfEmployees'].includes(input.name)) {
-                                            const rawValue = value.replace(/,/g, '');
-                                            if (/^\d*$/.test(rawValue)) {
-                                              field.onChange(rawValue);
-                                            }
+                                          // if (['numberOfEmployees', 'revenue'].includes(input.name)) {
+                                          //   const rawValue = value.replace(/,/g, '');
+                                          //   // if (/^\d*$/.test(rawValue)) {
+                                          //   //   field.onChange(rawValue);
+                                          //   // }
+                                          //   field.onChange(rawValue);
+                                          // }
+
+                                          if (['numberOfEmployees', 'revenue'].includes(input.name)) {
+                                            const rawValue = value.replace(/,/g, ''); // remove commas
+                                            field.onChange(rawValue); // ✅ allow any input, validate later
+                                          }
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase());
                                           } else {
-                                            field.onChange(value); // ? Ensures companyName, website, revenue are editable
+                                            field.onChange(value);
                                           }
                                         }}
                                         onFocus={() => setFocusedField(input.name)}
@@ -237,11 +379,6 @@ function OrganizationOnbording() {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )} */}
                                     </>
                                   )}
                                 </>
