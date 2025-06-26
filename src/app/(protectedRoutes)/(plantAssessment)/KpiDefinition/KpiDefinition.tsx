@@ -7,7 +7,6 @@ import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './kpiDefinition.module.css';
 import { Kpi, KpiFormValues } from '../plantAssement.model';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';

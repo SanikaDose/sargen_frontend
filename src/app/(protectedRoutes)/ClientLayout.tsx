@@ -139,7 +139,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const userName = useSelector((state: RootState) => state.global.userFullName);
   const userDesignation = useSelector((state: RootState) => state.global.userDesignation);
   const userLogoUrl = useSelector((state: RootState) => state.global.userLogoUrl);
-  const [triggerGetPointOfContact, { data: userPointOfConnectData, isFetching }] = useLazyGetPointOfContactQuery();
+  const [triggerGetPointOfContact, { data: userPointOfConnectData }] = useLazyGetPointOfContactQuery();
 
   // Derived values
 
@@ -218,7 +218,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
       dispatch(setUserFullName(fullName));
       dispatch(setUserDesignation(userPointOfConnectData.data.designation));
-      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePicUrl));
+      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
       console.log('fullName', userPointOfConnectData.data);
     }
   }, [userPointOfConnectData, dispatch]);
@@ -625,6 +625,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 backgroundColor: 'transparent',
                 boxShadow: 'none', // optional: remove shadow
                 border: 'none',
+                padding: 0,
               }}
             >
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -632,7 +633,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   Assessment Menu
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ padding: 0 }}>
                 <List disablePadding>
                   {sideBarListItemsForAssessment.map((item) => {
                     const activeSegment = pathName.split('/')[1]?.toLowerCase();
@@ -647,10 +648,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         key={item.text}
                         disablePadding
                         sx={{
-                          backgroundColor: isActive ? 'secondary.main' : 'transparent',
+                          backgroundColor: 'transparent',
+                          opacity: 1000,
+                          m: 0,
                         }}
                       >
-                        <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                        <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)} sx={{ p: 0 }}>
                           <ListItemIcon
                             sx={{
                               mr: 2,
