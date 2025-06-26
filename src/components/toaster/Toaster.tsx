@@ -52,7 +52,7 @@ export default function Toaster() {
               alignItems: 'center',
               color: '#FFFFFF !important',
               '& .MuiAlert-icon': {
-                color: '#FFFFFF !important', // 👈 makes icon white
+                color: '#FFFFFF !important', 
               },
               backgroundColor:
                 severity === 'success'
