@@ -40,9 +40,9 @@ export const reportDataApi = protectedApi.injectEndpoints({
         });
       },
     }),
-    summaryOfObservationsAndRecommendations: builder.mutation({
+    addSummaryOfObservationsAndRecommendations: builder.mutation({
       query: (body) => ({
-        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.summaryOfObservationsAndRecommendations}`,
+        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.addSummaryOfObservationsAndRecommendations}`,
         method: 'POST',
         body,
       }),
@@ -89,7 +89,7 @@ export const {
   useGetReportDataMutation,
   useAddAboutTheCompanyMutation,
   useAddIntroductionMutation,
-  useSummaryOfObservationsAndRecommendationsMutation,
+  useAddSummaryOfObservationsAndRecommendationsMutation,
   useAddRoiMutation,
   useAddCommentMutation,
 } = reportDataApi;
