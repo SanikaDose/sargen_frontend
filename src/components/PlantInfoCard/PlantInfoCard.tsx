@@ -89,15 +89,19 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
             disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT}
             onClick={onClick}
           >
-            {data?.assessmentCompletionStage === 'NOT_STARTED'
+            {data?.assessmentCompletionStage === AsseessmentStatus.NOT_STARTED
               ? 'Request for Assessment'
-              : data?.assessmentCompletionStage === 'START_ASSESSMENT' //change status according to new enum START_ASSESSMENT
-                ? 'Assessment Started'
-                : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
-                  ? 'Assessor Assigning ...'
-                  : data?.assessmentCompletionStage === 'COMPLETED_ASSESSMENT'
-                    ? 'Download Report'
-                    : 'status unknown'}
+              : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
+                ? 'Assessor Assigning ...'
+                : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
+                  ? 'Assessment Started'
+                  : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
+                    ? 'Edit Asssesment'
+                    : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
+                      ? 'Asssesment in reviewd'
+                      : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
+                        ? 'Download Assessment'
+                        : 'status unknown'}
           </CustomButton>
         </Box>
         <Box className={styles.progressCircle}>
