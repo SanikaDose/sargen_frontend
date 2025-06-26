@@ -60,6 +60,7 @@ export const apiRoutes = {
     getPlanningHorizon: 'get-planning-horizon',
     selectPlanningHorizon: 'select-planning-horizon',
     changeAssessmentStatus: 'change-assessment-status',
+    changeQuestionsStatus: '/change-question-status',
   },
   assessorOnboarding: {
     root: 'assessor-onboarding',
@@ -82,7 +83,7 @@ export const apiRoutes = {
     getSolutionsByImpactValuesSelected: '/get-solutions-by-impact-values-selected',
     selectSolutionsByImpactValuesSelected: '/select-solutions-by-impact-values-selected',
     addAboutTheCompany: '/add-about-the-company',
-    summaryOfObservationsAndRecommendations: '/summary-of-observations-and-recommendations',
+    addSummaryOfObservationsAndRecommendations: '/add-summary-of-observations-and-recommendations',
     addIntroduction: '/add-introduction',
     addComment: '/add-comment',
     addRoi: '/add-roi',

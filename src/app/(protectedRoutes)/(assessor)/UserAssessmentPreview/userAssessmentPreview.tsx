@@ -18,8 +18,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from './userAssessmentPreview.module.css';
-import { useStartAssessmentRuleEngineMutation } from './userAssessmentPreviewApi';
+import { useChangeQuestionsStatusMutation, useStartAssessmentRuleEngineMutation } from './userAssessmentPreviewApi';
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
+import { QuestionVerificationStatus } from '@/constants/enums';
+import { triggerToast } from '@/app/utils/toast';
 
 const UserAssessmentPreview = () => {
   const params = useParams();
@@ -33,9 +35,12 @@ const UserAssessmentPreview = () => {
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
   const [isFinishing, setIsFinishing] = useState(false);
-  const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [getQuestionnairesList] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer] = useSelectQuestionnairesAnswerMutation();
   const [startAssessmentRuleEngine] = useStartAssessmentRuleEngineMutation();
+  const [changeQuestionsStatus] = useChangeQuestionsStatusMutation();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -112,14 +117,13 @@ const UserAssessmentPreview = () => {
   }, []);
 
   const handleAnswerClick = (answerId: string) => {
+    if (!isEditMode) return;
     const questionUID = groupKeys[currentIndex];
     if (!questionUID) return;
-
     const updatedGroup = groupedQuestions[questionUID].map((ans) => ({
       ...ans,
-      isselected: ans.id === answerId, // ✅ single select
+      isselected: ans.id === answerId,
     }));
-
     setGroupedQuestions((prev) => ({
       ...prev,
       [questionUID]: updatedGroup,
@@ -162,6 +166,26 @@ const UserAssessmentPreview = () => {
     }
   };
 
+  const handleEditSaveClick = async () => {
+    if (isEditMode) {
+      // Save mode - submit the answer
+      setIsSaving(true);
+      try {
+        const saveSuccess = await submitQuestionnaireAnswer();
+        if (saveSuccess) {
+          setIsEditMode(false);
+        }
+      } catch (error) {
+        console.error('Failed to save answer:', error);
+      } finally {
+        setIsSaving(false);
+      }
+    } else {
+      // Edit mode - enable editing
+      setIsEditMode(true);
+    }
+  };
+
   const handleFinishAssessment = async () => {
     try {
       setIsFinishing(true);
@@ -189,6 +213,54 @@ const UserAssessmentPreview = () => {
     }
   };
 
+  const handleNextClick = async () => {
+    if (currentIndex < groupKeys.length - 1) {
+      const currentQuestion = currentGroup[0];
+      const selectedOption = currentGroup.find((q) => q.isselected);
+
+      if (currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.NOT_VERIFIED && selectedOption) {
+        try {
+          const payload = {
+            tenantId: organisationId,
+            plantId: plantId,
+            questionId: selectedOption.id,
+            questionStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED,
+          };
+
+          await changeQuestionsStatus(payload).unwrap();
+
+          // Update ONLY the selected option's status in the group
+          const updatedGroup = currentGroup.map((q) => ({
+            ...q,
+            questionVerificationStatus:
+              q.id === selectedOption.id ? QuestionVerificationStatus.ASSESSOR_VERIFIED : q.questionVerificationStatus,
+          }));
+
+          setGroupedQuestions((prev) => ({
+            ...prev,
+            [currentKey]: updatedGroup,
+          }));
+
+          // Update allQuestions array as well
+          setAllQuestions((prev) =>
+            prev.map((q) =>
+              q.question_uid === currentQuestion.question_uid &&
+              q.department === currentQuestion.department &&
+              q.context === currentQuestion.context
+                ? { ...q, questionVerificationStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED }
+                : q,
+            ),
+          );
+        } catch (error) {
+          console.error('Failed to verify question:', error);
+          return;
+        }
+      }
+
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
 
@@ -198,9 +270,50 @@ const UserAssessmentPreview = () => {
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
   const isLastQuestion = currentIndex === groupKeys.length - 1;
 
-  const handlePrimaryClick = () => {
+  const handlePrimaryClick = async () => {
     setIsModalOpen(false);
-    console.log('Primary action clicked');
+    const currentQuestion = currentGroup[0];
+    const selectedOption = currentGroup.find((q) => q.isselected);
+
+    if (!currentQuestion || !selectedOption) return;
+
+    try {
+      const payload = {
+        tenantId: organisationId,
+        plantId: plantId,
+        questionId: selectedOption.id,
+        questionStatus: QuestionVerificationStatus.ASSESSOR_FLAGGED,
+      };
+
+      await changeQuestionsStatus(payload).unwrap();
+
+      // Update ONLY the selected option's status in the group
+      const updatedGroup = currentGroup.map((q) => ({
+        ...q,
+        questionVerificationStatus: q.id === selectedOption.id ? QuestionVerificationStatus.ASSESSOR_FLAGGED : q.questionVerificationStatus,
+      }));
+
+      setGroupedQuestions((prev) => ({
+        ...prev,
+        [currentKey]: updatedGroup,
+      }));
+
+      // Update allQuestions array as well
+      setAllQuestions((prev) =>
+        prev.map((q) =>
+          q.question_uid === currentQuestion.question_uid &&
+          q.department === currentQuestion.department &&
+          q.context === currentQuestion.context
+            ? { ...q, questionVerificationStatus: QuestionVerificationStatus.ASSESSOR_FLAGGED }
+            : q,
+        ),
+      );
+
+      triggerToast('Question marked as needing attention', 'warning');
+    } catch (error) {
+      console.error('Failed to flag question as ASSESSOR_FLAGGED:', error);
+      triggerToast('Failed to mark question as needing attention', 'error');
+    }
   };
 
   const handleSecondaryClick = () => {
@@ -251,7 +364,7 @@ const UserAssessmentPreview = () => {
                   }))
                 }
                 placeholder="Enter justification"
-                readOnly={false}
+                readOnly={!isEditMode}
               />
             </Box>
           </Box>
@@ -264,6 +377,7 @@ const UserAssessmentPreview = () => {
                 setCurrentIndex={setCurrentIndex}
                 completedQuestionIds={completedQuestionIds}
                 allQuestions={allQuestions}
+                questionVerificationStatus={currentGroup[0]?.questionVerificationStatus}
               />
             </Box>
 
@@ -284,7 +398,7 @@ const UserAssessmentPreview = () => {
                 icon="left"
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                disabled={currentIndex === 0}
+                disabled={currentIndex === 0 || isEditMode}
               >
                 Back
               </CustomButton>
@@ -299,36 +413,46 @@ const UserAssessmentPreview = () => {
                   onSecondaryClick={handleSecondaryClick}
                 />
               )}
-              <CustomButton variant="contained" icon="alert" type="button" color="warning" onClick={() => setIsModalOpen(true)}>
-                Query
-              </CustomButton>
               <CustomButton
                 variant="contained"
-                icon="save"
+                icon="alert"
                 type="button"
-                onClick={
-                  isLastQuestion
-                    ? handleFinishAssessment
-                    : async () => {
-                        await submitQuestionnaireAnswer();
-                      }
-                }
-                disabled={isFinishing}
+                color="warning"
+                onClick={() => setIsModalOpen(true)}
+                disabled={isEditMode}
               >
-                {isFinishing ? 'Processing...' : isLoading ? 'Saving...' : isLastQuestion ? 'Finish' : 'Save'}
+                Query
               </CustomButton>
+
+              <CustomButton
+                variant="contained"
+                icon={isEditMode ? 'save' : 'edit'}
+                type="button"
+                onClick={handleEditSaveClick}
+                disabled={isSaving}
+              >
+                {isSaving ? 'Saving...' : isEditMode ? 'Save' : 'Edit'}
+              </CustomButton>
+
+              {isLastQuestion && (
+                <CustomButton
+                  variant="contained"
+                  icon="save"
+                  type="button"
+                  onClick={handleFinishAssessment}
+                  disabled={isFinishing || isEditMode}
+                >
+                  {isFinishing ? 'Processing...' : 'Finish'}
+                </CustomButton>
+              )}
 
               <CustomButton
                 variant="contained"
                 color="primary"
                 icon="right"
                 type="button"
-                onClick={() => {
-                  if (currentIndex < groupKeys.length - 1) {
-                    setCurrentIndex((prev) => prev + 1);
-                  }
-                }}
-                disabled={currentIndex === groupKeys.length - 1}
+                onClick={handleNextClick}
+                disabled={currentIndex === groupKeys.length - 1 || isEditMode}
               >
                 Next
               </CustomButton>

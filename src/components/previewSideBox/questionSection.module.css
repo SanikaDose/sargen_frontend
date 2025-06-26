@@ -22,6 +22,18 @@
   background-color: rgba(161, 208, 102, 1);
 }
 
+.isVerified {
+  background-color: rgba(161, 208, 102, 1);
+}
+
+.isFlagged {
+  background-color: #ed6c02;
+}
+
+.notVerified {
+  background-color: lightgray;
+}
+
 .selected {
   background-color: #1976d2;
   color: rgba(223, 224, 221, 1);
