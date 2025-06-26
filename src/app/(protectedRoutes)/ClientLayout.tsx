@@ -3,19 +3,23 @@ import { assessorExtraList, assessorOnboardedMenuList } from '@/constants/sideBa
 import { assessorOnboardingMenuList } from '@/constants/sideBarLists/assessorOnboardingList';
 import { organisationExtraMenuList, organisationOnboardedMenuList } from '@/constants/sideBarLists/organisationOnboardedList';
 import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
-import { setExtraListItems, setSideBarListItem, setSideBarListItemsForAssessment } from '@/store/globalSlice';
+import {
+  setExtraListItems,
+  setSideBarListItem,
+  setSideBarListItemsForAssessment,
+  setUserDesignation,
+  setUserFullName,
+  setUserLogoUrl,
+} from '@/store/globalSlice';
 import { RootState } from '@/store/store';
-
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-
 import ListItemText from '@mui/material/ListItemText';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
@@ -25,7 +29,6 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
-
 import { assessorUserAssessmentList, platformUserAssessmentList } from '@/constants/sideBarLists/plantAssessmentMenuList';
 import { SidebarItem } from '@/constants/sideBarLists/sideBarList.type';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -35,7 +38,9 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { ICONS } from '../utils/iconsMap';
 import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
+import { useLazyGetPointOfContactQuery } from './(organisation)/(contactPerson)/ContactPersonApi';
 import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
+import Loader from '@/components/Loader/Loader';
 
 const drawerWidth = 240;
 
@@ -105,10 +110,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const dispatch = useDispatch();
   const pathName = usePathname();
   const params = useParams();
+  // console.log('params', params.plantId);
 
   // Media queries
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   // All useState hooks
@@ -126,40 +132,49 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
   const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
   const currentDepartment = useSelector((state: RootState) => state.plantAssessmentGlobal.questionnairesDeparment);
+  const userName = useSelector((state: RootState) => state.global.userFullName);
+  const userDesignation = useSelector((state: RootState) => state.global.userDesignation);
+  const userLogoUrl = useSelector((state: RootState) => state.global.userLogoUrl);
+  const [triggerGetPointOfContact, { data: userPointOfConnectData, isFetching }] = useLazyGetPointOfContactQuery();
 
   // Derived values
   const open = isDesktop ? true : mobileOpen;
-  const plantId = params?.PlantId as string;
+
+  const plantId = (params?.plantId ?? params?.PlantId) as string;
+
   const userTypeFromLocalStorage = decodedToken?.userType;
   const userType = userTypeFromRedux || userTypeFromLocalStorage;
 
   // Initialize component with localStorage values
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('Authorization');
-      const storedTenantId = getValueLocalStorage('tenantId');
+    const token = localStorage.getItem('Authorization');
+    const storedTenantId = getValueLocalStorage('tenantId');
 
-      console.log('token:', token);
-      console.log('storedTenantId:', storedTenantId);
+    if (token) {
+      const decoded: Token = jwtDecode(token);
+      setDecodedToken(decoded);
+    }
 
-      if (token) {
-        const decoded: Token = jwtDecode(token);
-        setDecodedToken(decoded);
-      }
-
-      if (!token) {
-        router.push('login');
-      }
-
-      if (storedTenantId) {
-        setTenantId(storedTenantId);
-        setIsInitialized(true);
-      } else {
-        router.push('/login');
-        return;
-      }
+    if (!token) {
+      router.push('login');
+    }
+    if (storedTenantId && userType && userType[0] === 'PLATFORMUSER') {
+      setTenantId(storedTenantId);
+      setIsInitialized(true);
+      return;
+    }
+    if (storedTenantId && userType && userType[0] === 'ASSESSOR') {
+      setTenantId((params.OrganisationId ?? params.organisationId) as string);
+      setIsInitialized(true);
     }
   }, [router]);
+
+  React.useEffect(() => {
+    if (tenantId) {
+      triggerGetPointOfContact(tenantId);
+      setIsInitialized(true);
+    }
+  }, [tenantId, triggerGetPointOfContact]);
 
   // Set sidebar items based on onboarding status and user type
   React.useEffect(() => {
@@ -192,6 +207,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       }
     }
   }, [onboardingStatus, userType, showAssessmentListSideBar, dispatch]);
+
+  React.useEffect(() => {
+    if (userPointOfConnectData && userPointOfConnectData.data?.firstName && userPointOfConnectData.data?.lastName) {
+      const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
+      dispatch(setUserFullName(fullName));
+      dispatch(setUserDesignation(userPointOfConnectData.data.designation));
+      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
+      console.log('fullName', userPointOfConnectData.data);
+    }
+  }, [userPointOfConnectData, dispatch]);
 
   // Early return if not initialized
   if (!isInitialized) {
@@ -238,8 +263,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // Dispatch to global state
     dispatch(setSideBarListItem(updatedList));
   };
+
   const assementSideBarListItemOnClick = (link: string) => {
-    console.log('link', link);
     const isDepartment = DEPARTMENT_LINKS.includes(link);
 
     // ✅ Set department if applicable
@@ -258,9 +283,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       if (tenantId && plantId) {
         navigationPath = `${link}/${tenantId}/${plantId}`;
       } else {
-        navigationPath = `${link}`; // fallback for normal navigation
+        navigationPath = `${link}`;
       }
     }
+    console.log('navigationPath', navigationPath);
 
     router.push(navigationPath);
 
@@ -272,9 +298,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     dispatch(setSideBarListItem(updatedList));
   };
-
-  console.log('sideBarListItemsForAssessment', sideBarListItemsForAssessment);
-  console.log('sideBarListItems', sideBarListItems);
 
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
@@ -307,14 +330,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
           <Box display="flex" flexDirection="column" alignItems="flex-end" sx={{ marginLeft: 'auto' }}>
             <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
-              Viren Patil
+              {userName}
             </Typography>
             <Typography variant="body2" sx={{ color: `${theme.palette.text.disabled} !important` }}>
-              Software Engineer
+              {userDesignation}
             </Typography>
           </Box>
           <Button variant="text">
-            <Avatar src="https://avatar.iran.liara.run/public/19" />
+            <Avatar src={userLogoUrl} />
           </Button>
         </Toolbar>
       </AppBar>
@@ -398,6 +421,40 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               </ListItem>
             ))}
           </>
+          {extraListItems &&
+            extraListItems.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
+                sx={{
+                  pl: 0,
+                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                }}
+              >
+                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                  <ListItemIcon
+                    sx={{
+                      mr: 2,
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                    }}
+                  >
+                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
           {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
             <>
               <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
@@ -447,6 +504,60 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               })}
             </>
           )}
+
+          {showAssessmentListSideBar &&
+            onboardingStatus === OnboardingStatus.COMPLETED &&
+            userType &&
+            userType[0] === UserType.ASSESSOR && (
+              <>
+                <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+                  Assessment menu
+                </Typography>
+                {sideBarListItemsForAssessment.map((item) => {
+                  // Check if the current pathname contains the matchKeyword
+                  const activeSegment = pathName.split('/')[1]?.toLowerCase();
+                  const isDepartment = !item.linkRoute.startsWith('/');
+
+                  const isActive = isDepartment
+                    ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
+                    : activeSegment === item.matchKeyword?.toLowerCase();
+                  return (
+                    <ListItem
+                      key={item.text}
+                      disablePadding
+                      sx={{
+                        pl: 0,
+                        backgroundColor: isActive ? 'secondary.main' : 'transparent',
+                      }}
+                    >
+                      <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
+                        <ListItemIcon
+                          sx={{
+                            mr: 2,
+                            color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                          }}
+                        >
+                          {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                              }}
+                            >
+                              {item.text}
+                            </Typography>
+                          }
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
+              </>
+            )}
+
           {extraListItems &&
             extraListItems.map((item) => (
               <ListItem
@@ -508,8 +619,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </Box>
       </Drawer>
       <Main open={open}>
-        <DrawerHeader />
-        {children}
+        <>
+          <DrawerHeader />
+          <React.Suspense>{children}</React.Suspense>
+        </>
       </Main>
     </Box>
   );

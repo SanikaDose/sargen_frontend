@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useAddCostCategoriesMutation, useGetAssesmentStatusMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
+import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { CostInputPercentage, FormValues, MultipleSections, RawCostCategory } from '../plantAssement.model';
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
+import { FormValues, RawCostCategory } from '../plantAssement.model';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import styles from './costProfile.module.css';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
@@ -13,7 +13,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import Stepper from '@/components/Stepper/Stepper';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
@@ -26,28 +26,26 @@ const CostProfile = () => {
   dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
   dispatch(setShowAssessmentListSideBar(true));
   dispatch(setPlantAssessmentDepartment(''));
-  const steps = [
-    'Research',
-    'Selling',
-    'RTransport',
-    'Utilities',
-    'Aftermarket',
-    'Description',
-    'Labour',
-    'maintainance',
-    'Raw Material',
-    'Rental',
-  ].map((label) => ({ label }));
 
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
-  const tenantId = getValueLocalStorage('tenantId');
+  const tenantId = organisationId;
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
 
-  const { control, handleSubmit, reset } = useForm<FormValues>({
+  const [isMounting, setIsMounting] = useState(true);
+
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
+  const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: { costs: [] },
   });
 
@@ -91,11 +89,8 @@ const CostProfile = () => {
   };
 
   const handleFormSubmit = async (data: FormValues) => {
-    console.log('hello');
-
     if (!organisationId || !plantId) return;
     try {
-      console.log('hello api is cakling');
       const payload = {
         tenantId,
         plantId: plantId,
@@ -105,13 +100,12 @@ const CostProfile = () => {
           costAsAPercentageOfRevenue: parseFloat(String(cost.costAsAPercentageOfRevenue)),
         })),
       };
+      await addCostCategories(payload).unwrap();
+      await router.push(`/Questionaire/${organisationId}/${plantId}`);
 
-      const costProfileSaveResponse = await addCostCategories(payload).unwrap();
-      if (costProfileSaveResponse) {
-        router.push(`/KpiDefinition/${organisationId}/${plantId}`);
-      }
+      dispatch(setPlantAssessmentDepartment('R&D'));
     } catch (error) {
-      alert('cannot fetch api');
+      console.log(error);
     }
   };
 
@@ -127,7 +121,11 @@ const CostProfile = () => {
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      {isLoadingGet || isLoadingAdd ? (
+      {isMounting ? (
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+          <Loader loading />
+        </Box>
+      ) : isLoadingGet || isLoadingAdd ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
@@ -223,19 +221,23 @@ const CostProfile = () => {
                   className={styles.buttonSection}
                 >
                   <CustomButton
-                    children="Back"
+                    // children="Back"
                     variant="contained"
                     color="primary"
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                  />
+                  >
+                    Back
+                  </CustomButton>
                   <CustomButton
-                    children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    // children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
                     variant="contained"
                     icon="save"
                     type="submit"
-                  />
+                  >
+                    {isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                  </CustomButton>
                 </Box>
               </Box>
             </Box>

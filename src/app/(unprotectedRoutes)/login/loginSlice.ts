@@ -8,8 +8,8 @@ type LoginState = {
 };
 
 const initialState: LoginState = {
-  decodedToken: getInitialDecodedToken(),
-  onboardingStatus: localStorage.getItem('onboardingStatus') || '',
+  decodedToken: typeof window !== 'undefined' ? getInitialDecodedToken() : null,
+  onboardingStatus: typeof window !== 'undefined' ? localStorage.getItem('onboardingStatus') || '' : '',
 };
 
 const LoginSlice = createSlice({

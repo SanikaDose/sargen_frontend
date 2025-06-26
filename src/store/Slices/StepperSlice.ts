@@ -9,12 +9,7 @@ interface StepperState {
 const initialState: StepperState = {
   activeStep: 0,
   completedSteps: [],
-  steps: [
-    { label: 'Cost Profile' },
-    { label: 'KPI Definition' },
-    { label: 'Planning Horizon' },
-    { label: 'Industry Selection' },
-  ],
+  steps: [{ label: 'Industry Selection' }, { label: 'Planning Horizon' }, { label: 'KPI Definition' }, { label: 'Cost Profile' }],
 };
 
 const stepperSlice = createSlice({

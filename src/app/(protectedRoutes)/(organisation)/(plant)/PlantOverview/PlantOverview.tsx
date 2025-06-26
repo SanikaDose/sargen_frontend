@@ -6,27 +6,27 @@ import PlantInfoCard from '@/components/PlantInfoCard/PlantInfoCard';
 import { AsseessmentStatus } from '@/constants/enums';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { pageRoutes } from '@/constants/pagesRoutes';
+import { useDispatch } from 'react-redux';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { RootState } from '@/store/store';
-import SearchIcon from '@mui/icons-material/Search';
-import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
+// import { useGetAssesmentStatusMutation } from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
+import { Plant } from './PlantOverview.type';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import styles from './PlantOverview.module.css';
 import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
-
+import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
+import { GridSearchIcon } from '@mui/x-data-grid';
+import styles from './PlantOverview.module.css';
 export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
-  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  // const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
 
   // when ever the user will be there in plant overview then setShowAssessmentListSideBar will be always false
   // dispatch(setShowAssessmentListSideBar(false));
   const [searchValue, setSearchValue] = useState('');
   // const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
-  const [statusLoading, setStatusLoading] = useState(false);
+  // const [statusLoading, setStatusLoading] = useState(false);
 
   // Set page header
   useEffect(() => {
@@ -78,7 +78,6 @@ export default function PlantOverview() {
         <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
           <Paper
-            component="form"
             sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#ECE6F0', borderRadius: '16px' }}
             className={styles.searchInput}
           >
@@ -89,12 +88,12 @@ export default function PlantOverview() {
               onChange={(e) => handleSearch(e.target.value)}
             />
             <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-              <SearchIcon />
+              <GridSearchIcon />
             </IconButton>
           </Paper>
         </Box>
       </Typography>
-      {plantsLoading || statusLoading ? (
+      {plantsLoading || assesmentStatusLoading ? (
         <Grid
           container
           spacing={{ xs: 1.5, md: 1.5 }}
@@ -127,12 +126,12 @@ export default function PlantOverview() {
 
           {/* Plant Info Cards */}
           {Array.isArray(plantInfo?.data) &&
-            plantInfo.data.map((plant: any) => (
+            plantInfo.data.map((plant: Plant) => (
               <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
                 <PlantInfoCard
                   data={{
                     age: plant.age,
-                    assessmentCompletionPercentage: plant.assessmentCompletion,
+                    assessmentCompletionPercentage: plant.assessmentCompletionPercentage,
                     assessmentStartDate: plant.assessmentDate,
                     createdAt: plant.createdAt,
                     debriefDate: plant.debriefDate,
@@ -141,7 +140,7 @@ export default function PlantOverview() {
                     name: plant.name,
                     numberOfEmployees: plant.numberOfEmployees,
                     numberOfLines: plant.numberOfLines,
-                    plantLogo: plant.plantLogo,
+                    plantLogo: plant.plantLogo || '',
                     registrationNo: plant.registrationNo,
                     revenue: plant.revenue,
                     updatedAt: plant.debriefDate,

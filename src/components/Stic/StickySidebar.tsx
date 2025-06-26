@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styles from './style.module.css';
 import { SidebarIconType } from './StickySidebar.type';
-import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import UploadIcon from '@mui/icons-material/Upload';
 import InfoIcon from '@mui/icons-material/Info';

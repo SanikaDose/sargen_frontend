@@ -6,7 +6,7 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import Stepper from '@/components/Stepper/Stepper';
-import TextArea from '@/components/TextArea/TextArea';
+import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
@@ -15,9 +15,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
+import { Question } from './Questionaire.type';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 import styles from './Questionaire.module.css';
-import { Question } from './Questionaire.type';
+import Loader from '@/components/Loader/Loader';
 
 const Questionaire = () => {
   const DEPARTMENT_LINKS = [
@@ -41,15 +42,24 @@ const Questionaire = () => {
   dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
   dispatch(setShowAssessmentListSideBar(true));
   const plantId = params.PlantId as string;
+  const organisationId = (params.OrganisationId ?? params.organisationId) as string;
+
   const departmentName = useSelector((state: RootState) => (state as RootState).plantAssessmentGlobal.questionnairesDeparment);
 
-  console.log('department name ', departmentName);
+  const tenantId = organisationId;
 
-  const tenantId = getValueLocalStorage('tenantId');
+  const [isMounting, setIsMounting] = useState(true);
 
+  //component onmount
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounting(false);
+    }, 700); // Adjust duration as needed
+
+    return () => clearTimeout(timeout);
+  }, []);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [key: string]: Question[] }>({});
-  const [departmentIndex, setDepartmentIndex] = useState<number>(0);
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
   const steps = groupKeys.map((_, index) => ({
@@ -60,7 +70,7 @@ const Questionaire = () => {
   const fetchQuestions = async (dept: string) => {
     try {
       const result = await getQuestionnairesList({
-        tenantId,
+        tenantId: organisationId,
         plantId: plantId || '',
         department: dept,
       }).unwrap();
@@ -119,7 +129,7 @@ const Questionaire = () => {
     const question_uid = currentQuestionGroup[0]?.question_uid;
 
     const payload = {
-      tenantId,
+      tenantId: organisationId,
       plantId,
       questionnariesData: {
         id: selectedOption?.id ?? '',
@@ -147,7 +157,6 @@ const Questionaire = () => {
 
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
-  console.log('currentGroup', currentGroup);
 
   // Calculate completed steps
   const completedSteps = groupKeys.reduce<number[]>((acc, key, index) => {
@@ -219,7 +228,11 @@ const Questionaire = () => {
               )}
 
               <Box className={styles.justification}>
-                {isLoading || isSaving ? (
+                {isMounting ? (
+                  <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                    <Loader loading={true} />
+                  </Box>
+                ) : isLoading || isSaving ? (
                   <Skeleton variant="rectangular" height={120} width="100%" sx={{ borderRadius: '8px' }} />
                 ) : (
                   <TextArea
@@ -258,16 +271,18 @@ const Questionaire = () => {
               className={styles.buttonSection}
             >
               <CustomButton
-                children="Back"
+                // children="Back"
                 variant="contained"
                 color="primary"
                 icon="left"
                 type="button"
                 onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
                 disabled={currentIndex === 0 || isSaving}
-              />
+              >
+                Back
+              </CustomButton>
               <CustomButton
-                children={isSaving ? 'Saving...' : 'Save'}
+                // children={isSaving ? 'Saving...' : 'Save'}
                 variant="contained"
                 icon="save"
                 type="button"
@@ -296,7 +311,9 @@ const Questionaire = () => {
                   }
                 }}
                 disabled={isSaving}
-              />
+              >
+                {isSaving ? 'Saving...' : 'Save'}
+              </CustomButton>
             </Box>
           </Box>
         </Box>

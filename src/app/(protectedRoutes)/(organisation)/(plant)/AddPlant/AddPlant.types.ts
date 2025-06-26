@@ -14,7 +14,6 @@ export interface PlantFormType {
   assessmentStartDate: string;
   debriefDate: string;
   about: string;
-
   pocFullName: string;
   pocEmail: string;
   pocContactNo: string;
@@ -44,8 +43,27 @@ export interface AddPlantApi {
   about?: string;
   currencyType: string;
   gstin: string;
-
   pocFullName: string;
   pocEmail: string;
   pocContactNo: string;
 }
+
+export type AddPlantInfoResponse = {
+  id: string;
+  name: string;
+  location: string;
+  registrationNo: string;
+  gstin: string;
+  type: string;
+  age: string;
+  currencyType: string;
+  revenue: string;
+  numberOfEmployees: string;
+  numberOfLines: string;
+  assessmentStartDate: string; // ISO date string (e.g., '2025-06-23')
+  debriefDate: string; // ISO date string (e.g., '2025-06-30')
+  pocFullName: string;
+  pocEmail: string;
+  pocContactNo: string;
+  about: string;
+};

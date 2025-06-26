@@ -6,7 +6,7 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Kpi, KpiFormValues } from '../../(plantAssessment)/plantAssement.model';
 import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../../(plantAssessment)/plantAssementApi';
 import styles from './KpiDefinitionPreview.module.css';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const KpiDefinitionPreview = () => {
   const params = useParams();
@@ -28,7 +29,8 @@ const KpiDefinitionPreview = () => {
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorKpiDefinitionPreview));
-
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -67,7 +69,7 @@ const KpiDefinitionPreview = () => {
       setKpiList(cleaned);
 
       const formData = {
-        kpis: cleaned.map((k: { isselected: any }) => ({ isselected: k.isselected })),
+        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
       };
 
       // Reset form with fetched data
@@ -133,8 +135,8 @@ const KpiDefinitionPreview = () => {
   // Button state logic - simplified and clearer
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
-
   return (
     <>
       {isLoadingGet || isLoadingAdd ? (
@@ -230,7 +232,7 @@ const KpiDefinitionPreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled}
                   >
                     Back
                   </CustomButton>

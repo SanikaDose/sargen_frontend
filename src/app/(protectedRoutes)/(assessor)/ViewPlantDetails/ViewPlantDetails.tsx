@@ -3,7 +3,7 @@
 import Loader from '@/components/Loader/Loader';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FactoryIcon from '@mui/icons-material/Factory';
@@ -17,16 +17,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useGetSpecificPlantInfoQuery } from '../AssignedPlantsList/AssignedPlantsListApi';
 import { AssessorProps } from './Assessor.types';
 import { useGetAssessorMetadataQuery, usePostAssessorMetadataToPlantMutation } from './AssessorApi';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const excludeKeys = [
   'plantLogo',
   'name',
   'location',
   'registrationNo',
-  'assessor',
   'asessmentTableAssignedList',
   'assessmentCompletion',
-  'assessorCompletionStage',
+  'assessmentCompletionStage',
   'createdAt',
   'updatedAt',
   'id',
@@ -39,7 +39,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const assessorId = useSelector((state: RootState) => state.tokenDecode.decodedToken?.tenantId);
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
-
+  dispatch(setPlantAssessmentDepartment(''));
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -59,7 +59,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   });
   let metadataToUpload = [];
   if (metadataData) {
-    metadataToUpload = metadataData.map((md: any) => md?.tableName);
+    metadataToUpload = metadataData.map((md: AssessorProps) => md?.tableName);
     console.log('metadata', metadataToUpload);
   }
 
@@ -67,6 +67,16 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const [postAssessorMetadata, { isLoading: isPostingMetadata }] = usePostAssessorMetadataToPlantMutation();
 
   const plant = data?.data?.data;
+
+  // Check if assessment is already assigned
+  const isAssessmentAssigned = useMemo(() => {
+    return plant?.asessmentTableAssignedList && plant.asessmentTableAssignedList.length > 0;
+  }, [plant?.asessmentTableAssignedList]);
+
+  // Check if assessment is completed
+  const isAssessmentCompleted = useMemo(() => {
+    return plant?.assessmentCompletionStage === 'COMPLETED_ASSESSMENT';
+  }, [plant?.assessmentCompletionStage]);
 
   const filteredPlantInfo = useMemo(() => {
     if (!plant) return [];
@@ -89,17 +99,18 @@ const ViewPlantDetails = ({}: AssessorProps) => {
         tenantId: assessorId,
         plantId,
         metaDataIds: metadataToUpload,
-        // Add any additional data needed for the metadata assignment
-        // You might need to modify this based on your API requirements
       }).unwrap();
 
       setIsModalOpen(false);
     } catch (error) {
       console.error('Failed to allow assessment:', error);
-      // Modal will stay open on error so user can retry
     }
   };
 
+  const handleClick = () => {
+    router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
+    dispatch(setShowAssessmentListSideBar(true));
+  };
   if (isFetching) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
@@ -178,39 +189,52 @@ const ViewPlantDetails = ({}: AssessorProps) => {
             marginTop={2}
           >
             <Button
-              startIcon={<CheckCircleIcon />}
+              startIcon={isAssessmentAssigned ? <CheckCircleIcon /> : <CheckCircleIcon />}
               color="primary"
               variant="contained"
-              disabled={isMetadataFetching}
+              disabled={isAssessmentAssigned || isMetadataFetching}
               sx={{
                 color: '#FFFFFF',
-                bgcolor: '#28a745',
+                bgcolor: isAssessmentAssigned ? '#6c757d' : '#28a745',
                 fontSize: '14px',
                 p: 1,
                 borderRadius: '16px',
                 minWidth: '180px',
-                '&:hover': { bgcolor: '#218838' },
-                '&:disabled': { bgcolor: '#6c757d' },
+                '&:hover': {
+                  bgcolor: isAssessmentAssigned ? '#6c757d' : '#218838',
+                },
+                '&:disabled': {
+                  bgcolor: '#bdbdbd',
+                  color: '#FFFFFF',
+                },
               }}
               onClick={handleAllowAssessmentClick}
             >
-              Allow Assessment
+              {isAssessmentAssigned ? 'Assessment in process' : 'Allow Assessment'}
             </Button>
 
             <Button
               startIcon={<OndemandVideoIcon />}
               color="secondary"
               variant="contained"
+              disabled={!isAssessmentCompleted}
               sx={{
                 color: '#FFFFFF',
-                bgcolor: '#047af2',
+                bgcolor: isAssessmentCompleted ? '#047af2' : '#6c757d',
                 fontSize: '14px',
                 p: 1,
                 borderRadius: '16px',
                 minWidth: '180px',
-                '&:hover': { bgcolor: '#0356b0' },
+                '&:hover': {
+                  bgcolor: isAssessmentCompleted ? '#0356b0' : '#6c757d',
+                },
+                '&:disabled': {
+                  bgcolor: '#bdbdbd',
+                  color: '#FFFFFF',
+                },
               }}
-              onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
+              // onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
+              onClick={handleClick}
             >
               Review Assessment
             </Button>

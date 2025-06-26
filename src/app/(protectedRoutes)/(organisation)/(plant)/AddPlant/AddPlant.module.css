@@ -76,7 +76,7 @@
 .aboutSection {
   height: 20%;
   padding: 0% 0% 2% 0;
-    /* border: 1px solid rgb(47, 255, 186); */
+  /* border: 1px solid rgb(47, 255, 186); */
 }
 
 .buttonSection {
@@ -139,18 +139,11 @@
 
 @media (min-width: 1024px) and (min-width: 1440px) {
   .formContainer {
-    gap: 3rem; 
-  height: 90%;
+    gap: 3rem;
+    height: 90%;
   }
- 
+
   .paperContainer {
     height: auto;
-  }
- 
-}
-
-@media (min-width: 1920px) {
-  .formContainer {
-    /* gap: 4rem; */
   }
 }

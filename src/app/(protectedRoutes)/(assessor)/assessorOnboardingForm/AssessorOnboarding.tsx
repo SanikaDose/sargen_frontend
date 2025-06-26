@@ -421,7 +421,15 @@ function AssessorOnboarding() {
                         onFileSelect={(file) => {
                           setSelectedFile(file);
                         }}
-                        buttonColor={selectedFile ? 'success' : 'primary'}
+                        sx={
+                          selectedFile
+                            ? {
+                                backgroundColor: '#4CAF50 !important',
+                                color: '#fff !important',
+                                '&:hover': { backgroundColor: '#388e3c !important' },
+                              }
+                            : {}
+                        }
                       />
                     </Box>
 

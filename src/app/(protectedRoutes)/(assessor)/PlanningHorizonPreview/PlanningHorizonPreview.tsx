@@ -6,7 +6,7 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
@@ -17,17 +17,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HorizonFormValues, HorizonOption } from '../../(plantAssessment)/plantAssement.model';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../../(plantAssessment)/plantAssementApi';
 import styles from './PlanningHorizonPreview.module.css';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const PlanningHorizonPreview = () => {
   const params = useParams();
   const router = useRouter();
-  const organisationId = params.organisationId as string;
+  const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
   const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
   const dispatch = useDispatch();
   dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
-
+  dispatch(setShowAssessmentListSideBar(true));
+  dispatch(setPlantAssessmentDepartment(''));
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
 
   // Edit state management
@@ -57,7 +59,7 @@ const PlanningHorizonPreview = () => {
   const fetchHorizonOptions = async () => {
     try {
       const requestPayload = {
-        tenantId: organisationId,
+        tenantId,
         plantId: plantId || '',
       };
       const result = await getHorizonOptions(requestPayload).unwrap();
@@ -120,7 +122,7 @@ const PlanningHorizonPreview = () => {
       if (!selectedOption) return;
 
       const payload = {
-        organisationId,
+        tenantId,
         plantId: plantId || '',
         selectedPlan: {
           id: selectedOption.id,
@@ -145,7 +147,7 @@ const PlanningHorizonPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
+    router.push(`/IndustrySelectionPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
@@ -159,6 +161,7 @@ const PlanningHorizonPreview = () => {
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
   const isNextDisabled = (isEditMode && hasUnsavedChanges) || isLoadingAdd;
+  const isBackDisabled = isEditMode || isLoadingAdd;
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   return (
@@ -267,7 +270,7 @@ const PlanningHorizonPreview = () => {
                     icon="left"
                     type="button"
                     onClick={() => router.back()}
-                    disabled={isLoadingAdd}
+                    disabled={isBackDisabled}
                   >
                     Back
                   </CustomButton>

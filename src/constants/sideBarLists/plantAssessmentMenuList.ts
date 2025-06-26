@@ -105,7 +105,7 @@ const PlantAssessmentMenuList: SidebarItem[] = [
   {
     text: 'Learning and development',
     icon: 'SchoolIcon',
-    linkRoute: 'L&D',
+    linkRoute: 'Learning & Development',
     matchKeyword: 'Learning and development',
     show: false,
   },
@@ -136,18 +136,52 @@ const PlantAssessmentMenuList: SidebarItem[] = [
 export const platformUserAssessmentList = [...plantAssessmentConfigurationList, ...PlantAssessmentMenuList];
 
 export const assessorUserAssessmentList = [
-  ...plantAssessmentConfigurationList,
-  ...PlantAssessmentMenuList,
+  {
+    text: 'Industry selection',
+    icon: 'DomainIcon',
+    linkRoute: '/IndustrySelectionPreview',
+    matchKeyword: 'IndustrySelectionPreview',
+    show: false,
+  },
+  {
+    text: 'Planning Horizon',
+    icon: 'TimelineIcon',
+    linkRoute: '/PlanningHorizonPreview',
+    matchKeyword: 'PlanningHorizonPreview',
+    show: false,
+  },
+  {
+    text: 'KPI Defination',
+    icon: 'SpeedIcon',
+    linkRoute: '/KpiDefinitionPreview',
+    matchKeyword: 'KpiDefinitionPreview',
+    show: false,
+  },
+  {
+    text: 'Cost Profile',
+    icon: 'MonetizationOnIcon',
+    linkRoute: '/CostProfilePreview',
+    matchKeyword: 'CostProfilePreview',
+    show: false,
+  },
+  ...PlantAssessmentMenuList.filter((item) => item.text !== 'Preview'),
+  {
+    text: 'User Assessment Preview',
+    icon: 'VisibilityIcon',
+    linkRoute: '/UserAssessmentPreview',
+    matchKeyword: 'UserAssessmentPreview',
+    show: false,
+  },
   {
     text: 'Dimension selection',
     icon: 'TuneIcon',
-    linkRoute: 'DimensionSelection',
+    linkRoute: '/AssessmentBasedImpactValues',
     show: false,
   },
   {
     text: 'Solution Selection',
     icon: 'ChecklistIcon',
-    linkRoute: 'SolutionSelection',
+    linkRoute: '/AssessmentSolution',
     show: false,
   },
 

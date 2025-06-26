@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import styles from './style.module.css';
+import { QuestionCardProps } from './QuestionCard.types';
 
 const QuestionCard = ({
   questionNumber = 1,

@@ -1,12 +1,10 @@
 'use client';
-import * as React from 'react';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideToast } from './toasterSlice';
 import { RootState } from '@/store/store';
 import styles from './toaster.module.css';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { Slide } from '@mui/material';
 
 export default function Toaster() {
@@ -14,7 +12,7 @@ export default function Toaster() {
   const { open, severity, message } = useSelector((state: RootState) => state.toasterGlobal);
 
   // const theme = useTheme();
-  const isSmallScreen = useMediaQuery('(max-width:899px)');
+  // const isSmallScreen = useMediaQuery('(max-width:899px)');
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
     if (reason === 'clickaway') return;
@@ -56,17 +54,17 @@ export default function Toaster() {
               },
               backgroundColor:
                 severity === 'success'
-                  ? '#5d9981' // pastel green
+                  ? '#157759' // pastel green
                   : severity === 'error'
                     ? '#e71d36' // pastel red
                     : severity === 'warning'
                       ? '#fcca46' // pastel yellow
                       : '#0353a4', // pastel blue for info
-              width: {
-                sm: '300px',
-                md: '220px',
-                lg: '200px',
-              },
+              // width: {
+              //   sm: '300px',
+              //   md: '320px',
+              //   lg: '300px',
+              // },
               margin: {
                 xs: ' 0px 0px',
                 sm: '-14px ',
