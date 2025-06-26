@@ -12,7 +12,7 @@ type Props = {
   verificationStatus?: string;
 };
 
-const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
+const AssessorQuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
   console.log({ questions, selectedQuestionId, completedIds, onSelect });
   return (
     <div className={styles.buttonGrid}>
@@ -46,4 +46,4 @@ const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, compl
   );
 };
 
-export default QuestionSection;
+export default AssessorQuestionSection;

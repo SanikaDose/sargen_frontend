@@ -14,6 +14,9 @@ export interface PlantFormType {
   assessmentStartDate: string;
   debriefDate: string;
   about: string;
+  pocFullName: string;
+  pocEmail: string;
+  pocContactNo: string;
 }
 
 export interface PlantFormInput {
@@ -40,4 +43,7 @@ export interface EditPlantApi {
   about?: string;
   currencyType: string;
   gstin: string;
+  pocFullName: string;
+  pocEmail: string;
+  pocContactNo: string;
 }

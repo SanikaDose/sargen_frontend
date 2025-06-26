@@ -18,7 +18,7 @@ export const organisationExtraMenuList: SidebarItem[] = [
   {
     text: 'Report',
     icon: 'AssessmentIcon', // or 'DescriptionIcon'
-    linkRoute: '/report',
+    linkRoute: '/reportHistory',
     show: false,
   },
 ];

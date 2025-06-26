@@ -55,7 +55,7 @@ export const dataDisplayCustomizations: Components<Theme> = {
         '& .MuiListItem-root': {
           padding: '2px 8px',
           borderRadius: (theme.vars || theme).shape.borderRadius,
-          opacity: 0.7,
+          opacity: 1117,
           '&.Mui-selected': {
             opacity: 1,
             backgroundColor: alpha(theme.palette.action.selected, 0.3),
