@@ -213,7 +213,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
       dispatch(setUserFullName(fullName));
       dispatch(setUserDesignation(userPointOfConnectData.data.designation));
-      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
+      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePicUrl));
       console.log('fullName', userPointOfConnectData.data);
     }
   }, [userPointOfConnectData, dispatch]);
