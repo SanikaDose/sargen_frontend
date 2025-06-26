@@ -21,7 +21,7 @@ import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -170,38 +170,20 @@ const PlantRegistrationForm = () => {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#000000' }}>
-                                        Currency Type
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
-                                        {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '16px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('currencyType')}
-                                      >
-                                        <MenuItem value="">
-                                          <em>Select Currency</em>
-                                        </MenuItem>
-                                        {currencyOptions.map((currency) => (
-                                          <MenuItem key={currency.code} value={currency.name}>
-                                            {currency.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="red">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
-                                    </FormControl>
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      value={String(field.value ?? '')}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={currencyOptions.map(({ name }) => ({
+                                        label: name,
+                                        value: name,
+                                      }))}
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
                                   ) : (
                                     <>
                                       <InputWithLabel

@@ -80,32 +80,78 @@ function OrganizationOnbording() {
     reValidateMode: 'onChange',
   });
 
+  // useEffect(() => {
+  //   if (existingData?.data && !isFetching) {
+  //     const org = existingData.data;
+  //     console.log('orgg', org);
+  //     const fullRevenue = Number(org.revenue || 0);
+
+  //     const revenueUnits = [100000, 10000000, 1000, 1];
+  //     let unit = 1;
+  //     let normalizedRevenue = fullRevenue;
+
+  //     for (const u of revenueUnits) {
+  //       const divided = fullRevenue / u;
+  //       if (divided < 10000) {
+  //         unit = u;
+  //         normalizedRevenue = Math.floor(divided); // no toFixed here
+  //         break;
+  //       }
+  //     }
+
+  //     reset({
+  //       companyName: org.name || '',
+  //       website: org.website || '',
+  //       gstin: org.gstin || '',
+  //       country: org.country || '',
+  //       revenue: normalizedRevenue.toString(), // no forced decimal precision
+  //       revenueUnit: unit.toString(),
+  //       uom: org.uom || '',
+  //       numberOfEmployees: org.numberOfEmployees || '',
+  //       about: org.about || '',
+  //     });
+  //   }
+
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // }, [existingData, isFetching, logoData, reset]);
+
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
-      console.log('orgg', org);
       const fullRevenue = Number(org.revenue || 0);
 
-      const revenueUnits = [100000, 10000000, 1000, 1];
-      let unit = 1;
+      // Define units with display label and their numeric multiplier
+      const revenueUnitMap = [
+        //{ label: 'Arab', value: 1_00_00_00_000 },
+        { label: 'Crore', value: 1_00_00_000 },
+        { label: 'Lakh', value: 1_00_000 },
+        { label: 'Thousand', value: 1_000 },
+        { label: 'Unit', value: 1 },
+      ];
+
+      let selectedUnit = revenueUnitMap[revenueUnitMap.length - 1]; // Default to 'Unit'
       let normalizedRevenue = fullRevenue;
 
-      for (const u of revenueUnits) {
-        const divided = fullRevenue / u;
-        if (divided < 10000) {
-          unit = u;
-          normalizedRevenue = Math.floor(divided); // no toFixed here
+      for (const unit of revenueUnitMap) {
+        const divided = fullRevenue / unit.value;
+        if (divided >= 1) {
+          selectedUnit = unit;
+
+          const hasDecimal = divided % 1 !== 0;
+          normalizedRevenue = hasDecimal ? parseFloat(divided.toFixed(2)) : divided;
+
           break;
         }
       }
-
       reset({
         companyName: org.name || '',
         website: org.website || '',
         gstin: org.gstin || '',
         country: org.country || '',
-        revenue: normalizedRevenue.toString(), // no forced decimal precision
-        revenueUnit: unit.toString(),
+        revenue: normalizedRevenue.toString(),
+        revenueUnit: selectedUnit.value.toString(), // or use label if needed
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
         about: org.about || '',
@@ -158,13 +204,14 @@ function OrganizationOnbording() {
 
   //on form submit
   const onSubmit = async (data: OrgOnboardType) => {
-    const { revenue, revenueUnit, ...rest } = data;
-
-    const finalRevenue = Number(revenue) * Number(revenueUnit);
-
+    const { revenue, revenueUnit, numberOfEmployees, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
     const payload = {
       ...rest,
       revenue: finalRevenue.toString(), // Or keep as number if required
+      numberOfEmployees: cleanedEmployees.toString(),
     };
     console.log('updated addda', payload);
 
@@ -255,6 +302,7 @@ function OrganizationOnbording() {
                                         { label: 'Thousand', value: '1000' },
                                         { label: 'Lakh', value: '100000' },
                                         { label: 'Crore', value: '10000000' },
+                                        // { label: 'Arab', value: '1000000000' },
                                       ].map(({ label, value }) => ({
                                         label: label,
                                         value: value,
@@ -273,25 +321,20 @@ function OrganizationOnbording() {
                                         type={input.type || 'text'}
                                         value={
                                           ['numberOfEmployees', 'revenue'].includes(input.name)
-                                            ? // ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
-                                              // : field.value
-                                              formatWithIndianCommas(field.value)
+                                            ? formatWithIndianCommas(field.value)
                                             : field.value
                                         }
                                         onChange={(e) => {
                                           const value = e.target.value;
 
-                                          // if (['numberOfEmployees', 'revenue'].includes(input.name)) {
-                                          //   const rawValue = value.replace(/,/g, '');
-                                          //   // if (/^\d*$/.test(rawValue)) {
-                                          //   //   field.onChange(rawValue);
-                                          //   // }
-                                          //   field.onChange(rawValue);
-                                          // }
-
                                           if (['numberOfEmployees', 'revenue'].includes(input.name)) {
-                                            const rawValue = value.replace(/,/g, ''); // remove commas
-                                            field.onChange(rawValue); // ✅ allow any input, validate later
+                                            // Remove all commas and only allow digits
+                                            const rawValue = value.replace(/,/g, '');
+
+                                            if (/^\d*$/.test(rawValue)) {
+                                              console.log('rawvaueee', rawValue);
+                                              field.onChange(rawValue); // Save raw digits only
+                                            }
                                           }
                                           if (input.name === 'gstin') {
                                             field.onChange(value.toUpperCase());
