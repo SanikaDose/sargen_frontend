@@ -9,13 +9,13 @@
 }
 .paperContainer {
   border-radius: 16px;
+  padding: 2;
   background-color: white;
   border: 1px solid rgb(216, 216, 216);
   width: 100%;
-  display: flex; 
-  /* min-height: 87%; */
-  padding: 2;
-  gap: 3rem;
+  display: flex;
+  gap: 3;
+  min-height: 87%;
 }
 .heading {
   font-weight: 600;
