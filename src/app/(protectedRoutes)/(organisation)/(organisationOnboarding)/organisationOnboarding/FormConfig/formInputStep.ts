@@ -66,8 +66,7 @@ export const OrgFormInputs: OrgFormInput[] = [
     rules: {
       required: 'Organization Revenue is required',
       pattern: {
-        value: /^[0-9,]+$/,
-
+        value: /^[0-9.,]+$/,
         message: 'Enter a valid number',
       },
     },

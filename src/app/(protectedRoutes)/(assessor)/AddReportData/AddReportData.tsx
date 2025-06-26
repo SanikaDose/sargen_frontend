@@ -14,7 +14,7 @@ import {
   useAddCommentMutation,
   useAddIntroductionMutation,
   useAddRoiMutation,
-  useSummaryOfObservationsAndRecommendationsMutation,
+  useAddSummaryOfObservationsAndRecommendationsMutation,
   useGetReportDataMutation,
 } from './ReportDataApi';
 import { PayloadType } from './ReportData.types';
@@ -44,7 +44,7 @@ const AddReportData = () => {
 
   const [addAbout] = useAddAboutTheCompanyMutation();
   const [addIntro] = useAddIntroductionMutation();
-  const [addSummary] = useSummaryOfObservationsAndRecommendationsMutation();
+  const [addSummary] = useAddSummaryOfObservationsAndRecommendationsMutation();
   const [addROI] = useAddRoiMutation();
   const [addComment] = useAddCommentMutation();
   const [getReportData] = useGetReportDataMutation();

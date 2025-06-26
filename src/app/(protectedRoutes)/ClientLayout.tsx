@@ -14,7 +14,9 @@ import {
   setUserLogoUrl,
 } from '@/store/globalSlice';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, List } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Accordion, AccordionDetails, AccordionSummary, List, Popover } from '@mui/material';
 
 import { RootState } from '@/store/store';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -124,7 +126,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [isInitialized, setIsInitialized] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
-
+  const [openLogoutPopUp, setOpenLogoutPopUp] = React.useState(false);
   // All useSelector hooks
   const onboardingStatus: string = useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || '';
   const userTypeFromRedux = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType);
@@ -140,6 +142,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [triggerGetPointOfContact, { data: userPointOfConnectData }] = useLazyGetPointOfContactQuery();
 
   // Derived values
+
   const open = isDesktop ? true : mobileOpen;
 
   const plantId = (params?.plantId ?? params?.PlantId) as string;
@@ -220,6 +223,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   }, [userPointOfConnectData, dispatch]);
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    handleLogout();
+  };
+
+  const openAnchorEl = Boolean(anchorEl);
+
   // Early return if not initialized
   if (!isInitialized) {
     return null;
@@ -237,6 +253,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   };
 
+  const handleLogout = () => {
+    setOpenLogoutPopUp(false);
+    // 1. Clear Redux state (optional)
+    dispatch({ type: 'RESET_APP' }); // Replace with your root-level reset action
+
+    // 2. Clear localStorage / sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // 3. Redirect to login page
+    router.push('/login');
+  };
   const DEPARTMENT_LINKS = [
     'R&D',
     'Planning',
@@ -341,9 +369,55 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               {userDesignation}
             </Typography>
           </Box>
-          <Button variant="text">
-            <Avatar src={userLogoUrl} />
-          </Button>
+
+          <>
+            <Button variant="text" onClick={handleAvatarClick} sx={{ pl: 4, minWidth: 0 }}>
+              <Avatar src={userLogoUrl} />
+            </Button>
+
+            <Popover
+              open={openAnchorEl}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <List sx={{ minWidth: 160 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      handleClose();
+                      // Navigate to settings or call a callback
+                    }}
+                  >
+                    <ListItemIcon>
+                      <SettingsIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      handleClose();
+                    }}
+                  >
+                    <ListItemIcon>
+                      <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Popover>
+          </>
         </Toolbar>
       </AppBar>
       <Drawer
