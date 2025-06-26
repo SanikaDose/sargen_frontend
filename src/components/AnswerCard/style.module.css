@@ -4,8 +4,7 @@
   border-radius: 16px;
   border: 2px outset rgb(255, 255, 255);
   width: 100%;
-  min-height: 15%;
-  height: auto;
+  max-height: auto;
   display: flex;
   align-items: center;
 }

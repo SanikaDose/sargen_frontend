@@ -52,9 +52,9 @@ const steps = ['Form Data', ...fileValues.map((key, i) => `File ${i + 1}`)].map(
 //   (label) => ({ label }),
 // );
 
-const tenantId = getValueLocalStorage('tenantId');
-
 function AssessorOnboarding() {
+  const tenantId = getValueLocalStorage('tenantId');
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -101,107 +101,20 @@ function AssessorOnboarding() {
 
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
-  // const { data: orgStatus } = useGetOnboardingStatusQuery(tenantId ?? '');
-  // console.log('ornboding status', orgStatus);
-  // const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
 
-  // const readonlyFields = ['firstName', 'lastName', 'email'];
   const [Status, setStatus] = useState<string | null>(null);
   const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
   console.log('existing dataa', existingData);
   //reload view
+
   // useEffect(() => {
   //   if (existingData && existingData.data[0]?.formData) {
-  //     const { formData, metadata_information } = existingData.data[0];
-  //     console.log('formdatauserlog2', formData.userLogo);
+  //     const formData = existingData.data[0].formData;
   //     if (formData.userLogo) {
   //       setLogoUrl(formData.userLogo);
-  //       //  triggerToast('Assessor Logo Fetch Successfully', 'success');
   //     }
-  //     if (metadata_information) {
-  //       const preUploadedMap: Record<string, UploadFileMetadata> = {};
-
-  //       metadata_information.forEach((item) => {
-  //         if (item.tableName) {
-  //           preUploadedMap[item.tableName] = item;
-  //         }
-  //       });
-  //       setUploadedFiles(preUploadedMap);
-  //     }
-  //     reset({
-  //       firstName: formData.firstName || '',
-  //       lastName: formData.lastName || '',
-  //       email: formData.email || '',
-  //       contactNumber: formData.contactNumber || '',
-  //       city: formData.city || '',
-  //       country: formData.country || '',
-  //       yearOfExperience: formData.yearOfExperience || '',
-  //       certificationYear: formData.certificationYear || '',
-  //     });
   //   }
-  // }, [existingData, reset, isFetching]);
-
-  // useEffect(() => {
-  //   const fetchFile = async () => {
-  //     try {
-  //       const fileUrl = existingData?.data[0]?.formData?.siriCertificate;
-
-  //       if (fileUrl && typeof fileUrl === 'string') {
-  //         const response = await fetch(fileUrl); // ✅ This is valid
-  //         const blob = await response.blob();
-
-  //         const fetchedFile = new File([blob], 'siriCertificate.pdf', {
-  //           type: 'application/pdf',
-  //         });
-
-  //         setSelectedFile(fetchedFile);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching the file:', error);
-  //     }
-  //   };
-
-  //   fetchFile();
   // }, [existingData]);
-
-  // useEffect(() => {
-  //   if (existingData && existingData.data[0]?.formData) {
-  //     const { formData, metadata_information } = existingData.data[0];
-
-  //     if (formData?.firstName && formData?.email) {
-  //       reset({
-  //         firstName: formData.firstName || '',
-  //         lastName: formData.lastName || '',
-  //         email: formData.email || '',
-  //         contactNumber: formData.contactNumber || '',
-  //         city: formData.city || '',
-  //         country: formData.country || '',
-  //         yearOfExperience: formData.yearOfExperience || '',
-  //         certificationYear: formData.certificationYear || '',
-  //       });
-  //     }
-
-  //     if (formData.userLogo) {
-  //       setLogoUrl(formData.userLogo);
-  //     }
-
-  //     if (metadata_information) {
-  //       const preUploadedMap: Record<string, UploadFileMetadata> = {};
-  //       metadata_information.forEach((item) => {
-  //         if (item.tableName) preUploadedMap[item.tableName] = item;
-  //       });
-  //       setUploadedFiles(preUploadedMap);
-  //     }
-  //   }
-  // }, [existingData, reset, isFetching]);
-  useEffect(() => {
-    if (existingData && existingData.data[0]?.formData) {
-      const formData = existingData.data[0].formData;
-      if (formData.userLogo) {
-        setLogoUrl(formData.userLogo);
-      }
-    }
-  }, [existingData]);
 
   useEffect(() => {
     const populateFormAndFile = async () => {
@@ -224,9 +137,9 @@ function AssessorOnboarding() {
           });
 
           // Set logo
-          // if (formData.userLogo) {
-          //   setLogoUrl(formData.userLogo);
-          // }
+          if (formData.userLogo) {
+            setLogoUrl(formData.userLogo);
+          }
 
           // Fetch certificate if available
           const fileUrl = formData.siriCertificate;
@@ -256,7 +169,6 @@ function AssessorOnboarding() {
         console.error('Error populating form or fetching file:', error);
       }
     };
-
     if (existingData && existingData.data[0]?.formData) {
       populateFormAndFile();
     }
@@ -365,9 +277,9 @@ function AssessorOnboarding() {
         data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
-      const status = await getOnboardingStatus(tenantId ?? '').unwrap();
+      const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
       console.log('Status response:', status);
-      dispatch(setOnboardingStatus(status?.onboardingStatus));
+      //  dispatch(setOnboardingStatus(status?.onboardingStatus));
       if (status?.onboardingStatus) {
         setStatus(status.onboardingStatus);
         dispatch(setOnboardingStatus(status?.onboardingStatus));
@@ -386,12 +298,6 @@ function AssessorOnboarding() {
     }
   };
   console.log('status stateee', Status);
-  // ✅ Compute activeStep based on focused field index
-  // const activeStep = useMemo(() => {
-  //   const allInputs = [...AssessorFormInputs];
-  //   const index = allInputs.findIndex((input) => input.name === focusedField);
-  //   return index !== -1 ? index : 0;
-  // }, [focusedField]);
 
   const activeStep = useMemo(() => {
     // Step 0: If focused on any form field or siriCertificate is selected
@@ -406,20 +312,6 @@ function AssessorOnboarding() {
 
     return 0;
   }, [focusedField, currentUploadKey]);
-
-  // ✅ Compute completed steps where value length > 5
-  // const completedSteps = useMemo(() => {
-  //   const allInputs = [...AssessorFormInputs];
-  //   return allInputs.reduce((acc: number[], input, index) => {
-  //     const value = watchedValues?.[input.name as keyof AssessorFormType];
-
-  //     const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
-  //     if (isFilled) {
-  //       acc.push(index);
-  //     }
-  //     return acc;
-  //   }, []);
-  // }, [watchedValues]);
 
   const completedSteps = useMemo(() => {
     const completed: number[] = [];
@@ -476,7 +368,7 @@ function AssessorOnboarding() {
 
   return (
     <>
-      {isLoading && Status === 'COMPLETED' ? (
+      {Status === 'COMPLETED' ? (
         <Loader loading={true} />
       ) : (
         <Box sx={{ width: '100%', height: '99.5%' }}>

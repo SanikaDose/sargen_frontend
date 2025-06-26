@@ -18,6 +18,7 @@ import { useGetSpecificPlantInfoQuery } from '../AssignedPlantsList/AssignedPlan
 import { AssessorProps } from './Assessor.types';
 import { useGetAssessorMetadataQuery, usePostAssessorMetadataToPlantMutation } from './AssessorApi';
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
+import { AsseessmentStatus } from '@/constants/enums';
 
 const excludeKeys = [
   'plantLogo',
@@ -82,7 +83,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
 
   // Check if assessment is completed
   const isAssessmentCompleted = useMemo(() => {
-    return plant?.assessmentCompletionStage === 'COMPLETED_ASSESSMENT';
+    return plant?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT;
   }, [plant?.assessmentCompletionStage]);
 
   const filteredPlantInfo = useMemo(() => {

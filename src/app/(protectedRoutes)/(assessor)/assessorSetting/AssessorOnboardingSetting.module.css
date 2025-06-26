@@ -9,13 +9,13 @@
 }
 .paperContainer {
   border-radius: 16px;
+  padding: 2;
   background-color: white;
   border: 1px solid rgb(216, 216, 216);
   width: 100%;
   display: flex;
+  gap: 3;
   min-height: 87%;
-  padding: 2rem;
-  gap: 3rem;
 }
 .heading {
   font-weight: 600;
@@ -71,17 +71,12 @@
 
 .secondContainer {
   display: flex;
-
-  /* justify-content: space-evenly; */
   gap: 25;
   width: 100%;
   padding: 0% 1%;
 }
 .tableContainer {
   width: 100%;
-  /* border: 1px solid rgb(20, 133, 209);
-    background-color:antiquewhite;
-    padding: 10; */
 }
 .fileUploadContainer {
   display: flex;
@@ -165,6 +160,14 @@
   }
 }
 @media (min-width: 280px) and (max-width: 800px) {
+  .stepperContainer {
+    display: none;
+  }
+  .paperContainer {
+    height: 100%;
+  }
+}
+@media (min-width: 1000px) and (max-width: 1500px) {
   .stepperContainer {
     display: none;
   }
