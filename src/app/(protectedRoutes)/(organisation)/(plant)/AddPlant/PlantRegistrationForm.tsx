@@ -93,7 +93,7 @@ const PlantRegistrationForm = () => {
       const newPlantId = response?.id;
 
       // ✅ Step 3: Upload image only if user uploaded one
-      if (logoUrl && !logoUrl.includes('default-logo-image')) {
+      if (logoUrl && newPlantId && !logoUrl.includes('default-logo-image')) {
         const blob = await fetch(logoUrl).then((res) => res.blob());
         const file = new File([blob], 'plant-logo.png', { type: blob.type });
 

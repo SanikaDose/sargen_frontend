@@ -39,13 +39,19 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const assessorId = useSelector((state: RootState) => state.tokenDecode.decodedToken?.tenantId);
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
-  dispatch(setPlantAssessmentDepartment(''));
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Move all dispatch calls to useEffect to avoid setState during render
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.assessorViewAssignedPlantDetails));
+    dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(setShowAssessmentListSideBar(false));
+  }, [dispatch]);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data, isFetching, isError } = useGetSpecificPlantInfoQuery({ organisationId, plantId }, { skip: !organisationId || !plantId });
 
@@ -55,8 +61,9 @@ const ViewPlantDetails = ({}: AssessorProps) => {
     isFetching: isMetadataFetching,
     isError: isMetadataError,
   } = useGetAssessorMetadataQuery(assessorId, {
-    skip: !organisationId,
+    skip: !assessorId,
   });
+
   let metadataToUpload = [];
   if (metadataData) {
     metadataToUpload = metadataData.map((md: AssessorProps) => md?.tableName);
@@ -111,6 +118,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
     router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
     dispatch(setShowAssessmentListSideBar(true));
   };
+
   if (isFetching) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
@@ -189,7 +197,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
             marginTop={2}
           >
             <Button
-              startIcon={isAssessmentAssigned ? <CheckCircleIcon /> : <CheckCircleIcon />}
+              startIcon={<CheckCircleIcon />}
               color="primary"
               variant="contained"
               disabled={isAssessmentAssigned || isMetadataFetching}
@@ -233,7 +241,6 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                   color: '#FFFFFF',
                 },
               }}
-              // onClick={() => router.push(`/CostProfilePreview/${organisationId}/${plantId}`)}
               onClick={handleClick}
             >
               Review Assessment
