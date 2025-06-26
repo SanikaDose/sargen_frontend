@@ -26,9 +26,12 @@ const AssessmentBasedImpactValues = () => {
   const [dimensionData, setDimensionData] = useState<{ dimension: string; value: number }[]>([]);
   const [selectedDimensions, setSelectedDimensions] = useState<string[]>([]);
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorDimenasionSelection));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorDimenasionSelection));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
   // Helper function to format camelCase to Title Case
   const formatDimensionName = (name: string): string => {
     return (

@@ -30,9 +30,12 @@ const KpiDefinitionPreview = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setPageNameHeader(pagesNames.assessorKpiDefinitionPreview));
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(2));
+    dispatch(markStepCompleted(1));
+    dispatch(markStepIncomplete(3));
   }, [dispatch]);
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
@@ -128,12 +131,6 @@ const KpiDefinitionPreview = () => {
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
-
-  useEffect(() => {
-    dispatch(setActiveStep(1));
-    dispatch(markStepCompleted(0));
-    dispatch(markStepIncomplete(2)); // If coming back from Planning
-  }, [dispatch]);
 
   // Button state logic - simplified and clearer
   const isSaveDisabled = !isEditMode || isLoadingAdd;

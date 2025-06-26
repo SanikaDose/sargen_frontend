@@ -7,7 +7,7 @@ import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
@@ -33,6 +33,8 @@ const IndustrySelectionPreview = () => {
     dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(0));
+    dispatch(markStepIncomplete(1));
   }, [dispatch]);
 
   // Edit state management
@@ -135,10 +137,10 @@ const IndustrySelectionPreview = () => {
 
   const stepperState = useSelector((state: RootState) => state.stepper);
 
-  useEffect(() => {
-    dispatch(setActiveStep(3));
-    dispatch(markStepCompleted(2));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(setActiveStep(3));
+  //   dispatch(markStepCompleted(2));
+  // }, [dispatch]);
 
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;

@@ -6,7 +6,7 @@ import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,15 +23,22 @@ const CostProfilePreview = () => {
   const router = useRouter();
   const organisationId = params.organisationId as string;
   const plantId = params.plantId as string;
+
+  // initial state onf stepper
+  const stepperState = useSelector((state: RootState) => state.stepper);
+
   // const tenantId = getValueLocalStorage('tenantId');
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setPageNameHeader(pagesNames.assessorCostProfilePreview));
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
-  }, []);
+    dispatch(setActiveStep(3));
+    dispatch(markStepCompleted(2)); // KPI Definition completed
+  }, [dispatch]);
+
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -126,12 +133,6 @@ const CostProfilePreview = () => {
   useEffect(() => {
     fetchCostProfileData();
   }, [params]);
-
-  const stepperState = useSelector((state: RootState) => state.stepper);
-  useEffect(() => {
-    dispatch(setActiveStep(0));
-    dispatch(markStepIncomplete(1));
-  }, [dispatch]);
 
   // Button state logic
   const isSaveDisabled = !isEditMode || !hasUnsavedChanges || isLoadingAdd;
