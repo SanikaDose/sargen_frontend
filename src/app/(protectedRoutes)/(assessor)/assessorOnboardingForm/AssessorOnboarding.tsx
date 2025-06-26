@@ -376,18 +376,7 @@ function AssessorOnboarding() {
           <Box className={styles.stepperContainer}>
             <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
           </Box>
-          <Paper
-            elevation={2}
-            // sx={{ borderRadius: '16px' }}
-            className={styles.paperContainer}
-            // sx={{
-            //   borderRadius: '16px',
-            //   p: 2,
-            //   backgroundColor: 'white',
-            //   border: '1px solid #D8D8D8',
-
-            // }}
-          >
+          <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Typography variant="h4" className={styles.heading}>
                 Assessor Profile
