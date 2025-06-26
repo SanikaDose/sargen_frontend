@@ -7,7 +7,7 @@ export type PocPayload = {
   designation: string;
   contactNumber: string;
   jobRole?: string;
-  profilePic?: string;
+  profilePicUrl?: string;
   onboardingCompletionPercentage?: number;
 };
 
