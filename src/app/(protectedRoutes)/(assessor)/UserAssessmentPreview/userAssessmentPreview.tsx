@@ -9,7 +9,7 @@ import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
-import PreviewSideBox from '@/components/previewSideBox/PreviewSideBox';
+import AssessorPreviewSideBox from '@/components/previewSideBox/AssessorPreviewSideBox';
 import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
@@ -371,7 +371,7 @@ const UserAssessmentPreview = () => {
 
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
-              <PreviewSideBox
+              <AssessorPreviewSideBox
                 groupedQuestions={groupedQuestions}
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
