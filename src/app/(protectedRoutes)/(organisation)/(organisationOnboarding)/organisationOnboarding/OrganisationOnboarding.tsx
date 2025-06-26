@@ -157,6 +157,7 @@ function OrganizationOnbording() {
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
+      console.log('orgg', org);
       const fullRevenue = Number(org.revenue || 0);
 
       const revenueUnits = [100000, 10000000, 1000, 1];
@@ -249,6 +250,19 @@ function OrganizationOnbording() {
     }
   };
 
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
+
   return (
     <>
       {isLoading ? (
@@ -333,19 +347,26 @@ function OrganizationOnbording() {
                                         type={input.type || 'text'}
                                         value={
                                           ['numberOfEmployees', 'revenue'].includes(input.name)
-                                            ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                            ? // ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                              // : field.value
+                                              formatWithIndianCommas(field.value)
                                             : field.value
                                         }
                                         onChange={(e) => {
                                           const value = e.target.value;
 
-                                          if (['numberOfEmployees', 'revenue'].includes(input.name)) {
-                                            const rawValue = value.replace(/,/g, '');
-                                            if (/^\d*$/.test(rawValue)) {
-                                              field.onChange(rawValue);
-                                            }
-                                          }
+                                          // if (['numberOfEmployees', 'revenue'].includes(input.name)) {
+                                          //   const rawValue = value.replace(/,/g, '');
+                                          //   // if (/^\d*$/.test(rawValue)) {
+                                          //   //   field.onChange(rawValue);
+                                          //   // }
+                                          //   field.onChange(rawValue);
+                                          // }
 
+                                          if (['numberOfEmployees', 'revenue'].includes(input.name)) {
+                                            const rawValue = value.replace(/,/g, ''); // remove commas
+                                            field.onChange(rawValue); // ✅ allow any input, validate later
+                                          }
                                           if (input.name === 'gstin') {
                                             field.onChange(value.toUpperCase());
                                           } else {

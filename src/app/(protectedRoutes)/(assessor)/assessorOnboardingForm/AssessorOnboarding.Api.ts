@@ -413,7 +413,7 @@ export const assessorApi = protectedApi.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
-      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'Assessor', id: tenantId }],
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'AssessorLogo', id: tenantId }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
           successMessage: 'Assessor logo uploaded successfully!',
@@ -483,12 +483,6 @@ export const assessorApi = protectedApi.injectEndpoints({
       //   });
       // },
     }),
-    // getOnboardingStatus: builder.query<OnboardingStatusResponse, string>({
-    //   query: (tenantId) => ({
-
-    //     method: 'GET',
-    //   }),
-    // }),
 
     getOnboardingStatus: builder.query<OnboardingStatusResponse, { tenantId: string }>({
       query: ({ tenantId }) => ({
@@ -499,7 +493,7 @@ export const assessorApi = protectedApi.injectEndpoints({
     }),
   }),
 
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {
