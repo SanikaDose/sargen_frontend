@@ -73,7 +73,6 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
           }
         >
           <MenuItem disabled value="">
-            {/* style={{ fontWeight: 500, color: '#888' }} */}
             <span
               style={{
                 fontWeight: 500,
