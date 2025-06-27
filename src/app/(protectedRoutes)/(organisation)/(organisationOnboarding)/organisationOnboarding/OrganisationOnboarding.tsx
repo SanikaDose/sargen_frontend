@@ -80,43 +80,6 @@ function OrganizationOnbording() {
     mode: 'onSubmit',
   });
 
-  // useEffect(() => {
-  //   if (existingData?.data && !isFetching) {
-  //     const org = existingData.data;
-  //     console.log('orgg', org);
-  //     const fullRevenue = Number(org.revenue || 0);
-
-  //     const revenueUnits = [100000, 10000000, 1000, 1];
-  //     let unit = 1;
-  //     let normalizedRevenue = fullRevenue;
-
-  //     for (const u of revenueUnits) {
-  //       const divided = fullRevenue / u;
-  //       if (divided < 10000) {
-  //         unit = u;
-  //         normalizedRevenue = Math.floor(divided); // no toFixed here
-  //         break;
-  //       }
-  //     }
-
-  //     reset({
-  //       companyName: org.name || '',
-  //       website: org.website || '',
-  //       gstin: org.gstin || '',
-  //       country: org.country || '',
-  //       revenue: normalizedRevenue.toString(), // no forced decimal precision
-  //       revenueUnit: unit.toString(),
-  //       uom: org.uom || '',
-  //       numberOfEmployees: org.numberOfEmployees || '',
-  //       about: org.about || '',
-  //     });
-  //   }
-
-  //   if (logoData?.logoUrl) {
-  //     setLogoUrl(logoData.logoUrl);
-  //   }
-  // }, [existingData, isFetching, logoData, reset]);
-
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
