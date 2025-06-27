@@ -1,31 +1,31 @@
 'use client';
 
+import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
 import { Box, FormControl, FormHelperText, Grid, MenuItem, Paper, Select, Typography, useMediaQuery } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
 import styles from './ContactPerson.module.css';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
+import { contactPersonValidationRules } from './ContactPerson.validations';
 import {
   useAddPointOfContactMutation,
   useGetPointOfContactQuery,
   useLazyGetOnboardingStatusQuery,
   useUploadPocProfilePicMutation,
 } from './ContactPersonApi';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { useDispatch } from 'react-redux';
-import Loader from '@/components/Loader/Loader';
-import { contactPersonValidationRules } from './ContactPerson.validations';
-import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
