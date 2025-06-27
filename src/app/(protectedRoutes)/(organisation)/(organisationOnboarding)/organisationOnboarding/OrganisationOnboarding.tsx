@@ -108,6 +108,7 @@ function OrganizationOnbording() {
           break;
         }
       }
+
       const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
 
       reset({
@@ -348,7 +349,7 @@ function OrganizationOnbording() {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Orgnization"
+                              label="About Orgnization (max 200 characters)"
                               placeholder="Enter About Orgnization"
                               // required={true}
                               multiline

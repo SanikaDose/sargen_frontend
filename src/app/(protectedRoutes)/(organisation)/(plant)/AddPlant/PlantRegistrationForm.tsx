@@ -274,7 +274,7 @@ const PlantRegistrationForm = () => {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant"
+                              label="About Plant (max 200 characters)"
                               placeholder="Enter About Plant"
                               // required={true}
                               multiline

@@ -35,11 +35,11 @@ export interface EditPlantApi {
   name: string;
   location: string;
   registrationNo: string;
-  revenue: string;
+  revenue: number;
   type: string;
-  age: string;
-  numberOfEmployees: string;
-  numberOfLines: string;
+  age: number;
+  numberOfEmployees: number;
+  numberOfLines: number;
   assessmentStartDate: string;
   debriefDate: string;
   about?: string;
