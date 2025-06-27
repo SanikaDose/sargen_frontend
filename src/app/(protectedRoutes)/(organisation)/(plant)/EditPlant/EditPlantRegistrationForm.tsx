@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { Box, FormControl, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { Box, FormControl, MenuItem, Paper, Select, Typography, Divider } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { plantFormInputs } from './FormConfig/FormInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -29,6 +29,7 @@ const steps = [
   'Age',
   'Currency',
   'Revenue',
+  'Revenue Unit',
   'Employees',
   'Lines',
   'Assessment',
@@ -66,6 +67,30 @@ const EditPlantRegistrationForm = () => {
   useEffect(() => {
     if (getPlantData?.data) {
       const plant = getPlantData.data;
+      const fullRevenue = Number(plant.revenue || 0);
+      const revenueUnitMap = [
+        //{ label: 'Arab', value: 1_00_00_00_000 },
+        { label: 'Crore', value: 1_00_00_000 },
+        { label: 'Lakh', value: 1_00_000 },
+        { label: 'Thousand', value: 1_000 },
+        { label: 'Unit', value: 1 },
+      ];
+
+      let selectedUnit = revenueUnitMap[revenueUnitMap.length - 1];
+      let normalizedRevenue = fullRevenue;
+
+      for (const unit of revenueUnitMap) {
+        const divided = fullRevenue / unit.value;
+        if (divided >= 1) {
+          selectedUnit = unit;
+
+          const hasDecimal = divided % 1 !== 0;
+          normalizedRevenue = hasDecimal ? parseFloat(divided.toFixed(2)) : divided;
+
+          break;
+        }
+      }
+      const revenueUnitValue = plant.revenue && Number(plant.revenue) > 0 ? selectedUnit.value.toString() : '';
 
       reset({
         name: plant.name || '',
@@ -73,14 +98,15 @@ const EditPlantRegistrationForm = () => {
         registrationNo: plant.registrationNo || '',
         gstin: plant.gstin || '',
         type: plant.type || '',
-        revenue: plant.revenue || '',
+        revenue: normalizedRevenue.toString() || '',
+        revenueUnit: revenueUnitValue,
         currencyType: plant.currencyType,
         age: plant.age?.toString() || '',
         numberOfEmployees: plant.numberOfEmployees?.toString() || '',
         numberOfLines: plant.numberOfLines?.toString() || '',
         assessmentStartDate: plant.assessmentStartDate || '',
         debriefDate: plant.debriefDate || '',
-        about: plant.about || '', // if you have an 'about' field, adjust accordingly
+        about: plant.about || '',
         pocFullName: plant.pocFullName || '',
         pocEmail: plant.pocEmail || '',
         pocContactNo: plant.pocContactNo || '',
@@ -138,6 +164,19 @@ const EditPlantRegistrationForm = () => {
   useEffect(() => {
     // console.log('Errors:', errors);
   }, [errors]);
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
+
   return (
     <>
       {isLoading || isFetching ? (
@@ -160,7 +199,7 @@ const EditPlantRegistrationForm = () => {
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
-                  <Box className={styles.formFieldsBox}>
+                  {/* <Box className={styles.formFieldsBox}>
                     <section className={styles.formFieldsInner}>
                       <Grid container spacing={1}>
                         {plantFormInputs.map((input) => (
@@ -188,7 +227,7 @@ const EditPlantRegistrationForm = () => {
                                       helperText={fieldState.error?.message}
                                     />
                                   ) : (
-                                    <>
+                                   <>
                                       <InputWithLabel
                                         {...field}
                                         label={input.label + (input.rules?.required ? ' *' : '')}
@@ -228,6 +267,224 @@ const EditPlantRegistrationForm = () => {
                           )}
                         />
                       </Box>
+                    </section>
+                  </Box> */}
+                  <Box className={styles.formFieldsBox}>
+                    <section className={styles.formFieldsInner}>
+                      <Grid container spacing={1}>
+                        {plantFormInputs.map((input) => (
+                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
+                            <Controller
+                              name={input.name as keyof PlantFormType}
+                              control={control}
+                              defaultValue=""
+                              rules={input.rules}
+                              render={({ field, fieldState }) => (
+                                <>
+                                  {input.isCurrency || input.isRevenueUnit ? (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      value={String(field.value ?? '')}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={
+                                        input.isCurrency
+                                          ? currencyOptions.map(({ name }) => ({
+                                              label: name,
+                                              value: name,
+                                            }))
+                                          : [
+                                              { label: 'Thousand', value: '1000' },
+                                              { label: 'Lakh', value: '100000' },
+                                              { label: 'Crore', value: '10000000' },
+                                            ].map(({ label, value }) => ({
+                                              label: label,
+                                              value: value,
+                                            }))
+                                      }
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  ) : (
+                                    <>
+                                      <InputWithLabel
+                                        {...field}
+                                        label={input.label}
+                                        placeholder={input.placeholder}
+                                        type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                            ? formatWithIndianCommas(field.value)
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+
+                                          if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                            // Remove all commas and only allow digits
+                                            const rawValue = value.replace(/,/g, '');
+
+                                            if (/^\d*$/.test(rawValue)) {
+                                              console.log('rawvaueee', rawValue);
+                                              field.onChange(rawValue); // Save raw digits only
+                                            }
+                                          }
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase());
+                                          } else {
+                                            field.onChange(value);
+                                          }
+                                        }}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                      />
+                                    </>
+                                  )}
+                                </>
+                              )}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+
+                      <Box className={styles.aboutSection}>
+                        <Controller
+                          name="about"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: 'About Organization is required',
+                            maxLength: {
+                              value: 200,
+                              message: 'Only 200 characters are allowed',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
+                            <InputWithLabel
+                              {...field}
+                              label="About Plant"
+                              placeholder="Enter About Plant"
+                              // required={true}
+                              multiline
+                              type="text"
+                              rows={2}
+                              onFocus={() => setFocusedField('about')}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
+                            />
+                          )}
+                        />
+                      </Box>
+
+                      <Grid size={{ xs: 12 }}>
+                        <Divider sx={{ my: 3, width: '100%' }}>
+                          <Typography variant="subtitle1" fontWeight={600}>
+                            Point Of Contact
+                          </Typography>
+                        </Divider>
+                      </Grid>
+
+                      <Grid container spacing={1}>
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocFullName"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Full Name is required',
+                              minLength: { value: 3, message: 'Minimum 3 characters required' },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Full Name"
+                                  placeholder="Enter Full Name"
+                                  onFocus={() => setFocusedField('pocFullName')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocEmail"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Email is required',
+                              pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'Enter a valid email address',
+                              },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Email"
+                                  placeholder="Enter Email"
+                                  onFocus={() => setFocusedField('pocEmail')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocContactNo"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Contact number is required',
+                              minLength: { value: 10, message: 'Minimum 10 characters required' },
+                              maxLength: { value: 10, message: 'Maximum 10 characters allowed' },
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: 'Enter a valid number',
+                              },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Contact Number"
+                                  placeholder="Enter Contact Number"
+                                  onFocus={() => setFocusedField('pocContactNo')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
                     </section>
                   </Box>
                 </Box>

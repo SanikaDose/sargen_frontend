@@ -13,7 +13,7 @@ export default function OnboardingSuccess() {
     setShowLoader(true);
 
     const timeout = setTimeout(() => {
-      router.push('/AddContactPerson');
+      router.push('/PlantOverview');
     }, 3000);
 
     return () => clearTimeout(timeout);

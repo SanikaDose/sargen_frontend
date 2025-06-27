@@ -32,6 +32,7 @@ const steps = [
   'Type',
   'Age',
   'Revenue',
+  'Revenue Unit',
   'Currency',
   'Employees',
   'Lines',
@@ -73,19 +74,24 @@ const PlantRegistrationForm = () => {
 
   //this is an function which will fill the form with the data from the API and then uload the image while getting the plantId from respomse
   const onSubmit = async (data: PlantFormType) => {
+    const { revenue, revenueUnit, numberOfEmployees, numberOfLines, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
+    const cleanedLines = Number((numberOfLines || '').toString().replace(/,/g, ''));
+    const payload = {
+      ...rest,
+      revenue: finalRevenue,
+      numberOfEmployees: cleanedEmployees,
+      numberOfLines: cleanedLines,
+      age: data.age ? Number(data.age) : 0,
+    };
+    console.log('updated addda', payload);
     try {
-      const { ...body } = data;
-      console.log('data from the add plant', data);
-      // Convert revenue to number if it's a string
-      const bodyWithNumberRevenue = {
-        ...body,
-        revenue: body.revenue ? Number(body.revenue) : 0,
-      };
-
-      // 🔁 Step 1: Submit plant form
+      //  🔁 Step 1: Submit plant form
       const response = (await addPlantInfo({
         tenantId: tenantId ?? '',
-        body: bodyWithNumberRevenue,
+        body: payload,
       }).unwrap()) as unknown as AddPlantInfoResponse;
       console.log('Response from addPlantInfo:', response);
 
@@ -135,6 +141,19 @@ const PlantRegistrationForm = () => {
   useEffect(() => {
     // console.log('Errors:', errors);
   }, [errors]);
+
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
   return (
     <>
       {isLoading ? (
@@ -169,16 +188,27 @@ const PlantRegistrationForm = () => {
                               rules={input.rules}
                               render={({ field, fieldState }) => (
                                 <>
-                                  {input.isCurrency ? (
+                                  {input.isCurrency || input.isRevenueUnit ? (
                                     <CurrencyValueSelector
                                       {...field}
                                       value={String(field.value ?? '')}
                                       label={input.label}
                                       placeholder={input.placeholder}
-                                      options={currencyOptions.map(({ name }) => ({
-                                        label: name,
-                                        value: name,
-                                      }))}
+                                      options={
+                                        input.isCurrency
+                                          ? currencyOptions.map(({ name }) => ({
+                                              label: name,
+                                              value: name,
+                                            }))
+                                          : [
+                                              { label: 'Thousand', value: '1000' },
+                                              { label: 'Lakh', value: '100000' },
+                                              { label: 'Crore', value: '10000000' },
+                                            ].map(({ label, value }) => ({
+                                              label: label,
+                                              value: value,
+                                            }))
+                                      }
                                       required={true}
                                       onFocus={() => setFocusedField(input.name)}
                                       error={!!fieldState.error}
@@ -188,18 +218,38 @@ const PlantRegistrationForm = () => {
                                     <>
                                       <InputWithLabel
                                         {...field}
-                                        required
                                         label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                            ? formatWithIndianCommas(field.value)
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+
+                                          if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                            // Remove all commas and only allow digits
+                                            const rawValue = value.replace(/,/g, '');
+
+                                            if (/^\d*$/.test(rawValue)) {
+                                              console.log('rawvaueee', rawValue);
+                                              field.onChange(rawValue); // Save raw digits only
+                                            }
+                                          }
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase());
+                                          } else {
+                                            field.onChange(value);
+                                          }
+                                        }}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="red">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
                                     </>
                                   )}
                                 </>
@@ -214,7 +264,14 @@ const PlantRegistrationForm = () => {
                           name="about"
                           control={control}
                           defaultValue=""
-                          render={({ field }) => (
+                          rules={{
+                            required: 'About Organization is required',
+                            maxLength: {
+                              value: 200,
+                              message: 'Only 200 characters are allowed',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
                               label="About Plant"
@@ -224,6 +281,8 @@ const PlantRegistrationForm = () => {
                               type="text"
                               rows={2}
                               onFocus={() => setFocusedField('about')}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
                             />
                           )}
                         />
