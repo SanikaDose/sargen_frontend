@@ -69,15 +69,13 @@ export default function AssignedPlantsList() {
           <Grid container spacing={1.5} className={styles.gridContainer}>
             {filteredPlants.length > 0 ? (
               filteredPlants.map((plant: AssignedPlant) => {
-                const organisationName = plant.organisationId ? plant.organisationId.split('-').slice(0, 2).join('-') : 'N/A';
-
                 return (
                   <Grid key={plant.id} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
                     <AssessorPlantInfoCard
                       data={{
                         plantId: plant.plantId,
                         plantName: plant.plantName,
-                        organisationName,
+                        organisationName: plant.organisationName,
                         organisationId: plant.organisationId,
                         assessmentCompletionStage: plant.assessmentCompletionStage,
                         createdAt: plant.createdAt,

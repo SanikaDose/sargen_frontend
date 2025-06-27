@@ -186,34 +186,48 @@ const UserAssessmentPreview = () => {
     }
   };
 
-  const handleFinishAssessment = async () => {
+  const handleVerifyAndFinishClick = async () => {
+    const currentQuestion = currentGroup[0];
+    const selectedOption = currentGroup.find((q) => q.isselected);
+
+    if (!currentQuestion || !selectedOption) return;
+
     try {
       setIsFinishing(true);
 
-      // First save the current answer
+      const payload = {
+        tenantId: organisationId,
+        plantId: plantId,
+        questionId: selectedOption.id,
+        questionStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED,
+      };
+
+      // 1. Verify the current question
+      await changeQuestionsStatus(payload).unwrap();
+
+      // 2. Save the answer
       const saveSuccess = await submitQuestionnaireAnswer();
       if (!saveSuccess) {
         setIsFinishing(false);
         return;
       }
 
-      // Then start the rule engine
-      const ruleEnginePayload = {
+      // 3. Start the rule engine
+      await startAssessmentRuleEngine({
         tenantId: organisationId,
         plantId: plantId,
-      };
+      }).unwrap();
 
-      await startAssessmentRuleEngine(ruleEnginePayload).unwrap();
-
-      // Redirect to impact values page after successful rule engine start
+      // 4. Redirect to Impact Values page
       router.push(`/AssessmentBasedImpactValues/${organisationId}/${plantId}`);
     } catch (error) {
-      console.error('Failed to finish assessment:', error);
+      console.error('Failed to verify & finish assessment:', error);
+    } finally {
       setIsFinishing(false);
     }
   };
 
-  const handleNextClick = async () => {
+  const handleVerifyClick = async () => {
     if (currentIndex < groupKeys.length - 1) {
       const currentQuestion = currentGroup[0];
       const selectedOption = currentGroup.find((q) => q.isselected);
@@ -434,27 +448,15 @@ const UserAssessmentPreview = () => {
                 {isSaving ? 'Saving...' : isEditMode ? 'Save' : 'Edit'}
               </CustomButton>
 
-              {isLastQuestion && (
-                <CustomButton
-                  variant="contained"
-                  icon="save"
-                  type="button"
-                  onClick={handleFinishAssessment}
-                  disabled={isFinishing || isEditMode}
-                >
-                  {isFinishing ? 'Processing...' : 'Finish'}
-                </CustomButton>
-              )}
-
               <CustomButton
                 variant="contained"
                 color="primary"
-                icon="right"
+                icon="success"
                 type="button"
-                onClick={handleNextClick}
-                disabled={currentIndex === groupKeys.length - 1 || isEditMode}
+                onClick={isLastQuestion ? handleVerifyAndFinishClick : handleVerifyClick}
+                disabled={isEditMode || isSaving || isFinishing}
               >
-                Next
+                {isFinishing ? 'Processing...' : isLastQuestion ? 'Finish' : 'Verify'}
               </CustomButton>
             </Box>
           </Box>
