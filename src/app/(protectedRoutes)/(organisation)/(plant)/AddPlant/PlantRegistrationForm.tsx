@@ -2,26 +2,26 @@
 
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { triggerToast } from '@/app/utils/toast';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
-import { Box, FormControl, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { Box, Divider, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import styles from './AddPlant.module.css';
 import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { triggerToast } from '@/app/utils/toast';
-import Loader from '@/components/Loader/Loader';
-import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -37,10 +37,10 @@ const steps = [
   'Lines',
   'Assessment',
   'Debrief',
+  'About',
   'Full Name',
   'Email',
   'Contact Number',
-  'About',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
@@ -208,6 +208,7 @@ const PlantRegistrationForm = () => {
                           </Grid>
                         ))}
                       </Grid>
+
                       <Box className={styles.aboutSection}>
                         <Controller
                           name="about"
@@ -216,7 +217,7 @@ const PlantRegistrationForm = () => {
                           render={({ field }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Us"
+                              label="About Plant"
                               placeholder="Enter About Plant"
                               // required={true}
                               multiline
@@ -227,6 +228,111 @@ const PlantRegistrationForm = () => {
                           )}
                         />
                       </Box>
+
+                      <Grid size={{ xs: 12 }}>
+                        <Divider sx={{ my: 3, width: '100%' }}>
+                          <Typography variant="subtitle1" fontWeight={600}>
+                            Point Of Contact
+                          </Typography>
+                        </Divider>
+                      </Grid>
+
+                      <Grid container spacing={1}>
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocFullName"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Full Name is required',
+                              minLength: { value: 3, message: 'Minimum 3 characters required' },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Full Name"
+                                  placeholder="Enter Full Name"
+                                  onFocus={() => setFocusedField('pocFullName')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocEmail"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Email is required',
+                              pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'Enter a valid email address',
+                              },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Email"
+                                  placeholder="Enter Email"
+                                  onFocus={() => setFocusedField('pocEmail')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocContactNo"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Contact number is required',
+                              minLength: { value: 10, message: 'Minimum 10 characters required' },
+                              maxLength: { value: 10, message: 'Maximum 10 characters allowed' },
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: 'Enter a valid number',
+                              },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Contact Number"
+                                  placeholder="Enter Contact Number"
+                                  onFocus={() => setFocusedField('pocContactNo')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
                     </section>
                   </Box>
                 </Box>
