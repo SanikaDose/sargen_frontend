@@ -153,7 +153,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
       console.log('Status response:', status);
       dispatch(setOnboardingStatus(status?.onboardingStatus));
-      router.push('/PlantOverview');
+      router.push('/onboardingSuccess')
     } catch (err) {
       console.error('Error submitting form', err);
     }
