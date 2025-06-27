@@ -214,6 +214,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                                 required
                                 error={!!errors[fieldName]}
                                 helperText={errors[fieldName]?.message}
+                                readonly={fieldName === 'email'}
                               />
                             )}
                           />
