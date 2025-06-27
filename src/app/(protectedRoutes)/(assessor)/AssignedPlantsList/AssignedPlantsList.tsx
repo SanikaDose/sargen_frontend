@@ -1,9 +1,8 @@
 'use client';
 
-import { Box, Divider, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
+import { Box, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import styles from '../../(organisation)/(plant)/PlantOverview/PlantOverview.module.css';
-import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from 'next/navigation';
 import AssessorPlantInfoCard from './AssessorPlantInfoCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
@@ -13,6 +12,7 @@ import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalS
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import Loader from '@/components/Loader/Loader';
 import { AssignedPlant } from './AssignPlantList.type';
+import { GridSearchIcon } from '@mui/x-data-grid';
 
 export default function AssignedPlantsList() {
   const router = useRouter();
@@ -43,22 +43,18 @@ export default function AssignedPlantsList() {
         <Box className={styles.heading}>Assigned Plants List</Box>
         <Box sx={{ padding: 1 }}>
           <Paper
-            component="form"
-            sx={{ display: 'flex', alignItems: 'center' }}
+            sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#ECE6F0', borderRadius: '16px' }}
             className={styles.searchInput}
-            onSubmit={(e) => e.preventDefault()}
           >
             <InputBase
-              value={searchValue}
               sx={{ ml: 1, flex: 1 }}
               placeholder="Search Plant..."
               inputProps={{ 'aria-label': 'search plant' }}
               onChange={(e) => handleSearch(e.target.value)}
             />
             <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-              <SearchIcon />
+              <GridSearchIcon />
             </IconButton>
-            <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           </Paper>
         </Box>
       </Typography>
