@@ -40,7 +40,6 @@ export default function AssignedPlantsList() {
     <div className={styles.wrapper}>
       {/* Changed Typography component to "div" to avoid p > form nesting */}
       <Typography component="div" className={styles.headingSection}>
-        <Box className={styles.heading}>Assigned Plants List</Box>
         <Box sx={{ padding: 1 }}>
           <Paper
             sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#ECE6F0', borderRadius: '16px' }}

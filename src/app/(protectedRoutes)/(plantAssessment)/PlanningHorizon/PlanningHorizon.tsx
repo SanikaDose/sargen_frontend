@@ -150,17 +150,6 @@ const PlanningHorizon = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Planning Horizon
-                </Typography>
-
                 {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                     <Loader loading />

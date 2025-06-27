@@ -9,7 +9,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -174,16 +174,6 @@ const IndustrySelectionPreview = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography
-              variant="h4"
-              sx={{
-                color: 'black',
-                textAlign: 'left',
-                width: '100%',
-              }}
-            >
-              Industry Selection
-            </Typography>
             <Grid
               container
               spacing={2}

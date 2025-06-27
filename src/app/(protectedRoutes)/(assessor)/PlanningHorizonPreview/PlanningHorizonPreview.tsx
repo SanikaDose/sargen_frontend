@@ -185,17 +185,6 @@ const PlanningHorizonPreview = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Planning Horizon
-                </Typography>
-
                 <Grid
                   container
                   spacing={2}

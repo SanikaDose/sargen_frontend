@@ -80,7 +80,6 @@ export default function PlantOverview() {
     <div className={styles.wrapper}>
       {/* FIXED: Added component="div" to prevent Typography from rendering as <p> */}
       <Typography component="div" className={styles.headingSection}>
-        <Box className={styles.heading}>Plant Overview</Box>
         <Box sx={{ padding: 1 }}>
           <Paper
             sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#ECE6F0', borderRadius: '16px' }}

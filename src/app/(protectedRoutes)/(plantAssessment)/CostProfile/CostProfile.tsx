@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { FormValues, RawCostCategory } from '../plantAssement.model';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import styles from './costProfile.module.css';
 import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProfileCard';
@@ -147,17 +147,6 @@ const CostProfile = () => {
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               {/* Left Section */}
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Cost Profile
-                </Typography>
-
                 {/* Loader inside left section */}
                 {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
