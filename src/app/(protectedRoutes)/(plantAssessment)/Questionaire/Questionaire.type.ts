@@ -1,6 +1,6 @@
 export interface Question {
-  groupKey: string;
   verificationStatus: string;
+  groupKey?: string;
   questionNo: number;
   key: string | undefined;
   bandName: string;
