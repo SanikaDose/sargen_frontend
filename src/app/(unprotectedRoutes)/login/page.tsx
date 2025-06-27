@@ -128,7 +128,7 @@ const LoginPage = () => {
       <Box className={styles.paper}>
         <section className={styles.textContainer}>
           <Typography className={styles.welcomeBackText} variant="h3" fontWeight="bold">
-            Welcome Back
+            Welcome
           </Typography>
           <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
             Sign in to access your industry roadmap
