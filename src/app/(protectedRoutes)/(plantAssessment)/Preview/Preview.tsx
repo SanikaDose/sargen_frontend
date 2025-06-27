@@ -76,163 +76,58 @@ export default function Preview() {
   ];
 
   useEffect(() => {
-    let isCancelled = false; // Prevent state updates after unmount
-
     const fetchAllDepartmentQuestions = async () => {
-      if (isCancelled) return;
-
-      setAllQuestionsLoading(true);
+      setAllQuestionsLoading(true); // Start loading
 
       try {
-        const allQuestions: Question[] = [];
-        const failedDepartments: string[] = [];
+        const all: Question[] = [];
 
-        console.log(`🚀 Starting to fetch questions for ${departmentName.length} departments...`);
-
-        // Process departments in smaller batches to avoid overwhelming the API
-        const batchSize = 3; // Adjust based on your API limits
-
-        for (let i = 0; i < departmentName.length; i += batchSize) {
-          if (isCancelled) return;
-
-          const batch = departmentName.slice(i, i + batchSize);
-          console.log(`📦 Processing batch ${Math.floor(i / batchSize) + 1}: [${batch.join(', ')}]`);
-
-          const batchPromises = batch.map(async (dept) => {
-            try {
-              const result = await getQuestionnairesList({
-                tenantId,
-                plantId: plantId || '',
-                department: dept,
-              }).unwrap();
-
-              const questions = result?.questionsToSend || [];
-              console.log(`✅ ${dept}: ${questions.length} questions`);
-
-              return {
-                department: dept,
-                questions: questions,
-                success: true,
-              };
-            } catch (error) {
-              console.error(`❌ Failed to fetch ${dept}:`, error);
-              return {
-                department: dept,
-                questions: [],
-                success: false,
-                error,
-              };
-            }
-          });
-
-          const batchResults = await Promise.all(batchPromises);
-
-          batchResults.forEach((result) => {
-            if (result.success && result.questions.length > 0) {
-              allQuestions.push(...result.questions);
-            } else if (!result.success) {
-              failedDepartments.push(result.department);
-            }
-          });
-
-          // Small delay between batches to be gentle on the API
-          if (i + batchSize < departmentName.length && !isCancelled) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          }
+        for (const dept of departmentName) {
+          const result = await getQuestionnairesList({
+            tenantId,
+            plantId: plantId || '',
+            department: dept,
+          }).unwrap();
+          all.push(...(result?.questionsToSend || []));
         }
 
-        if (isCancelled) return;
-
-        console.log(`📊 Total questions collected: ${allQuestions.length}`);
-        if (failedDepartments.length > 0) {
-          console.warn(`⚠️ Failed departments: [${failedDepartments.join(', ')}]`);
-        }
-
-        if (allQuestions.length === 0) {
-          throw new Error('No questions were successfully loaded from any department');
-        }
-
-        // Group questions and handle justifications
         const grouped: { [key: string]: Question[] } = {};
         const justification: { [key: string]: string } = {};
 
-        allQuestions.forEach((q) => {
+        all.forEach((q) => {
           const key = `${q.question_uid}__${q.department}__${q.context}`;
-
-          if (!grouped[key]) {
-            grouped[key] = [];
-          }
+          if (!grouped[key]) grouped[key] = [];
           grouped[key].push(q);
 
-          if (q.isselected && q.justification) {
-            justification[key] = q.justification;
+          if (q.isselected) {
+            justification[key] = q.justification || '';
           }
         });
 
-        // Create deduplicated questions with consistent ordering
-        const groupKeysSorted = Object.keys(grouped).sort();
-        const dedupedQuestions = groupKeysSorted.map((key, index) => {
-          const questionGroup = grouped[key];
-          const firstQuestion = questionGroup[0];
-
+        const dedupedQuestions = Object.keys(grouped).map((key, index) => {
+          const first = grouped[key][0];
           return {
-            ...firstQuestion,
+            ...first,
             groupKey: key,
             questionNo: index + 1,
           };
         });
 
-        if (isCancelled) return;
-
-        console.log(`🎯 Final unique questions: ${dedupedQuestions.length}`);
-
-        // Update all states in one batch
         setGroupedQuestions(grouped);
-        setGroupKeys(groupKeysSorted);
+        setGroupKeys(Object.keys(grouped));
         setJustificationMap(justification);
         setAllQuestions(dedupedQuestions);
-
-        setCurrentIndex((prevIndex) => {
-          return prevIndex >= dedupedQuestions.length ? 0 : prevIndex;
-        });
-
-        // Show success message with any warnings
-        if (failedDepartments.length > 0) {
-          triggerToast(`Questions loaded successfully. ${failedDepartments.length} departments failed to load.`, 'warning');
-        }
-      } catch (error) {
-        if (isCancelled) return;
-
-        console.error('💥 Critical error in fetchAllDepartmentQuestions:', error);
-
-        // Reset to safe state
-        setGroupedQuestions({});
-        setGroupKeys([]);
-        setJustificationMap({});
-        setAllQuestions([]);
         setCurrentIndex(0);
-
-        triggerToast('Failed to load assessment questions. Please refresh the page.', 'error');
+      } catch (error) {
+        console.error('Failed to load questions:', error);
       } finally {
-        if (!isCancelled) {
-          setAllQuestionsLoading(false);
-        }
+        setAllQuestionsLoading(false); // Always stop loading
       }
     };
 
-    // Add a small delay to ensure component is fully mounted
-    const timeoutId = setTimeout(() => {
-      if (tenantId && plantId && departmentName.length > 0 && !isCancelled) {
-        fetchAllDepartmentQuestions();
-      }
-    }, 100);
+    fetchAllDepartmentQuestions();
+  }, []);
 
-    // Cleanup function
-    return () => {
-      isCancelled = true;
-      clearTimeout(timeoutId);
-    };
-  }, [tenantId, plantId]); // Minimal dependencies to prevent unnecessary re-runs
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return; //if edit is off then it will return
     const questionUID = groupKeys[currentIndex];

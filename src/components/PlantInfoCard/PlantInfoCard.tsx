@@ -93,15 +93,17 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
               ? 'Request for Assessment'
               : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
                 ? 'Assessor Assigning ...'
-                : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
-                  ? 'Assessment Started'
-                  : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
-                    ? 'Edit Asssesment'
-                    : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
-                      ? 'Asssesment in reviewd'
-                      : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
-                        ? 'Download Assessment'
-                        : 'status unknown'}
+                : data?.assessmentCompletionStage === AsseessmentStatus.START_ASSESSMENT
+                  ? 'Start Assesment'
+                  : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
+                    ? 'Assessment Started'
+                    : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
+                      ? 'Edit Asssesment'
+                      : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
+                        ? 'Asssesment in reviewd'
+                        : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
+                          ? 'Download Assessment'
+                          : 'status unknown'}
           </CustomButton>
         </Box>
         <Box className={styles.progressCircle}>
