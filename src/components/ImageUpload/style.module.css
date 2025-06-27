@@ -19,7 +19,8 @@
   object-fit: cover !important;
   object-position: center;
   background-color: rgba(243, 243, 243, 0.767);
-  border-radius: 16px !important;
+  border-radius: 16px !important; /* overridden by shape class */
+  border: 2px solid #d8d8d8; /* <-- ✅ this adds a border */
 }
 
 .circleAvatar {
