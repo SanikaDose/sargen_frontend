@@ -16,13 +16,24 @@
 .avatarImage {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover;
-
+  object-fit: cover !important;
+  object-position: center;
+  background-color: rgba(243, 243, 243, 0.767);
+  border-radius: 16px !important;
 }
+
+.circleAvatar {
+  border-radius: 50% !important;
+}
+
+.squareAvatar {
+  border-radius: 16px !important;
+}
+
 .avtarUpload {
   position: absolute;
-  top: 0;
-  left: 85%;
+  top: -30px;
+  left: 95%;
 }
 .editButton {
   position: absolute;
