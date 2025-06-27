@@ -11,14 +11,31 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
   const createdAt = data?.createdAt ?? '';
   const updatedAt = data?.updatedAt ?? '';
 
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return isNaN(date.getTime())
+      ? 'N/A'
+      : date.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+  };
+
+  const formatStatusText = (status: string) =>
+    status
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  const displayStatus = formatStatusText(assessmentCompletionStage).toUpperCase();
+
   return (
     <Box className={styles.cardContainer}>
-      {/* Top-Right Icon */}
       <Box className={styles.iconCorner} onClick={viewPlantOnClick}>
         <VisibilityIcon fontSize="small" />
       </Box>
 
-      {/* Main Content */}
       <Box className={styles.contentSection}>
         <Typography className={styles.label}>
           Plant Name: <span className={styles.value}>{plantName}</span>
@@ -26,23 +43,17 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
         <Typography className={styles.label}>
           Organisation: <span className={styles.value}>{organisationName}</span>
         </Typography>
-        <Typography className={styles.label}>
-          Stage: <span className={styles.value}>{assessmentCompletionStage}</span>
-        </Typography>
       </Box>
 
-      {/* Divider */}
       <Divider className={styles.divider} />
 
-      {/* Dates */}
       <Box className={styles.dateSection}>
-        <Typography className={styles.dateTitle}>Dates</Typography>
-        <Typography className={styles.dateText}>Created: {new Date(createdAt ?? '').toLocaleDateString()}</Typography>
-        <Typography className={styles.dateText}>Updated: {new Date(updatedAt ?? '').toLocaleDateString()}</Typography>
+        <Typography className={styles.dateTitle}>Dates:</Typography>
+        <Typography className={styles.dateText}>Created: {formatDate(createdAt)}</Typography>
+        <Typography className={styles.dateText}>Updated: {formatDate(updatedAt)}</Typography>
       </Box>
 
-      {/* Bottom Badge */}
-      <Box className={styles.statusBadge}>{assessmentCompletionStage}</Box>
+      <Box className={styles.statusBadge}>{displayStatus}</Box>
     </Box>
   );
 };

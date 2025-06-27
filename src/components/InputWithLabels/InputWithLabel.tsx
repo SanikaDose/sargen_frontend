@@ -6,6 +6,7 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
   name: string;
   required?: boolean;
   allowEmojis?: boolean; // Optional prop to control emoji behavior
+  readonly?: boolean; // Optional prop to make the input read-only
 }
 
 /**
@@ -14,7 +15,7 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
  * Prevents emoji input by default.
  */
 export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelProps>(
-  ({ label, name, required = false, allowEmojis = false, ...textFieldProps }, ref) => {
+  ({ label, name, required = false, allowEmojis = false, readonly = false, ...textFieldProps }, ref) => {
     // Emoji regex pattern - matches most common emojis and symbols
     const emojiRegex =
       /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F018}-\u{1F270}]|[\u{238C}-\u{2454}]|[\u{20D0}-\u{20FF}]/gu;
@@ -107,7 +108,12 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
           required={required}
           fullWidth
           sx={{
-            '& .MuiOutlinedInput-root': { borderRadius: '16px' },
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '16px',
+              ...(readonly && {
+                backgroundColor: '#f5f5f5', // Optional: Add background color for readonly state
+              }),
+            },
             '& input::placeholder': {
               fontWeight: 500, // Make placeholder bold
               color: '#888', // Optional: placeholder color
@@ -119,6 +125,7 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
           onChange={handleChange}
           InputProps={{
             ...textFieldProps.InputProps,
+            readOnly: readonly, // This is the key fix
             inputProps: {
               ...textFieldProps.InputProps?.inputProps,
               min: 0,
