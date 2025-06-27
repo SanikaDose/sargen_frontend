@@ -232,7 +232,11 @@ const UserAssessmentPreview = () => {
       const currentQuestion = currentGroup[0];
       const selectedOption = currentGroup.find((q) => q.isselected);
 
-      if (currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.NOT_VERIFIED && selectedOption) {
+      if (
+        (currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.NOT_VERIFIED ||
+          currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.ASSESSOR_FLAGGED) &&
+        selectedOption
+      ) {
         try {
           const payload = {
             tenantId: organisationId,
