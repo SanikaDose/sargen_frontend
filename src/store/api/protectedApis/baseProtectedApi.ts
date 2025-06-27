@@ -74,6 +74,7 @@ export const protectedApi = createApi({
     'PlantLogo',
     'ProfilePic',
     'AssessorLogo',
+    'MetadataFile',
     'OrganizationLogo',
   ],
 });
