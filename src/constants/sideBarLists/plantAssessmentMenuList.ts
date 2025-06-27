@@ -164,7 +164,7 @@ export const assessorUserAssessmentList = [
     matchKeyword: 'CostProfilePreview',
     show: false,
   },
-  ...PlantAssessmentMenuList.filter((item) => item.text !== 'Preview'),
+  // ...PlantAssessmentMenuList.filter((item) => item.text !== 'Preview'),
   {
     text: 'User Assessment Preview',
     icon: 'VisibilityIcon',

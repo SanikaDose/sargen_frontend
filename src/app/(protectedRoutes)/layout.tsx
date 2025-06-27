@@ -1,20 +1,22 @@
-// app/layout.tsx
+import type { Metadata } from 'next';
 import ClientLayout from './ClientLayout';
-
-export const metadata = {
+import '../page.module.css';
+export const metadata: Metadata = {
   title: 'Sargen',
   description: 'Demo App Layout',
   icons: {
-    icon: '/sargen.png',
+    icon: '/sargen.png', // You must use a path string — not an imported image
     shortcut: '/sargen.png',
     apple: '/sargen.png',
   },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <body style={{ height: '100vh' }}>
-      <ClientLayout>{children}</ClientLayout>
-    </body>
+    <html lang="en">
+      <body>
+        <ClientLayout>{children}</ClientLayout>
+      </body>
+    </html>
   );
 }

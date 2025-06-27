@@ -33,6 +33,7 @@ export type AssignedPlant = {
   plantId: string;
   plantName: string;
   assessmentCompletionStage: 'NOT_STARTED' | 'STARTED' | 'REQUESTED_ASSESSMENT' | 'COMPLETED'; // you can expand this enum
+  organisationName: string;
   organisationId: string;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string

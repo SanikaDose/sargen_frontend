@@ -33,37 +33,34 @@ import {
   useUploadBandDefinitionMutation,
   useViewMetadataFileMutation,
   useGetAssessorInfoQuery,
-  useGetOnboardingStatusQuery,
+  useLazyGetOnboardingStatusQuery,
 } from './AssessorOnbordingSetting.Api';
 
-import { fileUploadKeyMap, fileTypes } from './FormConfig/fileInput';
+import { fileUploadKeyMap, fileTypes, fileValues } from './FormConfig/fileInput';
 import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 
-const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
-  (label) => ({ label }),
-);
+const steps = ['Form Data', ...fileValues.map((key, i) => `File ${i + 1}`)].map((label) => ({ label }));
 
-const tenantId = getValueLocalStorage('tenantId');
+// const steps = ['First Name', 'Last Name', 'E-Mail Id', 'Contact Number', 'City', 'Country', 'Year Of Experience', 'Certification Year'].map(
+//   (label) => ({ label }),
+// );
 
-function AssessorOnbordingSetting() {
+function AssessorOnboarding() {
+  const tenantId = getValueLocalStorage('tenantId');
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setPageNameHeader('Assessor Onboarding'));
   }, [dispatch]);
-  const {
-    control,
-    handleSubmit,
-
-    reset,
-  } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -74,8 +71,7 @@ function AssessorOnbordingSetting() {
       yearOfExperience: '',
       certificationYear: '',
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
   });
   const router = useRouter();
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
@@ -100,67 +96,74 @@ function AssessorOnbordingSetting() {
   const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
   const [uploadBandDefinition] = useUploadBandDefinitionMutation();
   const [viewMetadataFile] = useViewMetadataFileMutation();
+  const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
+
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
-  const { data: orgStatus } = useGetOnboardingStatusQuery(tenantId ?? '');
-  console.log('ornboding status', orgStatus);
-  const { data: existingData, isFetching } = useGetAssessorInfoQuery(tenantId ?? '');
 
-  const readonlyFields = ['firstName', 'lastName', 'email'];
+  const [Status, setStatus] = useState<string | null>(null);
+  const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
+  console.log('existing dataa', existingData);
+
   //reload view
-  useEffect(() => {
-    if (existingData && existingData.data[0]?.formData) {
-      const { formData, metadata_information } = existingData.data[0];
-      console.log('formdatauserlog2', formData.userLogo);
-      if (formData.userLogo) {
-        setLogoUrl(formData.userLogo);
-        //  triggerToast('Assessor Logo Fetch Successfully', 'success');
-      }
-      if (metadata_information) {
-        const preUploadedMap: Record<string, UploadFileMetadata> = {};
-
-        metadata_information.forEach((item) => {
-          if (item.tableName) {
-            preUploadedMap[item.tableName] = item;
-          }
-        });
-        setUploadedFiles(preUploadedMap);
-      }
-      reset({
-        firstName: formData.firstName || '',
-        lastName: formData.lastName || '',
-        email: formData.email || '',
-        contactNumber: formData.contactNumber || '',
-        city: formData.city || '',
-        country: formData.country || '',
-        yearOfExperience: formData.yearOfExperience || '',
-        certificationYear: formData.certificationYear || '',
-      });
-    }
-  }, [existingData, reset, isFetching]);
 
   useEffect(() => {
-    const fetchFile = async () => {
+    const populateFormAndFile = async () => {
       try {
-        const fileUrl = existingData?.data[0]?.formData?.siriCertificate;
+        const assessorData = existingData?.data[0];
+        const formData = assessorData?.formData;
+        const metadata_information = assessorData?.metadata_information;
 
-        if (fileUrl && typeof fileUrl === 'string') {
-          const response = await fetch(fileUrl); // ✅ This is valid
-          const blob = await response.blob();
-
-          const fetchedFile = new File([blob], 'siriCertificate.pdf', {
-            type: 'application/pdf',
+        if (formData) {
+          // Reset form values first
+          reset({
+            firstName: formData.firstName || '',
+            lastName: formData.lastName || '',
+            email: formData.email || '',
+            contactNumber: formData.contactNumber || '',
+            city: formData.city || '',
+            country: formData.country || '',
+            yearOfExperience: formData.yearOfExperience || '',
+            certificationYear: formData.certificationYear || '',
           });
 
-          setSelectedFile(fetchedFile);
+          // Set logo
+          if (formData.userLogo) {
+            setLogoUrl(formData.userLogo);
+          }
+
+          // Fetch certificate if available
+          const fileUrl = formData.siriCertificate;
+          if (fileUrl && typeof fileUrl === 'string') {
+            const response = await fetch(fileUrl);
+            const blob = await response.blob();
+
+            const fetchedFile = new File([blob], 'siriCertificate.pdf', {
+              type: 'application/pdf',
+            });
+
+            setSelectedFile(fetchedFile);
+          }
+        }
+
+        // Set metadata file map
+        if (metadata_information) {
+          const preUploadedMap: Record<string, UploadFileMetadata> = {};
+          metadata_information.forEach((item) => {
+            if (item.tableName) {
+              preUploadedMap[item.tableName] = item;
+            }
+          });
+          setUploadedFiles(preUploadedMap);
         }
       } catch (error) {
-        console.error('Error fetching the file:', error);
+        console.error('Error populating form or fetching file:', error);
       }
     };
-
-    fetchFile();
-  }, [existingData]);
+    if (existingData && existingData.data[0]?.formData) {
+      populateFormAndFile();
+    }
+  }, [existingData, reset]);
 
   console.log('selectedfile', selectedFile);
 
@@ -251,7 +254,6 @@ function AssessorOnbordingSetting() {
   };
   //function to submit the formdata
   const onSubmit = async (formValues: AssessorFormType) => {
-    console.log('submot button clicked--------------------');
     if (!selectedFile) {
       triggerToast('Please add siriCertificate', 'error');
     }
@@ -266,42 +268,65 @@ function AssessorOnbordingSetting() {
         data: formValues,
         siriCertificate: selectedFile,
       }).unwrap();
-
-      if (orgStatus?.onboardingStatus) {
-        dispatch(setOnboardingStatus(orgStatus.onboardingStatus));
+      const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
+      console.log('Status response:', status);
+      //  dispatch(setOnboardingStatus(status?.onboardingStatus));
+      if (status?.onboardingStatus) {
+        setStatus(status.onboardingStatus);
+        dispatch(setOnboardingStatus(status?.onboardingStatus));
       }
-      if (orgStatus?.onboardingStatus === 'COMPLETED') {
+      // console.log('ornboding status', orgStatus);
+
+      if (status?.onboardingStatus === 'COMPLETED') {
         router.push('/AssignedPlantsList');
       }
 
-      if (orgStatus?.onboardingStatus === 'STARTED' || orgStatus?.onboardingStatus === 'NOT_STARTED') {
+      if (status?.onboardingStatus === 'STARTED' || status?.onboardingStatus === 'NOT_STARTED') {
         triggerToast('Please Fill All The Data', 'error');
       }
     } catch (error) {
       console.log('error', error);
     }
   };
+  console.log('status stateee', Status);
 
-  // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
-    const allInputs = [...AssessorFormInputs];
-    const index = allInputs.findIndex((input) => input.name === focusedField);
-    return index !== -1 ? index : 0;
-  }, [focusedField]);
+    // Step 0: If focused on any form field or siriCertificate is selected
+    const isFormFieldFocused = AssessorFormInputs.some((input) => input.name === focusedField);
+    if (isFormFieldFocused || focusedField === 'siriCertificate') return 0;
 
-  // ✅ Compute completed steps where value length > 5
+    // Step 1 to N: If user is interacting with a file upload
+    if (currentUploadKey) {
+      const indexInFiles = fileValues.findIndex((key) => key === currentUploadKey);
+      return indexInFiles !== -1 ? indexInFiles + 1 : 0; // +1 since step 0 is form
+    }
+
+    return 0;
+  }, [focusedField, currentUploadKey]);
+
   const completedSteps = useMemo(() => {
-    const allInputs = [...AssessorFormInputs];
-    return allInputs.reduce((acc: number[], input, index) => {
-      const value = watchedValues?.[input.name as keyof AssessorFormType];
+    const completed: number[] = [];
 
-      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
-      if (isFilled) {
-        acc.push(index);
+    // Step 0: Check if form fields are filled
+    const isFormComplete =
+      AssessorFormInputs.every((input) => {
+        const value = watchedValues?.[input.name as keyof AssessorFormType];
+        return (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+      }) && selectedFile; // Also check if siriCertificate is uploaded
+
+    if (isFormComplete) {
+      completed.push(0); // Form step
+    }
+
+    // Step 1 to N: check each fileKey
+    fileValues.forEach((fileKey, index) => {
+      if (uploadedFiles[fileKey]) {
+        completed.push(index + 1); // +1 because 0 is form step
       }
-      return acc;
-    }, []);
-  }, [watchedValues]);
+    });
+
+    return completed;
+  }, [watchedValues, selectedFile, uploadedFiles]);
   // function to download the file
 
   const handleDownloadClick = async (fileName: string) => {
@@ -334,7 +359,7 @@ function AssessorOnbordingSetting() {
 
   return (
     <>
-      {isLoading && orgStatus?.onboardingStatus === 'COMPLETED' ? (
+      {Status === 'COMPLETED' ? (
         <Loader loading={true} />
       ) : (
         <Box sx={{ width: '100%', height: '99.5%' }}>
@@ -365,8 +390,6 @@ function AssessorOnbordingSetting() {
                               //  defaultValue=""
                               rules={input.rules}
                               render={({ field, fieldState }) => {
-                                const isReadOnly = readonlyFields.includes(input.name);
-
                                 return (
                                   <>
                                     {input.iscountry ? (
@@ -394,9 +417,7 @@ function AssessorOnbordingSetting() {
                                         required
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
-                                        InputProps={{
-                                          readOnly: isReadOnly,
-                                        }}
+                                        readonly={input.name === 'email'}
                                       />
                                     )}
                                   </>
@@ -421,7 +442,15 @@ function AssessorOnbordingSetting() {
                         onFileSelect={(file) => {
                           setSelectedFile(file);
                         }}
-                        buttonColor={selectedFile ? 'success' : 'primary'}
+                        sx={
+                          selectedFile
+                            ? {
+                                backgroundColor: '#4CAF50 !important',
+                                color: '#fff !important',
+                                '&:hover': { backgroundColor: '#388e3c !important' },
+                              }
+                            : {}
+                        }
                       />
                     </Box>
 
@@ -525,7 +554,7 @@ function AssessorOnbordingSetting() {
                                       label="Upload"
                                       width="50px"
                                       showIcon
-                                      color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
+                                      color={uploadedFiles[backendKey] ? '#4CAF50' : '#1976d2'}
                                       onClick={() => {
                                         setCurrentUploadKey(backendKey);
                                         fileInputRef.current?.click();
@@ -584,4 +613,4 @@ function AssessorOnbordingSetting() {
   );
 }
 
-export default AssessorOnbordingSetting;
+export default AssessorOnboarding;

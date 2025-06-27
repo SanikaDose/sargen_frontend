@@ -7,7 +7,6 @@ import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption } from '../plantAssement.model';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import Stepper from '@/components/Stepper/Stepper';
@@ -19,31 +18,28 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
-// const steps = [
-//   'Research',
-//   'Selling',
-//   'RTransport',
-//   'Utilities',
-//   'Aftermarket',
-//   'Description',
-//   'Labour',
-//   'maintainance',
-//   'Raw Material',
-//   'Rental',
-// ].map((label) => ({ label }));
+
 const PlanningHorizon = () => {
   const params = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
 
-  dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+  const stepperState = useSelector((state: RootState) => state.stepper);
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentPlannigHorizon));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(1));
+    dispatch(markStepCompleted(0)); // Industry Selection completed
+    dispatch(markStepIncomplete(2)); // In case navigating back
+  }, [dispatch]);
+
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
 
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
-  const [selectHorizonOption, { isLoading: isLoadingAdd }] = useSelectPlanningHorizonListMutation();
+  const [selectHorizonOption] = useSelectPlanningHorizonListMutation();
   const tenantId = organisationId;
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
@@ -119,14 +115,6 @@ const PlanningHorizon = () => {
     // }
   };
 
-  const stepperState = useSelector((state: RootState) => state.stepper);
-
-  useEffect(() => {
-    dispatch(setActiveStep(2));
-    dispatch(markStepCompleted(1));
-    dispatch(markStepIncomplete(3)); // coming back from Industry
-  }, [dispatch]);
-
   const [isMounting, setIsMounting] = useState(true);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -141,7 +129,7 @@ const PlanningHorizon = () => {
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
-      ) : isLoadingGet || isLoadingAdd ? (
+      ) : isLoadingGet ? (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
           <Loader loading />
         </Box>
@@ -161,7 +149,7 @@ const PlanningHorizon = () => {
             }}
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              <Box component="form" className={styles.formContainer}>
+              <Box className={styles.formContainer}>
                 <Typography
                   variant="h4"
                   sx={{
@@ -173,7 +161,7 @@ const PlanningHorizon = () => {
                   Planning Horizon
                 </Typography>
 
-                {isLoadingGet || isLoadingAdd ? (
+                {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                     <Loader loading />
                   </Box>
@@ -182,10 +170,11 @@ const PlanningHorizon = () => {
                     container
                     spacing={2}
                     sx={{
-                      height: '100%',
-                      justifyContent: 'center',
+                      width: '100%',
+
                       alignItems: 'center',
-                      mt: 2,
+                      display: 'flex',
+                      justifyContent: 'cenetr',
                     }}
                   >
                     <Controller
@@ -197,11 +186,41 @@ const PlanningHorizon = () => {
                             const isSelected = field.value === option.id;
 
                             return (
-                              <Grid key={option.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  width: '40%',
+                                  alignItems: 'center',
+                                  marginLeft: '80px',
+                                  marginTop: '15px',
+                                }}
+                              >
                                 <Card label={option.planningHorizon} isSelected={isSelected} onToggle={() => field.onChange(option.id)} />
-                              </Grid>
+                              </Box>
                             );
                           })}
+
+                          {/* <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 4 }} sx={{ height: '10%' }}> */}
+                          {/* <Box
+                            sx={{
+                              display: 'flex',
+                              width: '40%',
+                              gap: 14,
+                              height: '70%',
+                              // marginTop: 5,
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Card label="ABC" isSelected={true} />
+                            <Card label="ABC" isSelected={true} />
+                            <Card label="ABC" isSelected={true} />
+                          </Box> */}
+                          {/* <Box sx={{ display: 'flex', width: '50%', gap: 4, height: '10%', marginTop: 5 }}>
+                         
+                          </Box> */}
+
+                          {/* </Grid> */}
                         </>
                       )}
                     />
@@ -244,7 +263,7 @@ const PlanningHorizon = () => {
                     icon="save"
                     type="submit"
                   >
-                    {isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
+                    {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

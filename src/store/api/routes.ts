@@ -103,6 +103,7 @@ export const apiControllerPath = {
     getPlanningHorizon: '/get-planning-horizon',
     selectPlanningHorizon: '/select-planning-horizon',
     changeAssessmentStatus: '/change-assessment-status',
+    changeQuestionsStatus: '/change-question-status',
   },
   metadataFileTemplate: {
     root: 'metadata-files-template',

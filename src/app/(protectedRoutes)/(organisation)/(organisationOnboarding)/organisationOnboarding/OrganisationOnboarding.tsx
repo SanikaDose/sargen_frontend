@@ -23,6 +23,7 @@ const steps = [
   'GST In',
   'Country',
   'Organization Revenue',
+  'Revenue Unit',
   'Currency Type',
   'Number of Employees',
   'About Organization',
@@ -35,6 +36,7 @@ import {
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
 } from './OrganisationOnboardingAPi';
+
 function OrganizationOnbording() {
   const dispatch = useDispatch();
 
@@ -73,24 +75,93 @@ function OrganizationOnbording() {
       uom: '',
       numberOfEmployees: '',
       about: '',
+      revenueUnit: '',
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
   });
+
+  // useEffect(() => {
+  //   if (existingData?.data && !isFetching) {
+  //     const org = existingData.data;
+  //     console.log('orgg', org);
+  //     const fullRevenue = Number(org.revenue || 0);
+
+  //     const revenueUnits = [100000, 10000000, 1000, 1];
+  //     let unit = 1;
+  //     let normalizedRevenue = fullRevenue;
+
+  //     for (const u of revenueUnits) {
+  //       const divided = fullRevenue / u;
+  //       if (divided < 10000) {
+  //         unit = u;
+  //         normalizedRevenue = Math.floor(divided); // no toFixed here
+  //         break;
+  //       }
+  //     }
+
+  //     reset({
+  //       companyName: org.name || '',
+  //       website: org.website || '',
+  //       gstin: org.gstin || '',
+  //       country: org.country || '',
+  //       revenue: normalizedRevenue.toString(), // no forced decimal precision
+  //       revenueUnit: unit.toString(),
+  //       uom: org.uom || '',
+  //       numberOfEmployees: org.numberOfEmployees || '',
+  //       about: org.about || '',
+  //     });
+  //   }
+
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // }, [existingData, isFetching, logoData, reset]);
+
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
+      const fullRevenue = Number(org.revenue || 0);
+
+      // Define units with display label and their numeric multiplier
+      const revenueUnitMap = [
+        //{ label: 'Arab', value: 1_00_00_00_000 },
+        { label: 'Crore', value: 1_00_00_000 },
+        { label: 'Lakh', value: 1_00_000 },
+        { label: 'Thousand', value: 1_000 },
+        { label: 'Unit', value: 1 },
+      ];
+
+      let selectedUnit = revenueUnitMap[revenueUnitMap.length - 1];
+      let normalizedRevenue = fullRevenue;
+
+      for (const unit of revenueUnitMap) {
+        const divided = fullRevenue / unit.value;
+        if (divided >= 1) {
+          selectedUnit = unit;
+
+          const hasDecimal = divided % 1 !== 0;
+          normalizedRevenue = hasDecimal ? parseFloat(divided.toFixed(2)) : divided;
+
+          break;
+        }
+      }
+      const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
+
       reset({
         companyName: org.name || '',
         website: org.website || '',
         gstin: org.gstin || '',
         country: org.country || '',
-        revenue: org.revenue || '',
+        revenue: normalizedRevenue.toString() || '',
+        //  revenueUnit: selectedUnit.value.toString() || '',
+        revenueUnit: revenueUnitValue,
+
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
         about: org.about || '',
       });
     }
+
     if (logoData?.logoUrl) {
       setLogoUrl(logoData.logoUrl);
     }
@@ -112,12 +183,23 @@ function OrganizationOnbording() {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
 
-      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+      // const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
 
-      if (isFilled) {
-        acc.push(index);
+      // if (isFilled) {
+      //   acc.push(index);
+      // }
+      if (input.name === 'revenue') {
+        const numericValue = Number((value || '').toString().replace(/,/g, ''));
+        if (numericValue > 0) {
+          acc.push(index);
+        }
+      } else {
+        const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+        if (isFilled) {
+          acc.push(index);
+        }
       }
-
       return acc;
     }, []);
   }, [watchedValues]);
@@ -137,13 +219,37 @@ function OrganizationOnbording() {
 
   //on form submit
   const onSubmit = async (data: OrgOnboardType) => {
+    const { revenue, revenueUnit, numberOfEmployees, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
+    const payload = {
+      ...rest,
+      revenue: finalRevenue.toString(), // Or keep as number if required
+      numberOfEmployees: cleanedEmployees.toString(),
+    };
+    console.log('updated addda', payload);
+
     try {
-      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: data }).unwrap();
+      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: payload }).unwrap();
       router.push('/onboardingSuccess');
     } catch (error) {
       console.log('error ', error);
     }
   };
+
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
 
   return (
     <>
@@ -159,7 +265,7 @@ function OrganizationOnbording() {
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
                 <Typography variant="h4" className={styles.heading}>
-                  Organization Details
+                  Organisation Details
                 </Typography>
 
                 <Box className={styles.formContainer}>
@@ -201,12 +307,25 @@ function OrganizationOnbording() {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )} */}
                                     </>
+                                  ) : input.isRevenueUnit ? (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={[
+                                        { label: 'Thousand', value: '1000' },
+                                        { label: 'Lakh', value: '100000' },
+                                        { label: 'Crore', value: '10000000' },
+                                      ].map(({ label, value }) => ({
+                                        label: label,
+                                        value: value,
+                                      }))}
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
                                   ) : (
                                     <>
                                       <InputWithLabel
@@ -215,20 +334,26 @@ function OrganizationOnbording() {
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
                                         value={
-                                          ['numberOfEmployees'].includes(input.name)
-                                            ? Number(field.value?.toString().replace(/,/g, '') || '0').toLocaleString('en-IN')
+                                          ['numberOfEmployees', 'revenue'].includes(input.name)
+                                            ? formatWithIndianCommas(field.value)
                                             : field.value
                                         }
                                         onChange={(e) => {
                                           const value = e.target.value;
 
-                                          if (['numberOfEmployees'].includes(input.name)) {
+                                          if (['numberOfEmployees', 'revenue'].includes(input.name)) {
+                                            // Remove all commas and only allow digits
                                             const rawValue = value.replace(/,/g, '');
+
                                             if (/^\d*$/.test(rawValue)) {
-                                              field.onChange(rawValue);
+                                              console.log('rawvaueee', rawValue);
+                                              field.onChange(rawValue); // Save raw digits only
                                             }
+                                          }
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase());
                                           } else {
-                                            field.onChange(value); // ? Ensures companyName, website, revenue are editable
+                                            field.onChange(value);
                                           }
                                         }}
                                         onFocus={() => setFocusedField(input.name)}
@@ -237,11 +362,6 @@ function OrganizationOnbording() {
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                       />
-                                      {/* {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )} */}
                                     </>
                                   )}
                                 </>
@@ -255,7 +375,14 @@ function OrganizationOnbording() {
                           name="about"
                           control={control}
                           defaultValue=""
-                          render={({ field }) => (
+                          rules={{
+                            required: 'About Organization is required',
+                            maxLength: {
+                              value: 200,
+                              message: 'Only 200 characters are allowed',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
                               label="About Orgnization"
@@ -265,6 +392,8 @@ function OrganizationOnbording() {
                               type="text"
                               rows={2}
                               onFocus={() => setFocusedField('about')}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
                             />
                           )}
                         />

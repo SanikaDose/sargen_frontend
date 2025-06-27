@@ -19,7 +19,7 @@ import Loader from '@/components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 const steps = [
   'Name',
   'Location',
@@ -44,6 +44,8 @@ const EditPlantRegistrationForm = () => {
 
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
+  console.log('organisationId', organisationId);
+  console.log('plant id', plantId);
 
   const {
     control,
@@ -79,6 +81,9 @@ const EditPlantRegistrationForm = () => {
         assessmentStartDate: plant.assessmentStartDate || '',
         debriefDate: plant.debriefDate || '',
         about: plant.about || '', // if you have an 'about' field, adjust accordingly
+        pocFullName: plant.pocFullName || '',
+        pocEmail: plant.pocEmail || '',
+        pocContactNo: plant.pocContactNo || '',
       });
 
       if (plant.plantLogo) {
@@ -93,7 +98,7 @@ const EditPlantRegistrationForm = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadPlantLogo({ organisationId, plantId, formData }).unwrap();
+      await uploadPlantLogo({ tenantId: organisationId ?? '', plantId, formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
@@ -168,38 +173,20 @@ const EditPlantRegistrationForm = () => {
                               render={({ field, fieldState }) => (
                                 <>
                                   {input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        Currency Type
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
-                                        {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '8px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontFamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('currencyType')}
-                                      >
-                                        <MenuItem value="">
-                                          <em>Select Currency</em>
-                                        </MenuItem>
-                                        {currencyOptions.map((currency) => (
-                                          <MenuItem key={currency.code} value={currency.name}>
-                                            {currency.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
-                                    </FormControl>
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      value={String(field.value ?? '')}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={currencyOptions.map(({ name }) => ({
+                                        label: name,
+                                        value: name,
+                                      }))}
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
                                   ) : (
                                     <>
                                       <InputWithLabel

@@ -28,9 +28,15 @@ const KpiDefinitionPreview = () => {
   const [selectKPIDefinition, { isLoading: isLoadingAdd }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorKpiDefinitionPreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(2));
+    dispatch(markStepCompleted(1));
+    dispatch(markStepIncomplete(3));
+  }, [dispatch]);
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -121,16 +127,10 @@ const KpiDefinitionPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/PlanningHorizonPreview/${organisationId}/${plantId}`);
+    router.push(`/CostProfilePreview/${organisationId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
-
-  useEffect(() => {
-    dispatch(setActiveStep(1));
-    dispatch(markStepCompleted(0));
-    dispatch(markStepIncomplete(2)); // If coming back from Planning
-  }, [dispatch]);
 
   // Button state logic - simplified and clearer
   const isSaveDisabled = !isEditMode || isLoadingAdd;
@@ -157,7 +157,7 @@ const KpiDefinitionPreview = () => {
             }}
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-              <Box component="form" className={styles.formContainer}>
+              <Box className={styles.formContainer}>
                 <Typography
                   variant="h4"
                   sx={{

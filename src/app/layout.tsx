@@ -1,7 +1,7 @@
 import GlobalReduxProvider from '@/providers/GlobalReduxProvider';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
+import './page.module.css';
 import ThemeProvider from './ThemeProvider';
 
 import I18nProvider from '@/providers/I18nProvider';
@@ -33,7 +33,7 @@ export default function RootLayout({
         <I18nProvider>
           <ThemeProvider>
             <GlobalReduxProvider>
-              <Toaster/>
+              <Toaster />
               <LanguageInitializer />
               {children}
             </GlobalReduxProvider>

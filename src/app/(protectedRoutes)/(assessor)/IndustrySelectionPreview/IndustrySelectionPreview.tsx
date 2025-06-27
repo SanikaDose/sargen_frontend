@@ -7,7 +7,7 @@ import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
+import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
@@ -29,9 +29,14 @@ const IndustrySelectionPreview = () => {
   // const tenantId = getValueLocalStorage('tenantId');
   const [industryData, setIndustryData] = useState<Industry[]>([]);
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.assessorIndustrySelectionPreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setActiveStep(0));
+    dispatch(markStepIncomplete(1));
+  }, [dispatch]);
+
   // Edit state management
   const [isEditMode, setIsEditMode] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -127,15 +132,15 @@ const IndustrySelectionPreview = () => {
   };
 
   const handleNextClick = () => {
-    router.push(`/UserAssessmentPreview/${tenantId}/${plantId}`);
+    router.push(`/PlanningHorizonPreview/${tenantId}/${plantId}`);
   };
 
   const stepperState = useSelector((state: RootState) => state.stepper);
 
-  useEffect(() => {
-    dispatch(setActiveStep(3));
-    dispatch(markStepCompleted(2));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(setActiveStep(3));
+  //   dispatch(markStepCompleted(2));
+  // }, [dispatch]);
 
   // Button state logic
   const isSaveDisabled = !isEditMode || isLoadingAdd;
@@ -168,7 +173,7 @@ const IndustrySelectionPreview = () => {
         }}
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
-          <Box component="form" className={styles.formContainer}>
+          <Box className={styles.formContainer}>
             <Typography
               variant="h4"
               sx={{

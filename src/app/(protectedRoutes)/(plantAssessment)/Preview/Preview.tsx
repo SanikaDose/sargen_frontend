@@ -5,7 +5,6 @@ import styles from './Preview.module.css';
 import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { useDispatch } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
@@ -19,20 +18,25 @@ import { triggerToast } from '@/app/utils/toast';
 import { PopupModal } from '@/components/PopupModal/PopupModal';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 import Loader from '@/components/Loader/Loader';
+import { useChangeAssessmentStatusMutation } from './PreviewApi';
+import { AsseessmentStatus } from '@/constants/enums';
 
 export default function Preview() {
   const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
-  dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
-  dispatch(setShowAssessmentListSideBar(true));
-  dispatch(setPlantAssessmentDepartment(''));
+
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
   const plantId = params.PlantId as string;
 
   const organisationId = params.OrganisationId as string;
   const tenantId = organisationId;
 
-  const [isMounting, setIsMounting] = useState(true);
+  const [isMounting, setIsMounting] = useState(false);
 
   //component onmount
   useEffect(() => {
@@ -50,9 +54,10 @@ export default function Preview() {
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
-
+  const [getAllQuestionsLoading, setAllQuestionsLoading] = useState(false);
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
+  const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
 
   const departmentName = [
     'R&D',
@@ -72,6 +77,8 @@ export default function Preview() {
 
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
+      setAllQuestionsLoading(true); // Start loading
+
       try {
         const all: Question[] = [];
 
@@ -88,9 +95,7 @@ export default function Preview() {
         const justification: { [key: string]: string } = {};
 
         all.forEach((q) => {
-          // Create a unique composite key
           const key = `${q.question_uid}__${q.department}__${q.context}`;
-
           if (!grouped[key]) grouped[key] = [];
           grouped[key].push(q);
 
@@ -115,6 +120,8 @@ export default function Preview() {
         setCurrentIndex(0);
       } catch (error) {
         console.error('Failed to load questions:', error);
+      } finally {
+        setAllQuestionsLoading(false); // Always stop loading
       }
     };
 
@@ -181,6 +188,25 @@ export default function Preview() {
   const questionText = currentGroup[0]?.question ?? '';
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
 
+  const handleFinalSubmit = async () => {
+    try {
+      await postAssesmentStatus({
+        tenantId,
+        plantId,
+        assessment: AsseessmentStatus.COMPLETED_ASSESSMENT,
+      }).unwrap();
+
+      triggerToast('Assessment submitted successfully!', 'success');
+    } catch (err) {
+      console.error('API failed:', err);
+      triggerToast('Failed to submit assessment', 'error');
+    } finally {
+      setFinalSubmitModel(false);
+
+      // Force a full page reload to the new route
+      window.location.assign('/PlantOverview');
+    }
+  };
   return (
     <Box component="form" sx={{ height: '99%' }}>
       <Paper
@@ -200,7 +226,7 @@ export default function Preview() {
               <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Loader loading={true} />
               </Box>
-            ) : isLoading || isSaving ? (
+            ) : isLoading || getAllQuestionsLoading || isSaving ? (
               <>
                 <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
@@ -342,14 +368,9 @@ export default function Preview() {
         <PopupModal
           label="Confirm Final Submit"
           text="Are you sure you want to submit?"
-          primaryButtonText="Confirm"
+          primaryButtonText={isLoading ? 'Submitting…' : 'Confirm'}
           secondaryButtonText="Cancel"
-          onPrimaryClick={() => {
-            setFinalSubmitModel(false);
-            setTimeout(() => {
-              router.push('/PlantOverview');
-            }, 100); // slight delay after closing modal
-          }}
+          onPrimaryClick={() => handleFinalSubmit()}
           onSecondaryClick={() => setFinalSubmitModel(false)}
         />
       )}

@@ -16,14 +16,11 @@ const inputSx = {
   backgroundColor: 'transparent ',
   borderRadius: '16px',
   fontSize: '0.9rem',
-  // padding: '10px 14px',
   height: '35px',
-  // '& .MuiOutlinedInput-notchedOutline': {
-  //   borderRadius: '16px',
-  // },
 };
 
-const ForgotPasswordPage = ({ setForgotPassword }: { setForgotPassword: (val: boolean) => void }) => {
+// Remove the prop interface since this is a page component
+const ForgotPasswordPage = () => {
   const router = useRouter();
   const {
     register,
@@ -42,6 +39,11 @@ const ForgotPasswordPage = ({ setForgotPassword }: { setForgotPassword: (val: bo
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleBackClick = () => {
+    // Navigate back to login page instead of using a prop
+    router.push(pageRoutes.unprotected.login); // Adjust this route as needed
   };
 
   const renderFormField = (
@@ -77,21 +79,15 @@ const ForgotPasswordPage = ({ setForgotPassword }: { setForgotPassword: (val: bo
             Forgot Password
           </Typography>
           <Typography variant="caption" className={styles.form_header_caption}>
-            Forgot password? Don’t worry, we’re here to help.
+            Forgot password? Don&#39;t worry, we&#39;re here to help.
           </Typography>
         </Box>
-
         {renderFormField('email', 'Email', 'email')}
 
         <Button type="submit" variant="contained">
           Submit
         </Button>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setForgotPassword(false);
-          }}
-        >
+        <Button variant="outlined" onClick={handleBackClick}>
           Back
         </Button>
       </Stack>

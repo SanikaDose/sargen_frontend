@@ -64,6 +64,7 @@ export const plantFormInputs: PlantFormInput[] = [
   },
   {
     name: 'currencyType',
+    placeholder: 'Enter Currency',
     label: 'Currency Type',
     isCurrency: true,
     required: true,
@@ -128,43 +129,43 @@ export const plantFormInputs: PlantFormInput[] = [
     },
   },
 
-  {
-    name: 'pocFullName',
-    label: 'Full Name',
-    placeholder: 'Enter Full Name',
-    required: true,
-    rules: {
-      required: 'Plant Name is required',
-      minLength: { value: 3, message: 'Minimum 3 characters required' },
-    },
-  },
-  {
-    name: 'pocEmail',
-    label: 'Email',
-    placeholder: 'Enter Email',
-    required: true,
-    rules: {
-      required: 'Email is required',
-      pattern: {
-        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email format
-        message: 'Enter a valid email address',
-      },
-    },
-  },
+  // {
+  //   name: 'pocFullName',
+  //   label: 'Full Name',
+  //   placeholder: 'Enter Full Name',
+  //   required: true,
+  //   rules: {
+  //     required: 'Plant Name is required',
+  //     minLength: { value: 3, message: 'Minimum 3 characters required' },
+  //   },
+  // },
+  // {
+  //   name: 'pocEmail',
+  //   label: 'Email',
+  //   placeholder: 'Enter Email',
+  //   required: true,
+  //   rules: {
+  //     required: 'Email is required',
+  //     pattern: {
+  //       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email format
+  //       message: 'Enter a valid email address',
+  //     },
+  //   },
+  // },
 
-  {
-    name: 'pocContactNo',
-    label: 'Contact Number',
-    placeholder: 'Enter Contact Number',
-    required: true,
-    rules: {
-      required: 'Contact number is required',
-      maxLength: { value: 10, message: 'Minimum 10 characters required' },
-      minLength: { value: 10, message: 'Minimum 10 characters required' },
-      pattern: {
-        value: /^[0-9]+$/,
-        message: 'Enter a valid number',
-      },
-    },
-  },
+  // {
+  //   name: 'pocContactNo',
+  //   label: 'Contact Number',
+  //   placeholder: 'Enter Contact Number',
+  //   required: true,
+  //   rules: {
+  //     required: 'Contact number is required',
+  //     maxLength: { value: 10, message: 'Minimum 10 characters required' },
+  //     minLength: { value: 10, message: 'Minimum 10 characters required' },
+  //     pattern: {
+  //       value: /^[0-9]+$/,
+  //       message: 'Enter a valid number',
+  //     },
+  //   },
+  // },
 ];

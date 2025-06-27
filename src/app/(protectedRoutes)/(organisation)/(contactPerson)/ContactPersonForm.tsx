@@ -30,7 +30,7 @@ import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice'
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
   const router = useRouter();
-  const [profilePicUrl, setProfilePicUrl] = useState<string>(defaultUserLogo.src);
+  const [profilePic, setProfilePic] = useState<string>(defaultUserLogo.src);
   const [uploadPocProfilePic] = useUploadPocProfilePicMutation();
   const [submitPointOfContact, { isLoading }] = useAddPointOfContactMutation();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
@@ -108,8 +108,8 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
         jobRole: contact.jobRole || '',
       });
 
-      if (contact.profilePicUrl && contact.profilePicUrl.startsWith('http')) {
-        setProfilePicUrl(contact.profilePicUrl);
+      if (contact.profilePic) {
+        setProfilePic(contact.profilePic);
       }
     }
   }, [existingData, isFetching, reset]);
@@ -120,7 +120,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
     try {
       await uploadPocProfilePic({ tenantId: tenantId ?? '', formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
-      setProfilePicUrl(localUrl);
+      setProfilePic(localUrl);
     } catch (error) {
       console.error('Image upload failed!', error);
     }
@@ -193,7 +193,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                 </Typography>
                 <Grid className={styles.formContainer}>
                   <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={profilePicUrl} onUpload={handleUpload} />
+                    <ImageUploader imageProp={profilePic} onUpload={handleUpload} />
                   </Box>
                   <Box className={styles.formFieldsBox}>
                     <Grid container spacing={1}>
@@ -214,6 +214,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                                 required
                                 error={!!errors[fieldName]}
                                 helperText={errors[fieldName]?.message}
+                                readonly={fieldName === 'email'}
                               />
                             )}
                           />
