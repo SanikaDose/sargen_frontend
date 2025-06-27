@@ -232,7 +232,7 @@ function OrganizationOnbording() {
 
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: payload }).unwrap();
-      router.push('/onboardingSuccess');
+      router.push('/AddContactPerson');
     } catch (error) {
       console.log('error ', error);
     }
