@@ -6,14 +6,15 @@ export interface PlantFormType {
   registrationNo: string;
   gstin: string;
   type: string;
-  age: number;
+  age: string;
   currencyType: string;
-  revenue: number;
-  numberOfEmployees: number;
-  numberOfLines: number;
+  revenue: string;
+  numberOfEmployees: string;
+  numberOfLines: string;
   assessmentStartDate: string;
   debriefDate: string;
   about: string;
+  revenueUnit: string;
   pocFullName: string;
   pocEmail: string;
   pocContactNo: string;
@@ -26,6 +27,7 @@ export interface PlantFormInput {
   type?: string;
   required?: boolean;
   isCurrency?: boolean;
+  isRevenueUnit?: boolean;
   rules?: RegisterOptions<PlantFormType, keyof PlantFormType>;
 }
 
