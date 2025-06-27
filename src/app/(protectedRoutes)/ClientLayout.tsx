@@ -325,9 +325,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     dispatch(setSideBarListItem(updatedList));
   };
 
-  console.log('sidebar list', sideBarListItems);
-  console.log('sideBarListItemsForAssessment', sideBarListItemsForAssessment);
-
   return (
     <Box sx={{ display: 'flex', height: '95%' }}>
       <CssBaseline />
@@ -495,40 +492,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-
-            {/* {sideBarListItemsForAssessment.map((item) => (
-              <ListItem
-                key={item.text}
-                disablePadding
-                sx={{
-                  pl: 0,
-                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
-                }}
-              >
-                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
-                  <ListItemIcon
-                    sx={{
-                      mr: 2,
-                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
-                    }}
-                  >
-                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
-                        }}
-                      >
-                        {item.text}
-                      </Typography>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))} */}
           </>
           {extraListItems &&
             extraListItems.map((item) => (
@@ -564,55 +527,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 </ListItemButton>
               </ListItem>
             ))}
-          {/* {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
-            <>
-              <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
-                Assessment menu
-              </Typography>
-              {sideBarListItemsForAssessment.map((item) => {
-                // Check if the current pathname contains the matchKeyword
-                const activeSegment = pathName.split('/')[1]?.toLowerCase();
-                const isDepartment = !item.linkRoute.startsWith('/');
-
-                const isActive = isDepartment
-                  ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
-                  : activeSegment === item.matchKeyword?.toLowerCase();
-                return (
-                  <ListItem
-                    key={item.text}
-                    disablePadding
-                    sx={{
-                      pl: 0,
-                      backgroundColor: isActive ? 'secondary.main' : 'transparent',
-                    }}
-                  >
-                    <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)}>
-                      <ListItemIcon
-                        sx={{
-                          mr: 2,
-                          color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
-                        }}
-                      >
-                        {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
-                            }}
-                          >
-                            {item.text}
-                          </Typography>
-                        }
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </>
-          )} */}
 
           {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
             <Accordion

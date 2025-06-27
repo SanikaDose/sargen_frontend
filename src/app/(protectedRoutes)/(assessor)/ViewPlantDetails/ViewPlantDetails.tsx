@@ -117,7 +117,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
 
   const handleClick = () => {
     router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
-    dispatch(setShowAssessmentListSideBar(true));
+    // dispatch(setShowAssessmentListSideBar(true));
   };
 
   if (isFetching) {
