@@ -15,7 +15,6 @@ import {
 } from '@/store/globalSlice';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Accordion, AccordionDetails, AccordionSummary, List, Popover } from '@mui/material';
 
 import { RootState } from '@/store/store';
@@ -381,8 +380,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 horizontal: 'right',
               }}
             >
-              <List sx={{ minWidth: 160 }}>
-                <ListItem disablePadding>
+              <List sx={{ minWidth: 50 }}>
+                {/* <ListItem disablePadding>
                   <ListItemButton
                     onClick={() => {
                       handleClosePopover();
@@ -394,7 +393,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     </ListItemIcon>
                     <ListItemText primary="Settings" />
                   </ListItemButton>
-                </ListItem>
+                </ListItem> */}
 
                 <ListItem disablePadding>
                   <ListItemButton
@@ -402,7 +401,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       handleLogout();
                     }}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon sx={{ mr: 1 }}>
                       <LogoutIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Logout" />
