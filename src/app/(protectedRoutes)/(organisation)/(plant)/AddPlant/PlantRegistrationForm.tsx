@@ -37,10 +37,10 @@ const steps = [
   'Lines',
   'Assessment',
   'Debrief',
+  'About',
   'Full Name',
   'Email',
   'Contact Number',
-  'About',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
@@ -209,6 +209,26 @@ const PlantRegistrationForm = () => {
                         ))}
                       </Grid>
 
+                      <Box className={styles.aboutSection}>
+                        <Controller
+                          name="about"
+                          control={control}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <InputWithLabel
+                              {...field}
+                              label="About Plant"
+                              placeholder="Enter About Plant"
+                              // required={true}
+                              multiline
+                              type="text"
+                              rows={2}
+                              onFocus={() => setFocusedField('about')}
+                            />
+                          )}
+                        />
+                      </Box>
+
                       <Grid size={{ xs: 12 }}>
                         <Divider sx={{ my: 3, width: '100%' }}>
                           <Typography variant="subtitle1" fontWeight={600}>
@@ -313,26 +333,6 @@ const PlantRegistrationForm = () => {
                           />
                         </Grid>
                       </Grid>
-
-                      <Box className={styles.aboutSection}>
-                        <Controller
-                          name="about"
-                          control={control}
-                          defaultValue=""
-                          render={({ field }) => (
-                            <InputWithLabel
-                              {...field}
-                              label="About Us"
-                              placeholder="Enter About Plant"
-                              // required={true}
-                              multiline
-                              type="text"
-                              rows={2}
-                              onFocus={() => setFocusedField('about')}
-                            />
-                          )}
-                        />
-                      </Box>
                     </section>
                   </Box>
                 </Box>
