@@ -23,6 +23,7 @@ const steps = [
   'GST In',
   'Country',
   'Organization Revenue',
+  'Revenue Unit',
   'Currency Type',
   'Number of Employees',
   'About Organization',
@@ -76,8 +77,7 @@ function OrganizationOnbording() {
       about: '',
       revenueUnit: '',
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
   });
 
   // useEffect(() => {
@@ -131,7 +131,7 @@ function OrganizationOnbording() {
         { label: 'Unit', value: 1 },
       ];
 
-      let selectedUnit = revenueUnitMap[revenueUnitMap.length - 1]; // Default to 'Unit'
+      let selectedUnit = revenueUnitMap[revenueUnitMap.length - 1];
       let normalizedRevenue = fullRevenue;
 
       for (const unit of revenueUnitMap) {
@@ -145,13 +145,17 @@ function OrganizationOnbording() {
           break;
         }
       }
+      const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
+
       reset({
         companyName: org.name || '',
         website: org.website || '',
         gstin: org.gstin || '',
         country: org.country || '',
-        revenue: normalizedRevenue.toString(),
-        revenueUnit: selectedUnit.value.toString(), // or use label if needed
+        revenue: normalizedRevenue.toString() || '',
+        //  revenueUnit: selectedUnit.value.toString() || '',
+        revenueUnit: revenueUnitValue,
+
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
         about: org.about || '',
@@ -179,12 +183,23 @@ function OrganizationOnbording() {
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof OrgOnboardType];
 
-      const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+      // const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
 
-      if (isFilled) {
-        acc.push(index);
+      // if (isFilled) {
+      //   acc.push(index);
+      // }
+      if (input.name === 'revenue') {
+        const numericValue = Number((value || '').toString().replace(/,/g, ''));
+        if (numericValue > 0) {
+          acc.push(index);
+        }
+      } else {
+        const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+        if (isFilled) {
+          acc.push(index);
+        }
       }
-
       return acc;
     }, []);
   }, [watchedValues]);
@@ -250,7 +265,7 @@ function OrganizationOnbording() {
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
                 <Typography variant="h4" className={styles.heading}>
-                  Organization Details
+                  Organisation Details
                 </Typography>
 
                 <Box className={styles.formContainer}>
@@ -302,7 +317,6 @@ function OrganizationOnbording() {
                                         { label: 'Thousand', value: '1000' },
                                         { label: 'Lakh', value: '100000' },
                                         { label: 'Crore', value: '10000000' },
-                                        // { label: 'Arab', value: '1000000000' },
                                       ].map(({ label, value }) => ({
                                         label: label,
                                         value: value,
@@ -361,7 +375,14 @@ function OrganizationOnbording() {
                           name="about"
                           control={control}
                           defaultValue=""
-                          render={({ field }) => (
+                          rules={{
+                            required: 'About Organization is required',
+                            maxLength: {
+                              value: 200,
+                              message: 'Only 200 characters are allowed',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
                               label="About Orgnization"
@@ -371,6 +392,8 @@ function OrganizationOnbording() {
                               type="text"
                               rows={2}
                               onFocus={() => setFocusedField('about')}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
                             />
                           )}
                         />

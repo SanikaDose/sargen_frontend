@@ -41,7 +41,7 @@ import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { AssessorFormInputs } from './FormConfig/formInputStep';
 import Loader from '@/components/Loader/Loader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
@@ -71,8 +71,7 @@ function AssessorOnboarding() {
       yearOfExperience: '',
       certificationYear: '',
     },
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
   });
   const router = useRouter();
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
@@ -105,16 +104,8 @@ function AssessorOnboarding() {
   const [Status, setStatus] = useState<string | null>(null);
   const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
   console.log('existing dataa', existingData);
-  //reload view
 
-  // useEffect(() => {
-  //   if (existingData && existingData.data[0]?.formData) {
-  //     const formData = existingData.data[0].formData;
-  //     if (formData.userLogo) {
-  //       setLogoUrl(formData.userLogo);
-  //     }
-  //   }
-  // }, [existingData]);
+  //reload view
 
   useEffect(() => {
     const populateFormAndFile = async () => {
@@ -399,8 +390,6 @@ function AssessorOnboarding() {
                               //  defaultValue=""
                               rules={input.rules}
                               render={({ field, fieldState }) => {
-                                const isReadOnly = input.name === 'email';
-
                                 return (
                                   <>
                                     {input.iscountry ? (
@@ -428,9 +417,7 @@ function AssessorOnboarding() {
                                         required
                                         error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
-                                        InputProps={{
-                                          readOnly: isReadOnly,
-                                        }}
+                                        readonly={input.name === 'email'}
                                       />
                                     )}
                                   </>
@@ -567,7 +554,7 @@ function AssessorOnboarding() {
                                       label="Upload"
                                       width="50px"
                                       showIcon
-                                      color={uploadedFiles[backendKey] ? 'green' : '#1976d2'}
+                                      color={uploadedFiles[backendKey] ? '#4CAF50' : '#1976d2'}
                                       onClick={() => {
                                         setCurrentUploadKey(backendKey);
                                         fileInputRef.current?.click();

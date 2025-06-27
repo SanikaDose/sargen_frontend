@@ -229,12 +229,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-    handleLogout();
+  // logout logic only
+  const handleLogout = () => {
+    setOpenLogoutPopUp(false);
+    dispatch({ type: 'RESET_APP' });
+    localStorage.clear();
+    sessionStorage.clear();
+    router.push('/login');
   };
 
-  const openAnchorEl = Boolean(anchorEl);
+  // only closes the popover
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+    setOpenLogoutPopUp(false); // only if needed
+  };
 
   // Early return if not initialized
   if (!isInitialized) {
@@ -253,18 +261,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   };
 
-  const handleLogout = () => {
-    setOpenLogoutPopUp(false);
-    // 1. Clear Redux state (optional)
-    dispatch({ type: 'RESET_APP' }); // Replace with your root-level reset action
-
-    // 2. Clear localStorage / sessionStorage
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // 3. Redirect to login page
-    router.push('/login');
-  };
   const DEPARTMENT_LINKS = [
     'R&D',
     'Planning',
@@ -376,9 +372,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </Button>
 
             <Popover
-              open={openAnchorEl}
+              open={Boolean(anchorEl)}
               anchorEl={anchorEl}
-              onClose={handleClose}
+              onClose={handleClosePopover}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'right',
@@ -392,7 +388,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 <ListItem disablePadding>
                   <ListItemButton
                     onClick={() => {
-                      handleClose();
+                      handleClosePopover();
                       // Navigate to settings or call a callback
                     }}
                   >
@@ -406,7 +402,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 <ListItem disablePadding>
                   <ListItemButton
                     onClick={() => {
-                      handleClose();
+                      handleLogout();
                     }}
                   >
                     <ListItemIcon>
