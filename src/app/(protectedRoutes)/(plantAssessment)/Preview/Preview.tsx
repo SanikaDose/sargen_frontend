@@ -74,6 +74,7 @@ export default function Preview() {
     'Management',
     'HR',
   ];
+
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       setAllQuestionsLoading(true); // Start loading

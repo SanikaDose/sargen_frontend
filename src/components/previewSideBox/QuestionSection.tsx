@@ -13,12 +13,12 @@ type Props = {
 };
 
 const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
-  console.log({ questions, selectedQuestionId, completedIds, onSelect });
+  console.log('questions', questions);
   return (
     <div className={styles.buttonGrid}>
       {questions.map((q) => {
         const isSelected = q.key === selectedQuestionId;
-        const isCompleted = completedIds.includes(q.key);
+        const isCompleted = q.key ? completedIds.includes(q.key) : false;
 
         // Add verification status check
         const isVerified = q.verificationStatus === QuestionVerificationStatus.ASSESSOR_VERIFIED;
@@ -37,7 +37,14 @@ const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, compl
           .join(' ');
 
         return (
-          <button type="button" key={q.question_uid} className={classNames} onClick={() => onSelect(q.key)}>
+          <button
+            type="button"
+            key={q.question_uid}
+            className={classNames}
+            onClick={() => {
+              if (q.key) onSelect(q.key);
+            }}
+          >
             {(q.questionNo ?? 0).toString().padStart(2, '0')}
           </button>
         );

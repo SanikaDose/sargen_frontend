@@ -31,8 +31,8 @@ const PlanningHorizon = () => {
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
     dispatch(setActiveStep(1));
-    dispatch(markStepCompleted(0)); // Industry Selection completed
-    dispatch(markStepIncomplete(2)); // In case navigating back
+    dispatch(markStepCompleted(0));
+    dispatch(markStepIncomplete(3));
   }, [dispatch]);
 
   const organisationId = params.OrganisationId as string;

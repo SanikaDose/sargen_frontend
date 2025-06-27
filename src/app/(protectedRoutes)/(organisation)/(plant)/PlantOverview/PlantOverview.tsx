@@ -72,7 +72,7 @@ export default function PlantOverview() {
       AsseessmentStatus.COMPLETED_ASSESSMENT
     ) {
       router.push(`IndustrySelection/${tenantId}/${plantId}`);
-      dispatch(setShowAssessmentListSideBar(true));
+      // dispatch(setShowAssessmentListSideBar(true));
     }
   };
 

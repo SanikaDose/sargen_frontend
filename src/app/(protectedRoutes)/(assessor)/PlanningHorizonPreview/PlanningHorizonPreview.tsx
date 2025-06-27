@@ -31,8 +31,8 @@ const PlanningHorizonPreview = () => {
     dispatch(setPageNameHeader(pagesNames.assessorPlanningHorizonPreview));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
-    dispatch(setActiveStep(2));
-    dispatch(markStepCompleted(1));
+    dispatch(setActiveStep(1));
+    dispatch(markStepCompleted(0));
     dispatch(markStepIncomplete(3));
   }, [dispatch]);
 

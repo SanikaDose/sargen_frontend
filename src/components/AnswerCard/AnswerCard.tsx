@@ -3,7 +3,7 @@ import { Box, Typography, Link } from '@mui/material';
 import type { AnswerCardProps } from './AnswerCard.types';
 import styles from './style.module.css';
 
-const MAX_PREVIEW_LENGTH = 120;
+const MAX_PREVIEW_LENGTH = 100;
 
 const AnswerCard = ({
   answerNumber = 1,
@@ -13,6 +13,7 @@ const AnswerCard = ({
 }: AnswerCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const showReadMore = answerText.length > MAX_PREVIEW_LENGTH;
+  console.log('show read more', showReadMore);
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
