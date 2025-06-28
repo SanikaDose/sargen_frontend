@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, SelectChangeEvent } from '@mui/material';
 
 export type DropdownOption = {
@@ -33,6 +33,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
   error,
   helperText,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <Box sx={{ width: '100%' }}>
       <FormControl fullWidth margin="normal">
@@ -55,6 +56,8 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
           value={value}
           onChange={onChange}
           onFocus={onFocus}
+          onOpen={() => setIsOpen(true)}
+          onClose={() => setIsOpen(false)}
           size="small"
           displayEmpty
           inputRef={inputRef}
@@ -65,8 +68,8 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
               sx={{
                 borderRadius: '16px',
                 '& input::placeholder': {
-                  //   fontWeight: 500,
-                  //   color: '#888',
+                  // fontWeight: 500,
+                  // color: '#888',
                 },
               }}
             />
@@ -76,8 +79,8 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
             <span
               style={{
                 fontWeight: 500,
-                color: '#888',
-                opacity: 0.4,
+                color: isOpen ? '#000' : '#888',
+                opacity: isOpen ? 1 : 0.4,
               }}
             >
               {placeholder}
