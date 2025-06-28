@@ -6,17 +6,18 @@
   /* gap: 10%; */
   padding: 1px;
   width: 100%;
+  height: 90%;
 }
 
 .paperContainer {
   border-radius: 16px;
   padding: 2;
   background-color: white;
-  border: 1px solid rgb(216, 216, 216);
+  /* border: 1px solid rgb(3, 3, 3); */
   width: 100%;
   display: flex;
   gap: 3;
-  min-height: 87%;
+  height: 100%;
 }
 .heading {
   font-weight: 600;
@@ -70,8 +71,11 @@
 }
 .formFieldsInner {
   width: 100%;
+  height: 100%;
+  overflow: auto;
   /* border: 1px solid rgb(78, 47, 255); */
 }
+
 .formFieldsBox {
   width: 70%;
 }

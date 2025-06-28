@@ -199,13 +199,13 @@ export const assessorUserAssessmentList = [
     linkRoute: '/ReportViewPage',
     show: false,
   },
-  {
-    text: 'Final Report',
-    icon: 'AssessmentIcon',
-    matchKeyword: 'ReportFinalPage',
-    linkRoute: '/ReportFinalPage',
-    show: false,
-  },
+  // {
+  //   text: 'Final Report',
+  //   icon: 'AssessmentIcon',
+  //   matchKeyword: 'ReportFinalPage',
+  //   linkRoute: '/ReportFinalPage',
+  //   show: false,
+  // },
   // {
   //   text: 'Introduction',
   //   icon: 'InfoIcon',

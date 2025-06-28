@@ -161,7 +161,7 @@ const AddReportData = () => {
           return nextIndex;
         });
       } else {
-        router.push(`/ReportPage/${tenantId}/${plantId}`);
+        router.push(`/ReportViewPage/${tenantId}/${plantId}`);
       }
     } catch (error) {
       console.error('Save failed:', error);

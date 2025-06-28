@@ -41,7 +41,7 @@ const steps = [
   'About',
   'Full Name',
   'Email',
-  'Contact Number',
+  'Contact ',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
@@ -161,8 +161,7 @@ const PlantRegistrationForm = () => {
       {isLoading ? (
         <Loader loading={true} />
       ) : (
-        <Box sx={{ width: '100%', height: '99.5%' }}>
-          {' '}
+        <Box sx={{ width: '100%', height: '90%' }}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
           </Box>
@@ -174,9 +173,9 @@ const PlantRegistrationForm = () => {
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
-                  <Box className={styles.formFieldsBox}>
+                  <Box className={styles.formFieldsBox} sx={{}}>
                     <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1}>
+                      <Grid container spacing={1} sx={{}}>
                         {plantFormInputs.map((input) => (
                           <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller

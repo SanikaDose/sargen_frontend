@@ -16,6 +16,7 @@ import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './Pl
 import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
 import styles from './PlantOverview.module.css';
+import { useDownloadReportMutation } from '@/app/(protectedRoutes)/(assessor)/ReportFinalizedPage/ReportFinalizedPageApi';
 
 export default function PlantOverview() {
   const dispatch = useDispatch();
@@ -45,12 +46,14 @@ export default function PlantOverview() {
   });
 
   const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
-
+  const [downloadReport, { isLoading: isDownloading }] = useDownloadReportMutation();
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
 
   const handleButtonClick = async (tenantId: string, plantId: string, assessmentStage: string) => {
+    console.log('AsseessmentStatus when click', assessmentStage === AsseessmentStatus.FINISH_ASSESSMENT);
+
     if (assessmentStage === AsseessmentStatus.NOT_STARTED || assessmentStage === AsseessmentStatus.REQUESTED_ASSESSMENT) {
       try {
         await postAssesmentStatus({
@@ -69,10 +72,30 @@ export default function PlantOverview() {
     if (
       assessmentStage === AsseessmentStatus.START_ASSESSMENT ||
       assessmentStage === AsseessmentStatus.ONGOING_ASSESSMENT ||
-      AsseessmentStatus.COMPLETED_ASSESSMENT
+      assessmentStage === AsseessmentStatus.COMPLETED_ASSESSMENT
     ) {
       router.push(`IndustrySelection/${tenantId}/${plantId}`);
-      // dispatch(setShowAssessmentListSideBar(true));
+    } else if (assessmentStage === AsseessmentStatus.FINISH_ASSESSMENT) {
+      try {
+        const bufferResponse = await downloadReport({
+          tenantId,
+          plantId,
+        }).unwrap();
+
+        const byteArray = new Uint8Array(bufferResponse.data);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Assessment_Report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Download failed:', error);
+      }
     }
   };
 

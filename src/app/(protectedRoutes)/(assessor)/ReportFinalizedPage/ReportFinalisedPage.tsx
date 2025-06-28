@@ -3,7 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
-import { useCreateReportMutation, useViewReportMutation } from './ReportFinalizedPageApi';
+import {
+  useChangeAssessmentStatusMutation,
+  useCreateReportMutation,
+  useDownloadReportMutation,
+  useViewReportMutation,
+} from './ReportFinalizedPageApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 
 import styles from '../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
@@ -13,6 +18,9 @@ import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssem
 import { useDispatch } from 'react-redux';
 import { useGetReportDataMutation } from '../AddReportData/ReportDataApi';
 import ReportTextSection from '@/components/ReportCardtext/ReportTextSection';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
+import Loader from '@/components/Loader/Loader';
+import { AsseessmentStatus } from '@/constants/enums';
 
 export default function ReportFinalisedPage() {
   const router = useRouter();
@@ -22,16 +30,17 @@ export default function ReportFinalisedPage() {
   const plantId = params.plantId as string;
 
   const [reportData, setReportData] = useState<string[]>(new Array());
+
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.reportFinalized));
-    // dispatch(setShowAssessmentListSideBar(true));
-    // dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
 
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [createReport, { isLoading: isCreating }] = useCreateReportMutation();
+  const [downloadReport, { isLoading: isDownloading }] = useDownloadReportMutation();
+  const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
   const [viewReport, { isLoading: isViewing }] = useViewReportMutation();
-
+  const isLoading = isCreating || isViewing || assesmentStatusLoading || isDownloading;
   const [getReportData] = useGetReportDataMutation();
 
   // Utility to strip HTML tags
@@ -69,8 +78,6 @@ export default function ReportFinalisedPage() {
     if (tenantId && plantId) fetchReportData();
   }, []);
 
-  console.log('reportData', reportData);
-
   useEffect(() => {
     const generateAndPreviewReport = async () => {
       try {
@@ -85,8 +92,34 @@ export default function ReportFinalisedPage() {
 
     generateAndPreviewReport();
   }, [tenantId, plantId, createReport, viewReport]);
+  const handleDownloadReport = async () => {
+    const payload = { tenantId, plantId };
 
-  console.log('url', reportUrl);
+    try {
+      const bufferResponse = await downloadReport(payload).unwrap();
+
+      const byteArray = new Uint8Array(bufferResponse.data);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Assessment_Report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      await postAssesmentStatus({
+        tenantId,
+        plantId,
+        assessment: AsseessmentStatus.FINISH_ASSESSMENT,
+      }).unwrap();
+
+      router.push('/AssignedPlantsList');
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
 
   return (
     <Box sx={{ height: '99%' }}>
@@ -102,16 +135,21 @@ export default function ReportFinalisedPage() {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ flex: 1, position: 'relative' }}>
-              <iframe
-                src={reportUrl}
-                type="application/pdf"
-                title="Report Preview"
-                width="100%"
-                height="100%"
-                style={{ border: '1px solid #ccc', borderRadius: '12px' }}
-              />
-            </Box>
+            {isLoading ? (
+              <Box sx={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader loading={isLoading} />
+              </Box>
+            ) : (
+              <Box sx={{ flex: 1, position: 'relative' }}>
+                <iframe
+                  src={reportUrl ?? undefined}
+                  title="Report Preview"
+                  width="100%"
+                  height="100%"
+                  style={{ border: '1px solid #ccc', borderRadius: '16px' }}
+                />
+              </Box>
+            )}
           </Box>
 
           <Box className={styles.rightSection}>
@@ -133,16 +171,21 @@ export default function ReportFinalisedPage() {
               <CustomButton
                 variant="contained"
                 color="primary"
-                // icon="left"
                 type="button"
-                // onClick={handleBack}
-                // disabled={currentQuestionIndex === 0 || isLoading}
+                onClick={() => {
+                  router.push(`/AssignedPlantsList`);
+                }}
               >
                 Home
               </CustomButton>
 
-              <CustomButton variant="contained">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}></Box>
+              <CustomButton
+                variant="contained"
+                onClick={() => {
+                  handleDownloadReport();
+                }}
+                disabled={isDownloading}
+              >
                 Download
               </CustomButton>
             </Box>

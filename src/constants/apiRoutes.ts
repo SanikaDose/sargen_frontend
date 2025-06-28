@@ -59,7 +59,7 @@ export const apiRoutes = {
     startAssessmentRuleEngine: '/start-assessment-rule-engine',
     getPlanningHorizon: 'get-planning-horizon',
     selectPlanningHorizon: 'select-planning-horizon',
-    changeAssessmentStatus: 'change-assessment-status',
+    changeAssessmentStatus: '/change-assessment-status',
     changeQuestionsStatus: '/change-question-status',
   },
   assessorOnboarding: {
