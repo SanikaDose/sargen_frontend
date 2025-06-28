@@ -7,7 +7,7 @@ import styles from './../AssessmentBasedImpactValues/AssessmentBasedImpactValues
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { useDispatch } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import {
   useAddAboutTheCompanyMutation,
@@ -19,7 +19,7 @@ import {
 } from './ReportDataApi';
 import { PayloadType } from './ReportData.types';
 import QuillTextArea from '@/components/QuillTextArea/QuillTextArea';
-import { Router } from 'express';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const questions = ['About the Company', 'Introduction', 'Summary of Observations and Recommendations.', 'ROI', 'Comments'];
 
@@ -31,6 +31,11 @@ const AddReportData = () => {
   const plantId = params.plantId as string;
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(setPageNameHeader(pagesNames.reportData));
+    dispatch(setShowAssessmentListSideBar(true));
+    dispatch(setPlantAssessmentDepartment(''));
+  }, [dispatch]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
