@@ -15,6 +15,7 @@ import FactoryIcon from '@mui/icons-material/Factory';
 import GroupIcon from '@mui/icons-material/Group';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import InfoIcon from '@mui/icons-material/Info';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import MonetizationOnRoundedIcon from '@mui/icons-material/MonetizationOnRounded';
 import PermContactCalendarRoundedIcon from '@mui/icons-material/PermContactCalendarRounded';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -34,7 +35,6 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TuneIcon from '@mui/icons-material/Tune';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-
 export const ICONS: Record<string, React.ElementType> = {
   HomeRoundedIcon: HomeRoundedIcon,
   DashboardIcon: DashboardIcon,
@@ -72,4 +72,5 @@ export const ICONS: Record<string, React.ElementType> = {
   CorporateFareIcon: CorporateFareRoundedIcon,
   PermContactCalendarIcon: PermContactCalendarRoundedIcon,
   VisibilityIcon: VisibilityIcon,
+  ManageAccountsIcon: ManageAccountsIcon,
 };

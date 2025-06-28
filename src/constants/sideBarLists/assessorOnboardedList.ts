@@ -12,8 +12,8 @@ export const assessorOnboardedMenuList: SidebarItem[] = [
 export const assessorExtraList: SidebarItem[] = [
   {
     text: 'Settings',
-    icon: 'FactoryIcon',
-    linkRoute: '/AssessorSetting',
+    icon: 'ManageAccountsIcon',
+    linkRoute: '/assessorSetting',
     show: false,
   },
   // {
