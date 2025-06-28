@@ -13,7 +13,7 @@ type Props = {
 };
 
 const QuestionSection: React.FC<Props> = ({ questions, selectedQuestionId, completedIds, onSelect }) => {
-  console.log('questions', questions);
+  // console.log('questions', questions);
   return (
     <div className={styles.buttonGrid}>
       {questions.map((q) => {

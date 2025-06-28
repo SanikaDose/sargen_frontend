@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Box, Paper, Typography, CircularProgress } from '@mui/material';
 import styles from './../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -19,11 +19,14 @@ import {
 } from './ReportDataApi';
 import { PayloadType } from './ReportData.types';
 import QuillTextArea from '@/components/QuillTextArea/QuillTextArea';
+import { Router } from 'express';
 
 const questions = ['About the Company', 'Introduction', 'Summary of Observations and Recommendations.', 'ROI', 'Comments'];
 
 const AddReportData = () => {
   const params = useParams();
+
+  const router = useRouter();
   const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
   const dispatch = useDispatch();
@@ -47,6 +50,8 @@ const AddReportData = () => {
   const [addSummary] = useAddSummaryOfObservationsAndRecommendationsMutation();
   const [addROI] = useAddRoiMutation();
   const [addComment] = useAddCommentMutation();
+  // const [getReportData] = useGetReportDataMutation();
+
   const [getReportData] = useGetReportDataMutation();
 
   // Fetch report data on mount
@@ -55,10 +60,14 @@ const AddReportData = () => {
       try {
         setIsInitialLoading(true);
         const payload = { tenantId, plantId };
-        const response = await getReportData(payload).unwrap();
+        const result = await getReportData(payload);
+
+        const response = result?.data?.[0];
+
+        if (!response) return;
 
         const existingData = [
-          response.aboutTheCompany || '',
+          response.aboutCompany || '',
           response.introduction || '',
           response.summaryOfObservationsAndRecommendations || '',
           response.roi || '',
@@ -66,7 +75,7 @@ const AddReportData = () => {
         ];
 
         setQuestionContents(existingData);
-        contentRef.current = existingData[0]; // sync first question
+        contentRef.current = existingData[0];
       } catch (error) {
         console.error('Failed to fetch report data:', error);
       } finally {
@@ -77,11 +86,22 @@ const AddReportData = () => {
     if (tenantId && plantId) fetchReportData();
   }, [tenantId, plantId, getReportData]);
 
+  console.log('questionContents', questionContents);
+
+  useEffect(() => {
+    if (!isInitialLoading && questionContents.length) {
+      contentRef.current = questionContents[currentQuestionIndex];
+    }
+  }, [questionContents, isInitialLoading]);
+
   const handleContentChange = (newContent: string) => {
     contentRef.current = newContent;
 
     setQuestionContents((prev) => {
       const updated = [...prev];
+
+      console.log('updated', updated);
+
       updated[currentQuestionIndex] = newContent;
       return updated;
     });
@@ -136,7 +156,7 @@ const AddReportData = () => {
           return nextIndex;
         });
       } else {
-        alert('All questions submitted successfully!');
+        router.push(`/ReportPage/${tenantId}/${plantId}`);
       }
     } catch (error) {
       console.error('Save failed:', error);
@@ -195,6 +215,7 @@ const AddReportData = () => {
 
             <Box sx={{ flex: 1, position: 'relative' }}>
               <QuillTextArea
+                key={currentQuestionIndex}
                 value={questionContents[currentQuestionIndex]}
                 onChange={handleContentChange}
                 placeholder="Enter your content here..."
