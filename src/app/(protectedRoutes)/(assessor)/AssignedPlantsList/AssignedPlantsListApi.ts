@@ -1,9 +1,10 @@
 import { apiRoutes } from '@/constants/apiRoutes';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
+import { GetAllAssignedPlantsResponse } from './AssignPlantList.type';
 
 export const assessorAsignPlantApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllAssignPlant: builder.query<any, string>({
+    getAllAssignPlant: builder.query<GetAllAssignedPlantsResponse, string>({
       query: (tenantId) => ({
         url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.getAllAssignedPlants}/${tenantId}`,
         method: 'GET',
@@ -17,27 +18,7 @@ export const assessorAsignPlantApi = protectedApi.injectEndpoints({
       }),
       providesTags: ['SpecificPlantInfo'],
     }),
-    getAssessorMetadata: builder.query({
-      query: (tenantId) => ({
-        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.getAllMetaData}/${tenantId}`,
-        method: 'GET',
-      }),
-      providesTags: ['AssessorMetadata'],
-    }),
-    postAssessorMetadataToPlant: builder.mutation({
-      query: (body) => ({
-        url: `${apiRoutes.assessorFlow.root}${apiRoutes.assessorFlow.assignMetadata}`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: ['AssessorMetadata', 'SpecificPlantInfo'],
-    }),
   }),
 });
 
-export const {
-  useGetSpecificPlantInfoQuery,
-  useGetAssessorMetadataQuery,
-  usePostAssessorMetadataToPlantMutation,
-  useGetAllAssignPlantQuery,
-} = assessorAsignPlantApi;
+export const { useGetSpecificPlantInfoQuery, useGetAllAssignPlantQuery } = assessorAsignPlantApi;

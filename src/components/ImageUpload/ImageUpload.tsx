@@ -3,38 +3,40 @@ import { Avatar, IconButton } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import styles from './style.module.css';
+
 interface ImageUploaderProps {
   imageProp?: string;
   onUpload?: (file: File) => void;
+  shape?: 'circle' | 'square';
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload, shape = 'circle' }) => {
   const [image, setImage] = useState<string | null>(null);
   const pathname = usePathname();
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => setImage(reader.result as string);
       reader.readAsDataURL(file);
-      onUpload?.(file); // trigger upload from parent
+      onUpload?.(file);
     }
   };
 
   const avatarSrc = image || imageProp || '/images/default-avatar-profile.png';
   const isPlantOverview = pathname?.includes('/PlantOverview');
+
   return (
     <div className={styles.avatarStack}>
       <div className={styles.avatarWrapper}>
-        <Avatar src={avatarSrc} alt="Uploaded Avatar" className={styles.avatarImage} />
+        <Avatar
+          src={avatarSrc}
+          alt="Uploaded Avatar"
+          className={`${styles.avatarImage} ${shape === 'square' ? styles.squareAvatar : styles.circleAvatar}`}
+        />
         <label htmlFor="avatar-upload" className={styles.avtarUpload}>
-          <input
-            accept="image/*"
-            id="avatar-upload"
-            type="file"
-            onChange={handleImageChange}
-            className={styles.hiddenInput}
-          />
+          <input accept="image/*" id="avatar-upload" type="file" onChange={handleImageChange} className={styles.hiddenInput} />
           {!isPlantOverview && (
             <IconButton component="span" className={styles.editButton} aria-label="edit avatar">
               <EditOutlinedIcon fontSize="inherit" />
@@ -45,5 +47,4 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ imageProp, onUpload }) =>
     </div>
   );
 };
-
 export default ImageUploader;

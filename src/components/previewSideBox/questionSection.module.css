@@ -7,9 +7,9 @@
 }
 
 .questionButton {
-  height: 50px;
-  border-radius: 4px;
-  padding: 4px;
+  height: 42px;
+  width: 42px;
+  border-radius: 16px;
   text-align: center;
   border: none;
   cursor: pointer;
@@ -20,6 +20,18 @@
 
 .reviewed {
   background-color: rgba(161, 208, 102, 1);
+}
+
+.isVerified {
+  background-color: rgba(161, 208, 102, 1);
+}
+
+.isFlagged {
+  background-color: #ed6c02;
+}
+
+.notVerified {
+  background-color: lightgray;
 }
 
 .selected {

@@ -1,13 +1,13 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useActiveAccountMutation } from "../registerApi";
-import InformativeComponent from "@/components/InformativeComponent/InformativeComponent";
-import { pageRoutes } from "@/constants/pagesRoutes";
+'use client';
+import { useRouter } from 'next/navigation';
+import { useActiveAccountMutation } from '../registerApi';
+import InformativeComponent from '@/components/InformativeComponent/InformativeComponent';
+import { pageRoutes } from '@/constants/pagesRoutes';
 
-const page = () => {
-  const router = useRouter();
+const Page = () => {
   const [activeAccount] = useActiveAccountMutation();
-  const text = "To Actiavte Account Click Below";
+  const text = 'To Activate Account Click Below';
+  const router = useRouter();
 
   async function handleActivateAccount() {
     const sidObj = {
@@ -19,11 +19,11 @@ const page = () => {
         router.push(pageRoutes.unprotected.login);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
   return <InformativeComponent content={text} behaviour={handleActivateAccount} />;
 };
 
-export default page;
+export default Page;

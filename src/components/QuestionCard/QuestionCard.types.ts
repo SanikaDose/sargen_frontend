@@ -1,4 +1,4 @@
-interface QuestionCardProps {
+export interface QuestionCardProps {
   questionNumber: number;
   questionText: string;
 }

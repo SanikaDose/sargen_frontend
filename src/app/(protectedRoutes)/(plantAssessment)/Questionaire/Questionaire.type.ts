@@ -1,4 +1,8 @@
 export interface Question {
+  verificationStatus: string;
+  groupKey?: string;
+  questionNo: number;
+  key: string | undefined;
   bandName: string;
   bandWeight: string;
   context: string;
@@ -11,4 +15,5 @@ export interface Question {
   answerOption: string;
   answer: string | null;
   justification: string | null;
+  questionVerificationStatus: string;
 }

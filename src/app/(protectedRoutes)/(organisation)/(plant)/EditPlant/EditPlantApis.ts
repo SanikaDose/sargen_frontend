@@ -25,13 +25,20 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Plant Information Addeed successfully!',
+          errorMessage: 'Falied To Add Plant Information',
+          duration: 4000,
+        });
+      },
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
 
     // 📤 Upload Plant Logo
-    uploadPlantLogo: builder.mutation<void, { organisationId: string; plantId: string; formData: FormData }>({
-      query: ({ organisationId, plantId, formData }) => ({
-        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadPlantLogo}/${organisationId}/${plantId}`,
+    uploadPlantLogo: builder.mutation<void, { tenantId: string; plantId: string; formData: FormData }>({
+      query: ({ tenantId, plantId, formData }) => ({
+        url: `${apiControllerPath.userLogos.root}${apiControllerPath.userLogos.uploadPlantLogo}/${tenantId}/${plantId}`,
         method: 'POST',
         body: formData,
       }),

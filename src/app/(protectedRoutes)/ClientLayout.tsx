@@ -1,262 +1,26 @@
 'use client';
+import { assessorExtraList, assessorOnboardedMenuList } from '@/constants/sideBarLists/assessorOnboardedList';
+import { assessorOnboardingMenuList } from '@/constants/sideBarLists/assessorOnboardingList';
+import { organisationExtraMenuList, organisationOnboardedMenuList } from '@/constants/sideBarLists/organisationOnboardedList';
+import { organisationOnboardingMenuList } from '@/constants/sideBarLists/organisationOnboardingList';
+import { assessorUserAssessmentList, platformUserAssessmentList } from '@/constants/sideBarLists/plantAssessmentMenuList';
+import { SidebarItem } from '@/constants/sideBarLists/sideBarList.type';
+import {
+  setExtraListItems,
+  setSideBarListItem,
+  setSideBarListItemsForAssessment,
+  setUserDesignation,
+  setUserFullName,
+  setUserLogoUrl,
+} from '@/store/globalSlice';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Accordion, AccordionDetails, AccordionSummary, List, Popover } from '@mui/material';
 
-// import { Header } from '@/components/Header/Header';
-// import InfoBox from '@/components/InfoBox/InfoBox';
-
-// import theme from '@/theme/theme';
-// import { AssessorOnboardingSideBarList } from '../../app/utils/allRoutes';
-
-// import SideBar from '@/components/sideBar/SideBar';
-// import MenuIcon from '@mui/icons-material/Menu';
-// import { Fab, Grid, useMediaQuery } from '@mui/material';
-// import { useEffect, useState } from 'react';
-
-// export default function ClientLayout({ children }: { children: React.ReactNode }) {
-//   const [openSideBar, setOpenSideBar] = useState(false);
-//   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600
-//   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899
-//   const isCompactDesktop = useMediaQuery('(min-width:901px) and (max-width:1045px)');
-//   console.log(openSideBar);
-//   // Check if sidebar should be permanent
-//   const isPermanentSidebar = !isMobile && !isTablet && !isCompactDesktop;
-
-//   const [showInfoBox, setShowInfoBox] = useState(false);
-
-//   useEffect(() => {
-//     console.log('width:', window.innerWidth);
-//   }, []);
-
-//   // Auto-close drawer on mobile/tablet for better UX
-//   useEffect(() => {
-//     if (isMobile || isTablet) {
-//       setOpenSideBar(false);
-//     } else if (isPermanentSidebar) {
-//       setOpenSideBar(true);
-//     }
-//   }, [isMobile, isTablet, isPermanentSidebar]);
-
-//   return (
-
-//   );
-// }
-
-// import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-// import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-// import MailIcon from '@mui/icons-material/Mail';
-// import MenuIcon from '@mui/icons-material/Menu';
-// import InboxIcon from '@mui/icons-material/MoveToInbox';
-// import { Avatar, Button, useMediaQuery } from '@mui/material';
-// import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-// import Box from '@mui/material/Box';
-// import CssBaseline from '@mui/material/CssBaseline';
-// import Divider from '@mui/material/Divider';
-// import Drawer from '@mui/material/Drawer';
-// import IconButton from '@mui/material/IconButton';
-// import List from '@mui/material/List';
-// import ListItem from '@mui/material/ListItem';
-// import ListItemButton from '@mui/material/ListItemButton';
-// import ListItemIcon from '@mui/material/ListItemIcon';
-// import ListItemText from '@mui/material/ListItemText';
-// import { styled, useTheme } from '@mui/material/styles';
-// import Toolbar from '@mui/material/Toolbar';
-// import Typography from '@mui/material/Typography';
-// import * as React from 'react';
-
-// const drawerWidth = 240;
-
-// const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
-//   open?: boolean;
-// }>(({ theme }) => ({
-//   flexGrow: 1,
-//   padding: theme.spacing(3),
-//   transition: theme.transitions.create('margin', {
-//     easing: theme.transitions.easing.sharp,
-//     duration: theme.transitions.duration.leavingScreen,
-//   }),
-//   marginLeft: `-${drawerWidth}px`,
-//   variants: [
-//     {
-//       props: ({ open }) => open,
-//       style: {
-//         transition: theme.transitions.create('margin', {
-//           easing: theme.transitions.easing.easeOut,
-//           duration: theme.transitions.duration.enteringScreen,
-//         }),
-//         marginLeft: 0,
-//       },
-//     },
-//   ],
-// }));
-
-// interface AppBarProps extends MuiAppBarProps {
-//   open?: boolean;
-// }
-
-// const AppBar = styled(MuiAppBar, {
-//   shouldForwardProp: (prop) => prop !== 'open',
-// })<AppBarProps>(({ theme }) => ({
-//   transition: theme.transitions.create(['margin', 'width'], {
-//     easing: theme.transitions.easing.sharp,
-//     duration: theme.transitions.duration.leavingScreen,
-//   }),
-//   variants: [
-//     {
-//       props: ({ open }) => open,
-//       style: {
-//         width: `calc(100% - ${drawerWidth}px)`,
-//         marginLeft: `${drawerWidth}px`,
-//         transition: theme.transitions.create(['margin', 'width'], {
-//           easing: theme.transitions.easing.easeOut,
-//           duration: theme.transitions.duration.enteringScreen,
-//         }),
-//       },
-//     },
-//   ],
-// }));
-
-// const DrawerHeader = styled('div')(({ theme }) => ({
-//   display: 'flex',
-//   alignItems: 'center',
-//   padding: theme.spacing(0, 1),
-//   // necessary for content to be below app bar
-//   ...theme.mixins.toolbar,
-//   justifyContent: 'flex-end',
-// }));
-
-// export default function ClientLayout({ children }: { children: React.ReactNode }) {
-//   const theme = useTheme();
-//   // Media queries to detect device type
-//   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
-//   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-960px
-//   const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >=960px
-
-//   const [mobileOpen, setMobileOpen] = React.useState(false);
-//   const open = isDesktop ? true : mobileOpen;
-
-//   const handleDrawerOpen = () => {
-//     if (!isDesktop) {
-//       setMobileOpen(true);
-//     }
-//   };
-
-//   const handleDrawerClose = () => {
-//     if (!isDesktop) {
-//       setMobileOpen(false);
-//     }
-//   };
-
-//   return (
-//     <Box sx={{ display: 'flex' }}>
-//       <CssBaseline />
-//       <AppBar
-//         position="fixed"
-//         open={open}
-//         sx={{
-//           background: `${theme.palette.background.paper} !important`,
-//           boxShadow: 0,
-//         }}
-//       >
-//         <Toolbar>
-//           {!isDesktop && (
-//             <IconButton
-//               color="inherit"
-//               aria-label="open drawer"
-//               onClick={handleDrawerOpen}
-//               edge="start"
-//               sx={[
-//                 {
-//                   mr: 2,
-//                 },
-//                 (open || isDesktop) && { display: 'none' },
-//               ]}
-//             >
-//               <MenuIcon />
-//             </IconButton>
-//           )}
-//           <Typography sx={{ color: theme.palette.text.primary }} variant="h6" noWrap component="div">
-//             Change it to the page name from global state
-//           </Typography>
-
-//           <Box display="flex" flexDirection="column" alignItems="flex-end" sx={{ marginLeft: 'auto' }}>
-//             <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
-//               Viren Patil
-//             </Typography>
-//             <Typography variant="body2" sx={{ color: `${theme.palette.text.disabled} !important` }}>
-//               Software Engineer
-//             </Typography>
-//           </Box>
-//           <Button variant="text">
-//             <Avatar src="https://avatar.iran.liara.run/public/19" />
-//           </Button>
-//         </Toolbar>
-//       </AppBar>
-//       <Drawer
-//         sx={{
-//           width: drawerWidth,
-//           flexShrink: 0,
-//           '& .MuiDrawer-paper': {
-//             width: drawerWidth,
-//             boxSizing: 'border-box',
-//           },
-//         }}
-//         variant="persistent"
-//         anchor="left"
-//         open={open}
-//       >
-//         <DrawerHeader>
-//           <IconButton onClick={handleDrawerClose}>
-//             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-//           </IconButton>
-//         </DrawerHeader>
-//         <Divider />
-//         <List>
-//           {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-//             <ListItem key={text} disablePadding>
-//               <ListItemButton>
-//                 <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-//                 <ListItemText primary={text} />
-//               </ListItemButton>
-//             </ListItem>
-//           ))}
-//         </List>
-
-//         <Box sx={{ flexGrow: 1 }} />
-//         <Box
-//           sx={{
-//             alignSelf: 'flex-start',
-//             mb: 2,
-//             display: 'flex',
-//             alignItems: 'center',
-//             gap: 1,
-//           }}
-//         >
-//           <Box
-//             component="img"
-//             src="/elansolLogo.png"
-//             alt="Elansol Logo"
-//             sx={{
-//               maxWidth: '120px', // Adjust based on your logo size
-//               height: 'auto',
-//             }}
-//           />
-//           <Typography variant="caption" color="text.secondary">
-//             v1.0.0
-//           </Typography>
-//         </Box>
-//       </Drawer>
-//       <Main open={open}>
-//         <DrawerHeader />
-//         {children}
-//       </Main>
-//     </Box>
-//   );
-// }
-
+import { RootState } from '@/store/store';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import { Avatar, Button, useMediaQuery } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -264,7 +28,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -272,7 +35,15 @@ import ListItemText from '@mui/material/ListItemText';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { jwtDecode } from 'jwt-decode';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { OnboardingStatus, Token, UserType } from '../(unprotectedRoutes)/login/login.types';
+import { ICONS } from '../utils/iconsMap';
+import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
+import { useLazyGetPointOfContactQuery } from './(organisation)/(contactPerson)/ContactPersonApi';
+import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
 
 const drawerWidth = 240;
 
@@ -336,16 +107,146 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  // ALL HOOKS MUST BE CALLED AT THE TOP LEVEL - NO CONDITIONALS
   const theme = useTheme();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const pathName = usePathname();
+  const params = useParams();
+  // console.log('params', params.plantId);
 
-  // Media queries to detect device type
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600-960px
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // >=960px
+  // Media queries
+  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
-  // For desktop/laptop, sidebar is always open; for mobile/tablet, it's controlled by state
+  // All useState hooks
+  const [tenantId, setTenantId] = React.useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
+  const [, setOpenLogoutPopUp] = React.useState(false);
+  // All useSelector hooks
+  const onboardingStatus: string = useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || '';
+  const userTypeFromRedux = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType);
+  const sideBarListItems: SidebarItem[] = useSelector((state: RootState) => state.global.SideBarListItem);
+  const sideBarListItemsForAssessment: SidebarItem[] = useSelector((state: RootState) => state.global.sideBarListItemsForAssessment);
+  const extraListItems: SidebarItem[] = useSelector((state: RootState) => state.global.extraListItems);
+  const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
+  const pageNameHeader: string = useSelector((state: RootState) => state.global.pageNameHeader);
+  const currentDepartment = useSelector((state: RootState) => state.plantAssessmentGlobal.questionnairesDeparment);
+  const userName = useSelector((state: RootState) => state.global.userFullName);
+  const userDesignation = useSelector((state: RootState) => state.global.userDesignation);
+  const userLogoUrl = useSelector((state: RootState) => state.global.userLogoUrl);
+  const [triggerGetPointOfContact, { data: userPointOfConnectData }] = useLazyGetPointOfContactQuery();
+
+  // Derived values
+
   const open = isDesktop ? true : mobileOpen;
+
+  const plantId = (params?.plantId ?? params?.PlantId) as string;
+
+  const userTypeFromLocalStorage = decodedToken?.userType;
+  const userType = userTypeFromRedux || userTypeFromLocalStorage;
+
+  // Initialize component with localStorage values
+  React.useEffect(() => {
+    const token = localStorage.getItem('Authorization');
+    const storedTenantId = getValueLocalStorage('tenantId');
+
+    if (token) {
+      const decoded: Token = jwtDecode(token);
+      setDecodedToken(decoded);
+    }
+
+    if (!token) {
+      router.push('login');
+    }
+    if (storedTenantId && userType && userType[0] === 'PLATFORMUSER') {
+      setTenantId(storedTenantId);
+      setIsInitialized(true);
+      return;
+    }
+    if (storedTenantId && userType && userType[0] === 'ASSESSOR') {
+      setTenantId((params.OrganisationId ?? params.organisationId) as string);
+      setIsInitialized(true);
+    }
+  }, [router, userType, params.OrganisationId, params.organisationId]);
+
+  React.useEffect(() => {
+    if (tenantId) {
+      triggerGetPointOfContact(tenantId);
+      setIsInitialized(true);
+    }
+  }, [tenantId, triggerGetPointOfContact]);
+
+  // Set sidebar items based on onboarding status and user type
+  React.useEffect(() => {
+    if (!userType || !onboardingStatus) return;
+
+    if (onboardingStatus === OnboardingStatus.NOT_STARTED || onboardingStatus === OnboardingStatus.STARTED) {
+      if (userType[0] === UserType.PLATFORMUSER) {
+        dispatch(setSideBarListItem(organisationOnboardingMenuList));
+      } else if (userType[0] === UserType.ASSESSOR) {
+        dispatch(setSideBarListItem(assessorOnboardingMenuList));
+      }
+    } else if (onboardingStatus === OnboardingStatus.COMPLETED) {
+      if (userType[0] === UserType.PLATFORMUSER) {
+        dispatch(setSideBarListItem(organisationOnboardedMenuList));
+        dispatch(setExtraListItems(organisationExtraMenuList));
+      } else if (userType[0] === UserType.ASSESSOR) {
+        dispatch(setSideBarListItem(assessorOnboardedMenuList));
+        dispatch(setExtraListItems(assessorExtraList));
+      }
+    }
+  }, [userType, onboardingStatus, dispatch]);
+
+  // Set assessment list items
+  React.useEffect(() => {
+    if (onboardingStatus === OnboardingStatus.COMPLETED && showAssessmentListSideBar && userType) {
+      if (userType[0] === UserType.PLATFORMUSER) {
+        dispatch(setSideBarListItemsForAssessment(platformUserAssessmentList));
+      } else if (userType[0] === UserType.ASSESSOR) {
+        dispatch(setSideBarListItemsForAssessment(assessorUserAssessmentList));
+      }
+    }
+  }, [onboardingStatus, userType, showAssessmentListSideBar, dispatch]);
+
+  React.useEffect(() => {
+    if (userPointOfConnectData && userPointOfConnectData.data?.firstName && userPointOfConnectData.data?.lastName) {
+      const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
+      dispatch(setUserFullName(fullName));
+      dispatch(setUserDesignation(userPointOfConnectData.data.designation));
+      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
+      console.log('fullName', userPointOfConnectData.data);
+    }
+  }, [userPointOfConnectData, dispatch]);
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // logout logic only
+  const handleLogout = () => {
+    setOpenLogoutPopUp(false);
+    dispatch({ type: 'RESET_APP' });
+    localStorage.clear();
+    sessionStorage.clear();
+    router.push('/login');
+  };
+
+  // only closes the popover
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+    setOpenLogoutPopUp(false); // only if needed
+  };
+
+  // Early return if not initialized
+  if (!isInitialized) {
+    return null;
+  }
 
   const handleDrawerOpen = () => {
     if (!isDesktop) {
@@ -357,6 +258,70 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     if (!isDesktop) {
       setMobileOpen(false);
     }
+  };
+
+  const DEPARTMENT_LINKS = [
+    'R&D',
+    'Planning',
+    'Production',
+    'Quality',
+    'Maintenance',
+    'Supply Chain - Sales',
+    'Supply Chain - Purchase',
+    'Finance',
+    'Utilities',
+    'IT',
+    'Learning & Development',
+    'Management',
+    'HR',
+  ];
+
+  const sideBarListItemOnClick = (link: string) => {
+    router.push(link);
+
+    // Create the updated list
+    const updatedList = sideBarListItems.map((item) => ({
+      ...item,
+      isActive: item.linkRoute === link,
+    }));
+
+    // Dispatch to global state
+    dispatch(setSideBarListItem(updatedList));
+  };
+
+  const assementSideBarListItemOnClick = (link: string) => {
+    const isDepartment = DEPARTMENT_LINKS.includes(link);
+
+    // ✅ Set department if applicable
+    if (isDepartment) {
+      dispatch(setPlantAssessmentDepartment(link));
+    }
+
+    // ✅ Determine navigation path
+    let navigationPath = '';
+
+    if (isDepartment) {
+      if (tenantId && plantId) {
+        navigationPath = `/Questionaire/${tenantId}/${plantId}`;
+      }
+    } else {
+      if (tenantId && plantId) {
+        navigationPath = `${link}/${tenantId}/${plantId}`;
+      } else {
+        navigationPath = `${link}`;
+      }
+    }
+    console.log('navigationPath', navigationPath);
+
+    router.push(navigationPath);
+
+    // ✅ Update sidebar state
+    const updatedList = sideBarListItems.map((item) => ({
+      ...item,
+      isActive: item.linkRoute === link,
+    }));
+
+    dispatch(setSideBarListItem(updatedList));
   };
 
   return (
@@ -372,35 +337,79 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       >
         <Toolbar>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
+            color="inherit"
             edge="start"
             sx={[
-              {
-                mr: 2,
-              },
+              { color: theme.palette.primary.main, mr: 2 },
               // Hide menu icon when sidebar is open OR when on desktop
               (open || isDesktop) && { display: 'none' },
             ]}
           >
-            <MenuIcon />
+            <MenuIcon sx={{ color: theme.palette.primary.main, mr: 2 }} />
           </IconButton>
-          <Typography sx={{ color: theme.palette.text.primary }} variant="h6" noWrap component="div">
-            Change it to the page name from global state
+          <Typography sx={{ color: theme.palette.text.primary }} variant="h4" noWrap component="div">
+            {pageNameHeader}
           </Typography>
 
           <Box display="flex" flexDirection="column" alignItems="flex-end" sx={{ marginLeft: 'auto' }}>
             <Typography variant="body1" fontWeight="bold" sx={{ color: 'text.primary' }}>
-              Viren Patil
+              {userName}
             </Typography>
             <Typography variant="body2" sx={{ color: `${theme.palette.text.disabled} !important` }}>
-              Software Engineer
+              {userDesignation}
             </Typography>
           </Box>
-          <Button variant="text">
-            <Avatar src="https://avatar.iran.liara.run/public/19" />
-          </Button>
+
+          <>
+            <Button variant="text" onClick={handleAvatarClick} sx={{ pl: 4, minWidth: 0 }}>
+              <Avatar src={userLogoUrl} />
+            </Button>
+
+            <Popover
+              open={Boolean(anchorEl)}
+              anchorEl={anchorEl}
+              onClose={handleClosePopover}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <List sx={{ minWidth: 50 }}>
+                {/* <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      handleClosePopover();
+                      // Navigate to settings or call a callback
+                    }}
+                  >
+                    <ListItemIcon>
+                      <SettingsIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                  </ListItemButton>
+                </ListItem> */}
+
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      handleLogout();
+                    }}
+                  >
+                    <ListItemIcon sx={{ mr: 1 }}>
+                      <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Popover>
+          </>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -408,10 +417,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: isDesktop ? drawerWidth : '100%', // mobile full width
+            height: '100%', // mobile full height
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
+            backgroundColor: theme.palette.background.paper,
           },
         }}
         variant={isDesktop ? 'permanent' : 'persistent'}
@@ -424,32 +435,163 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             src="/sargen-png-logo.png"
             alt="Sargen Logo"
             sx={{
-              maxWidth: isDesktop ? '100%' : '80%',
+              maxWidth: isDesktop ? '100%' : '50%',
               height: 'auto',
               padding: isDesktop ? 0 : 1,
               display: 'block',
               margin: '0 auto',
             }}
           />
+
           {/* Hide close icon on desktop */}
           {!isDesktop && (
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton onClick={handleDrawerClose} sx={{ color: theme.palette.primary.main }}>
               {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           )}
         </DrawerHeader>
         <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {/* Main list */}
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+          <>
+            <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+              {onboardingStatus !== OnboardingStatus.COMPLETED ? 'Onboarding menu' : 'Menu'}
+            </Typography>
 
+            {sideBarListItems.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
+                sx={{
+                  pl: 0,
+                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                }}
+              >
+                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                  <ListItemIcon
+                    sx={{
+                      mr: 2,
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                    }}
+                  >
+                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </>
+          {extraListItems &&
+            extraListItems.map((item) => (
+              <ListItem
+                key={item.text}
+                disablePadding
+                sx={{
+                  pl: 0,
+                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                }}
+              >
+                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                  <ListItemIcon
+                    sx={{
+                      mr: 2,
+                      color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                    }}
+                  >
+                    {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+
+          {showAssessmentListSideBar && onboardingStatus === OnboardingStatus.COMPLETED && (
+            <Accordion
+              defaultExpanded
+              sx={{
+                backgroundColor: 'transparent',
+                boxShadow: 'none', // optional: remove shadow
+                border: 'none',
+                padding: 0,
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={{ fontWeight: 'bold' }} variant="subtitle2">
+                  Assessment Menu
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: 0 }}>
+                <List disablePadding>
+                  {sideBarListItemsForAssessment.map((item) => {
+                    const activeSegment = pathName.split('/')[1]?.toLowerCase();
+                    const isDepartment = !item.linkRoute.startsWith('/');
+
+                    const isActive = isDepartment
+                      ? item.linkRoute?.toLowerCase() === currentDepartment?.toLowerCase()
+                      : activeSegment === item.matchKeyword?.toLowerCase();
+
+                    return (
+                      <ListItem
+                        key={item.text}
+                        disablePadding
+                        sx={{
+                          backgroundColor: 'transparent',
+                          opacity: 1000,
+                          m: 0,
+                        }}
+                      >
+                        <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)} sx={{ p: 0 }}>
+                          <ListItemIcon
+                            sx={{
+                              mr: 2,
+                              color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                            }}
+                          >
+                            {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
+                                }}
+                              >
+                                {item.text}
+                              </Typography>
+                            }
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          )}
+        </Box>
         <Box sx={{ flexGrow: 1 }} />
         <Box
           sx={{
@@ -476,8 +618,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </Box>
       </Drawer>
       <Main open={open}>
-        <DrawerHeader />
-        {children}
+        <>
+          <DrawerHeader />
+          <React.Suspense>{children}</React.Suspense>
+        </>
       </Main>
     </Box>
   );

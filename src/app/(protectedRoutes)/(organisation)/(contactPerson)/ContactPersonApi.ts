@@ -1,6 +1,7 @@
-import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
-import { ContactPersonApiResponse, PocPayload } from './ContactPerson.types';
+import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { apiRoutes } from '@/constants/apiRoutes';
+import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
+import { ContactPersonApiResponse, OnboardingStatusResponse, PocPayload } from './ContactPerson.types';
 
 export const onboardingApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,6 +12,12 @@ export const onboardingApi = protectedApi.injectEndpoints({
         body,
       }),
       invalidatesTags: ['Poc'],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Contact Details submitted successfully!',
+          errorMessage: 'Failed to submit Contact Details!',
+        });
+      },
     }),
 
     getPointOfContact: builder.query<ContactPersonApiResponse<PocPayload>, string>({
@@ -29,6 +36,12 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
 
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'ProfilePic', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Profile Image uploaded successfully!',
+          errorMessage: 'Failed to upload Profile Image!',
+        });
+      },
     }),
 
     getPocProfilePic: builder.query<string, { tenantId: string }>({
@@ -38,6 +51,14 @@ export const onboardingApi = protectedApi.injectEndpoints({
       }),
       providesTags: (result, error, { tenantId }) => [{ type: 'ProfilePic', id: tenantId }],
     }),
+
+    getOnboardingStatus: builder.query<OnboardingStatusResponse, { tenantId: string }>({
+      query: ({ tenantId }) => ({
+        url: `${apiRoutes.onboardingStatus.root}/${tenantId}${apiRoutes.onboardingStatus.getOnboardingStatus}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, { tenantId }) => [{ type: 'Poc', id: tenantId }],
+    }),
   }),
 });
 
@@ -46,4 +67,6 @@ export const {
   useGetPointOfContactQuery,
   useUploadPocProfilePicMutation,
   useGetPocProfilePicQuery,
+  useLazyGetOnboardingStatusQuery,
+  useLazyGetPointOfContactQuery,
 } = onboardingApi;

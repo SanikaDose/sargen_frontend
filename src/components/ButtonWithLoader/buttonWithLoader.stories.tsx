@@ -1,7 +1,5 @@
-import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import ButtonWithLoader from './buttonWithLoader';
-import { ButtonWithLoaderProps } from './buttonWithLoader.types';
 
 const meta: Meta<typeof ButtonWithLoader> = {
   title: 'Components/ButtonWithLoader',

@@ -1,17 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Checkbox, Typography } from '@mui/material';
 import styles from './Card.module.css';
 
 interface CardProps {
-  kpi: string;
+  label: ReactNode;
+  value?: string;
   isSelected: boolean;
   isDisabled?: boolean;
   onToggle: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ kpi, isSelected, isDisabled = false, onToggle }) => {
+const Card: React.FC<CardProps> = ({ label, value, isSelected, isDisabled = false, onToggle }) => {
   return (
     <div
       onClick={() => !isDisabled && onToggle()}
@@ -20,8 +21,13 @@ const Card: React.FC<CardProps> = ({ kpi, isSelected, isDisabled = false, onTogg
         cursor: isDisabled ? 'not-allowed' : 'pointer',
       }}
     >
-      <Checkbox checked={isSelected} disabled={isDisabled} onChange={onToggle} />
-      <Typography className={styles.kpiText}>{kpi}</Typography>
+      <Checkbox checked={isSelected} disabled={isDisabled} onClick={(e) => e.stopPropagation()} onChange={onToggle} />
+      <Typography className={styles.kpiText}>{label}</Typography>
+      {value && (
+        <Typography className={styles.kpiText} style={{ fontWeight: 600 }}>
+          Rating: <span style={{ fontSize: '1.25rem' }}>{value}</span>
+        </Typography>
+      )}
     </div>
   );
 };

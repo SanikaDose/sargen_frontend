@@ -1,8 +1,8 @@
 'use client';
 
+import { Lock, Visibility, VisibilityOff } from '@mui/icons-material';
+import { FormControl, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { TextField, FormControl, FormLabel, InputAdornment, IconButton, Box, FormHelperText } from '@mui/material';
-import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 import styles from './password.module.css';
 import { PasswordTextFieldProps } from './Password.types';
 
@@ -11,7 +11,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
   name,
   value,
   onChange,
-  showStrengthIndicator = false,
+  // showStrengthIndicator = false,
   showPasswordToggle = true,
   showLockIcon = true,
   required = false,
@@ -29,25 +29,13 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
     onChange?.(e);
   };
 
-  const calculateStrength = (password: string) => {
-    const checks = [
-      password.length >= 1,
-      /[a-z]/.test(password),
-      // /[A-Z]/.test(password),
-      // /\d/.test(password),
-      // /[^A-Za-z0-9]/.test(password),
-    ];
-    // const score = checks.filter(Boolean).length;
-    // const strength = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-    // const colors = ['#f44336', '#ff9800', '#ffc107', '#4caf50', '#2e7d32'];
-    // return { label: strength[score - 1] || '', color: colors[score - 1] || 'transparent', score };
-  };
-
-  // const { label: strengthLabel, color: strengthColor, score } = calculateStrength(value || '');
+  // const calculateStrength = (password: string) => {
+  //   const checks = [password.length >= 1, /[a-z]/.test(password)];
+  // };
 
   return (
     <FormControl fullWidth margin="normal">
-      <FormLabel htmlFor={name} className={styles.formLabel}>
+      <FormLabel htmlFor={name} className={styles.formLabel} color="primary">
         {label}
         {required ? ' *' : ''}
       </FormLabel>
@@ -63,6 +51,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
         required={required}
         variant="outlined"
         error={error}
+        helperText={hasTyped && error ? helperText : ''}
         InputProps={{
           startAdornment: showLockIcon ? (
             <InputAdornment position="start">
@@ -71,43 +60,13 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
           ) : undefined,
           endAdornment: showPasswordToggle ? (
             <InputAdornment position="end">
-              <IconButton
-                onClick={handleToggleVisibility}
-                edge="end"
-                tabIndex={-1}
-                size="small"
-                aria-label="toggle password visibility"
-              >
+              <IconButton onClick={handleToggleVisibility} edge="end" tabIndex={-1} size="small" aria-label="toggle password visibility">
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           ) : undefined,
         }}
       />
-
-      {/* {hasTyped && score < 5 && (
-        <FormHelperText error>
-          Password must contain at least 8 characters, including an uppercase letter, lowercase letter, number, and
-          symbol.
-        </FormHelperText>
-      )} */}
-
-      {/* {showStrengthIndicator && hasTyped && value && (
-        <Box>
-          <Box className={styles.strengthBarContainer}>
-            {[...Array(5)].map((_, idx) => (
-              <Box
-                key={idx}
-                className={styles.strengthBar}
-                sx={{ backgroundColor: idx < score ? strengthColor : '#e0e0e0' }}
-              />
-            ))}
-          </Box>
-          <FormHelperText className={styles.strengthText} sx={{ color: strengthColor }}>
-            {strengthLabel}
-          </FormHelperText>
-        </Box>
-      )} */}
     </FormControl>
   );
 };

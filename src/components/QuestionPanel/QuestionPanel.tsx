@@ -1,8 +1,8 @@
-import { useState } from "react";
-import styles from "./questionPanel.module.css";
-import { Box, Typography, Divider, Button } from "@mui/material";
-import { questionData } from "./questionData";
-import QuestionSection from "./QuestionSection";
+import { useState } from 'react';
+import styles from './questionPanel.module.css';
+import { Box, Typography, Divider, Button } from '@mui/material';
+import { questionData } from './questionData';
+import QuestionSection from './QuestionSection';
 
 const initialVisibleCount = 3;
 
@@ -31,7 +31,11 @@ const QuestionPanel = () => {
               <Typography className={styles.sectionTitle}>{section}</Typography>
               <Box className={styles.sectionDivider} />
             </Box>
-            <QuestionSection questions={questionData.filter((q) => q.section === section)} selected={currentQuestion} onSelect={(q) => setCurrentQuestion(q)} />
+            <QuestionSection
+              questions={questionData.filter((q) => q.section === section)}
+              selected={currentQuestion ?? undefined}
+              onSelect={(q) => setCurrentQuestion(q)}
+            />
           </Box>
         ))}
 

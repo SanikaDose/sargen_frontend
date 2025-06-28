@@ -1,3 +1,5 @@
+import { OnboardingStatus } from '@/constants/enums';
+
 export type PocPayload = {
   firstName: string;
   lastName: string;
@@ -7,7 +9,8 @@ export type PocPayload = {
   designation: string;
   contactNumber: string;
   jobRole?: string;
-  profilePicUrl?: string;
+  profilePic?: string;
+  onboardingCompletionPercentage?: number;
 };
 
 export interface ContactPersonFormProps {
@@ -21,6 +24,11 @@ export interface ContactPersonFormProps {
   jobRole?: string;
   tenantId: string;
   editMode?: boolean;
+}
+
+export interface OnboardingStatusResponse {
+  onboardingCompletionPercentage: number;
+  onboardingStatus: OnboardingStatus;
 }
 
 export interface ContactPersonApiResponse<T> {

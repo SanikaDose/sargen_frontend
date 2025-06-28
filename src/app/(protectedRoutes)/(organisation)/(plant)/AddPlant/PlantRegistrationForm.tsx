@@ -2,23 +2,26 @@
 
 import { currencyOptions } from '@/app/utils/CurrencyOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { triggerToast } from '@/app/utils/toast';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
-import { Box, FormControl, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { Box, Divider, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import styles from './AddPlant.module.css';
-import { PlantFormType } from './AddPlant.types';
+import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { triggerToast } from '@/app/utils/toast';
-import Loader from '@/components/Loader/Loader';
-
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -29,26 +32,32 @@ const steps = [
   'Type',
   'Age',
   'Revenue',
+  'Revenue Unit',
   'Currency',
   'Employees',
   'Lines',
   'Assessment',
   'Debrief',
   'About',
+  'Full Name',
+  'Email',
+  'Contact ',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
+  const dispatch = useDispatch();
+  dispatch(setPageNameHeader(pagesNames.plantOnboarding));
   const {
     control,
     handleSubmit,
     reset,
-    setFocus,
+
     formState: { errors },
   } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
@@ -63,35 +72,34 @@ const PlantRegistrationForm = () => {
     setSelectedFile(file);
   };
 
-  // Define the expected response type for addPlantInfo
-  type AddPlantInfoResponse = { id: string; [key: string]: any };
-
   //this is an function which will fill the form with the data from the API and then uload the image while getting the plantId from respomse
   const onSubmit = async (data: PlantFormType) => {
+    const { revenue, revenueUnit, numberOfEmployees, numberOfLines, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
+    const cleanedLines = Number((numberOfLines || '').toString().replace(/,/g, ''));
+    const payload = {
+      ...rest,
+      revenue: finalRevenue,
+      numberOfEmployees: cleanedEmployees,
+      numberOfLines: cleanedLines,
+      age: data.age ? Number(data.age) : 0,
+    };
+    console.log('updated addda', payload);
     try {
-      const { about, ...body } = data;
-
-      // Convert revenue to number if it's a string
-      const bodyWithNumberRevenue = {
-        ...body,
-        revenue: body.revenue ? Number(body.revenue) : 0,
-      };
-
-      // 🔁 Step 1: Submit plant form
+      //  🔁 Step 1: Submit plant form
       const response = (await addPlantInfo({
         tenantId: tenantId ?? '',
-        body: bodyWithNumberRevenue,
+        body: payload,
       }).unwrap()) as unknown as AddPlantInfoResponse;
       console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
-      const newPlantId = response?.data.id;
+      const newPlantId = response?.id;
 
-      if (selectedFile) {
-        handleUpload(selectedFile);
-      }
       // ✅ Step 3: Upload image only if user uploaded one
-      if (logoUrl && !logoUrl.includes('default-logo-image')) {
+      if (logoUrl && newPlantId && !logoUrl.includes('default-logo-image')) {
         const blob = await fetch(logoUrl).then((res) => res.blob());
         const file = new File([blob], 'plant-logo.png', { type: blob.type });
 
@@ -111,16 +119,30 @@ const PlantRegistrationForm = () => {
   };
 
   // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
+  // const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
 
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [
+      ...plantFormInputs,
+      { name: 'about', label: 'About Us' },
+      { name: 'pocFullName', label: 'Full Name' },
+      { name: 'pocEmail', label: 'Email' },
+      { name: 'pocContactNo', label: 'Contact' },
+    ];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 1
   const completedSteps = useMemo(() => {
+    const allInputs = [
+      ...plantFormInputs,
+      { name: 'about', label: 'About Us' },
+      { name: 'pocFullName', label: 'Full Name' },
+      { name: 'pocEmail', label: 'Email' },
+      { name: 'pocContactNo', label: 'Contact' },
+    ];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
       if (typeof value === 'string' && value.length >= 1) {
@@ -133,33 +155,41 @@ const PlantRegistrationForm = () => {
   useEffect(() => {
     // console.log('Errors:', errors);
   }, [errors]);
+
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
   return (
     <>
       {isLoading ? (
         <Loader loading={true} />
       ) : (
-        <Box sx={{ width: '100%', height: '99.5%' }}>
-          {' '}
+        <Box sx={{ width: '100%', height: '90%' }}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
           </Box>
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
-            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
+            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h6" className={styles.heading}>
-                  Plant Registration
-                </Typography>
-
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
-                  <Box className={styles.formFieldsBox}>
+                  <Box className={styles.formFieldsBox} sx={{}}>
                     <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1}>
+                      <Grid container spacing={1} sx={{}}>
                         {plantFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
+                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller
                               name={input.name as keyof PlantFormType}
                               control={control}
@@ -167,54 +197,68 @@ const PlantRegistrationForm = () => {
                               rules={input.rules}
                               render={({ field, fieldState }) => (
                                 <>
-                                  {input.isCurrency ? (
-                                    <FormControl fullWidth sx={{ mt: 1.9 }}>
-                                      <Typography sx={{ fontWeight: 600, color: '#000000' }}>
-                                        Currency Type
-                                        {input.rules?.required && <span style={{ color: 'red' }}> *</span>}
-                                      </Typography>
-                                      <Select
-                                        {...field}
-                                        displayEmpty
-                                        value={field.value || ''}
-                                        sx={{
-                                          borderRadius: '8px',
-                                          height: 36,
-                                          fontWeight: 500,
-                                          fontfamily: 'Inter, sans-serif',
-                                        }}
-                                        onFocus={() => setFocusedField('currencyType')}
-                                      >
-                                        <MenuItem value="">
-                                          <em>Select Currency</em>
-                                        </MenuItem>
-                                        {currencyOptions.map((currency) => (
-                                          <MenuItem key={currency.code} value={currency.name}>
-                                            {currency.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
-                                    </FormControl>
+                                  {input.isCurrency || input.isRevenueUnit ? (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      value={String(field.value ?? '')}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={
+                                        input.isCurrency
+                                          ? currencyOptions.map(({ name }) => ({
+                                              label: name,
+                                              value: name,
+                                            }))
+                                          : [
+                                              { label: 'Thousand', value: '1000' },
+                                              { label: 'Lakh', value: '100000' },
+                                              { label: 'Crore', value: '10000000' },
+                                            ].map(({ label, value }) => ({
+                                              label: label,
+                                              value: value,
+                                            }))
+                                      }
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
                                   ) : (
                                     <>
                                       <InputWithLabel
                                         {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
+                                        label={input.label}
                                         placeholder={input.placeholder}
                                         type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                            ? formatWithIndianCommas(field.value)
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+
+                                          if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                            // Remove all commas and only allow digits
+                                            const rawValue = value.replace(/,/g, '');
+
+                                            if (/^\d*$/.test(rawValue)) {
+                                              console.log('rawvaueee', rawValue);
+                                              field.onChange(rawValue); // Save raw digits only
+                                            }
+                                          }
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase());
+                                          } else {
+                                            field.onChange(value);
+                                          }
+                                        }}
                                         onFocus={() => setFocusedField(input.name)}
                                         size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
                                       />
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
                                     </>
                                   )}
                                 </>
@@ -223,24 +267,140 @@ const PlantRegistrationForm = () => {
                           </Grid>
                         ))}
                       </Grid>
+
                       <Box className={styles.aboutSection}>
                         <Controller
                           name="about"
                           control={control}
                           defaultValue=""
-                          render={({ field }) => (
+                          rules={{
+                            required: 'About Organization is required',
+                            maxLength: {
+                              value: 200,
+                              message: 'Only 200 characters are allowed',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Us"
+                              label="About Plant (max 200 characters)"
                               placeholder="Enter About Plant"
                               // required={true}
                               multiline
                               type="text"
+                              rows={2}
                               onFocus={() => setFocusedField('about')}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
                             />
                           )}
                         />
                       </Box>
+
+                      <Grid size={{ xs: 12 }}>
+                        <Divider sx={{ my: 3, width: '100%' }}>
+                          <Typography variant="subtitle1" fontWeight={600}>
+                            Point Of Contact
+                          </Typography>
+                        </Divider>
+                      </Grid>
+
+                      <Grid container spacing={1}>
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocFullName"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Full Name is required',
+                              minLength: { value: 3, message: 'Minimum 3 characters required' },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Full Name"
+                                  placeholder="Enter Full Name"
+                                  onFocus={() => setFocusedField('pocFullName')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocEmail"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Email is required',
+                              pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'Enter a valid email address',
+                              },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Email"
+                                  placeholder="Enter Email"
+                                  onFocus={() => setFocusedField('pocEmail')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                          <Controller
+                            name="pocContactNo"
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: 'Contact number is required',
+                              minLength: { value: 10, message: 'Minimum 10 characters required' },
+                              maxLength: { value: 10, message: 'Maximum 10 characters allowed' },
+                              pattern: {
+                                value: /^[0-9]+$/,
+                                message: 'Enter a valid number',
+                              },
+                            }}
+                            render={({ field, fieldState }) => (
+                              <>
+                                <InputWithLabel
+                                  {...field}
+                                  required
+                                  label="Contact Number"
+                                  placeholder="Enter Contact Number"
+                                  onFocus={() => setFocusedField('pocContactNo')}
+                                  size="small"
+                                />
+                                {fieldState?.error?.message && (
+                                  <Typography variant="caption" color="red">
+                                    {fieldState.error.message}
+                                  </Typography>
+                                )}
+                              </>
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
                     </section>
                   </Box>
                 </Box>
@@ -253,13 +413,18 @@ const PlantRegistrationForm = () => {
                 mt={5}
                 ml={5}
                 mr={5}
-                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+                sx={{
+                  background: '#F5FAFD',
+                  height: '70px',
+                  borderRadius: '8px',
+                  marginTop: { sx: 5, md: 2, sm: 3, lg: 0 },
+                }}
               >
                 <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
                   Back
                 </CustomButton>
                 <CustomButton type="submit" variant="contained" icon="save">
-                  {isLoading ? 'Saving...' : 'Save'}
+                  {isLoading ? 'Saving..' : 'Save'}
                 </CustomButton>
               </Box>
             </form>

@@ -61,6 +61,14 @@
   margin: auto;
 }
 
+.imageBox img {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(243, 243, 243, 0.767);
+  object-fit: contain;
+  object-position: center;
+}
+
 .formFieldsInner {
   width: 100%;
   /* border: 1px solid rgb(78, 47, 255); */

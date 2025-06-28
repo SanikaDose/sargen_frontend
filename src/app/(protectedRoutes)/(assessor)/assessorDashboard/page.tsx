@@ -12,7 +12,7 @@ const AssessorDashboardPage = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Pending Assessments
@@ -23,7 +23,7 @@ const AssessorDashboardPage = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Upcoming Meetings
@@ -34,7 +34,7 @@ const AssessorDashboardPage = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Completed Reviews
@@ -45,7 +45,7 @@ const AssessorDashboardPage = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Average Score
@@ -56,7 +56,7 @@ const AssessorDashboardPage = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom>
               Recent Feedbacks

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, FormControl, FormHelperText, OutlinedInput, Stack, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, OutlinedInput, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import styles from './resetPassword.module.css';
 import { pageRoutes } from '@/constants/pagesRoutes';
@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
   const handleResetPassword = async (data: FormValues) => {
     const sidAdd = {
       ...data,
-      sid: sid,
+      sid: sidValue,
     };
     try {
       const result = await resetPass(sidAdd).unwrap();

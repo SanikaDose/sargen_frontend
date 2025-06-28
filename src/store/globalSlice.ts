@@ -7,17 +7,25 @@ const initialState = {
   InfoBoxToShow: false,
   organizationId: '',
   sideBarDrawerList: [],
+  showAssessmentListSideBar: false,
+  sideBarListItemsForAssessment: [],
+  extraListItems: [],
+  pageNameHeader: 'Page heading',
+  userFullName: '',
+  userDesignation: '',
+  userLogoUrl: '',
 };
 
 const globalSlice = createSlice({
   name: 'global',
   initialState,
   reducers: {
-    setPageName: (state, action) => {
-      state.pageName = action.payload;
-    },
     setSideBarListItem: (state, action) => {
       state.SideBarListItem = action.payload;
+    },
+
+    setSideBarListItemsForAssessment: (state, action) => {
+      state.sideBarListItemsForAssessment = action.payload;
     },
     setPersonDetails: (state, action) => {
       state.personDetails = action.payload;
@@ -28,17 +36,43 @@ const globalSlice = createSlice({
     setOrganizationId: (state, action) => {
       state.organizationId = action.payload;
     },
+    setPageNameHeader: (state, action) => {
+      state.pageNameHeader = action.payload;
+    },
+    setShowAssessmentListSideBar: (state, action) => {
+      state.showAssessmentListSideBar = action.payload;
+    },
+    setExtraListItems: (state, action) => {
+      state.extraListItems = action.payload;
+    },
+
+    setUserFullName: (state, action) => {
+      state.userFullName = action.payload;
+    },
+    setUserDesignation: (state, action) => {
+      state.userDesignation = action.payload;
+    },
+    setUserLogoUrl: (state, action) => {
+      state.userLogoUrl = action.payload;
+    },
+
     resetGlobalState: () => initialState,
   },
 });
 
 export const {
-  setPageName,
+  setUserFullName,
+  setUserDesignation,
+  setUserLogoUrl,
   setSideBarListItem,
   setPersonDetails,
   setInfoBoxToShow,
   setOrganizationId,
   resetGlobalState,
+  setPageNameHeader,
+  setShowAssessmentListSideBar,
+  setSideBarListItemsForAssessment,
+  setExtraListItems,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

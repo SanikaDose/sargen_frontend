@@ -1,40 +1,61 @@
-import { Theme, alpha, Components } from '@mui/material/styles';
-import { svgIconClasses } from '@mui/material/SvgIcon';
-import { typographyClasses } from '@mui/material/Typography';
-import { buttonBaseClasses } from '@mui/material/ButtonBase';
 import { chipClasses } from '@mui/material/Chip';
 import { iconButtonClasses } from '@mui/material/IconButton';
-import { gray, red, green } from '../themePrimitives';
+import { alpha, Components, Theme } from '@mui/material/styles';
+import { svgIconClasses } from '@mui/material/SvgIcon';
+import { gray, green, red } from '../themePrimitives';
 
-/* eslint-disable import/prefer-default-export */
 export const dataDisplayCustomizations: Components<Theme> = {
-  MuiList: {
-    styleOverrides: {
-      root: {
-        padding: '8px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 0,
-      },
-    },
-  },
-  MuiListItem: {
+  MuiTable: {
     styleOverrides: {
       root: ({ theme }) => ({
-        [`& .${svgIconClasses.root}`]: {
-          width: '1rem',
-          height: '1rem',
-          color: (theme.vars || theme).palette.text.secondary,
+        borderCollapse: 'separate',
+        borderSpacing: 0,
+        '& .MuiTableCell-root': {
+          borderBottom: `1px solid ${(theme.vars || theme).palette.divider}`,
         },
-        [`& .${typographyClasses.root}`]: {
-          fontWeight: 500,
+      }),
+    },
+  },
+  MuiTableCell: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        padding: '12px 16px',
+        fontSize: theme.typography.body2.fontSize,
+        lineHeight: theme.typography.body2.lineHeight,
+        borderBottom: `1px solid ${(theme.vars || theme).palette.divider}`,
+      }),
+      head: ({ theme }) => ({
+        fontWeight: 600,
+        fontSize: theme.typography.caption.fontSize,
+        lineHeight: theme.typography.caption.lineHeight,
+        color: (theme.vars || theme).palette.text.secondary,
+        backgroundColor: (theme.vars || theme).palette.background.default,
+      }),
+    },
+  },
+  MuiTableRow: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.action.hover, 0.3),
         },
-        [`& .${buttonBaseClasses.root}`]: {
-          display: 'flex',
-          gap: 8,
+        '&.Mui-selected': {
+          backgroundColor: alpha(theme.palette.action.selected, 0.3),
+          '&:hover': {
+            backgroundColor: alpha(theme.palette.action.selected, 0.5),
+          },
+        },
+      }),
+    },
+  },
+  MuiList: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        padding: '8px',
+        '& .MuiListItem-root': {
           padding: '2px 8px',
           borderRadius: (theme.vars || theme).shape.borderRadius,
-          opacity: 0.7,
+          opacity: 1117,
           '&.Mui-selected': {
             opacity: 1,
             backgroundColor: alpha(theme.palette.action.selected, 0.3),
@@ -111,16 +132,6 @@ export const dataDisplayCustomizations: Components<Theme> = {
               [`& .${chipClasses.icon}`]: {
                 color: gray[500],
               },
-              ...theme.applyStyles('dark', {
-                borderColor: gray[700],
-                backgroundColor: gray[800],
-                [`& .${chipClasses.label}`]: {
-                  color: gray[300],
-                },
-                [`& .${chipClasses.icon}`]: {
-                  color: gray[300],
-                },
-              }),
             },
           },
           {
@@ -136,16 +147,6 @@ export const dataDisplayCustomizations: Components<Theme> = {
               [`& .${chipClasses.icon}`]: {
                 color: green[500],
               },
-              ...theme.applyStyles('dark', {
-                borderColor: green[800],
-                backgroundColor: green[900],
-                [`& .${chipClasses.label}`]: {
-                  color: green[300],
-                },
-                [`& .${chipClasses.icon}`]: {
-                  color: green[300],
-                },
-              }),
             },
           },
           {
@@ -161,16 +162,6 @@ export const dataDisplayCustomizations: Components<Theme> = {
               [`& .${chipClasses.icon}`]: {
                 color: red[500],
               },
-              ...theme.applyStyles('dark', {
-                borderColor: red[800],
-                backgroundColor: red[900],
-                [`& .${chipClasses.label}`]: {
-                  color: red[200],
-                },
-                [`& .${chipClasses.icon}`]: {
-                  color: red[300],
-                },
-              }),
             },
           },
           {

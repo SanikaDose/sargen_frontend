@@ -13,6 +13,7 @@ export interface PlantData {
   assessmentStartDate: string;
   debriefDate: string;
   assessmentCompletionPercentage: number;
+  assessmentCompletionStage: string;
 }
 
 export interface PlantInfoCardProps {

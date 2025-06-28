@@ -1,102 +1,106 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  Menu,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  TextField,
-  IconButton,
-} from '@mui/material';
-import styles from './style.module.css'; // ✅ import the CSS module
+import { Box, FormControl, FormLabel, Select, MenuItem, OutlinedInput, SelectChangeEvent } from '@mui/material';
 
-const currencies = ['USD', 'EUR', 'INR', 'JPY', 'UAE'];
-const currencySymbols: Record<string, string> = {
-  USD: '$',
-  EUR: '€',
-  INR: '₹',
-  JPY: '¥',
-  UAE: 'د.إ'
+export type DropdownOption = {
+  label: string;
+  value: string;
 };
 
-const CurrencyValueSelector: React.FC = () => {
-  const [currency, setCurrency] = useState('USD');
-  const [value, setValue] = useState('10');
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+export interface DropdownWithLabelProps {
+  label: string;
+  placeholder?: string;
+  name: string;
+  required?: boolean;
+  options: DropdownOption[];
+  value: string;
+  onChange: (event: SelectChangeEvent<string>) => void;
+  onFocus?: () => void;
+  inputRef?: React.Ref<HTMLInputElement>;
+  error?: boolean;
+  helperText?: React.ReactNode;
+}
 
-  const open = Boolean(anchorEl);
-
-  const handleCurrencyChange = (event: any) => {
-    setCurrency(event.target.value);
-  };
-
-  const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value;
-    const isValid = /^(\d+\.?\d{0,2}|\.\d{0,2})?$/.test(input);
-    if (isValid) {
-      setValue(input);
-    }
-  };
-
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuItemClick = (val: string) => {
-    setValue(val);
-    setAnchorEl(null);
-  };
-
+const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
+  label,
+  placeholder = 'Select',
+  name,
+  required = false,
+  options,
+  value,
+  onChange,
+  onFocus,
+  inputRef,
+  error,
+  helperText,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Box className={styles.container}>
-      <FormControl className={styles.formControl}>
-        <InputLabel id="currency-label">Currency</InputLabel>
+    <Box sx={{ width: '100%' }}>
+      <FormControl fullWidth margin="normal">
+        <FormLabel
+          htmlFor={name}
+          sx={{
+            fontWeight: 600,
+            mb: 0,
+            color: '#313131',
+            '&.Mui-focused': { color: '#313131' },
+          }}
+        >
+          {label}
+          {required && <span style={{ color: 'red' }}> *</span>}
+        </FormLabel>
+
         <Select
-          labelId="currency-label"
-          value={currency}
-          label="Currency"
-          onChange={handleCurrencyChange}
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          onFocus={onFocus}
+          onOpen={() => setIsOpen(true)}
+          onClose={() => setIsOpen(false)}
+          size="small"
+          displayEmpty
+          inputRef={inputRef}
+          error={error} // ✅ Only here
           input={
             <OutlinedInput
-              startAdornment={
-                <InputAdornment position="start">
-                  {currencySymbols[currency]}
-                </InputAdornment>
-              }
-              label="Currency"
+              placeholder={placeholder}
+              sx={{
+                borderRadius: '16px',
+                '& input::placeholder': {
+                  // fontWeight: 500,
+                  // color: '#888',
+                },
+              }}
             />
           }
         >
-          {currencies.map((cur) => (
-            <MenuItem key={cur} value={cur}>
-              {cur}
+          <MenuItem disabled value="">
+            <span
+              style={{
+                fontWeight: 500,
+                color: isOpen ? '#000' : '#888',
+                opacity: isOpen ? 1 : 0.4,
+              }}
+            >
+              {placeholder}
+            </span>
+          </MenuItem>
+          {options.map((opt) => (
+            <MenuItem key={opt.value} value={opt.value}>
+              {opt.label}
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
 
-      <TextField
-        className={styles.textField}
-        label="Value"
-        type="text"
-        value={value}
-        onChange={handleValueChange}
-        inputProps={{
-          inputMode: 'decimal',
-        }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={handleMenuClick}></IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
+        {helperText && (
+          <Box mt={0.5} ml={0.5}>
+            <span style={{ color: 'red', fontSize: '0.75rem' }}>{helperText}</span>
+          </Box>
+        )}
+      </FormControl>
     </Box>
   );
 };
 
-export default CurrencyValueSelector;
+export default DropdownWithLabel;

@@ -1,7 +1,6 @@
-import { Theme, alpha, Components } from '@mui/material/styles';
+import { alpha, Components, Theme } from '@mui/material/styles';
 import { gray, orange } from '../themePrimitives';
 
-/* eslint-disable import/prefer-default-export */
 export const feedbackCustomizations: Components<Theme> = {
   MuiAlert: {
     styleOverrides: {
@@ -33,13 +32,10 @@ export const feedbackCustomizations: Components<Theme> = {
   },
   MuiLinearProgress: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({}) => ({
         height: 8,
         borderRadius: 8,
         backgroundColor: gray[200],
-        ...theme.applyStyles('dark', {
-          backgroundColor: gray[800],
-        }),
       }),
     },
   },

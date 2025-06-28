@@ -1,0 +1,95 @@
+.richTextContainer {
+  width: 100%;
+  height: 742px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+/* Fixed toolbar at top */
+.customToolbar {
+  background: #f9f9f9;
+  border-bottom: 1px solid #ccc;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 8px 12px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Editor wrapper - scrollable area */
+.editorWrapper {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor {
+  flex: 1;
+  height: 100%;
+}
+
+/* Hide the default Quill toolbar since we're using custom */
+.richTextContainer .ql-toolbar {
+  display: none !important;
+}
+
+/* Style the editor container */
+.richTextContainer .ql-container {
+  height: 100%;
+  border: none;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Editor area with scroll */
+.richTextContainer .ql-editor {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  height: 100% !important;
+}
+
+/* Style the custom toolbar buttons */
+.customToolbar .ql-formats {
+  margin-right: 15px;
+}
+
+.customToolbar .ql-formats:last-child {
+  margin-right: 0;
+}
+
+.customToolbar button,
+.customToolbar select {
+  margin-right: 2px;
+}
+
+.customToolbar button {
+  border: none;
+  background: none;
+  padding: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.customToolbar button:hover {
+  background-color: #e0e0e0;
+}
+
+.customToolbar button.ql-active {
+  background-color: #ccc;
+}

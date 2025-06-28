@@ -23,29 +23,18 @@ const MenuProps = {
   },
 };
 
-const defaultOptions = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
+const defaultOptions = ['Thousand'];
 
 export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
   options = defaultOptions,
   placeholder = 'Placeholder',
-  width = 300,
+  // width = 300,
   multiSelect = false,
 }) => {
   const theme = useTheme();
   const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<any>) => {
+  const handleChange = (event: SelectChangeEvent<string | string[]>) => {
     const {
       target: { value },
     } = event;
@@ -53,7 +42,7 @@ export const Dropdown: React.FC<MultiSelectPlaceholderProps> = ({
     if (multiSelect) {
       setSelectedItems(typeof value === 'string' ? value.split(',') : value);
     } else {
-      setSelectedItems([value]);
+      setSelectedItems([typeof value === 'string' ? value : value[0] || '']);
     }
   };
 

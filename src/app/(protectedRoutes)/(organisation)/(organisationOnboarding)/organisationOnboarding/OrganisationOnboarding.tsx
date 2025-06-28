@@ -1,23 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, Button, Grid, Typography } from '@mui/material';
-import Stepper from '@/components/Stepper/Stepper';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
-import {
-  useSubmitOrganizationInfoMutation,
-  useUploadOrganizationLogoMutation,
-  useGetOrganizationInfoQuery,
-} from './OrganisationOnboardingAPi';
+import Loader from '@/components/Loader/Loader';
+import Stepper from '@/components/Stepper/Stepper';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { Box, Grid, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { MenuItem, FormControl, OutlinedInput, Select } from '@mui/material';
-import { CountryOptions } from '@/app/utils/CountryOptions';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
-import { currencyOptions } from '@/app/utils/CurrencyOptions';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { OrgFormInputs } from './FormConfig/formInputStep';
-import { OrgOnboard } from './OrganisationOnboarding.types';
+import styles from './OrganisationOnboarding.module.css';
+import { OrgOnboardType } from './OrganisationOnboarding.types';
 
 const steps = [
   'Company Name',
@@ -25,25 +23,48 @@ const steps = [
   'GST In',
   'Country',
   'Organization Revenue',
+  'Revenue Unit',
   'Currency Type',
   'Number of Employees',
   'About Organization',
 ].map((label) => ({ label }));
 
-import { triggerToast } from '@/app/utils/toast';
+import InfoBox from '@/components/InfoBox/InfoBox';
+import {
+  useGetLogoQuery,
+  useGetOrganizationInfoQuery,
+  useSubmitOrganizationInfoMutation,
+  useUploadOrganizationLogoMutation,
+} from './OrganisationOnboardingAPi';
+
 function OrganizationOnbording() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setPageNameHeader('Organization Onboarding'));
+  }, [dispatch]);
   const router = useRouter();
-  const [submitOrganizationInfo, { isLoading, isSuccess, isError }] = useSubmitOrganizationInfoMutation();
+  const [submitOrganizationInfo, { isLoading }] = useSubmitOrganizationInfoMutation();
 
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation();
   const [logoUrl, setLogoUrl] = useState<string>('/images/default-avatar-profile.png?ignore');
 
   const tenantId = getValueLocalStorage('tenantId');
+
+  const { data: existingData, isFetching } = useGetOrganizationInfoQuery(tenantId ?? '');
+  const { data: logoData } = useGetLogoQuery({ tenantId: tenantId ?? '' });
+  console.log(logoData);
+  // useEffect(() => {
+  //   if (logoData?.logoUrl) {
+  //     setLogoUrl(logoData.logoUrl);
+  //   }
+  // });
+  console.log('existingdata', existingData);
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    // formState: { errors },
   } = useForm({
     defaultValues: {
       companyName: '',
@@ -54,31 +75,94 @@ function OrganizationOnbording() {
       uom: '',
       numberOfEmployees: '',
       about: '',
+      revenueUnit: '',
     },
+    mode: 'onSubmit',
   });
-  const { data } = useGetOrganizationInfoQuery(tenantId || '', {
-    skip: !tenantId,
-  });
-  console.log('if we have tenentid the we get this data', data);
+
+  useEffect(() => {
+    if (existingData?.data && !isFetching) {
+      const org = existingData.data;
+      const fullRevenue = Number(org.revenue || 0);
+
+      // Define units with display label and their numeric multiplier
+      const revenueUnitMap = [
+        //{ label: 'Arab', value: 1_00_00_00_000 },
+        { label: 'Crore', value: 1_00_00_000 },
+        { label: 'Lakh', value: 1_00_000 },
+        { label: 'Thousand', value: 1_000 },
+        { label: 'Unit', value: 1 },
+      ];
+
+      let selectedUnit = revenueUnitMap[revenueUnitMap.length - 1];
+      let normalizedRevenue = fullRevenue;
+
+      for (const unit of revenueUnitMap) {
+        const divided = fullRevenue / unit.value;
+        if (divided >= 1) {
+          selectedUnit = unit;
+
+          const hasDecimal = divided % 1 !== 0;
+          normalizedRevenue = hasDecimal ? parseFloat(divided.toFixed(2)) : divided;
+
+          break;
+        }
+      }
+
+      const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
+
+      reset({
+        companyName: org.name || '',
+        website: org.website || '',
+        gstin: org.gstin || '',
+        country: org.country || '',
+        revenue: normalizedRevenue.toString() || '',
+        //  revenueUnit: selectedUnit.value.toString() || '',
+        revenueUnit: revenueUnitValue,
+
+        uom: org.uom || '',
+        numberOfEmployees: org.numberOfEmployees || '',
+        about: org.about || '',
+      });
+    }
+
+    if (logoData?.logoUrl) {
+      setLogoUrl(logoData.logoUrl);
+    }
+  }, [existingData, isFetching, logoData, reset]);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const watchedValues = useWatch({ control });
 
-  // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...OrgFormInputs];
-
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
-  // ✅ Compute completed steps where value length > 5
+  // ? Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
+    const allInputs = [...OrgFormInputs, { name: 'about', label: 'About Organization' }];
     return allInputs.reduce((acc: number[], input, index) => {
-      const value = watchedValues?.[input.name as keyof OrgOnboard];
-      if (typeof value === 'string' && value.length > 1) {
-        acc.push(index);
+      const value = watchedValues?.[input.name as keyof OrgOnboardType];
+
+      // const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+      // if (isFilled) {
+      //   acc.push(index);
+      // }
+      if (input.name === 'revenue') {
+        const numericValue = Number((value || '').toString().replace(/,/g, ''));
+        if (numericValue > 0) {
+          acc.push(index);
+        }
+      } else {
+        const isFilled = (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
+
+        if (isFilled) {
+          acc.push(index);
+        }
       }
       return acc;
     }, []);
@@ -89,287 +173,221 @@ function OrganizationOnbording() {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await uploadOrganizationLogo({ tenantId, formData }).unwrap();
+      await uploadOrganizationLogo({ tenantId: tenantId ?? '', formData }).unwrap();
       const localUrl = URL.createObjectURL(file);
       setLogoUrl(localUrl);
     } catch (error) {
-      console.error('Image upload failed:', error);
+      console.log('error', error);
     }
   };
 
   //on form submit
-  const onSubmit = async (data: any) => {
-    console.log('country value', data.country);
-    console.log('Form Data:', data);
-    try {
-      await submitOrganizationInfo({ tenantId, body: data }).unwrap();
-      console.log('Organization info submitted'); //use toster
+  const onSubmit = async (data: OrgOnboardType) => {
+    const { revenue, revenueUnit, numberOfEmployees, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
+    const payload = {
+      ...rest,
+      revenue: finalRevenue.toString(), // Or keep as number if required
+      numberOfEmployees: cleanedEmployees.toString(),
+    };
+    console.log('updated addda', payload);
 
+    try {
+      await submitOrganizationInfo({ tenantId: tenantId ?? '', body: payload }).unwrap();
       router.push('/AddContactPerson');
     } catch (error) {
-      console.log('api submition failed', error);
+      console.log('error ', error);
     }
   };
 
-  const onError = (errors: any) => {
-    console.error('Validation Errors:', errors);
-  };
+  function formatWithIndianCommas(value: string | number): string {
+    const str = (value ?? '').toString(); // ✅ safely convert to string
+
+    const raw = str.replace(/,/g, '');
+
+    // Format only if it's a valid number
+    if (/^\d+$/.test(raw)) {
+      return Number(raw).toLocaleString('en-IN');
+    }
+
+    return str; // fallback to raw input
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)}>
-      {/* Stepper */}
-      <Grid sx={{ borderRadius: '15px', padding: 1, height: { xs: 'auto', sm: '10%', md: '11%' } }}>
-        <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-      </Grid>
+    <>
+      {isLoading ? (
+        <Loader loading={true} />
+      ) : (
+        <Box sx={{ width: '100%', height: '99.5%' }}>
+          {' '}
+          <Box className={styles.stepperContainer}>
+            <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+          </Box>
+          <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
+            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
+              <Box className={styles.formOuterContainer}>
+                <Box className={styles.formContainer}>
+                  <Box className={styles.imageBox}>
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
+                  </Box>
 
-      <Grid sx={{ height: '3%' }}>
-        <Typography variant="h6">Organization Details</Typography>
-      </Grid>
+                  <Box className={styles.formFieldsBox}>
+                    <section className={styles.formFieldsInner}>
+                      <Grid container spacing={1}>
+                        {OrgFormInputs.map((input) => (
+                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
+                            <Controller
+                              name={input.name as keyof OrgOnboardType}
+                              control={control}
+                              defaultValue=""
+                              rules={input.rules}
+                              render={({ field, fieldState }) => (
+                                <>
+                                  {input.isCountry || input.isCurrency ? (
+                                    <>
+                                      <CurrencyValueSelector
+                                        {...field}
+                                        label={input.label}
+                                        placeholder={input.placeholder}
+                                        options={
+                                          input.isCountry
+                                            ? CountryOptions.map(({ name }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                            : currencyOptions.map(({ name }) => ({
+                                                label: name,
+                                                value: name,
+                                              }))
+                                        }
+                                        required={true}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                      />
+                                    </>
+                                  ) : input.isRevenueUnit ? (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      options={[
+                                        { label: 'Thousand', value: '1000' },
+                                        { label: 'Lakh', value: '100000' },
+                                        { label: 'Crore', value: '10000000' },
+                                      ].map(({ label, value }) => ({
+                                        label: label,
+                                        value: value,
+                                      }))}
+                                      required={true}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  ) : (
+                                    <>
+                                      <InputWithLabel
+                                        {...field}
+                                        label={input.label}
+                                        placeholder={input.placeholder}
+                                        type={input.type || 'text'}
+                                        value={
+                                          ['numberOfEmployees', 'revenue'].includes(input.name)
+                                            ? formatWithIndianCommas(field.value)
+                                            : field.value
+                                        }
+                                        onChange={(e) => {
+                                          const value = e.target.value;
 
-      {/* Image + Fields */}
-      <Box
-        sx={{
-          display: 'flex',
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 1,
-          px: 1,
-          flexDirection: { xs: 'column', lg: 'row' },
-        }}
-      >
-        {/* Image Upload */}
-        <Box sx={{ display: 'flex', width: '27%', justifyContent: 'center', alignItems: 'center' }}>
-          <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                                          if (['numberOfEmployees', 'revenue'].includes(input.name)) {
+                                            // Remove all commas and only allow digits
+                                            const rawValue = value.replace(/,/g, '');
+
+                                            if (/^\d*$/.test(rawValue)) {
+                                              console.log('rawvaueee', rawValue);
+                                              field.onChange(rawValue); // Save raw digits only
+                                            }
+                                          }
+                                          if (input.name === 'gstin') {
+                                            field.onChange(value.toUpperCase());
+                                          } else {
+                                            field.onChange(value);
+                                          }
+                                        }}
+                                        onFocus={() => setFocusedField(input.name)}
+                                        size="small"
+                                        required={true}
+                                        error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                      />
+                                    </>
+                                  )}
+                                </>
+                              )}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Box className={styles.aboutSection}>
+                        <Controller
+                          name="about"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: 'About Organization is required',
+                            maxLength: {
+                              value: 200,
+                              message: 'Only 200 characters are allowed',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
+                            <InputWithLabel
+                              {...field}
+                              label="About Orgnization (max 200 characters)"
+                              placeholder="Enter About Orgnization"
+                              // required={true}
+                              multiline
+                              type="text"
+                              rows={2}
+                              onFocus={() => setFocusedField('about')}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
+                            />
+                          )}
+                        />
+                      </Box>
+                    </section>
+                  </Box>
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                p={1}
+                mt={1}
+                ml={5}
+                mr={5}
+                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+              >
+                <CustomButton variant="contained" icon="left" color="primary" disabled>
+                  Back
+                </CustomButton>
+                <CustomButton type="submit" variant="contained" icon="right" color="primary">
+                  {isLoading ? 'Next...' : 'Next'}
+                </CustomButton>
+              </Box>
+            </form>
+
+            <Box sx={{ width: '30%' }} className={styles.rightSection}>
+              <InfoBox />
+            </Box>
+          </Paper>
         </Box>
-        {/* Inputs */}
-
-        <Grid container spacing={2}>
-          {/* Row 1 */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Controller
-              name="companyName"
-              control={control}
-              rules={{ required: 'Company name is required' }}
-              render={({ field }) => (
-                <InputWithLabel
-                  label="Name of the company"
-                  placeholder="Enter Name of the company"
-                  {...field}
-                  onFocus={() => setFocusedField('companyName')}
-                />
-              )}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Controller
-              name="website"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  label="Company Website"
-                  placeholder="Enter company website"
-                  {...field}
-                  onFocus={() => setFocusedField('website')}
-                  required
-                />
-              )}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Controller
-              name="gstin"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  type="text"
-                  label="GST In Details"
-                  placeholder="Enter GST IN no"
-                  {...field}
-                  onFocus={() => setFocusedField('gstin')}
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Row 2 */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2 }}>
-              Country
-            </Typography>
-            <FormControl fullWidth>
-              <Controller
-                name="country"
-                control={control}
-                rules={{ required: 'Country is required' }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    displayEmpty
-                    input={<OutlinedInput />}
-                    value={field.value || ''}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    onFocus={() => setFocusedField('country')}
-                    sx={{ height: '36px', color: '#888', width: '100%' }}
-                    renderValue={(selected) =>
-                      !selected ? <em style={{ color: '#888' }}>Select From Dropdown</em> : selected
-                    }
-                  >
-                    <MenuItem disabled value="">
-                      <em>Select From Dropdown</em>
-                    </MenuItem>
-                    {CountryOptions.map((country) => (
-                      <MenuItem key={country.code} value={country.name}>
-                        {country.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Controller
-              name="revenue"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  label="Organization Revenue"
-                  placeholder="Enter Revenue"
-                  {...field}
-                  onFocus={() => setFocusedField('revenue')}
-                />
-              )}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '14px', mt: 2, ml: '7px' }}>
-              Currency Type
-            </Typography>
-            <FormControl fullWidth sx={{}}>
-              <Controller
-                name="uom"
-                control={control}
-                rules={{ required: 'Currency type is required' }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    displayEmpty
-                    input={<OutlinedInput />}
-                    value={field.value || ''}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    onFocus={() => setFocusedField('uom')}
-                    sx={{
-                      height: '36px',
-                      color: '#888',
-                      width: '100%',
-                    }}
-                    renderValue={(selected) => {
-                      if (!selected) return <em style={{ color: '#888' }}>Select Currency</em>;
-                      return selected;
-                    }}
-                  >
-                    <MenuItem disabled value="">
-                      <em>Select From Dropdown</em>
-                    </MenuItem>
-
-                    {currencyOptions.map((country) => (
-                      <MenuItem key={country.code} value={country.name}>
-                        {country.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-          </Grid>
-
-          {/* Row 3 */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Controller
-              name="numberOfEmployees"
-              control={control}
-              render={({ field }) => (
-                <InputWithLabel
-                  label="Number of Employees"
-                  placeholder="Enter Number of Employees"
-                  {...field}
-                  onFocus={() => setFocusedField('numberOfEmployees')}
-                />
-              )}
-            />
-          </Grid>
-        </Grid>
-      </Box>
-
-      {/* About Org */}
-      <Grid sx={{ px: 1 }}>
-        <Controller
-          name="about"
-          control={control}
-          render={({ field }) => (
-            <InputWithLabel
-              label="About Organization"
-              type="text"
-              placeholder="Enter Organization Details"
-              multiline
-              {...field}
-              onFocus={() => setFocusedField('about')}
-            />
-          )}
-        />
-      </Grid>
-
-      {/* Buttons */}
-      {/* <Grid
-        container
-        justifyContent="space-between"
-        sx={{ p: 0.5, borderRadius: 4, backgroundColor: '#B0E0E6', border: '1px solid purple' }}
-      >
-        <Grid>
-          <CustomButton children="Back" variant="contained" color="primary" icon="left" height="55px" width="80px"    disabled  />
-        </Grid>
-        <Grid>
-          <CustomButton
-            children="Next"
-            variant="contained"
-            color="primary"
-            icon="right"
-            height="55px"
-            width="80px"
-            type="submit"
-          />
-        </Grid>
-      </Grid> */}
-
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        p={1}
-        mt={1}
-        ml={5}
-        mr={5}
-        sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
-      >
-        <CustomButton variant="contained" icon="left" color="primary" disabled>
-          Back
-        </CustomButton>
-        <CustomButton
-          type="submit"
-          variant="contained"
-          icon="right"
-          color="primary"
-          //  disabled={!isValid || isLoading}
-        >
-          Next
-        </CustomButton>
-      </Box>
-    </form>
+      )}
+    </>
   );
 }
 

@@ -1,9 +1,10 @@
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
+import { CustomButton } from '../CustomButton/CustomButton';
+import { AsseessmentStatus } from '@/constants/enums';
 import ImageUploader from '../ImageUpload/ImageUpload';
 
 const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
@@ -21,7 +22,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
       {/* Content */}
       <Box className={styles.content}>
         <Box className={styles.plantImage}>
-          <ImageUploader imageProp={plantData?.plantLogo} />
+          <ImageUploader imageProp={plantData?.plantLogo} shape="square" />
         </Box>
 
         {/* Info Grid */}
@@ -56,10 +57,10 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
         <Divider sx={{ marginBottom: 1 }} />
         <Box>
           <Typography className={styles.textLabel}>
-            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString()}
+            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString('en-GB')}
           </Typography>
           <Typography className={styles.textLabel}>
-            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString()}
+            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString('en-GB')}
           </Typography>
         </Box>
       </Box>
@@ -69,17 +70,49 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
         <Box>
           <Divider sx={{ marginBottom: 1 }} />
           <Typography className={styles.statusLabel}>Status</Typography>
-          <Button
-            startIcon={<OndemandVideoIcon />}
-            children={'Start Assessment'}
-            color={'secondary'}
-            variant={'text'}
-            sx={{ bgcolor: '#10557C33' }}
+
+          <CustomButton
+            icon="startAssesment"
+            // children={
+            //   data?.assessmentCompletionStage === 'NOT_STARTED'
+            //     ? 'Request for Assessment'
+            //     : data?.assessmentCompletionStage === 'STARTED' //change status according to new enum START_ASSESSMENT
+            //       ? 'Assessment Started'
+            //       : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
+            //         ? 'Assessor Assigning ...'
+            //         : 'Status Unknown'
+            // }
+            variant="contained"
+            color="primary"
+            width="100%"
+            height="30px"
+            disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT}
             onClick={onClick}
-          />
+          >
+            {data?.assessmentCompletionStage === AsseessmentStatus.NOT_STARTED
+              ? 'Request for Assessment'
+              : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
+                ? 'Assessor Assigning ...'
+                : data?.assessmentCompletionStage === AsseessmentStatus.START_ASSESSMENT
+                  ? 'Start Assesment'
+                  : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
+                    ? 'Assessment Started'
+                    : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
+                      ? 'Edit Asssesment'
+                      : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
+                        ? 'Asssesment in reviewd'
+                        : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
+                          ? 'Download Assessment'
+                          : 'status unknown'}
+          </CustomButton>
         </Box>
         <Box className={styles.progressCircle}>
-          <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
+          {data?.assessmentCompletionStage &&
+          [AsseessmentStatus.REQUESTED_ASSESSMENT, AsseessmentStatus.NOT_STARTED].includes(
+            data.assessmentCompletionStage as AsseessmentStatus,
+          ) ? null : (
+            <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
+          )}
         </Box>
       </Box>
     </Box>

@@ -13,7 +13,7 @@ export default function OnboardingSuccess() {
     setShowLoader(true);
 
     const timeout = setTimeout(() => {
-      router.push('/AddContactPerson');
+      router.push('/PlantOverview');
     }, 3000);
 
     return () => clearTimeout(timeout);
@@ -30,7 +30,7 @@ export default function OnboardingSuccess() {
     >
       <CheckCircleOutlineIcon style={{ fontSize: '100px', color: '#4caf50' }} />
       <Typography variant="h4" fontWeight="bold" color="success.main" gutterBottom>
-        You're successfully onboarded!
+        You are successfully onboarded!
       </Typography>
 
       <Typography variant="body1" color="text.secondary" mb={3}>

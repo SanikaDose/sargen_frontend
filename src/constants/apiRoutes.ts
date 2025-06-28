@@ -24,7 +24,7 @@ export const apiRoutes = {
   },
   onboardingStatus: {
     root: 'onboarding-status',
-    getOnboardingStatus: '/:tenantId/onboarding-status',
+    getOnboardingStatus: '/onboarding-status',
   },
   onboarding: {
     root: '/onboarding',
@@ -56,10 +56,11 @@ export const apiRoutes = {
     getQuestionnairesList: 'get-questionnaires-list',
     selectQuestionnairesAnswer: 'select-questionnaires-answer',
     editQuestionnairesAnswer: 'edit-questionnaires-answer',
-    startAssessmentRuleEngine: 'start-assessment-rule-engine',
+    startAssessmentRuleEngine: '/start-assessment-rule-engine',
     getPlanningHorizon: 'get-planning-horizon',
     selectPlanningHorizon: 'select-planning-horizon',
-    changeAssessmentStatus: 'change-assessment-status',
+    changeAssessmentStatus: '/change-assessment-status',
+    changeQuestionsStatus: '/change-question-status',
   },
   assessorOnboarding: {
     root: 'assessor-onboarding',
@@ -74,13 +75,19 @@ export const apiRoutes = {
     getAssignedPlants: '/get-assigned-plants',
     getAllAssignedPlants: '/get-all-assigned-plants',
     getAssignedPlantinfo: '/assigned-plants-info',
-    getAllMetaData: '/get-all-metadata/:tenantId',
+    getAllMetaData: '/get-all-metadata',
     assignMetadata: '/assign-metadata',
     getImpactValues: '/get-impact-values',
     selectImpactValues: '/select-impact-values',
     getSelectedImpactValues: '/get-selected-impact-values',
     getSolutionsByImpactValuesSelected: '/get-solutions-by-impact-values-selected',
     selectSolutionsByImpactValuesSelected: '/select-solutions-by-impact-values-selected',
+    addAboutTheCompany: '/add-about-the-company',
+    addSummaryOfObservationsAndRecommendations: '/add-summary-of-observations-and-recommendations',
+    addIntroduction: '/add-introduction',
+    addComment: '/add-comment',
+    addRoi: '/add-roi',
+    getReportData: '/get-report-data',
   },
   assessorEvaluation: {
     root: 'assessor-evaluation',
@@ -90,5 +97,14 @@ export const apiRoutes = {
   metadataFileTemplate: {
     root: 'metadata-files-template',
     getMetadataFile: '/download',
+  },
+  report: {
+    root: 'report',
+    createReport: '/create-report/:tenantId',
+    previewReport: '/preview-report',
+    downloadreport: '/download-report',
+    emailNotificationForReport: '/email-notification-after-save-report',
+    getAllReports: '/get-all-reports',
+    getReportDataByPlantId: '/get-report-data-by-plantId',
   },
 };

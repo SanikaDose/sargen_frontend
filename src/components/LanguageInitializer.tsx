@@ -16,7 +16,7 @@ export default function LanguageInitializer() {
 
     i18n.changeLanguage(selectedLang);
     dispatch(setLanguage(selectedLang));
-  }, []);
+  }, [dispatch]);
 
   return null;
 }

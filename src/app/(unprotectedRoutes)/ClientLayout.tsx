@@ -6,12 +6,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './style.module.css';
 import { Props } from './unprotected.types';
+import Image from 'next/image';
 
 const ClientLayout = ({ children }: Props) => {
   const chip = [
     {
       icon: <VerifiedIcon sx={{ color: 'green', height: '3vw' }} />,
-      text: 'Siri Analysis',
+      text: 'Real Analysis',
     },
     {
       icon: <RouteIcon sx={{ color: 'purple', height: '3vw' }} />,
@@ -48,9 +49,9 @@ const ClientLayout = ({ children }: Props) => {
       {/* {Nav bar} */}
       <nav className={styles.navbar}>
         <div className={styles.nav_container}>
-          <div className={styles.nav_brand}>
-            <h2>Logo</h2>
-          </div>
+          {/* <div className={styles.nav_brand}> */}
+          <Image src="/sargen-png-logo.png" alt="logo" className={styles.logo} width={100} height={100} />
+          {/* </div> */}
           <div className={styles.nav_links}>
             {getNavItems().map((item, index) => (
               <Link key={index} href={item.href} className={styles.nav_link}>
@@ -84,8 +85,7 @@ const ClientLayout = ({ children }: Props) => {
           <div className={styles.text_outer_container}>
             <h1>Unlock Your Industry&apos;s Future</h1>
             <p>
-              Transform your business with AI-powered roadmaps and strategic insights tailored to your industry&apos;s
-              unique challenges.
+              Transform your business with AI-powered roadmaps and strategic insights tailored to your industry&apos;s unique challenges.
             </p>
           </div>
 
