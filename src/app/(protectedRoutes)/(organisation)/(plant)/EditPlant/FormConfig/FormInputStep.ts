@@ -44,9 +44,17 @@ export const plantFormInputs: PlantFormInput[] = [
     required: true,
     rules: {
       required: 'GSTIN is required',
+      minLength: {
+        value: 15,
+        message: 'GSTIN must be exactly 15 characters',
+      },
+      maxLength: {
+        value: 15,
+        message: 'GSTIN must be exactly 15 characters',
+      },
       pattern: {
-        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$/, // Example pattern for GSTIN (7 alphanumeric characters)
-        message: 'Invalid GSTIN format',
+        value: /^[A-Za-z0-9]{15}$/,
+        message: 'Enter a valid GSTIN (only letters and numbers allowed)',
       },
     },
   },

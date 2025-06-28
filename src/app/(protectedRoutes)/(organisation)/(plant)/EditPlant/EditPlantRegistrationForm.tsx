@@ -83,11 +83,9 @@ const EditPlantRegistrationForm = () => {
         const divided = fullRevenue / unit.value;
         if (divided >= 1) {
           selectedUnit = unit;
-
           const hasDecimal = divided % 1 !== 0;
           normalizedRevenue = hasDecimal ? parseFloat(divided.toFixed(2)) : divided;
-
-          break;
+          break; // ✅ this is fine as long as map is sorted from largest → smallest
         }
       }
       const revenueUnitValue = plant.revenue && Number(plant.revenue) > 0 ? selectedUnit.value.toString() : '';
@@ -133,8 +131,21 @@ const EditPlantRegistrationForm = () => {
   };
 
   const onSubmit = async (data: PlantFormType) => {
+    const { revenue, revenueUnit, numberOfEmployees, numberOfLines, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
+    const cleanedLines = Number((numberOfLines || '').toString().replace(/,/g, ''));
+    const payload = {
+      ...rest,
+      revenue: finalRevenue,
+      numberOfEmployees: cleanedEmployees,
+      numberOfLines: cleanedLines,
+      age: data.age ? Number(data.age) : 0,
+    };
+    console.log('updated addda', payload);
     try {
-      await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
+      await editPlantInfo({ tenantId: organisationId, plantId, body: payload }).unwrap();
 
       router.push('/PlantOverview');
     } catch (error) {
@@ -190,10 +201,6 @@ const EditPlantRegistrationForm = () => {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h4" className={styles.heading}>
-                  Plant Registration
-                </Typography>
-
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
@@ -367,7 +374,7 @@ const EditPlantRegistrationForm = () => {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant"
+                              label="About Plant (max 200 characters)"
                               placeholder="Enter About Plant"
                               // required={true}
                               multiline

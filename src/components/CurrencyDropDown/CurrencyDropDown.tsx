@@ -65,8 +65,8 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
               sx={{
                 borderRadius: '16px',
                 '& input::placeholder': {
-                  //   fontWeight: 500,
-                  //   color: '#888',
+                  // fontWeight: 500,
+                  // color: '#888',
                 },
               }}
             />

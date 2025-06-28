@@ -108,6 +108,7 @@ function OrganizationOnbording() {
           break;
         }
       }
+
       const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
 
       reset({
@@ -227,10 +228,6 @@ function OrganizationOnbording() {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h4" className={styles.heading}>
-                  Organisation Details
-                </Typography>
-
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
@@ -348,7 +345,7 @@ function OrganizationOnbording() {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Orgnization"
+                              label="About Orgnization (max 200 characters)"
                               placeholder="Enter About Orgnization"
                               // required={true}
                               multiline

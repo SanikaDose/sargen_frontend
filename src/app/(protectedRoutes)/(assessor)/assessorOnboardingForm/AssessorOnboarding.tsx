@@ -369,9 +369,9 @@ function AssessorOnboarding() {
           </Box>
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
-              <Typography variant="h4" className={styles.heading}>
+              {/* <Typography variant="h4" className={styles.heading}>
                 Assessor Profile
-              </Typography>
+              </Typography> */}
 
               <Box className={styles.form}>
                 <Box className={styles.formContainer}>
@@ -473,7 +473,7 @@ function AssessorOnboarding() {
                     <TableContainer
                       component={Paper}
                       sx={{
-                        maxHeight: 400,
+                        maxHeight: 450,
                         overflowX: 'auto',
                       }}
                     >

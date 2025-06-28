@@ -153,7 +153,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
       console.log('Status response:', status);
       dispatch(setOnboardingStatus(status?.onboardingStatus));
-      router.push('/onboardingSuccess')
+      router.push('/onboardingSuccess');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -188,9 +188,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
           >
             <Grid container spacing={2} alignItems="stretch" sx={{ height: isMobile || isTablet ? 'auto' : '74.5vh' }}>
               <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
-                <Typography variant="h4" fontWeight={600} className={styles.heading}>
-                  User Profile
-                </Typography>
                 <Grid className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={profilePic} onUpload={handleUpload} />

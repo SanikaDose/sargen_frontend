@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './IndustrySelection.module.css';
 import { Industry, IndustryFormValues } from '../plantAssement.model';
@@ -140,17 +140,6 @@ const IndustrySelection = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Industry Selection
-                </Typography>
-
                 <Grid
                   container
                   spacing={2}
