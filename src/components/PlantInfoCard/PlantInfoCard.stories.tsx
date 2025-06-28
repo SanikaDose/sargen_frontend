@@ -29,6 +29,7 @@ Default.args = {
     assessmentStartDate: new Date().toISOString(),
     debriefDate: new Date().toISOString(),
     assessmentCompletionPercentage: 75,
+    assessmentCompletionStage: 'Stage 2',
   },
   onClick: () => alert('Card clicked!'),
 };

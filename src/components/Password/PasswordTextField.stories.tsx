@@ -2,8 +2,8 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { PasswordTextField, PasswordTextFieldProps } from '@/components/Password/Password';
-
+import { PasswordTextField } from '@/components/Password/Password';
+import { PasswordTextFieldProps } from './Password.types';
 const meta: Meta<typeof PasswordTextField> = {
   title: 'Components/PasswordTextField',
   component: PasswordTextField,
@@ -16,11 +16,11 @@ type Story = StoryObj<typeof PasswordTextField>;
 
 const Wrapper = (args: PasswordTextFieldProps) => {
   const methods = useForm({ defaultValues: { password: '' } });
-
+  //control={methods.control}
   return (
     <FormProvider {...methods}>
       <form>
-        <PasswordTextField {...args} name="password" control={methods.control} />
+        <PasswordTextField {...args} name="password" />
       </form>
     </FormProvider>
   );
