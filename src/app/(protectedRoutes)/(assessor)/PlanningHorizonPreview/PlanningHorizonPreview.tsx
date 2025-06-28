@@ -9,7 +9,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -62,60 +62,60 @@ const PlanningHorizonPreview = () => {
     }
   }, [watchedValues.selectedHorizonId, isEditMode, initialFormState.selectedHorizonId]);
 
-  const fetchHorizonOptions = async () => {
-    try {
-      const requestPayload = {
-        tenantId,
-        plantId: plantId || '',
-      };
-      const result = await getHorizonOptions(requestPayload).unwrap();
-
-      const mappedOptions = result.map((option: HorizonOption) => {
-        let termStart = Number(option.termStart);
-        let termEnd = Number(option.termEnd);
-
-        if (termStart % 1 !== 0) {
-          termStart = Math.round(termStart * 12);
-        }
-        if (termEnd % 1 !== 0) {
-          termEnd = Math.round(termEnd * 12);
-        }
-
-        return {
-          id: option.id,
-          planningHorizon: option.planningHorizon.trim(),
-          termStart,
-          termEnd,
-          degreeOfRelevanceCost: option.degreeOfRelevanceCost,
-          degreeOfRelevanceKpi: option.degreeOfRelevanceKpi,
-          degreeOfInfluenceOnProximityFactors: option.degreeOfRelevanceKpi,
-          isselected: option.isselected,
-        };
-      });
-
-      setHorizonOptions(mappedOptions);
-
-      const preselected = mappedOptions.find((opt: HorizonOption) => opt.isselected);
-      const formData = {
-        selectedHorizonId: preselected?.id || '',
-      };
-
-      // Reset form with fetched data
-      reset(formData);
-
-      // Set initial state after form is reset
-      setTimeout(() => {
-        setInitialFormState(formData);
-        setHasUnsavedChanges(false);
-      }, 0);
-    } catch (error) {
-      console.error('Failed to fetch horizon options:', error);
-    }
-  };
-
   useEffect(() => {
+    const fetchHorizonOptions = async () => {
+      try {
+        const requestPayload = {
+          tenantId,
+          plantId: plantId || '',
+        };
+        const result = await getHorizonOptions(requestPayload).unwrap();
+
+        const mappedOptions = result.map((option: HorizonOption) => {
+          let termStart = Number(option.termStart);
+          let termEnd = Number(option.termEnd);
+
+          if (termStart % 1 !== 0) {
+            termStart = Math.round(termStart * 12);
+          }
+          if (termEnd % 1 !== 0) {
+            termEnd = Math.round(termEnd * 12);
+          }
+
+          return {
+            id: option.id,
+            planningHorizon: option.planningHorizon.trim(),
+            termStart,
+            termEnd,
+            degreeOfRelevanceCost: option.degreeOfRelevanceCost,
+            degreeOfRelevanceKpi: option.degreeOfRelevanceKpi,
+            degreeOfInfluenceOnProximityFactors: option.degreeOfRelevanceKpi,
+            isselected: option.isselected,
+          };
+        });
+
+        setHorizonOptions(mappedOptions);
+
+        const preselected = mappedOptions.find((opt: HorizonOption) => opt.isselected);
+        const formData = {
+          selectedHorizonId: preselected?.id || '',
+        };
+
+        // Reset form with fetched data
+        reset(formData);
+
+        // Set initial state after form is reset
+        setTimeout(() => {
+          setInitialFormState(formData);
+          setHasUnsavedChanges(false);
+        }, 0);
+      } catch (error) {
+        console.error('Failed to fetch horizon options:', error);
+      }
+    };
+
     fetchHorizonOptions();
-  }, []);
+  }, [getHorizonOptions, tenantId, plantId, reset]);
 
   const handleEditClick = () => {
     setIsEditMode(true);

@@ -11,7 +11,7 @@ import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useRouter } from 'next/navigation';
+
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import styles from './AssessorOnboardingSetting.module.css';
@@ -73,7 +73,7 @@ function AssessorOnboarding() {
     },
     mode: 'onSubmit',
   });
-  const router = useRouter();
+
   const [uploadAssessorLogo] = useUploadAssessorLogoMutation();
   const [addAssessorInformation, { isLoading }] = useAddAssessorInformationMutation();
   const [getMetadataFileTemplate] = useGetMetadataFileTemplateMutation();

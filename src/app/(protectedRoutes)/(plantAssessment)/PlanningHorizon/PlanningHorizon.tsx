@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption } from '../plantAssement.model';
@@ -50,47 +50,47 @@ const PlanningHorizon = () => {
     },
   });
 
-  const fetchHorizonOptions = async () => {
-    const requestPayload = {
-      tenantId,
-      plantId: plantId || '',
-    };
-    const result = await getHorizonOptions(requestPayload).unwrap();
-
-    const mappedOptions = result.map((option: HorizonOption) => {
-      let termStart = Number(option.termStart);
-      let termEnd = Number(option.termEnd);
-
-      if (termStart % 1 !== 0) {
-        termStart = Math.round(termStart * 12);
-      }
-      if (termEnd % 1 !== 0) {
-        termEnd = Math.round(termEnd * 12);
-      }
-
-      return {
-        id: option.id,
-        planningHorizon: option.planningHorizon.trim(),
-        termStart,
-        termEnd,
-        degreeOfRelevanceCost: option.degreeOfRelevanceCost,
-        degreeOfRelevanceKpi: option.degreeOfRelevanceKpi,
-        degreeOfInfluenceOnProximityFactors: option.degreeOfRelevanceKpi,
-        isselected: option.isselected,
-      };
-    });
-
-    setHorizonOptions(mappedOptions);
-
-    const preselected = mappedOptions.find((opt: HorizonOption) => opt.isselected);
-    reset({
-      selectedHorizonId: preselected?.id || '',
-    });
-  };
-
   useEffect(() => {
+    const fetchHorizonOptions = async () => {
+      const requestPayload = {
+        tenantId,
+        plantId: plantId || '',
+      };
+      const result = await getHorizonOptions(requestPayload).unwrap();
+
+      const mappedOptions = result.map((option: HorizonOption) => {
+        let termStart = Number(option.termStart);
+        let termEnd = Number(option.termEnd);
+
+        if (termStart % 1 !== 0) {
+          termStart = Math.round(termStart * 12);
+        }
+        if (termEnd % 1 !== 0) {
+          termEnd = Math.round(termEnd * 12);
+        }
+
+        return {
+          id: option.id,
+          planningHorizon: option.planningHorizon.trim(),
+          termStart,
+          termEnd,
+          degreeOfRelevanceCost: option.degreeOfRelevanceCost,
+          degreeOfRelevanceKpi: option.degreeOfRelevanceKpi,
+          degreeOfInfluenceOnProximityFactors: option.degreeOfRelevanceKpi,
+          isselected: option.isselected,
+        };
+      });
+
+      setHorizonOptions(mappedOptions);
+
+      const preselected = mappedOptions.find((opt: HorizonOption) => opt.isselected);
+      reset({
+        selectedHorizonId: preselected?.id || '',
+      });
+    };
+
     fetchHorizonOptions();
-  }, []);
+  }, [getHorizonOptions, tenantId, plantId, reset]);
 
   const onSubmit = async (data: HorizonFormValues) => {
     const selectedOption = horizonOptions.find((opt) => opt.id === data.selectedHorizonId);
@@ -176,6 +176,7 @@ const PlanningHorizon = () => {
 
                             return (
                               <Box
+                                key={option.id}
                                 sx={{
                                   display: 'flex',
                                   width: '40%',
