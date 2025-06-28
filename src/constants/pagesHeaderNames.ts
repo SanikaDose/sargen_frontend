@@ -27,4 +27,7 @@ export const pagesNames = {
   assessorSolutionSelection: 'Assessor / Solution selection ',
   assessorReportData: 'Assessor / Report Data ',
   reportHistory: 'Reports / Report History',
+  draftReport: 'Report / Report Draft',
+  reportData: 'Report / Report Data',
+  reportFinalized: 'Report / Report Finalized',
 };

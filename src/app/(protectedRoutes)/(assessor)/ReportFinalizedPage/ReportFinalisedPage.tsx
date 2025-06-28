@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
-import { useCreateReportMutation, useViewReportMutation } from './ReportViewApi';
+import { useCreateReportMutation, useViewReportMutation } from './ReportFinalizedPageApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 
 import styles from '../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { useGetReportDataMutation } from '../AddReportData/ReportDataApi';
 import ReportTextSection from '@/components/ReportCardtext/ReportTextSection';
 
-export default function ReportViewPage() {
+export default function ReportFinalisedPage() {
   const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
@@ -23,9 +23,9 @@ export default function ReportViewPage() {
 
   const [reportData, setReportData] = useState<string[]>(new Array());
   useEffect(() => {
-    dispatch(setPageNameHeader(pagesNames.draftReport));
-    dispatch(setShowAssessmentListSideBar(true));
-    dispatch(setPlantAssessmentDepartment(''));
+    dispatch(setPageNameHeader(pagesNames.reportFinalized));
+    // dispatch(setShowAssessmentListSideBar(true));
+    // dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
 
   const [reportUrl, setReportUrl] = useState<string | null>(null);
@@ -135,21 +135,15 @@ export default function ReportViewPage() {
                 color="primary"
                 // icon="left"
                 type="button"
-                onClick={() => {
-                  router.push(`AddReportData${tenantId}/${plantId}`);
-                }}
+                // onClick={handleBack}
+                // disabled={currentQuestionIndex === 0 || isLoading}
               >
-                Back
+                Home
               </CustomButton>
 
               <CustomButton variant="contained">
-                <Box
-                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                  onClick={() => {
-                    router.push(`AddReportData${tenantId}/${plantId}`);
-                  }}
-                ></Box>
-                Finalize
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}></Box>
+                Download
               </CustomButton>
             </Box>
           </Box>
