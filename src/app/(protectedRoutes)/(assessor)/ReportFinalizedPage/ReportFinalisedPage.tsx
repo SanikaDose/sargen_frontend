@@ -14,22 +14,20 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import styles from '../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader } from '@/store/globalSlice';
-//import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 import { useDispatch } from 'react-redux';
 import { useGetReportDataMutation } from '../AddReportData/ReportDataApi';
 import ReportTextSection from '@/components/ReportCardtext/ReportTextSection';
-import { PopupModal } from '@/components/PopupModal/PopupModal';
 import Loader from '@/components/Loader/Loader';
 import { AsseessmentStatus } from '@/constants/enums';
 
 export default function ReportFinalisedPage() {
-  // const router = useRouter();
+  const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
   const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
 
-  const [reportData, setReportData] = useState<string[]>(new Array());
+  const [reportData, setReportData] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.reportFinalized));

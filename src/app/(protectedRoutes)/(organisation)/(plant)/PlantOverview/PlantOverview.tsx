@@ -46,7 +46,7 @@ export default function PlantOverview() {
   });
 
   const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
-  const [downloadReport, { isLoading: isDownloading }] = useDownloadReportMutation();
+  const [downloadReport] = useDownloadReportMutation();
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
