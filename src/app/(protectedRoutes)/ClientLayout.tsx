@@ -171,7 +171,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setTenantId((params.OrganisationId ?? params.organisationId) as string);
       setIsInitialized(true);
     }
-  }, [router]);
+  }, [router, userType, params.OrganisationId, params.organisationId]);
 
   React.useEffect(() => {
     if (tenantId) {

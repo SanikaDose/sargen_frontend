@@ -36,7 +36,7 @@ const AssessmentSolution = () => {
     dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (data && Array.isArray(data)) {

@@ -1,50 +1,50 @@
 //import React from 'react'
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Grid from '@mui/material/Grid';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { CountryOptions } from '@/app/utils/CountryOptions';
+import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
+import FileActionButton from '@/components/FileActionButton/FileActionButton';
+import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Stepper from '@/components/Stepper/Stepper';
-import { CustomButton } from '@/components/CustomButton/CustomButton';
-import styles from './AssessorOnboarding.module.css';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { AssessorFormType, UploadFileMetadata, UploadFunction } from './AssessorOnboarding.types';
-import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/navigation';
-import FileUploadButton from '@/components/FileUploadButton/FileuploadButton';
-import FileActionButton from '@/components/FileActionButton/FileActionButton';
-import { CountryOptions } from '@/app/utils/CountryOptions';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   useAddAssessorInformationMutation,
-  useUploadAssessorLogoMutation,
+  useGetAssessorInfoQuery,
   useGetMetadataFileTemplateMutation,
-  useUploadQuestionnariesMutation,
+  useLazyGetOnboardingStatusQuery,
+  useUploadAssessorLogoMutation,
+  useUploadBandDefinitionMutation,
+  useUploadCostProfileLookupMutation,
   useUploadCostProfileMutation,
+  useUploadIndustryAssessmentMatrixMutation,
+  useUploadIndustrySelectionLookupMutation,
+  useUploadIndustrySelectionMutation,
+  useUploadKPILookupMutation,
   useUploadKPIMutation,
   useUploadPlanningHorizonMutation,
-  useUploadIndustrySelectionMutation,
-  useUploadCostProfileLookupMutation,
-  useUploadIndustrySelectionLookupMutation,
-  useUploadKPILookupMutation,
-  useUploadIndustryAssessmentMatrixMutation,
+  useUploadQuestionnariesMutation,
   useUploadSolutionMetadataMutation,
-  useUploadBandDefinitionMutation,
   useViewMetadataFileMutation,
-  useGetAssessorInfoQuery,
-  useLazyGetOnboardingStatusQuery,
 } from './AssessorOnboarding.Api';
+import styles from './AssessorOnboarding.module.css';
+import { AssessorFormType, UploadFileMetadata, UploadFunction } from './AssessorOnboarding.types';
 
-import { fileUploadKeyMap, fileTypes, fileValues } from './FormConfig/fileInput';
+import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 import { triggerToast } from '@/app/utils/toast';
 import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
-import { AssessorFormInputs } from './FormConfig/formInputStep';
-import Loader from '@/components/Loader/Loader';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPageNameHeader } from '@/store/globalSlice';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
-import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
+import Loader from '@/components/Loader/Loader';
+import { setPageNameHeader } from '@/store/globalSlice';
+import { useDispatch } from 'react-redux';
+import { fileTypes, fileUploadKeyMap, fileValues } from './FormConfig/fileInput';
+import { AssessorFormInputs } from './FormConfig/formInputStep';
 
 const steps = ['Form Data', ...fileValues.map((key, i) => `File ${i + 1}`)].map((label) => ({ label }));
 

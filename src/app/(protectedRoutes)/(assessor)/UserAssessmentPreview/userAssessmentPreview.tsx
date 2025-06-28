@@ -22,7 +22,21 @@ import { useChangeQuestionsStatusMutation, useStartAssessmentRuleEngineMutation 
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 import { QuestionVerificationStatus } from '@/constants/enums';
 import { triggerToast } from '@/app/utils/toast';
-
+const departmentName = [
+  'R&D',
+  'Planning',
+  'Production',
+  'Quality',
+  'Maintenance',
+  'Supply Chain - Sales',
+  'Supply Chain - Purchase',
+  'Finance',
+  'Utilities',
+  'IT',
+  'Learning & Development',
+  'Management',
+  'HR',
+];
 const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();
@@ -49,38 +63,21 @@ const UserAssessmentPreview = () => {
     dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
 
-  const departmentName = [
-    'R&D',
-    'Planning',
-    'Production',
-    'Quality',
-    'Maintenance',
-    'Supply Chain - Sales',
-    'Supply Chain - Purchase',
-    'Finance',
-    'Utilities',
-    'IT',
-    'Learning & Development',
-    'Management',
-    'HR',
-  ];
-
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
         const all: Question[] = [];
 
-        for (const dept of departmentName) {
-          const result = await getQuestionnairesList({
-            tenantId: organisationId,
-            plantId: plantId || '',
-            department: dept,
-          }).unwrap();
-          all.push(...(result?.questionsToSend || []));
-        }
+        const result = await getQuestionnairesList({
+          tenantId: organisationId,
+          plantId: plantId || '',
+          // department: dept,
+        }).unwrap();
+        all.push(...(result?.questionsToSend || []));
 
         const grouped: { [key: string]: Question[] } = {};
         const justification: { [key: string]: string } = {};
+        console.log('grouped questions', grouped);
 
         all.forEach((q) => {
           // Create a unique composite key
@@ -114,7 +111,10 @@ const UserAssessmentPreview = () => {
     };
 
     fetchAllDepartmentQuestions();
-  }, []);
+  }, [getQuestionnairesList, organisationId, plantId]);
+
+  console.log('set grouped questions', groupedQuestions);
+  console.log('set setAllQuestions questions', allQuestions);
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return;

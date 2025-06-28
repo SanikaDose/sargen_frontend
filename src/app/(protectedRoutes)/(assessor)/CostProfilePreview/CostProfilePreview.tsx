@@ -73,30 +73,6 @@ const CostProfilePreview = () => {
     name: 'costs',
   });
 
-  const fetchCostProfileData = async () => {
-    if (!organisationId || !plantId) return;
-
-    const payload = {
-      tenantId: organisationId,
-      plantId: plantId,
-    };
-
-    try {
-      const result = await getCostCategories(payload).unwrap();
-
-      const formattedData = result.map((item: RawCostCategory) => ({
-        id: item.id,
-        costCategory: item.costCategory.trim(),
-        costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
-      }));
-
-      replace(formattedData);
-      setHasUnsavedChanges(false);
-    } catch (error) {
-      console.error('Failed to fetch cost categories', error);
-    }
-  };
-
   const handleEditClick = () => {
     setIsEditMode(true);
     setHasUnsavedChanges(false);
@@ -131,8 +107,32 @@ const CostProfilePreview = () => {
   };
 
   useEffect(() => {
+    const fetchCostProfileData = async () => {
+      if (!organisationId || !plantId) return;
+
+      const payload = {
+        tenantId: organisationId,
+        plantId: plantId,
+      };
+
+      try {
+        const result = await getCostCategories(payload).unwrap();
+
+        const formattedData = result.map((item: RawCostCategory) => ({
+          id: item.id,
+          costCategory: item.costCategory.trim(),
+          costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
+        }));
+
+        replace(formattedData);
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        console.error('Failed to fetch cost categories', error);
+      }
+    };
+
     fetchCostProfileData();
-  }, [params]);
+  }, [getCostCategories, organisationId, plantId, replace]);
 
   // Button state logic
   const isSaveDisabled = !isEditMode || !hasUnsavedChanges || isLoadingAdd;

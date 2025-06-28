@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { Box, FormControl, MenuItem, Paper, Select, Typography, Divider } from '@mui/material';
+import { Box, Paper, Typography, Divider } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { plantFormInputs } from './FormConfig/FormInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -83,11 +83,9 @@ const EditPlantRegistrationForm = () => {
         const divided = fullRevenue / unit.value;
         if (divided >= 1) {
           selectedUnit = unit;
-
           const hasDecimal = divided % 1 !== 0;
           normalizedRevenue = hasDecimal ? parseFloat(divided.toFixed(2)) : divided;
-
-          break;
+          break; // ✅ this is fine as long as map is sorted from largest → smallest
         }
       }
       const revenueUnitValue = plant.revenue && Number(plant.revenue) > 0 ? selectedUnit.value.toString() : '';
@@ -133,8 +131,21 @@ const EditPlantRegistrationForm = () => {
   };
 
   const onSubmit = async (data: PlantFormType) => {
+    const { revenue, revenueUnit, numberOfEmployees, numberOfLines, ...rest } = data;
+    console.log('data', data);
+    const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
+    const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
+    const cleanedLines = Number((numberOfLines || '').toString().replace(/,/g, ''));
+    const payload = {
+      ...rest,
+      revenue: finalRevenue,
+      numberOfEmployees: cleanedEmployees,
+      numberOfLines: cleanedLines,
+      age: data.age ? Number(data.age) : 0,
+    };
+    console.log('updated addda', payload);
     try {
-      await editPlantInfo({ tenantId: organisationId, plantId, body: data }).unwrap();
+      await editPlantInfo({ tenantId: organisationId, plantId, body: payload }).unwrap();
 
       router.push('/PlantOverview');
     } catch (error) {
@@ -143,16 +154,18 @@ const EditPlantRegistrationForm = () => {
   };
 
   // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
+  // const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
 
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 5
   const completedSteps = useMemo(() => {
+    const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
       if (typeof value === 'string' && value.length >= 1) {
@@ -363,7 +376,7 @@ const EditPlantRegistrationForm = () => {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant"
+                              label="About Plant (max 200 characters)"
                               placeholder="Enter About Plant"
                               // required={true}
                               multiline

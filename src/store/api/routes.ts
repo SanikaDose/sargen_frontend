@@ -120,4 +120,12 @@ export const apiControllerPath = {
   enquiry: {
     root: '/enquiries',
   },
+
+  report: {
+    root: 'report',
+    createReport: '/create-report/',
+    previewReport: '/preview-report',
+    downloadreport: '/download-report',
+    emailNotificationForReport: '/email-notification-after-save-report',
+  },
 };

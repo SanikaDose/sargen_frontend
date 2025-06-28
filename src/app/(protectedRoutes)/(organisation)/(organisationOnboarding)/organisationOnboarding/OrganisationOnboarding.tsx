@@ -8,7 +8,7 @@ import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -108,6 +108,7 @@ function OrganizationOnbording() {
           break;
         }
       }
+
       const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
 
       reset({
@@ -229,7 +230,7 @@ function OrganizationOnbording() {
               <Box className={styles.formOuterContainer}>
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
                   <Box className={styles.formFieldsBox}>
@@ -344,7 +345,7 @@ function OrganizationOnbording() {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Orgnization"
+                              label="About Orgnization (max 200 characters)"
                               placeholder="Enter About Orgnization"
                               // required={true}
                               multiline

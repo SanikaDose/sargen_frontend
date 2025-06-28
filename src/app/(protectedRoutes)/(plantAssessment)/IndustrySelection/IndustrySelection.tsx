@@ -47,42 +47,41 @@ const IndustrySelection = () => {
     },
   });
 
-  const apiCall = async () => {
-    try {
-      const obj = {
-        tenantId,
-        plantId: plantId || '',
-      };
-      const result = await getIndustrySelectionList(obj).unwrap();
-
-      // Add null/undefined check and provide fallback
-      if (!result || !Array.isArray(result)) {
-        console.warn('API returned null or invalid data:', result);
-        setIndustryData([]);
-        return;
-      }
-
-      const industries = result.map((item: Industry) => ({
-        id: item.id,
-        industry_name: item.industry_name.trim(),
-        isselected: item.isselected,
-      }));
-
-      setIndustryData(industries);
-
-      const selected = industries.find((i: Industry) => i.isselected);
-      reset({
-        selectedIndustryId: selected?.id || '',
-      });
-    } catch (error) {
-      console.error('Error fetching industry selection list:', error);
-      setIndustryData([]);
-    }
-  };
-
   useEffect(() => {
+    const apiCall = async () => {
+      try {
+        const obj = {
+          tenantId,
+          plantId: plantId || '',
+        };
+        const result = await getIndustrySelectionList(obj).unwrap();
+
+        // Add null/undefined check and provide fallback
+        if (!result || !Array.isArray(result)) {
+          console.warn('API returned null or invalid data:', result);
+          setIndustryData([]);
+          return;
+        }
+
+        const industries = result.map((item: Industry) => ({
+          id: item.id,
+          industry_name: item.industry_name.trim(),
+          isselected: item.isselected,
+        }));
+
+        setIndustryData(industries);
+
+        const selected = industries.find((i: Industry) => i.isselected);
+        reset({
+          selectedIndustryId: selected?.id || '',
+        });
+      } catch (error) {
+        console.error('Error fetching industry selection list:', error);
+        setIndustryData([]);
+      }
+    };
     apiCall();
-  }, []);
+  }, [getIndustrySelectionList, tenantId, plantId, reset]);
 
   const onSubmit = async (data: IndustryFormValues) => {
     const selectedIndustry = industryData.find((item) => item.id === data.selectedIndustryId);
@@ -157,14 +156,14 @@ const IndustrySelection = () => {
                       <>
                         {industryData.map((industry) => {
                           const isSelected = field.value === industry.id;
-                          const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
+                          // const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
 
                           return (
                             <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
                               <Card
                                 label={industry.industry_name}
                                 isSelected={isSelected}
-                                isDisabled={isDisabled}
+                                // isDisabled={isDisabled}
                                 onToggle={() => field.onChange(industry.id)}
                               />
                             </Grid>

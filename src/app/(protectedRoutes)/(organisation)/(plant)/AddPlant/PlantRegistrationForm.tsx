@@ -119,16 +119,18 @@ const PlantRegistrationForm = () => {
   };
 
   // this is an spread operator to get the values of the form inputs (mainly for about section)
-  const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
+  // const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
 
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
+    const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 1
   const completedSteps = useMemo(() => {
+    const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
       if (typeof value === 'string' && value.length >= 1) {
@@ -270,7 +272,7 @@ const PlantRegistrationForm = () => {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant"
+                              label="About Plant (max 200 characters)"
                               placeholder="Enter About Plant"
                               // required={true}
                               multiline

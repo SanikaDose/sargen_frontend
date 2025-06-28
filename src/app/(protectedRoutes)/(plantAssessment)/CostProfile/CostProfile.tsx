@@ -70,29 +70,6 @@ const CostProfile = () => {
     name: 'costs',
   });
 
-  const fetchCostProfileData = async () => {
-    if (!organisationId || !plantId) return;
-
-    const payload = {
-      tenantId,
-      plantId: plantId,
-    };
-
-    try {
-      const result = await getCostCategories(payload).unwrap();
-
-      const formattedData = result.map((item: RawCostCategory) => ({
-        id: item.id,
-        costCategory: item.costCategory.trim(),
-        costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
-      }));
-
-      replace(formattedData);
-    } catch (error) {
-      console.error('Failed to fetch cost categories', error);
-    }
-  };
-
   const handleFormSubmit = async (data: FormValues) => {
     if (!organisationId || !plantId) return;
     try {
@@ -115,8 +92,30 @@ const CostProfile = () => {
   };
 
   useEffect(() => {
+    const fetchCostProfileData = async () => {
+      if (!organisationId || !plantId) return;
+
+      const payload = {
+        tenantId,
+        plantId: plantId,
+      };
+
+      try {
+        const result = await getCostCategories(payload).unwrap();
+
+        const formattedData = result.map((item: RawCostCategory) => ({
+          id: item.id,
+          costCategory: item.costCategory.trim(),
+          costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
+        }));
+
+        replace(formattedData);
+      } catch (error) {
+        console.error('Failed to fetch cost categories', error);
+      }
+    };
     fetchCostProfileData();
-  }, [params]);
+  }, [organisationId, tenantId, plantId, getCostCategories, replace]);
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
