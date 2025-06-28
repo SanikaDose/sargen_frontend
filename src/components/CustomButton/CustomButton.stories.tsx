@@ -14,7 +14,7 @@ const meta: Meta<typeof CustomButton> = {
     },
     icon: {
       control: 'select',
-      options: ['left', 'right', 'alert', 'save', 'success','cancel', undefined],
+      options: ['left', 'right', 'alert', 'save', 'success', 'cancel', undefined],
     },
     height: {
       control: { type: 'text' },
@@ -58,7 +58,7 @@ export const CustomSize: Story = {
     children: 'Custom Size',
     variant: 'contained',
     icon: 'alert',
-    color: '#f44336',
+    //  color: '#f44336',
     height: '60px',
     width: '220px',
   },

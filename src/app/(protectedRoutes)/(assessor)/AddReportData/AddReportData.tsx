@@ -97,7 +97,7 @@ const AddReportData = () => {
     if (!isInitialLoading && questionContents.length) {
       contentRef.current = questionContents[currentQuestionIndex];
     }
-  }, [questionContents, isInitialLoading]);
+  }, [questionContents, isInitialLoading, currentQuestionIndex]);
 
   const handleContentChange = (newContent: string) => {
     contentRef.current = newContent;

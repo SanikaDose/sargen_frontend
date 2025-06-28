@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Box, Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useCreateReportMutation, useViewReportMutation } from './ReportViewApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -23,7 +24,7 @@ export default function ReportViewPage() {
   const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
 
-  const [reportData, setReportData] = useState<string[]>(new Array());
+  const [reportData, setReportData] = useState<string[]>([]);
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.draftReport));
     dispatch(setShowAssessmentListSideBar(true));
@@ -74,7 +75,7 @@ export default function ReportViewPage() {
   useEffect(() => {
     const generateAndPreviewReport = async () => {
       try {
-        const createRes = await createReport({ tenantId, plantId }).unwrap();
+        await createReport({ tenantId, plantId }).unwrap();
         const viewRes = await viewReport({ tenantId, plantId }).unwrap();
 
         setReportUrl(viewRes?.url || '');

@@ -1,5 +1,5 @@
 // PreviewSideBox.stories.tsx
-import React from 'react';
+
 import PreviewSideBox from './PreviewSideBox';
 
 // Storybook metadata
@@ -10,6 +10,6 @@ const previewSideBoxMeta = {
 };
 
 // Default story
-export const Default = () => <PreviewSideBox />;
+// export const Default = () =>return <PreviewSideBox />;
 
 export default previewSideBoxMeta;

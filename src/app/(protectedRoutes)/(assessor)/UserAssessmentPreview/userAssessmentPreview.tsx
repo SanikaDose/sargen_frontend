@@ -22,21 +22,21 @@ import { useChangeQuestionsStatusMutation, useStartAssessmentRuleEngineMutation 
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 import { QuestionVerificationStatus } from '@/constants/enums';
 import { triggerToast } from '@/app/utils/toast';
-const departmentName = [
-  'R&D',
-  'Planning',
-  'Production',
-  'Quality',
-  'Maintenance',
-  'Supply Chain - Sales',
-  'Supply Chain - Purchase',
-  'Finance',
-  'Utilities',
-  'IT',
-  'Learning & Development',
-  'Management',
-  'HR',
-];
+// const departmentName = [
+//   'R&D',
+//   'Planning',
+//   'Production',
+//   'Quality',
+//   'Maintenance',
+//   'Supply Chain - Sales',
+//   'Supply Chain - Purchase',
+//   'Finance',
+//   'Utilities',
+//   'IT',
+//   'Learning & Development',
+//   'Management',
+//   'HR',
+// ];
 const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();

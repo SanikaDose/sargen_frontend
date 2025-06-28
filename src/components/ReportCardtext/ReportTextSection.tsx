@@ -1,7 +1,6 @@
 'use client';
 
 import { Box, Divider, Typography } from '@mui/material';
-import styles from './Reportcard.module.css';
 
 interface ReportTextSectionProps {
   reportData: string[]; // expected order: aboutCompany, introduction, summary, roi, comment

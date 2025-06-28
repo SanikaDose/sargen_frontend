@@ -17,6 +17,7 @@ const AssessorQuestionSection: React.FC<Props> = ({ questions, selectedQuestionI
   return (
     <div className={styles.buttonGrid}>
       {questions.map((q) => {
+        if (!q.key) return null;
         const isSelected = q.key === selectedQuestionId;
         const isCompleted = completedIds.includes(q.key);
 
@@ -37,7 +38,7 @@ const AssessorQuestionSection: React.FC<Props> = ({ questions, selectedQuestionI
           .join(' ');
 
         return (
-          <button type="button" key={q.question_uid} className={classNames} onClick={() => onSelect(q.key)}>
+          <button type="button" key={q.question_uid} className={classNames} onClick={() => onSelect(q.key ?? '')}>
             {(q.questionNo ?? 0).toString().padStart(2, '0')}
           </button>
         );
