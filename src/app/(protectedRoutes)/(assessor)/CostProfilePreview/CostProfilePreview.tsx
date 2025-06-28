@@ -8,7 +8,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
@@ -163,16 +163,6 @@ const CostProfilePreview = () => {
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               {/* Left Section */}
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Cost Profile
-                </Typography>
                 <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                   {fields.length > 0
                     ? fields.map((field, index) => (

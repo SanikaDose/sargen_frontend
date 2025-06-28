@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './kpiDefinition.module.css';
 import { Kpi, KpiFormValues } from '../plantAssement.model';
@@ -125,16 +125,6 @@ const KpiDefinition = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Kpis Selection
-                </Typography>
                 {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                     <Loader loading />

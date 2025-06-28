@@ -201,13 +201,9 @@ const EditPlantRegistrationForm = () => {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h4" className={styles.heading}>
-                  Plant Registration
-                </Typography>
-
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
                   {/* <Box className={styles.formFieldsBox}>

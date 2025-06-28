@@ -146,10 +146,6 @@ const ViewPlantDetails = ({}: AssessorProps) => {
           border: '1px solid #D8D8D8',
         }}
       >
-        <Typography variant="h4" mb={5}>
-          Plant Details
-        </Typography>
-
         {/* Show metadata loading state */}
         {isMetadataFetching && (
           <Box display="flex" alignItems="center" gap={1} mb={2}>

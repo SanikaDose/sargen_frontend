@@ -69,10 +69,6 @@ const ReportHistory = () => {
           height: isMobile || isTablet ? 'auto' : '89vh',
         }}
       >
-        <Typography variant="h4" mt={2} mb={2}>
-          Report History
-        </Typography>
-
         <Box display="flex" justifyContent="flex-end" mb={1}>
           <TextField label="Search" variant="outlined" size="small" value={searchText} onChange={handleSearch} />
         </Box>

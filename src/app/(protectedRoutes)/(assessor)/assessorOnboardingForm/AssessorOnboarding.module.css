@@ -5,7 +5,7 @@
   /* justify-content: space-between; */
   /* align-items: center; */
   padding: 1px;
- 
+  margin-top: 40;
 }
 .paperContainer {
   border-radius: 16px;
@@ -21,7 +21,6 @@
   font-weight: 600;
   padding: 0 0 1rem 1rem;
 }
-
 
 .stepperContainer {
   display: flex;
@@ -130,10 +129,9 @@
 @media (max-width: 900px) {
   .formContainer {
     flex-direction: column;
-   
+
     width: 100%;
     padding: 0;
-   
   }
 
   .secondContainer {
