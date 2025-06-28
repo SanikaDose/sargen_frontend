@@ -66,7 +66,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
                 borderRadius: '16px',
                 '& input::placeholder': {
                   // fontWeight: 500,
-                  // color: 'pink',
+                  // color: '#888',
                 },
               }}
             />
@@ -76,7 +76,7 @@ const DropdownWithLabel: React.FC<DropdownWithLabelProps> = ({
             <span
               style={{
                 fontWeight: 500,
-                color: 'green',
+                color: '#888',
                 opacity: 0.4,
               }}
             >
