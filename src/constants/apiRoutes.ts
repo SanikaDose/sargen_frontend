@@ -98,12 +98,13 @@ export const apiRoutes = {
     root: 'metadata-files-template',
     getMetadataFile: '/download',
   },
-
   report: {
     root: 'report',
-    createReport: '/create-report/',
+    createReport: '/create-report/:tenantId',
     previewReport: '/preview-report',
     downloadreport: '/download-report',
     emailNotificationForReport: '/email-notification-after-save-report',
+    getAllReports: '/get-all-reports',
+    getReportDataByPlantId: '/get-report-data-by-plantId',
   },
 };
