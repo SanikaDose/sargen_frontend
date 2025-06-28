@@ -156,14 +156,14 @@ const IndustrySelection = () => {
                       <>
                         {industryData.map((industry) => {
                           const isSelected = field.value === industry.id;
-                          const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
+                          // const isDisabled = !isSelected && industryData.filter((i) => i.isselected).length >= 1;
 
                           return (
                             <Grid key={industry.id} size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }} sx={{ height: '10%' }}>
                               <Card
                                 label={industry.industry_name}
                                 isSelected={isSelected}
-                                isDisabled={isDisabled}
+                                // isDisabled={isDisabled}
                                 onToggle={() => field.onChange(industry.id)}
                               />
                             </Grid>

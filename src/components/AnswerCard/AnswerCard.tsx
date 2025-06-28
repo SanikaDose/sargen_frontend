@@ -13,7 +13,7 @@ const AnswerCard = ({
 }: AnswerCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const showReadMore = answerText.length > MAX_PREVIEW_LENGTH;
-  console.log('show read more', showReadMore);
+  // console.log('show read more', showReadMore);
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click

@@ -68,17 +68,16 @@ const UserAssessmentPreview = () => {
       try {
         const all: Question[] = [];
 
-        for (const dept of departmentName) {
-          const result = await getQuestionnairesList({
-            tenantId: organisationId,
-            plantId: plantId || '',
-            department: dept,
-          }).unwrap();
-          all.push(...(result?.questionsToSend || []));
-        }
+        const result = await getQuestionnairesList({
+          tenantId: organisationId,
+          plantId: plantId || '',
+          // department: dept,
+        }).unwrap();
+        all.push(...(result?.questionsToSend || []));
 
         const grouped: { [key: string]: Question[] } = {};
         const justification: { [key: string]: string } = {};
+        console.log('grouped questions', grouped);
 
         all.forEach((q) => {
           // Create a unique composite key
@@ -113,6 +112,9 @@ const UserAssessmentPreview = () => {
 
     fetchAllDepartmentQuestions();
   }, [getQuestionnairesList, organisationId, plantId]);
+
+  console.log('set grouped questions', groupedQuestions);
+  console.log('set setAllQuestions questions', allQuestions);
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return;
