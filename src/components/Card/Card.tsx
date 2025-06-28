@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Checkbox, Typography } from '@mui/material';
 import styles from './Card.module.css';
 
 interface CardProps {
-  label: string;
+  label: ReactNode;
   value?: string;
   isSelected: boolean;
   isDisabled?: boolean;
