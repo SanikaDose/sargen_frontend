@@ -42,7 +42,7 @@ const RegisterPage = () => {
     (value: string) =>
       passwordRegex.test(value) ||
       'Password must be 8–16 characters long, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and no spaces',
-    [],
+    [passwordRegex],
   );
 
   async function handleRegister(data: RegisterFormInputs) {

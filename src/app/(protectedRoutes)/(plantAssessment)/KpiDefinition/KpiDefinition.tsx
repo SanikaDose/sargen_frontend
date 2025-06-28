@@ -45,28 +45,28 @@ const KpiDefinition = () => {
   });
   const selectedKpis = useWatch({ control, name: 'kpis' });
   const selectedCount = selectedKpis?.filter((k) => k.isselected)?.length || 0;
-  const fetchKpis = async () => {
-    try {
-      const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
-
-      console.log('response', response);
-
-      const cleaned = response.map((k: Kpi) => ({
-        ...k,
-        kpi: k.kpi.trim(),
-      }));
-      setKpiList(cleaned);
-      reset({
-        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
-      });
-    } catch (error) {
-      console.error('Failed to fetch KPIs:', error);
-    }
-  };
 
   useEffect(() => {
+    const fetchKpis = async () => {
+      try {
+        const response = await getKPIDefinition({ tenantId, plantId }).unwrap();
+
+        console.log('response', response);
+
+        const cleaned = response.map((k: Kpi) => ({
+          ...k,
+          kpi: k.kpi.trim(),
+        }));
+        setKpiList(cleaned);
+        reset({
+          kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
+        });
+      } catch (error) {
+        console.error('Failed to fetch KPIs:', error);
+      }
+    };
     fetchKpis();
-  }, [router]);
+  }, [router, getKPIDefinition, tenantId, plantId, reset]);
 
   const handleSave = async (formData: KpiFormValues) => {
     try {

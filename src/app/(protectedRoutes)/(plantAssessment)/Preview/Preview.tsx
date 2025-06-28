@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { useDispatch } from 'react-redux';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import TextArea from '@/components/textArea/TextArea';
@@ -22,7 +22,7 @@ import { useChangeAssessmentStatusMutation } from './PreviewApi';
 import { AsseessmentStatus } from '@/constants/enums';
 
 export default function Preview() {
-  const router = useRouter();
+  // const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
 
@@ -59,23 +59,23 @@ export default function Preview() {
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
   const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
 
-  const departmentName = [
-    'R&D',
-    'Planning',
-    'Production',
-    'Quality',
-    'Maintenance',
-    'Supply Chain - Sales',
-    'Supply Chain - Purchase',
-    'Finance',
-    'Utilities',
-    'IT',
-    'Learning & Development',
-    'Management',
-    'HR',
-  ];
-
   useEffect(() => {
+    const departmentName = [
+      'R&D',
+      'Planning',
+      'Production',
+      'Quality',
+      'Maintenance',
+      'Supply Chain - Sales',
+      'Supply Chain - Purchase',
+      'Finance',
+      'Utilities',
+      'IT',
+      'Learning & Development',
+      'Management',
+      'HR',
+    ];
+
     const fetchAllDepartmentQuestions = async () => {
       setAllQuestionsLoading(true); // Start loading
 
@@ -126,7 +126,7 @@ export default function Preview() {
     };
 
     fetchAllDepartmentQuestions();
-  }, []);
+  }, [getQuestionnairesList, plantId, tenantId]);
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return; //if edit is off then it will return

@@ -6,7 +6,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DownloadIcon from '@mui/icons-material/Download';
 import { reportRows } from './ReportData';
-import { Box, Typography, TextField, useMediaQuery } from '@mui/material';
+import { Box, TextField, useMediaQuery } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
