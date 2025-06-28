@@ -61,6 +61,10 @@ pipeline {
               PORT=3000 pm2 start npm --name "${PROJECT_KEY}" -- start
               pm2 save
 
+              echo "restarting nginx server"
+              nginx -t
+              systemctl reload nginx
+
               echo "✅ Deployment completed successfully"
             '
           """
