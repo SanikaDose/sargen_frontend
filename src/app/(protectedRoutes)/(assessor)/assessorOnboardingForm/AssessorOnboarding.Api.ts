@@ -2,12 +2,12 @@ import { rtkAPIToast } from '@/app/utils/rtkAPIToast';
 import { protectedApi } from '@/store/api/protectedApis/baseProtectedApi';
 import { apiControllerPath } from '@/store/api/routes';
 import {
-  OnboardingStatusResponse,
   getAssessorPayload,
-  UploadResponse,
-  UploadArgs,
+  OnboardingStatusResponse,
   RawUploadResponse,
+  UploadArgs,
   UploadFileMetadata,
+  UploadResponse,
 } from './AssessorOnboarding.types';
 
 export const assessorApi = protectedApi.injectEndpoints({
@@ -501,6 +501,7 @@ export const {
   useGetMetadataFileTemplateMutation,
   useGetMetadataInformationQuery,
   useGetAssessorInfoQuery,
+  useLazyGetAssessorInfoQuery,
   useUploadAssessorLogoMutation,
 
   useUploadQuestionnariesMutation,

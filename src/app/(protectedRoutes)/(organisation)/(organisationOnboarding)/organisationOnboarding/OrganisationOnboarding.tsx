@@ -233,7 +233,7 @@ function OrganizationOnbording() {
 
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
                   <Box className={styles.formFieldsBox}>
