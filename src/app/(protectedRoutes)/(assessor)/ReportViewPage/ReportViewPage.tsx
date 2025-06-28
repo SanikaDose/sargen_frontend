@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Box, Paper } from '@mui/material';
-import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useCreateReportMutation, useViewReportMutation } from './ReportViewApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
