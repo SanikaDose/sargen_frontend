@@ -9,7 +9,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -61,43 +61,43 @@ const IndustrySelectionPreview = () => {
     }
   }, [watchedValues.selectedIndustryId, isEditMode, initialFormState.selectedIndustryId]);
 
-  const fetchIndustryData = async () => {
-    try {
-      const obj = {
-        tenantId,
-        plantId: plantId || '',
-      };
-      const result = await getIndustrySelectionList(obj).unwrap();
-
-      const industries = result.map((item: Industry) => ({
-        id: item.id,
-        industry_name: item.industry_name.trim(),
-        isselected: item.isselected,
-      }));
-
-      setIndustryData(industries);
-
-      const selected = industries.find((i: Industry) => i.isselected);
-      const formData = {
-        selectedIndustryId: selected?.id || '',
-      };
-
-      // Reset form with fetched data
-      reset(formData);
-
-      // Set initial state after form is reset
-      setTimeout(() => {
-        setInitialFormState(formData);
-        setHasUnsavedChanges(false);
-      }, 0);
-    } catch (error) {
-      console.error('Failed to fetch industry data:', error);
-    }
-  };
-
   useEffect(() => {
+    const fetchIndustryData = async () => {
+      try {
+        const obj = {
+          tenantId,
+          plantId: plantId || '',
+        };
+        const result = await getIndustrySelectionList(obj).unwrap();
+
+        const industries = result.map((item: Industry) => ({
+          id: item.id,
+          industry_name: item.industry_name.trim(),
+          isselected: item.isselected,
+        }));
+
+        setIndustryData(industries);
+
+        const selected = industries.find((i: Industry) => i.isselected);
+        const formData = {
+          selectedIndustryId: selected?.id || '',
+        };
+
+        // Reset form with fetched data
+        reset(formData);
+
+        // Set initial state after form is reset
+        setTimeout(() => {
+          setInitialFormState(formData);
+          setHasUnsavedChanges(false);
+        }, 0);
+      } catch (error) {
+        console.error('Failed to fetch industry data:', error);
+      }
+    };
+
     fetchIndustryData();
-  }, []);
+  }, [getIndustrySelectionList, tenantId, plantId, reset]);
 
   const handleEditClick = () => {
     setIsEditMode(true);
@@ -174,16 +174,6 @@ const IndustrySelectionPreview = () => {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer}>
-            <Typography
-              variant="h4"
-              sx={{
-                color: 'black',
-                textAlign: 'left',
-                width: '100%',
-              }}
-            >
-              Industry Selection
-            </Typography>
             <Grid
               container
               spacing={2}

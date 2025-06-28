@@ -36,7 +36,7 @@ const AssessmentSolution = () => {
     dispatch(setPageNameHeader(pagesNames.assessorSolutionSelection));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
@@ -125,8 +125,6 @@ const AssessmentSolution = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography variant="h4">Assessment Solutions</Typography>
-
                 <Grid container spacing={2} sx={{ mt: 2 }}>
                   {Object.entries(groupedSolutions).map(([category, solutions]) => (
                     <Grid size={{ xs: 12, md: 6 }} key={category}>

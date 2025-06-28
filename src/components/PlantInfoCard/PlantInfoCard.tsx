@@ -22,7 +22,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
       {/* Content */}
       <Box className={styles.content}>
         <Box className={styles.plantImage}>
-          <ImageUploader imageProp={plantData?.plantLogo} />
+          <ImageUploader imageProp={plantData?.plantLogo} shape="square" />
         </Box>
 
         {/* Info Grid */}

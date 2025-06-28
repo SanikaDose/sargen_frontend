@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { FormValues, RawCostCategory } from '../plantAssement.model';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import styles from './costProfile.module.css';
 import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProfileCard';
@@ -70,29 +70,6 @@ const CostProfile = () => {
     name: 'costs',
   });
 
-  const fetchCostProfileData = async () => {
-    if (!organisationId || !plantId) return;
-
-    const payload = {
-      tenantId,
-      plantId: plantId,
-    };
-
-    try {
-      const result = await getCostCategories(payload).unwrap();
-
-      const formattedData = result.map((item: RawCostCategory) => ({
-        id: item.id,
-        costCategory: item.costCategory.trim(),
-        costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
-      }));
-
-      replace(formattedData);
-    } catch (error) {
-      console.error('Failed to fetch cost categories', error);
-    }
-  };
-
   const handleFormSubmit = async (data: FormValues) => {
     if (!organisationId || !plantId) return;
     try {
@@ -115,8 +92,30 @@ const CostProfile = () => {
   };
 
   useEffect(() => {
+    const fetchCostProfileData = async () => {
+      if (!organisationId || !plantId) return;
+
+      const payload = {
+        tenantId,
+        plantId: plantId,
+      };
+
+      try {
+        const result = await getCostCategories(payload).unwrap();
+
+        const formattedData = result.map((item: RawCostCategory) => ({
+          id: item.id,
+          costCategory: item.costCategory.trim(),
+          costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
+        }));
+
+        replace(formattedData);
+      } catch (error) {
+        console.error('Failed to fetch cost categories', error);
+      }
+    };
     fetchCostProfileData();
-  }, [params]);
+  }, [organisationId, tenantId, plantId, getCostCategories, replace]);
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
@@ -147,17 +146,6 @@ const CostProfile = () => {
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               {/* Left Section */}
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Cost Profile
-                </Typography>
-
                 {/* Loader inside left section */}
                 {isLoadingGet ? (
                   <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>

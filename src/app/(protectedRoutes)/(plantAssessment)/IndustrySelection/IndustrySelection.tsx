@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './IndustrySelection.module.css';
 import { Industry, IndustryFormValues } from '../plantAssement.model';
@@ -47,42 +47,41 @@ const IndustrySelection = () => {
     },
   });
 
-  const apiCall = async () => {
-    try {
-      const obj = {
-        tenantId,
-        plantId: plantId || '',
-      };
-      const result = await getIndustrySelectionList(obj).unwrap();
-
-      // Add null/undefined check and provide fallback
-      if (!result || !Array.isArray(result)) {
-        console.warn('API returned null or invalid data:', result);
-        setIndustryData([]);
-        return;
-      }
-
-      const industries = result.map((item: Industry) => ({
-        id: item.id,
-        industry_name: item.industry_name.trim(),
-        isselected: item.isselected,
-      }));
-
-      setIndustryData(industries);
-
-      const selected = industries.find((i: Industry) => i.isselected);
-      reset({
-        selectedIndustryId: selected?.id || '',
-      });
-    } catch (error) {
-      console.error('Error fetching industry selection list:', error);
-      setIndustryData([]);
-    }
-  };
-
   useEffect(() => {
+    const apiCall = async () => {
+      try {
+        const obj = {
+          tenantId,
+          plantId: plantId || '',
+        };
+        const result = await getIndustrySelectionList(obj).unwrap();
+
+        // Add null/undefined check and provide fallback
+        if (!result || !Array.isArray(result)) {
+          console.warn('API returned null or invalid data:', result);
+          setIndustryData([]);
+          return;
+        }
+
+        const industries = result.map((item: Industry) => ({
+          id: item.id,
+          industry_name: item.industry_name.trim(),
+          isselected: item.isselected,
+        }));
+
+        setIndustryData(industries);
+
+        const selected = industries.find((i: Industry) => i.isselected);
+        reset({
+          selectedIndustryId: selected?.id || '',
+        });
+      } catch (error) {
+        console.error('Error fetching industry selection list:', error);
+        setIndustryData([]);
+      }
+    };
     apiCall();
-  }, []);
+  }, [getIndustrySelectionList, tenantId, plantId, reset]);
 
   const onSubmit = async (data: IndustryFormValues) => {
     const selectedIndustry = industryData.find((item) => item.id === data.selectedIndustryId);
@@ -140,17 +139,6 @@ const IndustrySelection = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Industry Selection
-                </Typography>
-
                 <Grid
                   container
                   spacing={2}

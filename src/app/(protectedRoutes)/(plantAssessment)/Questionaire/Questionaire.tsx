@@ -43,7 +43,7 @@ const Questionaire = () => {
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.plantAssessmentQuestionnaires));
     dispatch(setShowAssessmentListSideBar(true));
-  }, []);
+  }, [dispatch]);
   const plantId = params.PlantId as string;
   const organisationId = (params.OrganisationId ?? params.organisationId) as string;
 
@@ -70,43 +70,44 @@ const Questionaire = () => {
   }));
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
-  const fetchQuestions = async (dept: string) => {
-    try {
-      const result = await getQuestionnairesList({
-        tenantId: organisationId,
-        plantId: plantId || '',
-        department: dept,
-      }).unwrap();
-
-      const questions = result?.questionsToSend || [];
-
-      const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
-        if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
-        acc[curr.question_uid].push(curr);
-        return acc;
-      }, {});
-
-      const justificationState: { [key: string]: string } = {};
-      questions.forEach((q: Question) => {
-        if (q.isselected) {
-          justificationState[q.question_uid] = q.justification || '';
-        }
-      });
-
-      setGroupedQuestions(grouped);
-      setGroupKeys(Object.keys(grouped));
-      setJustificationMap(justificationState);
-      setCurrentIndex(0); // Reset question index for new department
-    } catch (error) {
-      console.error(`Error fetching questions for department ${dept}:`, error);
-    }
-  };
 
   useEffect(() => {
+    const fetchQuestions = async (dept: string) => {
+      try {
+        const result = await getQuestionnairesList({
+          tenantId: organisationId,
+          plantId: plantId || '',
+          department: dept,
+        }).unwrap();
+
+        const questions = result?.questionsToSend || [];
+
+        const grouped = questions.reduce((acc: { [key: string]: Question[] }, curr: Question) => {
+          if (!acc[curr.question_uid]) acc[curr.question_uid] = [];
+          acc[curr.question_uid].push(curr);
+          return acc;
+        }, {});
+
+        const justificationState: { [key: string]: string } = {};
+        questions.forEach((q: Question) => {
+          if (q.isselected) {
+            justificationState[q.question_uid] = q.justification || '';
+          }
+        });
+
+        setGroupedQuestions(grouped);
+        setGroupKeys(Object.keys(grouped));
+        setJustificationMap(justificationState);
+        setCurrentIndex(0); // Reset question index for new department
+      } catch (error) {
+        console.error(`Error fetching questions for department ${dept}:`, error);
+      }
+    };
+
     if (departmentName && departmentName.trim().length > 0) {
       fetchQuestions(departmentName);
     }
-  }, [departmentName]);
+  }, [departmentName, getQuestionnairesList, organisationId, plantId]);
 
   const handleAnswerClick = (answerId: string) => {
     const currentKey = groupKeys[currentIndex];

@@ -8,7 +8,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
@@ -73,30 +73,6 @@ const CostProfilePreview = () => {
     name: 'costs',
   });
 
-  const fetchCostProfileData = async () => {
-    if (!organisationId || !plantId) return;
-
-    const payload = {
-      tenantId: organisationId,
-      plantId: plantId,
-    };
-
-    try {
-      const result = await getCostCategories(payload).unwrap();
-
-      const formattedData = result.map((item: RawCostCategory) => ({
-        id: item.id,
-        costCategory: item.costCategory.trim(),
-        costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
-      }));
-
-      replace(formattedData);
-      setHasUnsavedChanges(false);
-    } catch (error) {
-      console.error('Failed to fetch cost categories', error);
-    }
-  };
-
   const handleEditClick = () => {
     setIsEditMode(true);
     setHasUnsavedChanges(false);
@@ -131,8 +107,32 @@ const CostProfilePreview = () => {
   };
 
   useEffect(() => {
+    const fetchCostProfileData = async () => {
+      if (!organisationId || !plantId) return;
+
+      const payload = {
+        tenantId: organisationId,
+        plantId: plantId,
+      };
+
+      try {
+        const result = await getCostCategories(payload).unwrap();
+
+        const formattedData = result.map((item: RawCostCategory) => ({
+          id: item.id,
+          costCategory: item.costCategory.trim(),
+          costAsAPercentageOfRevenue: parseFloat(item.costAsAPercentageOfRevenue) || 0,
+        }));
+
+        replace(formattedData);
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        console.error('Failed to fetch cost categories', error);
+      }
+    };
+
     fetchCostProfileData();
-  }, [params]);
+  }, [getCostCategories, organisationId, plantId, replace]);
 
   // Button state logic
   const isSaveDisabled = !isEditMode || !hasUnsavedChanges || isLoadingAdd;
@@ -163,16 +163,6 @@ const CostProfilePreview = () => {
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               {/* Left Section */}
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  Cost Profile
-                </Typography>
                 <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                   {fields.length > 0
                     ? fields.map((field, index) => (

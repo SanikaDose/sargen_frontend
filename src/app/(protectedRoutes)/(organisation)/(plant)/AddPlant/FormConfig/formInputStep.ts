@@ -9,6 +9,10 @@ export const plantFormInputs: PlantFormInput[] = [
     rules: {
       required: 'Plant Name is required',
       minLength: { value: 3, message: 'Minimum 3 characters required' },
+      pattern: {
+        value: /^[A-Za-z ]+$/, // Only letters and spaces
+        message: 'Only letters allowed ',
+      },
     },
   },
   {
@@ -18,6 +22,10 @@ export const plantFormInputs: PlantFormInput[] = [
     required: true,
     rules: {
       required: 'Location is required',
+      pattern: {
+        value: /^[A-Za-z ]+$/, // Only letters and spaces
+        message: 'Only letters allowed ',
+      },
     },
   },
   {
@@ -36,9 +44,17 @@ export const plantFormInputs: PlantFormInput[] = [
     required: true,
     rules: {
       required: 'GSTIN is required',
+      minLength: {
+        value: 15,
+        message: 'GSTIN must be exactly 15 characters',
+      },
+      maxLength: {
+        value: 15,
+        message: 'GSTIN must be exactly 15 characters',
+      },
       pattern: {
-        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$/, // Example pattern for GSTIN (7 alphanumeric characters)
-        message: 'Invalid GSTIN format',
+        value: /^[A-Za-z0-9]{15}$/,
+        message: 'Enter a valid GSTIN (only letters and numbers allowed)',
       },
     },
   },
@@ -49,17 +65,51 @@ export const plantFormInputs: PlantFormInput[] = [
     required: true,
     rules: {
       required: 'Plant type is required',
+      pattern: {
+        value: /^[A-Za-z ]+$/, // Only letters and spaces
+        message: 'Only letters allowed ',
+      },
     },
   },
   {
     name: 'age',
     label: 'Plant Age (Years)',
     placeholder: 'Enter age',
-    type: 'number',
+    //type: 'number',
     required: true,
     rules: {
       required: 'Age is required',
       min: { value: 1, message: 'Age must be at least 1' },
+      pattern: {
+        value: /^[0-9]+$/,
+        message: 'Enter a valid number',
+      },
+    },
+  },
+
+  {
+    name: 'revenue',
+    label: 'Plant Revenue',
+    placeholder: 'Plant Revenue',
+    // type: 'number',
+    required: true,
+    //
+    rules: {
+      required: 'Organization Revenue is required',
+      pattern: {
+        value: /^[0-9.,]+$/,
+        message: 'Enter a valid number',
+      },
+    },
+  },
+  {
+    name: 'revenueUnit',
+    label: 'Revenue Unit',
+    placeholder: 'Select Revenue Unit',
+    isRevenueUnit: true,
+    required: true,
+    rules: {
+      required: 'Revenue unit is required',
     },
   },
   {
@@ -73,39 +123,33 @@ export const plantFormInputs: PlantFormInput[] = [
     },
   },
   {
-    name: 'revenue',
-    label: 'Plant Revenue',
-    placeholder: 'Plant Revenue',
-    type: 'number',
-    required: true,
-    rules: {
-      required: 'Revenue is required',
-      validate: (value: string | number) => {
-        const num = typeof value === 'number' ? value : parseFloat(value);
-        return num > 0 || 'Revenue must be greater than 0';
-      },
-    },
-  },
-  {
     name: 'numberOfEmployees',
     label: 'No. of Employees',
     placeholder: 'Enter total no',
-    type: 'number',
+    // type: 'number',
     required: true,
     rules: {
       required: 'Employee count is required',
       min: { value: 1, message: 'At least 1 employee required' },
+      pattern: {
+        value: /^[0-9,]+$/,
+        message: 'Enter a valid number',
+      },
     },
   },
   {
     name: 'numberOfLines',
     label: 'No. of Lines',
     placeholder: 'Enter no',
-    type: 'number',
+    //  type: 'number',
     required: true,
     rules: {
       required: 'Line count is required',
       min: { value: 1, message: 'At least 1 line required' },
+      pattern: {
+        value: /^[0-9,]+$/,
+        message: 'Enter a valid number',
+      },
     },
   },
   {
@@ -128,44 +172,4 @@ export const plantFormInputs: PlantFormInput[] = [
       required: 'Debrief date is required',
     },
   },
-
-  // {
-  //   name: 'pocFullName',
-  //   label: 'Full Name',
-  //   placeholder: 'Enter Full Name',
-  //   required: true,
-  //   rules: {
-  //     required: 'Plant Name is required',
-  //     minLength: { value: 3, message: 'Minimum 3 characters required' },
-  //   },
-  // },
-  // {
-  //   name: 'pocEmail',
-  //   label: 'Email',
-  //   placeholder: 'Enter Email',
-  //   required: true,
-  //   rules: {
-  //     required: 'Email is required',
-  //     pattern: {
-  //       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Basic email format
-  //       message: 'Enter a valid email address',
-  //     },
-  //   },
-  // },
-
-  // {
-  //   name: 'pocContactNo',
-  //   label: 'Contact Number',
-  //   placeholder: 'Enter Contact Number',
-  //   required: true,
-  //   rules: {
-  //     required: 'Contact number is required',
-  //     maxLength: { value: 10, message: 'Minimum 10 characters required' },
-  //     minLength: { value: 10, message: 'Minimum 10 characters required' },
-  //     pattern: {
-  //       value: /^[0-9]+$/,
-  //       message: 'Enter a valid number',
-  //     },
-  //   },
-  // },
 ];

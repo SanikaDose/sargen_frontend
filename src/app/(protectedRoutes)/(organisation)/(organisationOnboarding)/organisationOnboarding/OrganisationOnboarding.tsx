@@ -8,7 +8,7 @@ import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -80,43 +80,6 @@ function OrganizationOnbording() {
     mode: 'onSubmit',
   });
 
-  // useEffect(() => {
-  //   if (existingData?.data && !isFetching) {
-  //     const org = existingData.data;
-  //     console.log('orgg', org);
-  //     const fullRevenue = Number(org.revenue || 0);
-
-  //     const revenueUnits = [100000, 10000000, 1000, 1];
-  //     let unit = 1;
-  //     let normalizedRevenue = fullRevenue;
-
-  //     for (const u of revenueUnits) {
-  //       const divided = fullRevenue / u;
-  //       if (divided < 10000) {
-  //         unit = u;
-  //         normalizedRevenue = Math.floor(divided); // no toFixed here
-  //         break;
-  //       }
-  //     }
-
-  //     reset({
-  //       companyName: org.name || '',
-  //       website: org.website || '',
-  //       gstin: org.gstin || '',
-  //       country: org.country || '',
-  //       revenue: normalizedRevenue.toString(), // no forced decimal precision
-  //       revenueUnit: unit.toString(),
-  //       uom: org.uom || '',
-  //       numberOfEmployees: org.numberOfEmployees || '',
-  //       about: org.about || '',
-  //     });
-  //   }
-
-  //   if (logoData?.logoUrl) {
-  //     setLogoUrl(logoData.logoUrl);
-  //   }
-  // }, [existingData, isFetching, logoData, reset]);
-
   useEffect(() => {
     if (existingData?.data && !isFetching) {
       const org = existingData.data;
@@ -145,6 +108,7 @@ function OrganizationOnbording() {
           break;
         }
       }
+
       const revenueUnitValue = org.revenue && Number(org.revenue) > 0 ? selectedUnit.value.toString() : '';
 
       reset({
@@ -232,7 +196,7 @@ function OrganizationOnbording() {
 
     try {
       await submitOrganizationInfo({ tenantId: tenantId ?? '', body: payload }).unwrap();
-      router.push('/onboardingSuccess');
+      router.push('/AddContactPerson');
     } catch (error) {
       console.log('error ', error);
     }
@@ -264,13 +228,9 @@ function OrganizationOnbording() {
           <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
             <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)}>
               <Box className={styles.formOuterContainer}>
-                <Typography variant="h4" className={styles.heading}>
-                  Organisation Details
-                </Typography>
-
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} />
+                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
                   <Box className={styles.formFieldsBox}>
@@ -385,7 +345,7 @@ function OrganizationOnbording() {
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Orgnization"
+                              label="About Orgnization (max 200 characters)"
                               placeholder="Enter About Orgnization"
                               // required={true}
                               multiline

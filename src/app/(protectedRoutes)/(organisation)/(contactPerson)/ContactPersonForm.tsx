@@ -1,31 +1,31 @@
 'use client';
 
+import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 import { CountryOptions } from '@/app/utils/CountryOptions';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
+import InfoBox from '@/components/InfoBox/InfoBox';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
+import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader } from '@/store/globalSlice';
 import { Box, FormControl, FormHelperText, Grid, MenuItem, Paper, Select, Typography, useMediaQuery } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import defaultUserLogo from './../../../../../public/images/default-avatar-profile.png';
 import styles from './ContactPerson.module.css';
 import { ContactPersonFormProps, PocPayload } from './ContactPerson.types';
+import { contactPersonValidationRules } from './ContactPerson.validations';
 import {
   useAddPointOfContactMutation,
   useGetPointOfContactQuery,
   useLazyGetOnboardingStatusQuery,
   useUploadPocProfilePicMutation,
 } from './ContactPersonApi';
-import InfoBox from '@/components/InfoBox/InfoBox';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
-import { useDispatch } from 'react-redux';
-import Loader from '@/components/Loader/Loader';
-import { contactPersonValidationRules } from './ContactPerson.validations';
-import { setOnboardingStatus } from '@/app/(unprotectedRoutes)/login/loginSlice';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -153,7 +153,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
       const status = await getOnboardingStatus({ tenantId: tenantId ?? '' }).unwrap();
       console.log('Status response:', status);
       dispatch(setOnboardingStatus(status?.onboardingStatus));
-      router.push('/PlantOverview');
+      router.push('/onboardingSuccess');
     } catch (err) {
       console.error('Error submitting form', err);
     }
@@ -188,9 +188,6 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
           >
             <Grid container spacing={2} alignItems="stretch" sx={{ height: isMobile || isTablet ? 'auto' : '74.5vh' }}>
               <Grid size={{ xs: 12, md: isMobile ? 12 : 8 }}>
-                <Typography variant="h4" fontWeight={600} className={styles.heading}>
-                  User Profile
-                </Typography>
                 <Grid className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={profilePic} onUpload={handleUpload} />

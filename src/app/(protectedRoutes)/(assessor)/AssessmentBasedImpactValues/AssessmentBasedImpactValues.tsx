@@ -169,7 +169,6 @@ const AssessmentBasedImpactValues = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography variant="h4">Assessment Based Impact Values</Typography>
                 <Grid
                   container
                   spacing={2}

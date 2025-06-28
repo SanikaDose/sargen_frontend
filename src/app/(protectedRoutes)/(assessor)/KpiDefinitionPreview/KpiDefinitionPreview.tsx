@@ -9,7 +9,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -65,35 +65,34 @@ const KpiDefinitionPreview = () => {
     }
   }, [watchedValues.kpis, isEditMode, initialFormState.kpis]);
 
-  const fetchKpis = async () => {
-    try {
-      const response = await getKPIDefinition({ tenantId: organisationId, plantId }).unwrap();
-      const cleaned = response.map((k: Kpi) => ({
-        ...k,
-        kpi: k.kpi.trim(),
-      }));
-      setKpiList(cleaned);
-
-      const formData = {
-        kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
-      };
-
-      // Reset form with fetched data
-      reset(formData);
-
-      // Set initial state after form is reset - this is crucial
-      setTimeout(() => {
-        setInitialFormState(formData);
-        setHasUnsavedChanges(false);
-      }, 0);
-    } catch (error) {
-      console.error('Failed to fetch KPIs:', error);
-    }
-  };
-
   useEffect(() => {
+    const fetchKpis = async () => {
+      try {
+        const response = await getKPIDefinition({ tenantId: organisationId, plantId }).unwrap();
+        const cleaned = response.map((k: Kpi) => ({
+          ...k,
+          kpi: k.kpi.trim(),
+        }));
+        setKpiList(cleaned);
+
+        const formData = {
+          kpis: cleaned.map((k: { isselected: boolean }) => ({ isselected: k.isselected })),
+        };
+
+        // Reset form with fetched data
+        reset(formData);
+
+        // Set initial state after form is reset - this is crucial
+        setTimeout(() => {
+          setInitialFormState(formData);
+          setHasUnsavedChanges(false);
+        }, 0);
+      } catch (error) {
+        console.error('Failed to fetch KPIs:', error);
+      }
+    };
     fetchKpis();
-  }, []);
+  }, [getKPIDefinition, organisationId, plantId, reset]);
 
   const handleEditClick = () => {
     setIsEditMode(true);
@@ -158,16 +157,6 @@ const KpiDefinitionPreview = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: 'black',
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  KPIs Selection
-                </Typography>
                 <Grid container spacing={2} sx={{ height: '100%', justifyContent: 'center', alignItems: 'center', mt: 2 }}>
                   {kpiList.map((field, index) => (
                     <Grid

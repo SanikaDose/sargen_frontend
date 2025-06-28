@@ -22,7 +22,21 @@ import { useChangeQuestionsStatusMutation, useStartAssessmentRuleEngineMutation 
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 import { QuestionVerificationStatus } from '@/constants/enums';
 import { triggerToast } from '@/app/utils/toast';
-
+const departmentName = [
+  'R&D',
+  'Planning',
+  'Production',
+  'Quality',
+  'Maintenance',
+  'Supply Chain - Sales',
+  'Supply Chain - Purchase',
+  'Finance',
+  'Utilities',
+  'IT',
+  'Learning & Development',
+  'Management',
+  'HR',
+];
 const UserAssessmentPreview = () => {
   const params = useParams();
   const router = useRouter();
@@ -97,7 +111,7 @@ const UserAssessmentPreview = () => {
     };
 
     fetchAllDepartmentQuestions();
-  }, []);
+  }, [getQuestionnairesList, organisationId, plantId]);
 
   console.log('set grouped questions', groupedQuestions);
   console.log('set setAllQuestions questions', allQuestions);
@@ -218,7 +232,11 @@ const UserAssessmentPreview = () => {
       const currentQuestion = currentGroup[0];
       const selectedOption = currentGroup.find((q) => q.isselected);
 
-      if (currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.NOT_VERIFIED && selectedOption) {
+      if (
+        (currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.NOT_VERIFIED ||
+          currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.ASSESSOR_FLAGGED) &&
+        selectedOption
+      ) {
         try {
           const payload = {
             tenantId: organisationId,

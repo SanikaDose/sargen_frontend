@@ -3,7 +3,7 @@ import React from 'react';
 import PreviewSideBox from './PreviewSideBox';
 
 // Storybook metadata
-export default {
+const previewSideBoxMeta = {
   title: 'Components/PreviewSideBox',
   component: PreviewSideBox,
   tags: ['autodocs'], // Optional: enables Docs addon
@@ -11,3 +11,5 @@ export default {
 
 // Default story
 export const Default = () => <PreviewSideBox />;
+
+export default previewSideBoxMeta;
