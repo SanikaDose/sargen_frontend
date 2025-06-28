@@ -125,7 +125,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [isInitialized, setIsInitialized] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
-  const [openLogoutPopUp, setOpenLogoutPopUp] = React.useState(false);
+  const [, setOpenLogoutPopUp] = React.useState(false);
   // All useSelector hooks
   const onboardingStatus: string = useSelector((state: RootState) => state.tokenDecode.onboardingStatus) || '';
   const userTypeFromRedux = useSelector((state: RootState) => state.tokenDecode.decodedToken?.userType);

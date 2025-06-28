@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useCreateReportMutation, useViewReportMutation } from './ReportViewApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -21,7 +21,7 @@ export default function ReportViewPage() {
   const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
 
-  const [reportData, setReportData] = useState<string[]>(new Array());
+  const [reportData, setReportData] = useState<string[]>([]);
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.draftReport));
     dispatch(setShowAssessmentListSideBar(true));
@@ -29,8 +29,8 @@ export default function ReportViewPage() {
   }, [dispatch]);
 
   const [reportUrl, setReportUrl] = useState<string | null>(null);
-  const [createReport, { isLoading: isCreating }] = useCreateReportMutation();
-  const [viewReport, { isLoading: isViewing }] = useViewReportMutation();
+  const [createReport] = useCreateReportMutation();
+  const [viewReport] = useViewReportMutation();
 
   const [getReportData] = useGetReportDataMutation();
 
@@ -67,14 +67,14 @@ export default function ReportViewPage() {
     };
 
     if (tenantId && plantId) fetchReportData();
-  }, []);
+  }, [tenantId, plantId, getReportData]);
 
   console.log('reportData', reportData);
 
   useEffect(() => {
     const generateAndPreviewReport = async () => {
       try {
-        const createRes = await createReport({ tenantId, plantId }).unwrap();
+        await createReport({ tenantId, plantId }).unwrap();
         const viewRes = await viewReport({ tenantId, plantId }).unwrap();
 
         setReportUrl(viewRes?.url || '');
@@ -103,14 +103,16 @@ export default function ReportViewPage() {
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ flex: 1, position: 'relative' }}>
-              <iframe
-                src={reportUrl}
-                type="application/pdf"
-                title="Report Preview"
-                width="100%"
-                height="100%"
-                style={{ border: '1px solid #ccc', borderRadius: '12px' }}
-              />
+              {reportUrl && (
+                <iframe
+                  src={reportUrl}
+                  //   type="application/pdf"
+                  title="Report Preview"
+                  width="100%"
+                  height="100%"
+                  style={{ border: '1px solid #ccc', borderRadius: '12px' }}
+                />
+              )}
             </Box>
           </Box>
 

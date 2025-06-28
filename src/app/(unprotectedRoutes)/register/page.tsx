@@ -37,13 +37,21 @@ const RegisterPage = () => {
 
   const [typeOfUser, setTypeOfUser] = useState<string>('organisation');
 
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{8,16}$/;
-  const validatePassword = useCallback(
-    (value: string) =>
+  // const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{8,16}$/;
+  // const validatePassword = useCallback(
+  //   (value: string) =>
+  //     passwordRegex.test(value) ||
+  //     'Password must be 8–16 characters long, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and no spaces',
+  //   [passwordRegex],
+  // );
+
+  const validatePassword = useCallback((value: string) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{8,16}$/;
+    return (
       passwordRegex.test(value) ||
-      'Password must be 8–16 characters long, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and no spaces',
-    [passwordRegex],
-  );
+      'Password must be 8–16 characters long, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and no spaces'
+    );
+  }, []);
 
   async function handleRegister(data: RegisterFormInputs) {
     console.log('inside the handle register function');
