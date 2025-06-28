@@ -277,13 +277,13 @@ function AssessorOnboarding() {
       }
       // console.log('ornboding status', orgStatus);
 
-      if (status?.onboardingStatus === 'COMPLETED') {
-        router.push('/AssignedPlantsList');
-      }
+      // if (status?.onboardingStatus === 'COMPLETED') {
+      //   router.push('/AssignedPlantsList');
+      // }
 
-      if (status?.onboardingStatus === 'STARTED' || status?.onboardingStatus === 'NOT_STARTED') {
-        triggerToast('Please Fill All The Data', 'error');
-      }
+      // if (status?.onboardingStatus === 'STARTED' || status?.onboardingStatus === 'NOT_STARTED') {
+      //   triggerToast('Please Fill All The Data', 'error');
+      // }
     } catch (error) {
       console.log('error', error);
     }
