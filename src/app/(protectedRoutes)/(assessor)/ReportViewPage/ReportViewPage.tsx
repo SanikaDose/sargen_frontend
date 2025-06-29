@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useCreateReportMutation, useViewReportMutation } from './ReportViewApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -13,6 +13,8 @@ import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssem
 import { useDispatch } from 'react-redux';
 import { useGetReportDataMutation } from '../AddReportData/ReportDataApi';
 import ReportTextSection from '@/components/ReportCardtext/ReportTextSection';
+import Loader from '@/components/Loader/Loader';
+import { PopupModal } from '@/components/PopupModal/PopupModal';
 
 export default function ReportViewPage() {
   const router = useRouter();
@@ -21,17 +23,17 @@ export default function ReportViewPage() {
   const tenantId = params.organisationId as string;
   const plantId = params.plantId as string;
 
-  const [reportData, setReportData] = useState<string[]>(new Array());
+  const [reportData, setReportData] = useState<string[]>([]);
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.draftReport));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
-
+  const [finalSubmitModel, setFinalSubmitModel] = useState(false);
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [createReport, { isLoading: isCreating }] = useCreateReportMutation();
   const [viewReport, { isLoading: isViewing }] = useViewReportMutation();
-
+  const isLoading = isCreating || isViewing;
   const [getReportData] = useGetReportDataMutation();
 
   // Utility to strip HTML tags
@@ -69,12 +71,10 @@ export default function ReportViewPage() {
     if (tenantId && plantId) fetchReportData();
   }, []);
 
-  console.log('reportData', reportData);
-
   useEffect(() => {
     const generateAndPreviewReport = async () => {
       try {
-        const createRes = await createReport({ tenantId, plantId }).unwrap();
+        await createReport({ tenantId, plantId }).unwrap();
         const viewRes = await viewReport({ tenantId, plantId }).unwrap();
 
         setReportUrl(viewRes?.url || '');
@@ -86,8 +86,9 @@ export default function ReportViewPage() {
     generateAndPreviewReport();
   }, [tenantId, plantId, createReport, viewReport]);
 
-  console.log('url', reportUrl);
-
+  const handleFinalReportSubmit = () => {
+    setFinalSubmitModel(true);
+  };
   return (
     <Box sx={{ height: '99%' }}>
       <Paper
@@ -102,16 +103,21 @@ export default function ReportViewPage() {
       >
         <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
           <Box className={styles.formContainer} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ flex: 1, position: 'relative' }}>
-              <iframe
-                src={reportUrl}
-                type="application/pdf"
-                title="Report Preview"
-                width="100%"
-                height="100%"
-                style={{ border: '1px solid #ccc', borderRadius: '12px' }}
-              />
-            </Box>
+            {isLoading ? (
+              <Box sx={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader loading={isLoading} /> {/* Your custom loader */}
+              </Box>
+            ) : (
+              <Box sx={{ flex: 1, position: 'relative' }}>
+                <iframe
+                  src={reportUrl ?? undefined}
+                  title="Report Preview"
+                  width="100%"
+                  height="100%"
+                  style={{ border: '1px solid #ccc', borderRadius: '16px' }}
+                />
+              </Box>
+            )}
           </Box>
 
           <Box className={styles.rightSection}>
@@ -136,25 +142,34 @@ export default function ReportViewPage() {
                 // icon="left"
                 type="button"
                 onClick={() => {
-                  router.push(`AddReportData${tenantId}/${plantId}`);
+                  router.push(`/AddReportData/${tenantId}/${plantId}`);
                 }}
               >
                 Back
               </CustomButton>
 
-              <CustomButton variant="contained">
-                <Box
-                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-                  onClick={() => {
-                    router.push(`AddReportData${tenantId}/${plantId}`);
-                  }}
-                ></Box>
+              <CustomButton
+                variant="contained"
+                onClick={() => {
+                  handleFinalReportSubmit();
+                }}
+              >
                 Finalize
               </CustomButton>
             </Box>
           </Box>
         </Box>
       </Paper>
+      {finalSubmitModel && (
+        <PopupModal
+          label="Confirm Final Report Generation"
+          text="Are you sure you want to submit?"
+          primaryButtonText="Confirm"
+          secondaryButtonText="Cancel"
+          onPrimaryClick={() => router.push(`/ReportFinalizedPage/${tenantId}/${plantId}`)}
+          onSecondaryClick={() => setFinalSubmitModel(false)}
+        />
+      )}
     </Box>
   );
 }

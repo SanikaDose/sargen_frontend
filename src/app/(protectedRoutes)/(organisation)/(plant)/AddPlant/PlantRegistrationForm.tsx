@@ -41,7 +41,7 @@ const steps = [
   'About',
   'Full Name',
   'Email',
-  'Contact Number',
+  'Contact ',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
@@ -123,14 +123,26 @@ const PlantRegistrationForm = () => {
 
   // ✅ Compute activeStep based on focused field index
   const activeStep = useMemo(() => {
-    const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
+    const allInputs = [
+      ...plantFormInputs,
+      { name: 'about', label: 'About Us' },
+      { name: 'pocFullName', label: 'Full Name' },
+      { name: 'pocEmail', label: 'Email' },
+      { name: 'pocContactNo', label: 'Contact' },
+    ];
     const index = allInputs.findIndex((input) => input.name === focusedField);
     return index !== -1 ? index : 0;
   }, [focusedField]);
 
   // ✅ Compute completed steps where value length > 1
   const completedSteps = useMemo(() => {
-    const allInputs = [...plantFormInputs, { name: 'about', label: 'About Us' }];
+    const allInputs = [
+      ...plantFormInputs,
+      { name: 'about', label: 'About Us' },
+      { name: 'pocFullName', label: 'Full Name' },
+      { name: 'pocEmail', label: 'Email' },
+      { name: 'pocContactNo', label: 'Contact' },
+    ];
     return allInputs.reduce((acc: number[], input, index) => {
       const value = watchedValues?.[input.name as keyof PlantFormType];
       if (typeof value === 'string' && value.length >= 1) {
@@ -161,8 +173,7 @@ const PlantRegistrationForm = () => {
       {isLoading ? (
         <Loader loading={true} />
       ) : (
-        <Box sx={{ width: '100%', height: '99.5%' }}>
-          {' '}
+        <Box sx={{ width: '100%', height: '90%' }}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
           </Box>
@@ -174,9 +185,9 @@ const PlantRegistrationForm = () => {
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
                   </Box>
 
-                  <Box className={styles.formFieldsBox}>
+                  <Box className={styles.formFieldsBox} sx={{}}>
                     <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1}>
+                      <Grid container spacing={1} sx={{}}>
                         {plantFormInputs.map((input) => (
                           <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller

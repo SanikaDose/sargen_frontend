@@ -1,6 +1,6 @@
 export type ReportData = {
-  plantId: any;
-  orgName: any;
+  plantId: string;
+  orgName: string;
   reportName: string;
   version: string;
   plantName: string;

@@ -86,6 +86,7 @@ export default function Preview() {
           const result = await getQuestionnairesList({
             tenantId,
             plantId: plantId || '',
+            department: dept,
           }).unwrap();
           all.push(...(result?.questionsToSend || []));
         }

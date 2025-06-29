@@ -97,7 +97,7 @@ const AddReportData = () => {
     if (!isInitialLoading && questionContents.length) {
       contentRef.current = questionContents[currentQuestionIndex];
     }
-  }, [questionContents, isInitialLoading]);
+  }, [questionContents, isInitialLoading, currentQuestionIndex]);
 
   const handleContentChange = (newContent: string) => {
     contentRef.current = newContent;
@@ -161,7 +161,7 @@ const AddReportData = () => {
           return nextIndex;
         });
       } else {
-        router.push(`/ReportPage/${tenantId}/${plantId}`);
+        router.push(`/ReportViewPage/${tenantId}/${plantId}`);
       }
     } catch (error) {
       console.error('Save failed:', error);

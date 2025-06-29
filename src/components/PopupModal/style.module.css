@@ -2,15 +2,17 @@
   position: fixed;
   top: 0;
   left: 0;
+  bottom: 0; /* ✅ Add this */
+  right: 0; /* ✅ Add this */
   width: 100vw;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.774);
-  backdrop-filter: blur(100px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999; /* Ensure it's above everything else */
 }
 
 .modal {
