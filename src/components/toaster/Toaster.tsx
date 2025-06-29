@@ -65,7 +65,7 @@ export default function Toaster() {
             color: '#FFFFFF !important',
           },
           backgroundColor:
-            severity === 'success' ? '#157759' : severity === 'error' ? '#e71d36' : severity === 'warning' ? '#fcca46' : '#0353a4',
+            severity === 'success' ? '#4caf50' : severity === 'error' ? '#e71d36' : severity === 'warning' ? '#fcca46' : '#0353a4',
           margin: {
             xs: '0px 0px',
             sm: '-14px',
