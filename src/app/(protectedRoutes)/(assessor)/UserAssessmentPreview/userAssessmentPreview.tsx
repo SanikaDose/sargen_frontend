@@ -325,7 +325,7 @@ const UserAssessmentPreview = () => {
   };
 
   return (
-    <Box component="form" sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%', gap: 1 }}>
+    <Box component="form" sx={{ height: '99%' }}>
       <Paper
         className={styles.formSection}
         elevation={2}

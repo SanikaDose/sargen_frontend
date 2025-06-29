@@ -185,53 +185,50 @@ const PlanningHorizonPreview = () => {
           >
             <Box sx={{ width: '100%', height: '100%', display: 'flex' }} className={styles.bothSections}>
               <Box className={styles.formContainer}>
-                <Grid
-                  container
-                  spacing={2}
-                  sx={{
-                    height: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    mt: 2,
-                  }}
-                >
-                  <Controller
-                    name="selectedHorizonId"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        {horizonOptions.map((option) => {
-                          const isSelected = field.value === option.id;
-                          const isDisabled = !isEditMode;
+                {isLoadingGet ? (
+                  <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                    <Loader loading />
+                  </Box>
+                ) : (
+                  <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                      width: '100%',
 
-                          return (
-                            <Grid
-                              key={option.id}
-                              size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 5 }}
-                              sx={{
-                                height: '10%',
-                                '& *': {
-                                  cursor: isEditMode ? 'inherit' : 'not-allowed !important',
-                                },
-                              }}
-                            >
-                              <Card
-                                label={option.planningHorizon}
-                                isSelected={isSelected}
-                                isDisabled={isDisabled}
-                                onToggle={() => {
-                                  if (isEditMode) {
-                                    field.onChange(option.id);
-                                  }
+                      alignItems: 'center',
+                      display: 'flex',
+                      justifyContent: 'cenetr',
+                    }}
+                  >
+                    <Controller
+                      name="selectedHorizonId"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          {horizonOptions.map((option) => {
+                            const isSelected = field.value === option.id;
+
+                            return (
+                              <Box
+                                key={option.id}
+                                sx={{
+                                  display: 'flex',
+                                  width: '40%',
+                                  alignItems: 'center',
+                                  marginLeft: '80px',
+                                  marginTop: '15px',
                                 }}
-                              />
-                            </Grid>
-                          );
-                        })}
-                      </>
-                    )}
-                  />
-                </Grid>
+                              >
+                                <Card label={option.planningHorizon} isSelected={isSelected} onToggle={() => field.onChange(option.id)} />
+                              </Box>
+                            );
+                          })}
+                        </>
+                      )}
+                    />
+                  </Grid>
+                )}
               </Box>
 
               <Box className={styles.rightSection}>

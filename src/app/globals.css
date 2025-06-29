@@ -5,9 +5,10 @@ body {
 }
 
 body {
+  height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;  height: 100vh;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {

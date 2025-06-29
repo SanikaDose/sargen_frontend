@@ -44,6 +44,7 @@ import { ICONS } from '../utils/iconsMap';
 import { getValueLocalStorage } from '../utils/localStorageGetterSetter';
 import { useLazyGetPointOfContactQuery } from './(organisation)/(contactPerson)/ContactPersonApi';
 import { setPlantAssessmentDepartment } from './(plantAssessment)/plantAssementSlice';
+import { useLazyGetAssessorInfoQuery } from './(assessor)/assessorOnboardingForm/AssessorOnboarding.Api';
 
 const drawerWidth = 240;
 
@@ -122,6 +123,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   // All useState hooks
   const [tenantId, setTenantId] = React.useState<string | null>(null);
+  const [assessmentOrgId, setAssessmentOrgId] = React.useState<string | null>(null);
   const [isInitialized, setIsInitialized] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [decodedToken, setDecodedToken] = React.useState<Token | null>(null);
@@ -139,7 +141,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const userDesignation = useSelector((state: RootState) => state.global.userDesignation);
   const userLogoUrl = useSelector((state: RootState) => state.global.userLogoUrl);
   const [triggerGetPointOfContact, { data: userPointOfConnectData }] = useLazyGetPointOfContactQuery();
-
+  const [triggerGetAssessorInfo, { data: assessorInformation }] = useLazyGetAssessorInfoQuery();
   // Derived values
 
   const open = isDesktop ? true : mobileOpen;
@@ -168,17 +170,23 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       return;
     }
     if (storedTenantId && userType && userType[0] === 'ASSESSOR') {
-      setTenantId((params.OrganisationId ?? params.organisationId) as string);
+      setTenantId(storedTenantId);
+      setAssessmentOrgId((params.OrganisationId ?? params.organisationId) as string);
       setIsInitialized(true);
     }
   }, [router, userType, params.OrganisationId, params.organisationId]);
 
   React.useEffect(() => {
-    if (tenantId) {
+    if (tenantId && userType && userType[0] === 'PLATFORMUSER') {
       triggerGetPointOfContact(tenantId);
       setIsInitialized(true);
     }
-  }, [tenantId, triggerGetPointOfContact]);
+
+    if (tenantId && userType && userType[0] === 'ASSESSOR') {
+      triggerGetAssessorInfo(tenantId);
+      setIsInitialized(true);
+    }
+  }, [tenantId, triggerGetPointOfContact, triggerGetAssessorInfo]);
 
   // Set sidebar items based on onboarding status and user type
   React.useEffect(() => {
@@ -213,14 +221,27 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }, [onboardingStatus, userType, showAssessmentListSideBar, dispatch]);
 
   React.useEffect(() => {
-    if (userPointOfConnectData && userPointOfConnectData.data?.firstName && userPointOfConnectData.data?.lastName) {
-      const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
-      dispatch(setUserFullName(fullName));
-      dispatch(setUserDesignation(userPointOfConnectData.data.designation));
-      dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
-      console.log('fullName', userPointOfConnectData.data);
+    if (userType && userType[0] === 'PLATFORMUSER') {
+      if (userPointOfConnectData && userPointOfConnectData.data?.firstName && userPointOfConnectData.data?.lastName) {
+        const fullName = `${userPointOfConnectData.data.firstName} ${userPointOfConnectData.data.lastName}`;
+        dispatch(setUserFullName(fullName));
+        dispatch(setUserDesignation(userPointOfConnectData.data.designation));
+        dispatch(setUserLogoUrl(userPointOfConnectData.data.profilePic));
+        console.log('fullName', userPointOfConnectData.data);
+      }
     }
-  }, [userPointOfConnectData, dispatch]);
+
+    if (userType && userType[0] === 'ASSESSOR') {
+      console.log(assessorInformation && assessorInformation.data[0].formData.firstName && assessorInformation.data[0].formData.lastName);
+
+      if (assessorInformation && assessorInformation.data[0].formData.firstName && assessorInformation.data[0].formData.lastName) {
+        const fullName = `${assessorInformation.data[0].formData.firstName} ${assessorInformation.data[0].formData.lastName}`;
+        dispatch(setUserFullName(fullName));
+        dispatch(setUserDesignation('ASSESSOR'));
+        dispatch(setUserLogoUrl(assessorInformation.data[0].formData.userLogo));
+      }
+    }
+  }, [userPointOfConnectData, assessorInformation, dispatch]);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -300,17 +321,34 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     // ✅ Determine navigation path
     let navigationPath = '';
 
-    if (isDepartment) {
-      if (tenantId && plantId) {
-        navigationPath = `/Questionaire/${tenantId}/${plantId}`;
-      }
-    } else {
-      if (tenantId && plantId) {
-        navigationPath = `${link}/${tenantId}/${plantId}`;
+    if (userType && userType[0] === 'PLATFORMUSER') {
+      if (isDepartment) {
+        if (tenantId && plantId) {
+          navigationPath = `/Questionaire/${tenantId}/${plantId}`;
+        }
       } else {
-        navigationPath = `${link}`;
+        if (tenantId && plantId) {
+          navigationPath = `${link}/${tenantId}/${plantId}`;
+        } else {
+          navigationPath = `${link}`;
+        }
       }
     }
+
+    if (userType && userType[0] === 'ASSESSOR') {
+      if (isDepartment) {
+        if (tenantId && assessmentOrgId && plantId) {
+          navigationPath = `/Questionaire/${assessmentOrgId}/${plantId}`;
+        }
+      } else {
+        if (tenantId && assessmentOrgId && plantId) {
+          navigationPath = `${link}/${assessmentOrgId}/${plantId}`;
+        } else {
+          navigationPath = `${link}`;
+        }
+      }
+    }
+
     console.log('navigationPath', navigationPath);
 
     router.push(navigationPath);
