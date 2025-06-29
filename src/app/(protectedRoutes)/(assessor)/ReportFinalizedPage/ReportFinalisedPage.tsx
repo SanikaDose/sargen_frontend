@@ -5,7 +5,7 @@ import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import {
   useChangeAssessmentStatusMutation,
-  useCreateReportMutation,
+  // useCreateReportMutation,
   useDownloadReportMutation,
   useViewReportMutation,
 } from './ReportFinalizedPageApi';
@@ -34,11 +34,11 @@ export default function ReportFinalisedPage() {
   }, [dispatch]);
 
   const [reportUrl, setReportUrl] = useState<string | null>(null);
-  const [createReport, { isLoading: isCreating }] = useCreateReportMutation();
+  // const [createReport, { isLoading: isCreating }] = useCreateReportMutation();
   const [downloadReport, { isLoading: isDownloading }] = useDownloadReportMutation();
   const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
   const [viewReport, { isLoading: isViewing }] = useViewReportMutation();
-  const isLoading = isCreating || isViewing || assesmentStatusLoading || isDownloading;
+  const isLoading = isViewing || assesmentStatusLoading || isDownloading;
   const [getReportData] = useGetReportDataMutation();
 
   // Utility to strip HTML tags
@@ -79,7 +79,7 @@ export default function ReportFinalisedPage() {
   useEffect(() => {
     const generateAndPreviewReport = async () => {
       try {
-        await createReport({ tenantId, plantId }).unwrap();
+        // await createReport({ tenantId, plantId }).unwrap();
         const viewRes = await viewReport({ tenantId, plantId }).unwrap();
 
         setReportUrl(viewRes?.url || '');
@@ -89,7 +89,7 @@ export default function ReportFinalisedPage() {
     };
 
     generateAndPreviewReport();
-  }, [tenantId, plantId, createReport, viewReport]);
+  }, [tenantId, plantId, viewReport]);
   const handleDownloadReport = async () => {
     const payload = { tenantId, plantId };
 
