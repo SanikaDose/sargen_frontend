@@ -1,19 +1,29 @@
 .sidebar {
   position: fixed;
   bottom: 20px;
-  left: 20px;
   z-index: 1000;
   background: white;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   padding: 8px;
   transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.left {
+  left: 20px;
+}
+
+.right {
+  right: 20px;
+}
+
+.open {
+  /* Add any additional styles when open */
 }
 
 .toggleButton {
-    /* position: absolute; */
-  /* top: 20px; */
-  /* left: -50px; */
   background: #1976d2;
   color: white;
   border: none;
@@ -21,13 +31,13 @@
   border-radius: 10%;
   cursor: pointer;
   font-size: 1.25rem;
+  align-self: flex-end;
 }
 
 .iconList {
   list-style: none;
   padding: 0;
   margin: 8px 0 0;
-  background-color: red;
 }
 
 .iconItem {
@@ -38,13 +48,14 @@
   color: #333;
 }
 
-.iconItem span {
-  font-size: 0.9rem;
+.alignLeft {
+  align-items: flex-start;
 }
 
-/* Show only on small screens */
-@media (min-width: 600px) {
-  .sidebar {
-    display: none;
-  }
+.alignRight {
+  align-items: flex-end;
+}
+
+.iconItem span {
+  font-size: 0.9rem;
 }

@@ -30,7 +30,7 @@ const KpiDefinitionPreview = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setPageNameHeader(pagesNames.plantAssessmentKpiDefinition));
+    dispatch(setPageNameHeader(pagesNames.assessorKpiDefinitionPreview));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
     dispatch(setActiveStep(2));

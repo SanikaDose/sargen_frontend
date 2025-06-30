@@ -3,9 +3,9 @@
 // import { report } from 'process';
 
 export const pagesNames = {
-  organisationOnboardingInfo: 'Onboarding/ Organisation',
-  plantOnboarding: 'Onboarding/ Plant Registration',
-  plantEditOnboarding: 'Onboarding/ Edit Plant Registration',
+  organisationOnboardingInfo: 'Onboarding / Organisation',
+  plantOnboarding: 'Onboarding / Plant Registration',
+  plantEditOnboarding: 'Onboarding / Edit Plant Registration',
   organisationOnboardingContactPerson: 'Onboarding / Contact Person',
   organisationOnboardedPlantOverView: 'Plant / Overview',
   plantAssessmentIndustrySelection: 'Assessment / Industry Selection',
