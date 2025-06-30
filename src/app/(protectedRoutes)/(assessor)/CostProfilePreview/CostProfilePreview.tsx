@@ -32,7 +32,7 @@ const CostProfilePreview = () => {
   const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setPageNameHeader(pagesNames.plantAssessmentCostProfile));
+    dispatch(setPageNameHeader(pagesNames.assessorCostProfilePreview));
     dispatch(setShowAssessmentListSideBar(true));
     dispatch(setPlantAssessmentDepartment(''));
     dispatch(setActiveStep(3));
@@ -209,8 +209,8 @@ const CostProfilePreview = () => {
                     costValue={overAllCostProfile}
                     onChange={() => {}}
                     readonly
-                    boxBackgroundColor="#10557C"
-                    textColor="#FFFFFF"
+                    boxBackgroundColor="#f5fafd"
+                    textColor="#000000"
                   />
                 </Box>
               </Box>
