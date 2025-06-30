@@ -100,8 +100,9 @@ export const apiRoutes = {
   },
   report: {
     root: 'report',
-    createReport: '/create-report/:tenantId',
+    createReport: '/create-report',
     previewReport: '/preview-report',
+    finalizedReport: '/get-report-preview-without-watermark',
     downloadreport: '/download-report',
     emailNotificationForReport: '/email-notification-after-save-report',
     getAllReports: '/get-all-reports',

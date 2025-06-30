@@ -5,23 +5,23 @@ import { AsseessmentStatus } from '@/constants/enums';
 
 export const ReportApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
-    createReport: builder.mutation({
-      query: (body) => ({
-        url: `${apiRoutes.report.root}${apiRoutes.report.createReport}`,
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: ['SpecificPlantInfo'],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        await rtkAPIToast(queryFulfilled, dispatch, {
-          successMessage: 'Generating report',
-          errorMessage: 'Failed To Generate Report!',
-        });
-      },
-    }),
+    // createReport: builder.mutation({
+    //   query: (body) => ({
+    //     url: `${apiRoutes.report.root}${apiRoutes.report.createReport}`,
+    //     method: 'POST',
+    //     body,
+    //   }),
+    //   invalidatesTags: ['SpecificPlantInfo'],
+    //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+    //     await rtkAPIToast(queryFulfilled, dispatch, {
+    //       successMessage: 'Generating report',
+    //       errorMessage: 'Failed To Generate Report!',
+    //     });
+    //   },
+    // }),
     viewReport: builder.mutation({
       query: (body) => ({
-        url: `${apiRoutes.report.root}${apiRoutes.report.previewReport}`,
+        url: `${apiRoutes.report.root}${apiRoutes.report.finalizedReport}`,
         method: 'POST',
         body,
       }),
@@ -62,4 +62,4 @@ export const ReportApi = protectedApi.injectEndpoints({
   }),
 });
 
-export const { useCreateReportMutation, useViewReportMutation, useDownloadReportMutation, useChangeAssessmentStatusMutation } = ReportApi;
+export const { useViewReportMutation, useDownloadReportMutation, useChangeAssessmentStatusMutation } = ReportApi;

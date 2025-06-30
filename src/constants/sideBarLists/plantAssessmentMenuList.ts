@@ -186,7 +186,7 @@ export const assessorUserAssessmentList = [
   },
 
   {
-    text: 'Report data',
+    text: 'Report Data',
     icon: 'AssessmentIcon',
     matchKeyword: 'AddReportData',
     linkRoute: '/AddReportData',
