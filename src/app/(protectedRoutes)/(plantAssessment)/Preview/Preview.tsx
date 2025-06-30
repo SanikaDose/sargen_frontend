@@ -54,7 +54,6 @@ export default function Preview() {
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
-  const [getAllQuestionsLoading, setAllQuestionsLoading] = useState(false);
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
   const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
@@ -206,7 +205,7 @@ export default function Preview() {
               <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Loader loading={true} />
               </Box>
-            ) : isLoading || getAllQuestionsLoading || isSaving ? (
+            ) : isLoading || isSaving ? (
               <>
                 <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 
