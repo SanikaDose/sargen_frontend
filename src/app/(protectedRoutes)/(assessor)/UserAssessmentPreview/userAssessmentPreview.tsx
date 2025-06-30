@@ -264,6 +264,7 @@ const UserAssessmentPreview = () => {
       setCurrentIndex((prev) => prev + 1);
     }
   };
+  console.log('groupKeys', groupKeys[0]);
 
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];

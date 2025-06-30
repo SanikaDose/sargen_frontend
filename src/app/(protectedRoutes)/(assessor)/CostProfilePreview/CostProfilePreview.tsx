@@ -209,7 +209,7 @@ const CostProfilePreview = () => {
                     costValue={overAllCostProfile}
                     onChange={() => {}}
                     readonly
-                    boxBackgroundColor="#f5fafd"
+                    boxBackgroundColor={parseFloat(overAllCostProfile) >= 100 ? '#f15353' : '#f5fafd'}
                     textColor="#000000"
                   />
                 </Box>
