@@ -84,7 +84,7 @@ export default function ReportViewPage() {
     };
 
     generateAndPreviewReport();
-  }, [tenantId, plantId, createReport, viewReport]);
+  }, []);
 
   const handleFinalReportSubmit = () => {
     setFinalSubmitModel(true);

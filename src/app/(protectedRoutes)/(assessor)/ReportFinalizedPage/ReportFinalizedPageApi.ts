@@ -19,7 +19,7 @@ export const ReportApi = protectedApi.injectEndpoints({
     //     });
     //   },
     // }),
-    viewReport: builder.mutation({
+    viewFinalReport: builder.mutation({
       query: (body) => ({
         url: `${apiRoutes.report.root}${apiRoutes.report.finalizedReport}`,
         method: 'POST',
@@ -62,4 +62,4 @@ export const ReportApi = protectedApi.injectEndpoints({
   }),
 });
 
-export const { useViewReportMutation, useDownloadReportMutation, useChangeAssessmentStatusMutation } = ReportApi;
+export const { useViewFinalReportMutation, useDownloadReportMutation, useChangeAssessmentStatusMutation } = ReportApi;
