@@ -1,22 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper, Typography } from '@mui/material';
-import styles from './AssessmentBasedImpactValues.module.css';
+import Card from '@/components/Card/Card';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
+import Loader from '@/components/Loader/Loader';
+import { pagesNames } from '@/constants/pagesHeaderNames';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
+import styles from './AssessmentBasedImpactValues.module.css';
 import {
   useGetImpactValuesMutation,
   useGetSelectedImpactValuesMutation,
   useSelectImpactValuesMutation,
 } from './AssessmentBasedImpactValuesApi';
-import Card from '@/components/Card/Card';
-import { useDispatch } from 'react-redux';
-import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { pagesNames } from '@/constants/pagesHeaderNames';
-import Loader from '@/components/Loader/Loader';
-import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 const AssessmentBasedImpactValues = () => {
   const params = useParams();
@@ -104,7 +104,7 @@ const AssessmentBasedImpactValues = () => {
       } else if (prev.length < 4) {
         return [...prev, dimension];
       } else {
-        alert('You can select only 4 impact dimensions.');
+        // alert('You can select only 4 impact dimensions.');
         return prev;
       }
     });
@@ -112,7 +112,7 @@ const AssessmentBasedImpactValues = () => {
 
   const handleSave = async () => {
     if (selectedDimensions.length !== 4) {
-      alert('You must select exactly 4 impact dimensions.');
+      // alert('You must select exactly 4 impact dimensions.');
       return;
     }
 
@@ -181,6 +181,7 @@ const AssessmentBasedImpactValues = () => {
                 >
                   {dimensionData.map(({ dimension, value }) => {
                     const isSelected = selectedDimensions.includes(dimension); // Direct comparison
+                    const isDisabled = !isSelected && selectedDimensions.length >= 4;
                     return (
                       <Grid size={{ xs: 12, sm: 6, md: 4 }} key={dimension}>
                         <Card
@@ -206,7 +207,8 @@ const AssessmentBasedImpactValues = () => {
                             </Box>
                           }
                           isSelected={isSelected}
-                          onToggle={() => toggleSelection(dimension)}
+                          isDisabled={isDisabled}
+                          onToggle={() => !isDisabled && toggleSelection(dimension)}
                         />
                       </Grid>
                     );
@@ -236,7 +238,7 @@ const AssessmentBasedImpactValues = () => {
                   <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()}>
                     Back
                   </CustomButton>
-                  <CustomButton variant="contained" icon="save" type="submit">
+                  <CustomButton variant="contained" icon="save" type="submit" disabled={selectedDimensions.length !== 4}>
                     Save
                   </CustomButton>
                 </Box>
