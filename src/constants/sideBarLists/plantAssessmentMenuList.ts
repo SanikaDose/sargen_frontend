@@ -176,11 +176,13 @@ export const assessorUserAssessmentList = [
     text: 'Dimension selection',
     icon: 'TuneIcon',
     linkRoute: '/AssessmentBasedImpactValues',
+    matchKeyword: 'AssessmentBasedImpactValues',
     show: false,
   },
   {
     text: 'Solution Selection',
     icon: 'ChecklistIcon',
+    matchKeyword: 'AssessmentSolution',
     linkRoute: '/AssessmentSolution',
     show: false,
   },
