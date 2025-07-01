@@ -91,8 +91,6 @@ const AddReportData = () => {
     if (tenantId && plantId) fetchReportData();
   }, [tenantId, plantId, getReportData]);
 
-  console.log('questionContents', questionContents);
-
   useEffect(() => {
     if (!isInitialLoading && questionContents.length) {
       contentRef.current = questionContents[currentQuestionIndex];
@@ -104,8 +102,6 @@ const AddReportData = () => {
 
     setQuestionContents((prev) => {
       const updated = [...prev];
-
-      console.log('updated', updated);
 
       updated[currentQuestionIndex] = newContent;
       return updated;

@@ -21,7 +21,17 @@ const Card: React.FC<CardProps> = ({ label, value, isSelected, isDisabled = fals
         cursor: isDisabled ? 'not-allowed' : 'pointer',
       }}
     >
-      <Checkbox checked={isSelected} disabled={isDisabled} onClick={(e) => e.stopPropagation()} onChange={onToggle} />
+      <Checkbox
+        checked={isSelected}
+        disabled={isDisabled}
+        onClick={(e) => e.stopPropagation()}
+        onChange={onToggle}
+        sx={{
+          '&.Mui-disabled': {
+            color: isSelected ? 'primary.main' : 'rgba(0, 0, 0, 0.6)',
+          },
+        }}
+      />
       <Typography className={styles.kpiText}>{label}</Typography>
       {value && (
         <Typography className={styles.kpiText} style={{ fontWeight: 600 }}>

@@ -20,6 +20,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
         display: 'flex',
         flexDirection: 'column',
         ...sx,
+        overflowY: 'auto',
       }}
     >
       {heading && (

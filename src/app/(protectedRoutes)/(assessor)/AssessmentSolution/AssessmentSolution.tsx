@@ -95,7 +95,6 @@ const AssessmentSolution = () => {
       }
     } catch (error) {
       console.error('Save failed:', error);
-      alert('Something went wrong while saving solutions');
     }
   };
 

@@ -208,6 +208,7 @@ const PlanningHorizonPreview = () => {
                         <>
                           {horizonOptions.map((option) => {
                             const isSelected = field.value === option.id;
+                            const isDisabled = !isEditMode;
 
                             return (
                               <Box
@@ -220,7 +221,12 @@ const PlanningHorizonPreview = () => {
                                   marginTop: '15px',
                                 }}
                               >
-                                <Card label={option.planningHorizon} isSelected={isSelected} onToggle={() => field.onChange(option.id)} />
+                                <Card
+                                  label={option.planningHorizon}
+                                  isSelected={isSelected}
+                                  isDisabled={isDisabled}
+                                  onToggle={() => field.onChange(option.id)}
+                                />
                               </Box>
                             );
                           })}

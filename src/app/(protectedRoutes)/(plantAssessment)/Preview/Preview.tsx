@@ -54,48 +54,29 @@ export default function Preview() {
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
-  const [getAllQuestionsLoading, setAllQuestionsLoading] = useState(false);
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
   const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
-
   useEffect(() => {
-    const departmentName = [
-      'R&D',
-      'Planning',
-      'Production',
-      'Quality',
-      'Maintenance',
-      'Supply Chain - Sales',
-      'Supply Chain - Purchase',
-      'Finance',
-      'Utilities',
-      'IT',
-      'Learning & Development',
-      'Management',
-      'HR',
-    ];
-
     const fetchAllDepartmentQuestions = async () => {
-      setAllQuestionsLoading(true); // Start loading
-
       try {
         const all: Question[] = [];
 
-        for (const dept of departmentName) {
-          const result = await getQuestionnairesList({
-            tenantId,
-            plantId: plantId || '',
-            department: dept,
-          }).unwrap();
-          all.push(...(result?.questionsToSend || []));
-        }
+        const result = await getQuestionnairesList({
+          tenantId: organisationId,
+          plantId: plantId || '',
+          // department: dept,
+        }).unwrap();
+        all.push(...(result?.questionsToSend || []));
 
         const grouped: { [key: string]: Question[] } = {};
         const justification: { [key: string]: string } = {};
+        console.log('grouped questions', grouped);
 
         all.forEach((q) => {
+          // Create a unique composite key
           const key = `${q.question_uid}__${q.department}__${q.context}`;
+
           if (!grouped[key]) grouped[key] = [];
           grouped[key].push(q);
 
@@ -120,13 +101,11 @@ export default function Preview() {
         setCurrentIndex(0);
       } catch (error) {
         console.error('Failed to load questions:', error);
-      } finally {
-        setAllQuestionsLoading(false); // Always stop loading
       }
     };
 
     fetchAllDepartmentQuestions();
-  }, [getQuestionnairesList, plantId, tenantId]);
+  }, [getQuestionnairesList, organisationId, plantId]);
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return; //if edit is off then it will return
@@ -226,7 +205,7 @@ export default function Preview() {
               <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                 <Loader loading={true} />
               </Box>
-            ) : isLoading || getAllQuestionsLoading || isSaving ? (
+            ) : isLoading || isSaving ? (
               <>
                 <Skeleton variant="text" width="40%" height={32} sx={{ mb: 2 }} />
 

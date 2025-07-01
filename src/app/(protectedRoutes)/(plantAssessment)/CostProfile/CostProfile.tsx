@@ -181,8 +181,8 @@ const CostProfile = () => {
                     costValue={overAllCostProfile}
                     onChange={() => {}}
                     readonly
-                    boxBackgroundColor={parseFloat(overAllCostProfile) >= 100 ? '#f15353' : '#10557C'}
-                    textColor="#FFFFFF"
+                    boxBackgroundColor={parseFloat(overAllCostProfile) >= 100 ? '#f15353' : '#f5fafd'}
+                    textColor="#000000"
                   />
                 </Box>
               </Box>

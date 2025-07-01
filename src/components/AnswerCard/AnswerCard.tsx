@@ -3,7 +3,7 @@ import { Box, Typography, Link } from '@mui/material';
 import type { AnswerCardProps } from './AnswerCard.types';
 import styles from './style.module.css';
 
-const MAX_PREVIEW_LENGTH = 100;
+const MAX_PREVIEW_LENGTH = 260;
 
 const AnswerCard = ({
   answerNumber = 1,
@@ -13,7 +13,6 @@ const AnswerCard = ({
 }: AnswerCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const showReadMore = answerText.length > MAX_PREVIEW_LENGTH;
-  // console.log('show read more', showReadMore);
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
@@ -33,9 +32,7 @@ const AnswerCard = ({
         mb: 1.5,
         transition: 'background-color 0.3s ease',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        gap: 1,
+        gap: 2,
       }}
     >
       <Typography
@@ -58,10 +55,12 @@ const AnswerCard = ({
         <Link
           underline="hover"
           sx={{
-            alignSelf: 'flex-start',
+            alignSelf: 'flex-end',
             fontSize: '0.875rem',
             fontWeight: 500,
             color: isSelected ? '#fff' : '#10557C',
+            display: 'flex',
+            width: '9%',
           }}
           onClick={toggleExpand}
         >

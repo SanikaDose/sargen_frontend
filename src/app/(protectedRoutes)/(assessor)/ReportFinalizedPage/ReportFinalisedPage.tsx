@@ -3,22 +3,18 @@
 import { useEffect, useState } from 'react';
 import { Box, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  useChangeAssessmentStatusMutation,
-  // useCreateReportMutation,
-  useDownloadReportMutation,
-  useViewReportMutation,
-} from './ReportFinalizedPageApi';
+import { useChangeAssessmentStatusMutation, useDownloadReportMutation, useViewFinalReportMutation } from './ReportFinalizedPageApi';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 
 import styles from '../AssessmentBasedImpactValues/AssessmentBasedImpactValues.module.css';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { setPageNameHeader } from '@/store/globalSlice';
+import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { useDispatch } from 'react-redux';
 import { useGetReportDataMutation } from '../AddReportData/ReportDataApi';
 import ReportTextSection from '@/components/ReportCardtext/ReportTextSection';
 import Loader from '@/components/Loader/Loader';
 import { AsseessmentStatus } from '@/constants/enums';
+import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 
 export default function ReportFinalisedPage() {
   const router = useRouter();
@@ -31,13 +27,15 @@ export default function ReportFinalisedPage() {
 
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.reportFinalized));
+    dispatch(setShowAssessmentListSideBar(false));
+    dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
 
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   // const [createReport, { isLoading: isCreating }] = useCreateReportMutation();
   const [downloadReport, { isLoading: isDownloading }] = useDownloadReportMutation();
   const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
-  const [viewReport, { isLoading: isViewing }] = useViewReportMutation();
+  const [viewFinalizedReport, { isLoading: isViewing }] = useViewFinalReportMutation();
   const isLoading = isViewing || assesmentStatusLoading || isDownloading;
   const [getReportData] = useGetReportDataMutation();
 
@@ -79,8 +77,7 @@ export default function ReportFinalisedPage() {
   useEffect(() => {
     const generateAndPreviewReport = async () => {
       try {
-        // await createReport({ tenantId, plantId }).unwrap();
-        const viewRes = await viewReport({ tenantId, plantId }).unwrap();
+        const viewRes = await viewFinalizedReport({ tenantId, plantId }).unwrap();
 
         setReportUrl(viewRes?.url || '');
       } catch (err) {
@@ -89,7 +86,7 @@ export default function ReportFinalisedPage() {
     };
 
     generateAndPreviewReport();
-  }, [tenantId, plantId, viewReport]);
+  }, []);
   const handleDownloadReport = async () => {
     const payload = { tenantId, plantId };
 
