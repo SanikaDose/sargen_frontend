@@ -21,6 +21,7 @@
     "@mui/x-data-grid": "^8.5.0",
     "@react-pdf-viewer/core": "^3.12.0",
     "@reduxjs/toolkit": "^2.8.2",
+    "document": "^0.4.7",
     "exceljs": "^4.4.0",
     "highlight.js": "^11.11.1",
     "i18next": "^25.2.1",
