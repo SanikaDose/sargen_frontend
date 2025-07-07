@@ -1,0 +1,12 @@
+.plantImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+
+.plantImage img {
+  background-color: rgba(243, 243, 243, 0.767);
+  object-fit: contain;
+  object-position: center;
+}
