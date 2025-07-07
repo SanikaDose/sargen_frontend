@@ -167,10 +167,36 @@ const ViewPlantDetails = ({}: AssessorProps) => {
 
         <Box display="flex" alignItems="flex-start" gap={3} mb={3}>
           {plant.plantLogo ? (
-            <Avatar variant="circular" src={plant.plantLogo} alt={plant.name} sx={{ width: 100, height: 100 }} />
+            <Avatar
+              variant="square"
+              src={plant.plantLogo}
+              alt={plant.name}
+              sx={{
+                width: 100,
+                height: 100,
+                borderRadius: '16px',
+                backgroundColor: 'rgba(243, 243, 243, 0.767)',
+                objectFit: 'contain',
+                objectPosition: 'center',
+                border: '2px solid #d8d8d8',
+                padding: 1,
+              }}
+            />
           ) : (
-            <Avatar sx={{ width: 100, height: 100 }} variant="circular">
-              <FactoryIcon sx={{ fontSize: '40px' }} />
+            <Avatar
+              sx={{
+                width: 100,
+                height: 100,
+                justifyContent: 'center',
+                borderRadius: '16px',
+                alignItems: 'center',
+                backgroundColor: 'rgba(243, 243, 243, 0.767)',
+                border: '2px solid #d8d8d8',
+                padding: 1,
+              }}
+              variant="square"
+            >
+              <FactoryIcon sx={{ fontSize: '40px', borderRadius: '16px' }} />
             </Avatar>
           )}
 
