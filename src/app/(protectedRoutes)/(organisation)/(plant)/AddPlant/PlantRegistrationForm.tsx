@@ -96,7 +96,7 @@ const PlantRegistrationForm = () => {
       console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
-      const newPlantId = response?.id;
+      const newPlantId = response?.data.id;
 
       // ✅ Step 3: Upload image only if user uploaded one
       if (logoUrl && newPlantId && !logoUrl.includes('default-logo-image')) {
