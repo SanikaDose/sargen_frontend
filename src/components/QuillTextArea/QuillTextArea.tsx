@@ -14,51 +14,36 @@ const QuillTextArea: React.FC<QuillTextAreaProps> = ({ value, onChange, placehol
   useEffect(() => {
     if (!editorRef.current || !toolbarRef.current || initializedRef.current) return;
 
-    const toolbarOptions = {
-      full: [
-        [{ header: [1, 2, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ color: [] }, { background: [] }],
-        ['link'],
-        ['clean'],
-      ],
-    };
+    import('quill').then((QuillModule) => {
+      const Quill = QuillModule.default;
 
-    quillRef.current = new Quill(editorRef.current, {
-      theme: 'snow',
-      placeholder,
-      readOnly,
-      modules: {
-        toolbar: {
-          container: toolbarRef.current,
-          handlers: {},
+      quillRef.current = new Quill(editorRef.current!, {
+        theme: 'snow',
+        placeholder,
+        readOnly,
+        modules: {
+          toolbar: {
+            container: toolbarRef.current!,
+          },
+          clipboard: { matchVisual: false },
         },
-        clipboard: { matchVisual: false },
-      },
-    });
+      });
 
-    // Manually add toolbar options to the custom toolbar
-    const quillToolbarModule = quillRef.current.getModule('toolbar');
-    if (quillToolbarModule && toolbarOptions[toolbar]) {
-      // The toolbar is now controlled by our custom container
-    }
-
-    // Set initial content
-    if (value) {
-      try {
-        quillRef.current.root.innerHTML = value;
-      } catch {
-        quillRef.current.setText(value);
+      if (value) {
+        try {
+          quillRef.current.root.innerHTML = value;
+        } catch {
+          quillRef.current.setText(value);
+        }
       }
-    }
 
-    quillRef.current.on('text-change', () => {
-      const html = quillRef.current?.root.innerHTML;
-      onChange?.(html || '');
+      quillRef.current.on('text-change', () => {
+        const html = quillRef.current?.root.innerHTML;
+        onChange?.(html || '');
+      });
+
+      initializedRef.current = true;
     });
-
-    initializedRef.current = true;
   }, [onChange, placeholder, readOnly, toolbar, value]);
 
   useEffect(() => {

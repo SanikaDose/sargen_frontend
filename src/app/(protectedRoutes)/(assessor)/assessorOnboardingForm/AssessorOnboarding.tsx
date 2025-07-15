@@ -103,7 +103,7 @@ function AssessorOnboarding() {
 
   const [Status, setStatus] = useState<string | null>(null);
   const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
-  console.log('existing dataa', existingData);
+  // console.log('existing dataa', existingData);
 
   //reload view
 
@@ -165,7 +165,7 @@ function AssessorOnboarding() {
     }
   }, [existingData, reset]);
 
-  console.log('selectedfile', selectedFile);
+  // console.log('selectedfile', selectedFile);
 
   //function to view the metadata files
   const handleViewClick = async (fileName: string) => {
@@ -208,7 +208,7 @@ function AssessorOnboarding() {
   };
 
   const handleUploadFile = async (file: File, fileKey: string) => {
-    console.log('Uploading file for:', uploadedFiles);
+    // console.log('Uploading file for:', uploadedFiles);
     setUploadingKey(fileKey);
 
     const uploadFunction = uploadFunctionMap[fileKey];
@@ -219,7 +219,7 @@ function AssessorOnboarding() {
 
     try {
       const response = await uploadFunction({ tenantId: tenantId ?? '', file }).unwrap();
-      console.log('uploaded resp', response); // NOW you'll see it
+      // console.log('uploaded resp', response); // NOW you'll see it
 
       if (response?.status && response?.data?.[0]) {
         const fullMetadataObject = response.data[0];
@@ -288,7 +288,7 @@ function AssessorOnboarding() {
       console.log('error', error);
     }
   };
-  console.log('status stateee', Status);
+  // console.log('status stateee', Status);
 
   const activeStep = useMemo(() => {
     // Step 0: If focused on any form field or siriCertificate is selected
@@ -344,7 +344,7 @@ function AssessorOnboarding() {
         fileName,
       }).unwrap();
 
-      console.log('Download triggered successfully.');
+      // console.log('Download triggered successfully.');
     } catch (err) {
       console.error('Error downloading file:', err);
     } finally {
