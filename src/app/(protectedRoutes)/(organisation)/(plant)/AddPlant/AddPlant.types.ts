@@ -51,7 +51,7 @@ export interface AddPlantApi {
 }
 
 export type AddPlantInfoResponse = {
-  data: any;
+  data: unknown;
   id: string;
   name: string;
   location: string;
