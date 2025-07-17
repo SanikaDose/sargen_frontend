@@ -56,7 +56,7 @@ const PlantRegistrationForm = () => {
   } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/plant-logo.png?ignore');
   const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);

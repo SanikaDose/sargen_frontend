@@ -98,7 +98,7 @@ function AssessorOnboarding() {
   const [viewMetadataFile] = useViewMetadataFileMutation();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
-  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
 
   const [Status, setStatus] = useState<string | null>(null);
@@ -164,7 +164,7 @@ function AssessorOnboarding() {
       populateFormAndFile();
     }
   }, [existingData, reset]);
-
+  console.log('uploade files after the fetchhh', uploadedFiles);
   // console.log('selectedfile', selectedFile);
 
   //function to view the metadata files
@@ -209,7 +209,7 @@ function AssessorOnboarding() {
 
   const handleUploadFile = async (file: File, fileKey: string) => {
     // console.log('Uploading file for:', uploadedFiles);
-    setUploadingKey(fileKey);
+    setUploadingKeys((prev) => ({ ...prev, [fileKey]: true }));
 
     const uploadFunction = uploadFunctionMap[fileKey];
     if (!uploadFunction) {
@@ -236,7 +236,15 @@ function AssessorOnboarding() {
     } catch (error) {
       console.log('catch error', error);
     } finally {
-      setUploadingKey(null);
+      // setUploadingKeys((prev) => {
+      //   const { [fileKey]: _unused, ...rest } = prev;
+      //   return rest;
+      // });
+      setUploadingKeys((prev) => {
+        const updated = { ...prev };
+        delete updated[fileKey];
+        return updated;
+      });
     }
   };
 
@@ -546,7 +554,7 @@ function AssessorOnboarding() {
                                     padding: 1,
                                   }}
                                 >
-                                  {uploadingKey === backendKey ? (
+                                  {uploadingKeys[backendKey] ? (
                                     <ButtonWithLoader loading={true} width="50px" label="" height="40px" />
                                   ) : (
                                     <FileActionButton
