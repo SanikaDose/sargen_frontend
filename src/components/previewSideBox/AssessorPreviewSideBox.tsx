@@ -4,9 +4,9 @@ import { useRef, useState, useEffect } from 'react';
 import styles from './previewSideBox.module.css';
 import { Box, Typography, Divider } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import QuestionSection from './QuestionSection';
 import { Question } from '@/app/(protectedRoutes)/(plantAssessment)/Questionaire/Questionaire.type';
 import { QuestionVerificationStatus } from '@/constants/enums';
+import AssessorQuestionSection from './AssessorQuestionSection';
 
 type PreviewSideBoxProps = {
   groupedQuestions: { [key: string]: Question[] };
@@ -97,7 +97,7 @@ const AssessorPreviewSideBox: React.FC<PreviewSideBoxProps> = ({
               <Box className={styles.sectionDivider} />
             </Box>
 
-            <QuestionSection
+            <AssessorQuestionSection
               questions={departmentGroups[dept].map(({ key, question }, index) => ({
                 ...question,
                 key,

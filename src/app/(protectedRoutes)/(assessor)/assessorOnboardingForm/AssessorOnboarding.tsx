@@ -98,12 +98,12 @@ function AssessorOnboarding() {
   const [viewMetadataFile] = useViewMetadataFileMutation();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
-  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
   const [downloadKey, setdownloadKey] = useState<string | null>(null);
 
   const [Status, setStatus] = useState<string | null>(null);
   const { data: existingData } = useGetAssessorInfoQuery(tenantId ?? '');
-  console.log('existing dataa', existingData);
+  // console.log('existing dataa', existingData);
 
   //reload view
 
@@ -164,8 +164,8 @@ function AssessorOnboarding() {
       populateFormAndFile();
     }
   }, [existingData, reset]);
-
-  console.log('selectedfile', selectedFile);
+  console.log('uploade files after the fetchhh', uploadedFiles);
+  // console.log('selectedfile', selectedFile);
 
   //function to view the metadata files
   const handleViewClick = async (fileName: string) => {
@@ -208,8 +208,8 @@ function AssessorOnboarding() {
   };
 
   const handleUploadFile = async (file: File, fileKey: string) => {
-    console.log('Uploading file for:', uploadedFiles);
-    setUploadingKey(fileKey);
+    // console.log('Uploading file for:', uploadedFiles);
+    setUploadingKeys((prev) => ({ ...prev, [fileKey]: true }));
 
     const uploadFunction = uploadFunctionMap[fileKey];
     if (!uploadFunction) {
@@ -219,7 +219,7 @@ function AssessorOnboarding() {
 
     try {
       const response = await uploadFunction({ tenantId: tenantId ?? '', file }).unwrap();
-      console.log('uploaded resp', response); // NOW you'll see it
+      // console.log('uploaded resp', response); // NOW you'll see it
 
       if (response?.status && response?.data?.[0]) {
         const fullMetadataObject = response.data[0];
@@ -236,7 +236,15 @@ function AssessorOnboarding() {
     } catch (error) {
       console.log('catch error', error);
     } finally {
-      setUploadingKey(null);
+      // setUploadingKeys((prev) => {
+      //   const { [fileKey]: _unused, ...rest } = prev;
+      //   return rest;
+      // });
+      setUploadingKeys((prev) => {
+        const updated = { ...prev };
+        delete updated[fileKey];
+        return updated;
+      });
     }
   };
 
@@ -288,7 +296,7 @@ function AssessorOnboarding() {
       console.log('error', error);
     }
   };
-  console.log('status stateee', Status);
+  // console.log('status stateee', Status);
 
   const activeStep = useMemo(() => {
     // Step 0: If focused on any form field or siriCertificate is selected
@@ -344,7 +352,7 @@ function AssessorOnboarding() {
         fileName,
       }).unwrap();
 
-      console.log('Download triggered successfully.');
+      // console.log('Download triggered successfully.');
     } catch (err) {
       console.error('Error downloading file:', err);
     } finally {
@@ -546,7 +554,7 @@ function AssessorOnboarding() {
                                     padding: 1,
                                   }}
                                 >
-                                  {uploadingKey === backendKey ? (
+                                  {uploadingKeys[backendKey] ? (
                                     <ButtonWithLoader loading={true} width="50px" label="" height="40px" />
                                   ) : (
                                     <FileActionButton

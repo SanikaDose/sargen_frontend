@@ -6,7 +6,7 @@ import { apiControllerPath } from '@/store/api/routes';
 export const plantAssessmentPreviewApi = protectedApi.injectEndpoints({
   endpoints: (builder) => ({
     changeAssessmentStatus: builder.mutation<
-      boolean,
+      boolean, // Verify this return type matches what your API actually returns
       { tenantId: string; plantId: string; assessment: AsseessmentStatus.COMPLETED_ASSESSMENT }
     >({
       query: (body) => ({
@@ -15,7 +15,6 @@ export const plantAssessmentPreviewApi = protectedApi.injectEndpoints({
         body,
       }),
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
-      // ✅ This goes INSIDE the mutation
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
           successMessage: 'Assessment status updated successfully!',

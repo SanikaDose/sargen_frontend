@@ -56,7 +56,7 @@ const PlantRegistrationForm = () => {
   } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/plant-logo.png?ignore');
   const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -96,7 +96,7 @@ const PlantRegistrationForm = () => {
       console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
-      const newPlantId = response?.data.id;
+      const newPlantId = (response?.data as { id: string | number })?.id;
 
       // ✅ Step 3: Upload image only if user uploaded one
       if (logoUrl && newPlantId && !logoUrl.includes('default-logo-image')) {
@@ -106,7 +106,7 @@ const PlantRegistrationForm = () => {
         const formData = new FormData();
         formData.append('file', file);
 
-        await uploadPlantLogo({ tenantId: tenantId ?? '', plantId: newPlantId, formData }).unwrap();
+        await uploadPlantLogo({ tenantId: tenantId ?? '', plantId: String(newPlantId), formData }).unwrap();
       }
       triggerToast('Plant Onboarded successfully!', 'success');
 

@@ -193,7 +193,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                 backgroundColor: 'rgba(243, 243, 243, 0.767)',
                 border: '2px solid #d8d8d8',
                 padding: 1,
-              }} 
+              }}
               variant="square"
             >
               <FactoryIcon sx={{ fontSize: '40px', borderRadius: '16px' }} />

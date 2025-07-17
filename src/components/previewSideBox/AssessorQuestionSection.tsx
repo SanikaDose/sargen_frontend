@@ -19,7 +19,6 @@ const AssessorQuestionSection: React.FC<Props> = ({ questions, selectedQuestionI
       {questions.map((q) => {
         if (!q.key) return null;
         const isSelected = q.key === selectedQuestionId;
-        const isCompleted = completedIds.includes(q.key);
 
         // Add verification status check
         const isVerified = q.verificationStatus === QuestionVerificationStatus.ASSESSOR_VERIFIED;
@@ -28,9 +27,9 @@ const AssessorQuestionSection: React.FC<Props> = ({ questions, selectedQuestionI
 
         const classNames = [
           styles.questionButton,
-          isCompleted ? styles.reviewed : '',
+
           isSelected ? styles.selected : '',
-          q.verificationStatus && isVerified ? styles.verified : '',
+          q.verificationStatus && isVerified ? styles.isVerified : '',
           q.verificationStatus && isNotVerified ? styles.notVerified : '',
           q.verificationStatus && isFlagged ? styles.isFlagged : '',
         ]
