@@ -48,6 +48,7 @@
   border-radius: 16px;
   background-color: #ffffff;
   height: 100%;
+  /* border: 1px solid; */
 }
 
 .solutionTitle {
@@ -63,6 +64,26 @@
   padding-left: 20px;
   background-color: #f9f9f9;
   border-left: 2px solid #047af2;
+}
+.scrollableList {
+  max-height: 300px; /* or any height that fits your layout */
+  overflow-y: auto;
+  padding-right: 4px; /* Optional: space for scrollbar */
+  padding: 0 12px;
+}
+
+/* Optional: style the scrollbar */
+.scrollableList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableList::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.scrollableList::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @media (min-width: 300px) and (max-width: 915px) {

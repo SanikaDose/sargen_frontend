@@ -28,9 +28,9 @@ const AssessorQuestionSection: React.FC<Props> = ({ questions, selectedQuestionI
 
         const classNames = [
           styles.questionButton,
-          isCompleted ? styles.reviewed : '',
+          // isCompleted ? styles.reviewed : '',
           isSelected ? styles.selected : '',
-          q.verificationStatus && isVerified ? styles.verified : '',
+          q.verificationStatus && isVerified ? styles.isVerified : '',
           q.verificationStatus && isNotVerified ? styles.notVerified : '',
           q.verificationStatus && isFlagged ? styles.isFlagged : '',
         ]
