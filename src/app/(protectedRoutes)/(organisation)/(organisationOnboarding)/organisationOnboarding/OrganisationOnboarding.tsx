@@ -36,6 +36,7 @@ import {
   useSubmitOrganizationInfoMutation,
   useUploadOrganizationLogoMutation,
 } from './OrganisationOnboardingAPi';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 function OrganizationOnbording() {
   const dispatch = useDispatch();
@@ -382,7 +383,7 @@ function OrganizationOnbording() {
             </form>
 
             <Box sx={{ width: '30%' }} className={styles.rightSection}>
-              <InfoBox />
+              <InfoBox heading={aboutSection.organisationOnboarding.heading} content={aboutSection.organisationOnboarding.description} />
             </Box>
           </Paper>
         </Box>

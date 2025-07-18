@@ -18,6 +18,7 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const IndustrySelection = () => {
   const router = useRouter();
@@ -177,10 +178,7 @@ const IndustrySelection = () => {
 
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                    heading="About Industry"
-                  />
+                  <InfoBox heading={aboutSection.industrySelection.heading} content={aboutSection.industrySelection.description} />
                 </Box>
 
                 <Box

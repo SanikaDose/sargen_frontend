@@ -22,6 +22,7 @@ import styles from './AddPlant.module.css';
 import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
+import { aboutSection } from '@/app/utils/aboutSection';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -430,7 +431,7 @@ const PlantRegistrationForm = () => {
             </form>
 
             <Box sx={{ width: '30%' }} className={styles.rightSection}>
-              <InfoBox />
+              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
             </Box>
           </Paper>
         </Box>

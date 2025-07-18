@@ -26,6 +26,7 @@ import {
   useLazyGetOnboardingStatusQuery,
   useUploadPocProfilePicMutation,
 } from './ContactPersonApi';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
   const tenantId = getValueLocalStorage('tenantId');
@@ -277,10 +278,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
 
               {!isMobile && !isTablet && (
                 <Grid size={{ xs: 4 }}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                    heading="About Contact Person"
-                  />
+                  <InfoBox content={aboutSection.contactPerson.description} heading={aboutSection.contactPerson.heading} />
                 </Grid>
               )}
             </Grid>

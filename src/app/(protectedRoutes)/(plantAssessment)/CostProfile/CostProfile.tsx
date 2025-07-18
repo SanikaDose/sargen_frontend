@@ -17,6 +17,7 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import { aboutSection } from '@/app/utils/aboutSection';
 const CostProfile = () => {
   const params = useParams();
   const router = useRouter();
@@ -190,13 +191,10 @@ const CostProfile = () => {
               {/* Right Section */}
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..."
-                    heading="About Industry"
-                  />
+                  <InfoBox heading={aboutSection.costProfile.heading} content={aboutSection.costProfile.description} />
                 </Box>
 
-                <Box
+                <Box  
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
