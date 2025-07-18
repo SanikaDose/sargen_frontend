@@ -45,6 +45,7 @@ const KpiDefinition = () => {
     defaultValues: { kpis: [] },
   });
   const selectedKpis = useWatch({ control, name: 'kpis' });
+
   const selectedCount = selectedKpis?.filter((k) => k.isselected)?.length || 0;
 
   useEffect(() => {
@@ -184,12 +185,7 @@ const KpiDefinition = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton
-                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
-                    variant="contained"
-                    icon="save"
-                    type="submit"
-                  >
+                  <CustomButton disabled={selectedCount !== 5 || isLoadingGet} variant="contained" icon="save" type="submit">
                     {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>

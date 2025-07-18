@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './IndustrySelection.module.css';
 import { Industry, IndustryFormValues } from '../plantAssement.model';
 import InfoBox from '@/components/InfoBox/InfoBox';
@@ -46,6 +46,11 @@ const IndustrySelection = () => {
     defaultValues: {
       selectedIndustryId: '',
     },
+  });
+
+  const selectedIndustryId = useWatch({
+    control,
+    name: 'selectedIndustryId',
   });
 
   useEffect(() => {
@@ -202,12 +207,7 @@ const IndustrySelection = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton
-                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
-                    variant="contained"
-                    icon="save"
-                    type="submit"
-                  >
+                  <CustomButton disabled={!selectedIndustryId || isLoadingGet} variant="contained" icon="save" type="submit">
                     {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
