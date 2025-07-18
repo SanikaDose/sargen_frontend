@@ -21,4 +21,5 @@ export interface PlantInfoCardProps {
   editPlantOnClick?: () => void;
   viewPlantOnClick?: () => void;
   onClick?: () => void;
+  downloadReportLoading: boolean;
 }
