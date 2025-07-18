@@ -86,6 +86,11 @@ const ViewPlantDetails = ({}: AssessorProps) => {
     return plant?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT;
   }, [plant?.assessmentCompletionStage]);
 
+  // Check if assessment is finished - New condition for the first button
+  const isAssessmentFinished = useMemo(() => {
+    return plant?.assessmentCompletionStage === 'FINISH_ASSESSMENT';
+  }, [plant?.assessmentCompletionStage]);
+
   const filteredPlantInfo = useMemo(() => {
     if (!plant) return [];
     return Object.entries(plant).filter(([key]) => !excludeKeys.includes(key));
@@ -226,22 +231,22 @@ const ViewPlantDetails = ({}: AssessorProps) => {
               disabled={isAssessmentAssigned || isMetadataFetching}
               sx={{
                 color: '#FFFFFF',
-                bgcolor: isAssessmentAssigned ? '#6c757d' : '#28a745',
+                bgcolor: isAssessmentFinished ? '#28a745' : isAssessmentAssigned ? '#6c757d' : '#28a745',
                 fontSize: '14px',
                 p: 1,
                 borderRadius: '16px',
                 minWidth: '180px',
                 '&:hover': {
-                  bgcolor: isAssessmentAssigned ? '#6c757d' : '#218838',
+                  bgcolor: isAssessmentFinished ? '#218838' : isAssessmentAssigned ? '#6c757d' : '#218838',
                 },
                 '&:disabled': {
-                  bgcolor: '#bdbdbd',
+                  bgcolor: isAssessmentFinished ? '#28a745' : '#bdbdbd',
                   color: '#FFFFFF',
                 },
               }}
               onClick={handleAllowAssessmentClick}
             >
-              {isAssessmentAssigned ? 'Assessment in process' : 'Allow Assessment'}
+              {isAssessmentFinished ? 'Assessment Finished' : isAssessmentAssigned ? 'Assessment in process' : 'Allow Assessment'}
             </Button>
 
             <Button
