@@ -45,7 +45,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
           fontSize: 'medium',
         }}
       >
-        {content || 'Please Enter the About us in Organization Entry Portal'}
+        <div dangerouslySetInnerHTML={{ __html: content }} />
       </Box>
     </Box>
   );
