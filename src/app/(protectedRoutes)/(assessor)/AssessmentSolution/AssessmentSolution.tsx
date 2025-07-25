@@ -177,7 +177,13 @@ const AssessmentSolution = () => {
                   <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()}>
                     Back
                   </CustomButton>
-                  <CustomButton variant="contained" icon="save" type="button" onClick={handleSave} disabled={isSavingSolutions}>
+                  <CustomButton
+                    variant="contained"
+                    icon="save"
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isSavingSolutions || selectedSolutions.size === 0}
+                  >
                     {isSavingSolutions ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
