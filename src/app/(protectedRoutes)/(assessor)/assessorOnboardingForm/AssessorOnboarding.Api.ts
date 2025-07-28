@@ -268,34 +268,34 @@ export const assessorApi = protectedApi.injectEndpoints({
       },
     }),
 
-    // uploadIndustryAssessmentMatrix: builder.mutation<UploadResponse, UploadArgs>({
-    //   query: ({ tenantId, file }) => {
-    //     const formData = new FormData();
-    //     if (file) {
-    //       formData.append('assessment_matrix_score_lookup_table_', file);
-    //     }
-    //     return {
-    //       url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadIndustryAssessmentMatrix}${tenantId}`,
-    //       method: 'POST',
-    //       body: formData,
-    //     };
-    //   },
-    //   transformResponse: (response: RawUploadResponse): UploadResponse => {
-    //     return {
-    //       status: response.status,
-    //       message: response.message ?? '',
-    //       data: response.data,
-    //     };
-    //   },
-    //   invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'MetadataFile', id: tenantId }],
-    //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-    //     await rtkAPIToast(queryFulfilled, dispatch, {
-    //       successMessage: 'Industry assessment matrix uploaded successfully!',
-    //       errorMessage: 'Failed to upload industry assessment matrix!',
-    //       duration: 4000,
-    //     });
-    //   },
-    // }),
+    uploadDimBandDescriptionMatrix: builder.mutation<UploadResponse, UploadArgs>({
+      query: ({ tenantId, file }) => {
+        const formData = new FormData();
+        if (file) {
+          formData.append('dim_band_description_table_', file);
+        }
+        return {
+          url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadDimBandDescription}${tenantId}`,
+          method: 'POST',
+          body: formData,
+        };
+      },
+      transformResponse: (response: RawUploadResponse): UploadResponse => {
+        return {
+          status: response.status,
+          message: response.message ?? '',
+          data: response.data,
+        };
+      },
+      invalidatesTags: (_result, _error, { tenantId }) => [{ type: 'MetadataFile', id: tenantId }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await rtkAPIToast(queryFulfilled, dispatch, {
+          successMessage: 'Dim Band Description uploaded successfully!',
+          errorMessage: 'Failed to upload Dim Band Description!',
+          duration: 4000,
+        });
+      },
+    }),
 
     uploadSolutionMetadata: builder.mutation<UploadResponse, UploadArgs>({
       query: ({ tenantId, file }) => {
@@ -512,7 +512,8 @@ export const {
   useUploadCostProfileLookupMutation,
   useUploadIndustrySelectionLookupMutation,
   useUploadKPILookupMutation,
-  // useUploadIndustryAssessmentMatrixMutation,
+
+  useUploadDimBandDescriptionMatrixMutation,
   useUploadSolutionMetadataMutation,
   useUploadBandDefinitionMutation,
 
