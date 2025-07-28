@@ -26,7 +26,6 @@
   height: 77%;
   display: flex;
   flex-direction: column;
-  gap: 15;
 }
 .questionSection {
   height: 15%;
@@ -35,7 +34,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 15;
+  gap: 10;
   overflow-y: auto;
 }
 

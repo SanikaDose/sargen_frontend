@@ -1,8 +1,8 @@
 'use client';
 
-import { Box, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, Paper, Skeleton, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import styles from './Preview.module.css';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { useDispatch } from 'react-redux';
@@ -20,6 +20,8 @@ import { setPlantAssessmentDepartment } from '../plantAssementSlice';
 import Loader from '@/components/Loader/Loader';
 import { useChangeAssessmentStatusMutation } from './PreviewApi';
 import { AsseessmentStatus } from '@/constants/enums';
+import CustomAudioRecorder from '@/components/ClientAudioRecord/CustomAudioRecorder';
+import { JustificationMode } from './Preview.type';
 
 export default function Preview() {
   // const router = useRouter();
@@ -55,6 +57,7 @@ export default function Preview() {
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [departmentQuestionOrder, setDepartmentQuestionOrder] = useState<{ [dept: string]: string[] }>({});
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
+  const [justificationMode, setJustificationMode] = useState<'text' | 'record'>('text');
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
   const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
@@ -294,10 +297,12 @@ export default function Preview() {
   const department = currentQuestion?.department || 'Unknown';
 
   const departmentQuestionNumber = departmentQuestionOrder[department]?.indexOf(currentGroupKey) + 1 || 0;
-  console.log('departmentQuestionOrder', departmentQuestionOrder);
 
-  console.log('departmentGroups', departmentGroups);
-
+  const handleModeChange = (event: React.MouseEvent<HTMLElement>, newMode: JustificationMode | null) => {
+    if (newMode !== null) {
+      setJustificationMode(newMode);
+    }
+  };
   return (
     <Box component="form" sx={{ height: '99%' }}>
       <Paper
@@ -336,16 +341,18 @@ export default function Preview() {
               </>
             ) : (
               <>
-                <Typography variant="h4" sx={{ color: 'black', textAlign: 'left', width: '100%', marginBottom: 1 }}>
-                  {currentGroup[0]?.department}
-                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="h4" sx={{ color: 'black', textAlign: 'left', width: '50%' }}>
+                    {currentGroup[0]?.department}
+                  </Typography>
+                </Box>
 
-                <Box className={styles.questionAnsweresSection}>
+                <Box className={styles.questionAnsweresSection} sx={{ mb: 1 }}>
                   <Box className={styles.questionSection}>
                     <QuestionCard questionNumber={departmentQuestionNumber} questionText={questionText} />
                   </Box>
 
-                  <Box className={styles.answerSection}>
+                  <Box className={styles.answerSection} sx={{ border: '1px solid #eee', borderRadius: '16px' }}>
                     {currentGroup.map((option, idx) => (
                       <AnswerCard
                         key={option.id}
@@ -359,17 +366,35 @@ export default function Preview() {
                 </Box>
 
                 <Box className={styles.justification}>
-                  <TextArea
-                    value={justificationMap[currentKey] || ''}
-                    onChange={(val) =>
-                      setJustificationMap((prev) => ({
-                        ...prev,
-                        [currentKey]: val,
-                      }))
-                    }
-                    placeholder="Enter justification"
-                    readOnly={false}
-                  />
+                  <ToggleButtonGroup
+                    size="small"
+                    color="primary"
+                    value={justificationMode}
+                    exclusive
+                    onChange={handleModeChange}
+                    aria-label="justification mode"
+                  >
+                    <ToggleButton value="text">Text</ToggleButton>
+                    <ToggleButton value="record">Record</ToggleButton>
+                  </ToggleButtonGroup>
+
+                  {/* Conditional Rendering */}
+                  <Box className={styles.justification} sx={{ mt: 1 }}>
+                    {justificationMode === 'record' ? (
+                      <CustomAudioRecorder />
+                    ) : (
+                      <TextArea
+                        value={justificationMap[currentKey] || ''}
+                        onChange={(val) =>
+                          setJustificationMap((prev) => ({
+                            ...prev,
+                            [currentKey]: val,
+                          }))
+                        }
+                        placeholder="Enter justification"
+                      />
+                    )}
+                  </Box>
                 </Box>
               </>
             )}

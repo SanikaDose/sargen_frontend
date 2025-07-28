@@ -14,7 +14,7 @@ const TextArea: React.FC<TextAreaProps> = ({ value, onChange, placeholder = '', 
         }}
         placeholder={placeholder}
         readOnly={readOnly}
-        rows={6}
+        rows={3}
       />
     </div>
   );

@@ -1,0 +1,292 @@
+/* CustomAudioRecorder.css */
+
+.audio-recorder-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 20px;
+  background-color: #f1faff;
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(90, 162, 196, 1);
+  box-shadow: 0px 2px 5px rgba(16, 84, 124, 1);
+  height: auto;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.recording-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.record-button {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  color: #d68585;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.record-button.recording {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+}
+
+.record-button.ready {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.record-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.record-button:active {
+  transform: translateY(0);
+}
+
+.record-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.record-button.recording::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.recording-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+}
+
+.recording-dot {
+  width: 8px;
+  height: 8px;
+  background: #ff4757;
+  border-radius: 50%;
+  color: #d68585;
+}
+
+.recording-dot.blinking {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.3;
+  }
+}
+
+.time-display {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #757575;
+}
+
+.audio-player {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.player-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.control-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
+}
+
+.control-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+}
+
+.control-button.delete-button {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+}
+
+.control-button.delete-button:hover {
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.control-button.download-button {
+  background: linear-gradient(135deg, #2ed573, #1e90ff);
+  box-shadow: 0 2px 10px rgba(46, 213, 115, 0.3);
+}
+
+.control-button.download-button:hover {
+  box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+}
+
+.waveform-placeholder {
+  height: 40px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  border-radius: 20px;
+  margin: 8px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.waveform-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.4), transparent);
+}
+
+.waveform-placeholder.playing::before {
+  animation: wave 2s infinite;
+}
+
+@keyframes wave {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.status-text {
+  color: #757575;
+  font-size: 14px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .audio-recorder-container {
+    max-width: 100%;
+    margin: 10px;
+    padding: 16px;
+  }
+
+  .recording-section {
+    gap: 12px;
+  }
+
+  .record-button {
+    width: 56px;
+    height: 56px;
+  }
+
+  .time-display {
+    font-size: 16px;
+  }
+
+  .player-controls {
+    gap: 8px;
+  }
+
+  .control-button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Accessibility improvements */
+.record-button:focus,
+.control-button:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .audio-player {
+    background: rgba(30, 30, 30, 0.95);
+  }
+
+  .status-text {
+    color: #757575;
+  }
+
+  .waveform-placeholder {
+    background: linear-gradient(90deg, #444 25%, #555 50%, #444 75%);
+  }
+}
+
+/* Animation for smooth transitions */
+.audio-recorder-container * {
+  transition: all 0.2s ease-in-out;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .audio-recorder-container {
+    border: 2px solid #000;
+  }
+
+  .record-button,
+  .control-button {
+    border: 1px solid #000;
+  }
+}
