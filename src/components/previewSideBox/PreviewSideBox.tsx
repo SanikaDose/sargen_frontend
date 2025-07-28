@@ -15,30 +15,41 @@ type PreviewSideBoxProps = {
   allQuestions: Question[];
 };
 
-const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
-  groupedQuestions,
-  currentIndex,
-  completedQuestionIds,
-  setCurrentIndex,
-  allQuestions,
-}) => {
+const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({ groupedQuestions, currentIndex, completedQuestionIds, setCurrentIndex }) => {
   const [prevDepartment, setPrevDepartment] = useState<string>('');
   const pathname = usePathname();
 
   // Create refs for each department
   const departmentRefs = useRef<{ [department: string]: HTMLDivElement | null }>({});
 
-  // Group questions by department
-  const departmentGroups: { [department: string]: { key: string; question: Question }[] } = {};
+  // Group questions by department and assign sequential numbers within each department
+  const departmentGroups: { [department: string]: { key: string; question: Question; questionNo: number }[] } = {};
 
+  // First pass to count questions per department
+  const departmentCounts: { [department: string]: number } = {};
+  Object.entries(groupedQuestions).forEach(([, questions]) => {
+    const q = questions[0];
+    if (!q) return;
+    departmentCounts[q.department] = (departmentCounts[q.department] || 0) + 1;
+  });
+
+  // Second pass to assign sequential numbers
+  const departmentCurrentNumbers: { [department: string]: number } = {};
   Object.entries(groupedQuestions).forEach(([key, questions]) => {
     const q = questions[0];
     if (!q) return;
 
     const dept = q.department || 'Unknown';
-    if (!departmentGroups[dept]) departmentGroups[dept] = [];
+    if (!departmentGroups[dept]) {
+      departmentGroups[dept] = [];
+      departmentCurrentNumbers[dept] = 1; // Initialize counter for this department
+    }
 
-    departmentGroups[dept].push({ key, question: q });
+    departmentGroups[dept].push({
+      key,
+      question: q,
+      questionNo: departmentCurrentNumbers[dept]++, // Assign and increment
+    });
   });
 
   const departmentNames = Object.keys(departmentGroups);
@@ -81,10 +92,10 @@ const PreviewSideBox: React.FC<PreviewSideBoxProps> = ({
             </Box>
 
             <QuestionSection
-              questions={departmentGroups[dept].map(({ key, question }, index) => ({
+              questions={departmentGroups[dept].map(({ key, question, questionNo }) => ({
                 ...question,
                 key,
-                questionNo: allQuestions.find((q) => q.groupKey === key)?.questionNo ?? index + 1,
+                questionNo,
               }))}
               selectedQuestionId={selectedQuestionId}
               completedIds={completedQuestionIds}
