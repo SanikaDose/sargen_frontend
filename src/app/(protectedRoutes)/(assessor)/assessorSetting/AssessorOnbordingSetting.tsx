@@ -24,7 +24,7 @@ import {
   useUploadBandDefinitionMutation,
   useUploadCostProfileLookupMutation,
   useUploadCostProfileMutation,
-  useUploadIndustryAssessmentMatrixMutation,
+  // useUploadIndustryAssessmentMatrixMutation,
   useUploadIndustrySelectionLookupMutation,
   useUploadIndustrySelectionMutation,
   useUploadKPILookupMutation,
@@ -92,7 +92,7 @@ function AssessorOnboarding() {
   const [uploadCostProfileLookup] = useUploadCostProfileLookupMutation();
   const [uploadIndustrySelectionLookup] = useUploadIndustrySelectionLookupMutation();
   const [uploadKPILookup] = useUploadKPILookupMutation();
-  const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
+  // const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
   const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
   const [uploadBandDefinition] = useUploadBandDefinitionMutation();
   const [viewMetadataFile] = useViewMetadataFileMutation();
@@ -201,7 +201,7 @@ function AssessorOnboarding() {
     cost_lookup_table_: uploadCostProfileLookup,
     industry_selection_lookup_table_: uploadIndustrySelectionLookup,
     kpi_lookup_table_: uploadKPILookup,
-    assessment_matrix_score_lookup_table_: uploadIndustryAssessmentMatrix,
+    // assessment_matrix_score_lookup_table_: uploadIndustryAssessmentMatrix,
     solutions_with_band_weights_: uploadSolutionMetadata,
     band_definition_table_: uploadBandDefinition,
   };

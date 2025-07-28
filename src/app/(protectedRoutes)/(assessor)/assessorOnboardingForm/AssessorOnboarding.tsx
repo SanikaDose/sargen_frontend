@@ -23,7 +23,7 @@ import {
   useUploadBandDefinitionMutation,
   useUploadCostProfileLookupMutation,
   useUploadCostProfileMutation,
-  useUploadIndustryAssessmentMatrixMutation,
+  // useUploadIndustryAssessmentMatrixMutation,
   useUploadIndustrySelectionLookupMutation,
   useUploadIndustrySelectionMutation,
   useUploadKPILookupMutation,
@@ -92,7 +92,7 @@ function AssessorOnboarding() {
   const [uploadCostProfileLookup] = useUploadCostProfileLookupMutation();
   const [uploadIndustrySelectionLookup] = useUploadIndustrySelectionLookupMutation();
   const [uploadKPILookup] = useUploadKPILookupMutation();
-  const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
+  // const [uploadIndustryAssessmentMatrix] = useUploadIndustryAssessmentMatrixMutation();
   const [uploadSolutionMetadata] = useUploadSolutionMetadataMutation();
   const [uploadBandDefinition] = useUploadBandDefinitionMutation();
   const [viewMetadataFile] = useViewMetadataFileMutation();
@@ -192,7 +192,6 @@ function AssessorOnboarding() {
     }
   };
 
-  // const uploadFunctionMap: Record<string, (params: { tenantId: string; file: File }) => > = {
   const uploadFunctionMap: Record<string, UploadFunction> = {
     questionnaires_: uploadQuestionnaries,
     cost_profile_: uploadCostProfile,
@@ -202,7 +201,7 @@ function AssessorOnboarding() {
     cost_lookup_table_: uploadCostProfileLookup,
     industry_selection_lookup_table_: uploadIndustrySelectionLookup,
     kpi_lookup_table_: uploadKPILookup,
-    assessment_matrix_score_lookup_table_: uploadIndustryAssessmentMatrix,
+    //  assessment_matrix_score_lookup_table_: uploadIndustryAssessmentMatrix,
     solutions_with_band_weights_: uploadSolutionMetadata,
     band_definition_table_: uploadBandDefinition,
   };
@@ -236,10 +235,6 @@ function AssessorOnboarding() {
     } catch (error) {
       console.log('catch error', error);
     } finally {
-      // setUploadingKeys((prev) => {
-      //   const { [fileKey]: _unused, ...rest } = prev;
-      //   return rest;
-      // });
       setUploadingKeys((prev) => {
         const updated = { ...prev };
         delete updated[fileKey];
@@ -315,21 +310,19 @@ function AssessorOnboarding() {
   const completedSteps = useMemo(() => {
     const completed: number[] = [];
 
-    // Step 0: Check if form fields are filled
     const isFormComplete =
       AssessorFormInputs.every((input) => {
         const value = watchedValues?.[input.name as keyof AssessorFormType];
         return (typeof value === 'string' && value.trim().length > 0) || (typeof value === 'number' && !isNaN(value));
-      }) && selectedFile; // Also check if siriCertificate is uploaded
+      }) && selectedFile;
 
     if (isFormComplete) {
-      completed.push(0); // Form step
+      completed.push(0);
     }
 
-    // Step 1 to N: check each fileKey
     fileValues.forEach((fileKey, index) => {
       if (uploadedFiles[fileKey]) {
-        completed.push(index + 1); // +1 because 0 is form step
+        completed.push(index + 1);
       }
     });
 
@@ -346,7 +339,6 @@ function AssessorOnboarding() {
     try {
       setdownloadKey(fileName);
 
-      // This will internally trigger the file download via responseHandler
       await getMetadataFileTemplate({
         userType: 'ASSESSOR',
         fileName,
@@ -362,7 +354,7 @@ function AssessorOnboarding() {
   // to show the created at and update at date in the date format
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'NA';
-    return new Date(dateStr).toISOString().split('T')[0]; // "YYYY-MM-DD"
+    return new Date(dateStr).toISOString().split('T')[0];
   };
 
   return (
@@ -532,7 +524,6 @@ function AssessorOnboarding() {
                                 <TableCell
                                   sx={{
                                     textAlign: 'left',
-
                                     padding: 1,
                                   }}
                                 >
