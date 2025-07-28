@@ -22,6 +22,7 @@ import styles from './AddPlant.module.css';
 import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
+import { aboutSection } from '@/app/utils/aboutSection';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -56,7 +57,7 @@ const PlantRegistrationForm = () => {
   } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
   const [uploadPlantLogo] = useUploadPlantLogoMutation();
-  const [logoUrl, setLogoUrl] = useState<string>('/images/default-logo-image.png?ignore');
+  const [logoUrl, setLogoUrl] = useState<string>('/images/plant-logo.png?ignore');
   const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -96,7 +97,7 @@ const PlantRegistrationForm = () => {
       console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
-      const newPlantId = response?.id;
+      const newPlantId = (response?.data as { id: string | number })?.id;
 
       // ✅ Step 3: Upload image only if user uploaded one
       if (logoUrl && newPlantId && !logoUrl.includes('default-logo-image')) {
@@ -106,7 +107,7 @@ const PlantRegistrationForm = () => {
         const formData = new FormData();
         formData.append('file', file);
 
-        await uploadPlantLogo({ tenantId: tenantId ?? '', plantId: newPlantId, formData }).unwrap();
+        await uploadPlantLogo({ tenantId: tenantId ?? '', plantId: String(newPlantId), formData }).unwrap();
       }
       triggerToast('Plant Onboarded successfully!', 'success');
 
@@ -430,7 +431,7 @@ const PlantRegistrationForm = () => {
             </form>
 
             <Box sx={{ width: '30%' }} className={styles.rightSection}>
-              <InfoBox />
+              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
             </Box>
           </Paper>
         </Box>

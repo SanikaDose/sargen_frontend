@@ -180,6 +180,7 @@ const AssessmentBasedImpactValues = () => {
                   }}
                 >
                   {dimensionData.map(({ dimension, value }) => {
+                    if (dimension === 'costAsAPercentRevenue') return null;
                     const isSelected = selectedDimensions.includes(dimension); // Direct comparison
                     const isDisabled = !isSelected && selectedDimensions.length >= 4;
                     return (

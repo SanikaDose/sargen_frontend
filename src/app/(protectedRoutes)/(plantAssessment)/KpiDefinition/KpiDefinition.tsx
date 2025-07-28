@@ -18,6 +18,7 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const KpiDefinition = () => {
   const params = useParams();
@@ -44,6 +45,7 @@ const KpiDefinition = () => {
     defaultValues: { kpis: [] },
   });
   const selectedKpis = useWatch({ control, name: 'kpis' });
+
   const selectedCount = selectedKpis?.filter((k) => k.isselected)?.length || 0;
 
   useEffect(() => {
@@ -159,10 +161,7 @@ const KpiDefinition = () => {
 
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id"
-                    heading="About Industry"
-                  />
+                  <InfoBox heading={aboutSection.kpiSelection.heading} content={aboutSection.kpiSelection.description} />
                 </Box>
 
                 <Box
@@ -186,12 +185,7 @@ const KpiDefinition = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton
-                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
-                    variant="contained"
-                    icon="save"
-                    type="submit"
-                  >
+                  <CustomButton disabled={selectedCount !== 5 || isLoadingGet} variant="contained" icon="save" type="submit">
                     {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>

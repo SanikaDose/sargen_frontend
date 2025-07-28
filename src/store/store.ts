@@ -20,8 +20,7 @@ export const store = configureStore({
     stepper: stepperReducer,
   },
 
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(protectedApi.middleware).concat(publicApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(protectedApi.middleware).concat(publicApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

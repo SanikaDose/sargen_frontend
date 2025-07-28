@@ -22,13 +22,8 @@ export default function PlantOverview() {
   const dispatch = useDispatch();
   const router = useRouter();
   const tenantId = getValueLocalStorage('tenantId') ?? '';
-  // const showAssessmentListSideBar = useSelector((state: RootState) => state.global.showAssessmentListSideBar);
 
-  // when ever the user will be there in plant overview then setShowAssessmentListSideBar will be always false
-  // dispatch(setShowAssessmentListSideBar(false));
   const [searchValue, setSearchValue] = useState('');
-  // const [assessmentStatuses, setAssessmentStatuses] = useState<Record<string, any>>({});
-  // const [statusLoading, setStatusLoading] = useState(false);
 
   // Set page header
   useEffect(() => {
@@ -47,6 +42,7 @@ export default function PlantOverview() {
 
   const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
   const [downloadReport] = useDownloadReportMutation();
+  const [downloadingPlantId, setDownloadingPlantId] = useState<string | null>(null);
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
@@ -76,6 +72,7 @@ export default function PlantOverview() {
     ) {
       router.push(`IndustrySelection/${tenantId}/${plantId}`);
     } else if (assessmentStage === AsseessmentStatus.FINISH_ASSESSMENT) {
+      setDownloadingPlantId(plantId);
       try {
         const bufferResponse = await downloadReport({
           tenantId,
@@ -95,6 +92,8 @@ export default function PlantOverview() {
         window.URL.revokeObjectURL(url);
       } catch (error) {
         console.error('Download failed:', error);
+      } finally {
+        setDownloadingPlantId(null);
       }
     }
   };
@@ -175,6 +174,7 @@ export default function PlantOverview() {
                   }}
                   editPlantOnClick={() => router.push(`EditPlant/${tenantId}/${plant.id}`)}
                   onClick={() => handleButtonClick(tenantId, plant.id, plant?.assessmentCompletionStage)}
+                  downloadReportLoading={downloadingPlantId === plant.id}
                 />
               </Grid>
             ))}

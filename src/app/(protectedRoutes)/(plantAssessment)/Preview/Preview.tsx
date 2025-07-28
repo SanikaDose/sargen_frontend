@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../Questionaire/Questionaire.type';
 import { useGetQuestionnairesListMutation, useSelectQuestionnairesAnswerMutation } from '../plantAssementApi';
 import { useDispatch } from 'react-redux';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import QuestionCard from '@/components/QuestionCard/QuestionCard';
 import AnswerCard from '@/components/AnswerCard/AnswerCard';
 import TextArea from '@/components/textArea/TextArea';
@@ -25,7 +25,7 @@ export default function Preview() {
   // const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
-
+  const router = useRouter();
   useEffect(() => {
     dispatch(setPageNameHeader(pagesNames.plantAssesmentPreview));
     dispatch(setShowAssessmentListSideBar(true));
@@ -105,7 +105,7 @@ export default function Preview() {
     };
 
     fetchAllDepartmentQuestions();
-  }, [getQuestionnairesList, organisationId, plantId]);
+  }, []);
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return; //if edit is off then it will return
@@ -169,21 +169,24 @@ export default function Preview() {
 
   const handleFinalSubmit = async () => {
     try {
-      await postAssesmentStatus({
+      setFinalSubmitModel(false); // Close modal immediately to prevent duplicate submissions
+
+      const response: { error?: unknown } = await postAssesmentStatus({
         tenantId,
         plantId,
         assessment: AsseessmentStatus.COMPLETED_ASSESSMENT,
-      }).unwrap();
+      });
+
+      if (response.error) {
+        throw new Error(typeof response.error === 'string' ? response.error : JSON.stringify(response.error));
+      }
 
       triggerToast('Assessment submitted successfully!', 'success');
+      router.push('/PlantOverview');
     } catch (err) {
-      console.error('API failed:', err);
+      console.error('Submission failed:', err);
       triggerToast('Failed to submit assessment', 'error');
-    } finally {
-      setFinalSubmitModel(false);
-
-      // Force a full page reload to the new route
-      window.location.assign('/PlantOverview');
+      setFinalSubmitModel(true); // Re-open modal if failed
     }
   };
   return (
@@ -349,7 +352,7 @@ export default function Preview() {
           text="Are you sure you want to submit?"
           primaryButtonText={isLoading ? 'Submitting…' : 'Confirm'}
           secondaryButtonText="Cancel"
-          onPrimaryClick={() => handleFinalSubmit()}
+          onPrimaryClick={async () => await handleFinalSubmit()}
           onSecondaryClick={() => setFinalSubmitModel(false)}
         />
       )}

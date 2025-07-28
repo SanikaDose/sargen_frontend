@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption } from '../plantAssement.model';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
@@ -18,6 +18,7 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const PlanningHorizon = () => {
   const params = useParams();
@@ -50,6 +51,10 @@ const PlanningHorizon = () => {
     },
   });
 
+  const selectedHorizonId = useWatch({
+    control,
+    name: 'selectedHorizonId',
+  });
   useEffect(() => {
     const fetchHorizonOptions = async () => {
       const requestPayload = {
@@ -92,6 +97,8 @@ const PlanningHorizon = () => {
     fetchHorizonOptions();
   }, [getHorizonOptions, tenantId, plantId, reset]);
 
+  console.log('horizonOptions', horizonOptions);
+
   const onSubmit = async (data: HorizonFormValues) => {
     const selectedOption = horizonOptions.find((opt) => opt.id === data.selectedHorizonId);
     if (!selectedOption) return;
@@ -110,9 +117,8 @@ const PlanningHorizon = () => {
     };
 
     await selectHorizonOption(payload).unwrap();
-    // if (plannedSaveSuucesfully) {
+
     router.push(`/KpiDefinition/${organisationId}/${plantId}`);
-    // }
   };
 
   const [isMounting, setIsMounting] = useState(true);
@@ -173,7 +179,7 @@ const PlanningHorizon = () => {
                         <>
                           {horizonOptions.map((option) => {
                             const isSelected = field.value === option.id;
-
+                            console.log('isSelected ', isSelected);
                             return (
                               <Box
                                 key={option.id}
@@ -189,28 +195,6 @@ const PlanningHorizon = () => {
                               </Box>
                             );
                           })}
-
-                          {/* <Grid size={{ xs: 6, sm: 6, md: 5, lg: 5, xl: 4 }} sx={{ height: '10%' }}> */}
-                          {/* <Box
-                            sx={{
-                              display: 'flex',
-                              width: '40%',
-                              gap: 14,
-                              height: '70%',
-                              // marginTop: 5,
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <Card label="ABC" isSelected={true} />
-                            <Card label="ABC" isSelected={true} />
-                            <Card label="ABC" isSelected={true} />
-                          </Box> */}
-                          {/* <Box sx={{ display: 'flex', width: '50%', gap: 4, height: '10%', marginTop: 5 }}>
-                         
-                          </Box> */}
-
-                          {/* </Grid> */}
                         </>
                       )}
                     />
@@ -220,10 +204,7 @@ const PlanningHorizon = () => {
 
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                    heading="About Industry"
-                  />
+                  <InfoBox heading={aboutSection.planningHorizon.heading} content={aboutSection.planningHorizon.description} />
                 </Box>
 
                 <Box
@@ -247,12 +228,7 @@ const PlanningHorizon = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton
-                    // children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
-                    variant="contained"
-                    icon="save"
-                    type="submit"
-                  >
+                  <CustomButton disabled={!selectedHorizonId || isLoadingGet} variant="contained" icon="save" type="submit">
                     {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>

@@ -260,7 +260,11 @@ const Questionaire = () => {
           {/* Right section */}
           <Box className={styles.rightSection}>
             <Box className={styles.aboutSection}>
-              <InfoBox heading="About Industry" content={currentGroup[0].context} />
+              {isLoading || isSaving ? (
+                <Skeleton variant="rectangular" height="100%" width="100%" sx={{ borderRadius: '16px' }} />
+              ) : (
+                <InfoBox heading="Question Guide" content={currentGroup[0].context} />
+              )}
             </Box>
 
             <Box

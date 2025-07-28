@@ -135,9 +135,9 @@ const AssessmentSolution = () => {
                         >
                           {category.replace(/_/g, ' ').charAt(0).toUpperCase() + category.replace(/_/g, ' ').slice(1).toLowerCase()}
                         </Typography>
-                        <List component="div" disablePadding>
+                        <List component="div" className={styles.scrollableList} sx={{ padding: '0 ' }}>
                           {solutions.map((solution, idx) => (
-                            <Box key={solution.id}>
+                            <Box key={solution.id} sx={{ padding: '0px' }}>
                               <ListItemButton className={styles.solutionItem}>
                                 <Checkbox
                                   checked={selectedSolutions.has(solution.id)}
@@ -177,7 +177,13 @@ const AssessmentSolution = () => {
                   <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={() => router.back()}>
                     Back
                   </CustomButton>
-                  <CustomButton variant="contained" icon="save" type="button" onClick={handleSave} disabled={isSavingSolutions}>
+                  <CustomButton
+                    variant="contained"
+                    icon="save"
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isSavingSolutions || selectedSolutions.size === 0}
+                  >
                     {isSavingSolutions ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>

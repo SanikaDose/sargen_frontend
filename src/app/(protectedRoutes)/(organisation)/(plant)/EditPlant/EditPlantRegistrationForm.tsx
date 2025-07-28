@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
+import { aboutSection } from '@/app/utils/aboutSection';
 const steps = [
   'Name',
   'Location',
@@ -519,7 +520,7 @@ const EditPlantRegistrationForm = () => {
             </form>
 
             <Box className={styles.rightSection}>
-              <InfoBox />
+              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
             </Box>
           </Paper>
         </Box>

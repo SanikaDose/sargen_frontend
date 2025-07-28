@@ -1,5 +1,5 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, CircularProgress, Divider, Typography } from '@mui/material';
 import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
@@ -7,7 +7,7 @@ import { CustomButton } from '../CustomButton/CustomButton';
 import { AsseessmentStatus } from '@/constants/enums';
 import ImageUploader from '../ImageUpload/ImageUpload';
 
-const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) => {
+const PlantInfoCard = ({ data, editPlantOnClick, onClick, downloadReportLoading }: PlantInfoCardProps) => {
   const plantData = data;
 
   return (
@@ -73,37 +73,32 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick }: PlantInfoCardProps) 
 
           <CustomButton
             icon="startAssesment"
-            // children={
-            //   data?.assessmentCompletionStage === 'NOT_STARTED'
-            //     ? 'Request for Assessment'
-            //     : data?.assessmentCompletionStage === 'STARTED' //change status according to new enum START_ASSESSMENT
-            //       ? 'Assessment Started'
-            //       : data?.assessmentCompletionStage === 'REQUESTED_ASSESSMENT'
-            //         ? 'Assessor Assigning ...'
-            //         : 'Status Unknown'
-            // }
             variant="contained"
             color="primary"
             width="100%"
             height="30px"
-            disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT}
+            disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT || downloadReportLoading}
             onClick={onClick}
           >
-            {data?.assessmentCompletionStage === AsseessmentStatus.NOT_STARTED
-              ? 'Request for Assessment'
-              : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
-                ? 'Assessor Assigning ...'
-                : data?.assessmentCompletionStage === AsseessmentStatus.START_ASSESSMENT
-                  ? 'Start Assesment'
-                  : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
-                    ? 'Assessment Started'
-                    : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
-                      ? 'Edit Asssesment'
-                      : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
-                        ? 'Asssesment in reviewd'
-                        : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
-                          ? 'Download Assessment'
-                          : 'status unknown'}
+            {downloadReportLoading
+              ? 'Downloading Report'
+              : data?.assessmentCompletionStage === AsseessmentStatus.NOT_STARTED
+                ? 'Request for Assessment'
+                : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
+                  ? 'Assessor Assigning ...'
+                  : data?.assessmentCompletionStage === AsseessmentStatus.START_ASSESSMENT
+                    ? 'Start Assessment'
+                    : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
+                      ? 'Assessment Started'
+                      : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
+                        ? 'Edit Assessment'
+                        : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
+                          ? 'Assessment in Review'
+                          : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
+                            ? 'Download Assessment'
+                            : 'Status Unknown'}
+
+            {downloadReportLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : ''}
           </CustomButton>
         </Box>
         <Box className={styles.progressCircle}>

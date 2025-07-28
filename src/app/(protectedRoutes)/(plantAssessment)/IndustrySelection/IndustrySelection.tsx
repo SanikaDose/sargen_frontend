@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { Box, Grid, Paper } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './IndustrySelection.module.css';
 import { Industry, IndustryFormValues } from '../plantAssement.model';
 import InfoBox from '@/components/InfoBox/InfoBox';
@@ -18,6 +18,7 @@ import Loader from '@/components/Loader/Loader';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPlantAssessmentDepartment } from '../plantAssementSlice';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const IndustrySelection = () => {
   const router = useRouter();
@@ -45,6 +46,11 @@ const IndustrySelection = () => {
     defaultValues: {
       selectedIndustryId: '',
     },
+  });
+
+  const selectedIndustryId = useWatch({
+    control,
+    name: 'selectedIndustryId',
   });
 
   useEffect(() => {
@@ -177,10 +183,7 @@ const IndustrySelection = () => {
 
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu. Nam accumsan vel lectus nec ullamcorper. Sed euismod ultrices velit, nec dignissim tortor aliquam eu. Praesent volutpat tortor a mi molestie blandit. Nulla euismod tortor a luctus maximus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio enim, ullamcorper ornare egestas in, tristique non velit. Sed molestie felis id quam cursus elementum. Curabitur lectus sapien, placerat vel nulla ut, euismod rhoncus nulla. Sed convallis vulputate purus, at varius nisl efficitur cursus. Pellentesque tincidunt, velit id."
-                    heading="About Industry"
-                  />
+                  <InfoBox heading={aboutSection.industrySelection.heading} content={aboutSection.industrySelection.description} />
                 </Box>
 
                 <Box
@@ -204,12 +207,7 @@ const IndustrySelection = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton
-                    // children={isLoadingAdd || isLoadingGet ? 'Saving...' : 'Save'}
-                    variant="contained"
-                    icon="save"
-                    type="submit"
-                  >
+                  <CustomButton disabled={!selectedIndustryId || isLoadingGet} variant="contained" icon="save" type="submit">
                     {isLoadingGet ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
