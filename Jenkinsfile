@@ -42,10 +42,6 @@ pipeline {
             ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} '
               set -e
 
-              export NVM_DIR="/root/.nvm"
-              [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-              nvm use 22
-
               echo "🚀 Navigating to deployment directory..."
               cd ${DEPLOY_DIR}
 
@@ -74,8 +70,6 @@ pipeline {
         }
       }
     }
-
-
   }
 
   post {
