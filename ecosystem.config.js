@@ -2,8 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'sargen_frontend',
-      script: 'node',
-      args: '.next/standalone/server.js',
+      script: './.next/standalone/server.js',
       cwd: '/var/www/sargen_frontend',
       env: {
         NODE_ENV: 'production',
@@ -11,4 +10,4 @@ module.exports = {
       }
     }
   ]
-}
+};
