@@ -59,6 +59,12 @@ pipeline {
               echo "🏗️ Building Next.js frontend..."
               npm run build
 
+              echo "steps to fix .next standalone issue"
+              mkdir -p .next/standalone/.next
+              cp -r .next/static .next/standalone/.next/
+              cp -r public .next/standalone/
+
+
               echo "🔄 Restarting PM2 on port 3000..."
               pm2 delete ${PROJECT_KEY} || true
               PORT=3000 pm2 start ecosystem.config.js --name "${PROJECT_KEY}"
