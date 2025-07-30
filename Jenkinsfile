@@ -51,7 +51,7 @@ pipeline {
 
               echo "📦 Installing dependencies..."
               rm -rf node_modules package-lock.json .next
-              npm ci
+              npm install
 
               echo "🏗️ Building Next.js frontend..."
               npm run build
