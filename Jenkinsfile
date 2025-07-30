@@ -50,7 +50,7 @@ pipeline {
               git reset --hard origin/production
 
               echo "📦 Installing dependencies..."
-              rm -rf node_modules .next
+              rm -rf node_modules package-lock.json .next
               npm ci
 
               echo "🏗️ Building Next.js frontend..."
