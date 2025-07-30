@@ -50,6 +50,9 @@ pipeline {
               git reset --hard origin/production
 
               echo "📦 Installing dependencies..."
+              export NVM_DIR="\$HOME/.nvm"
+              source "\$NVM_DIR/nvm.sh"
+              nvm use 22
               rm -rf node_modules .next
               npm ci
 
