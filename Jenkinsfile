@@ -7,6 +7,7 @@ pipeline {
     CONTABO_HOST = '109.199.109.4'
     DEPLOY_DIR = '/var/www/sargen_frontend'
     REPO_URL = 'git@github.com:elansol/sargen_frontend.git'
+    PATH = "/root/.nvm/versions/node/v22.17.0/bin:$PATH"
   }
 
   stages {
