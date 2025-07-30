@@ -37,37 +37,36 @@ pipeline {
 
     stage('Deploy to Contabo') {
       steps {
-        sshagent (credentials: ['contabo-ssh']) {
-          sh '''
-            echo "🧠 Loading NVM..."
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 22
+        sshagent(credentials: ['contabo-ssh']) {
+          sh """
+            ssh -o StrictHostKeyChecking=no root@${CONTABO_HOST} '
+              set -e
 
-            echo "📁 Changing to deployment directory..."
-            cd /var/www/sargen_frontend
+              echo "🚀 Navigating to deployment directory..."
+              cd ${DEPLOY_DIR}
 
-            echo "🔄 Pulling latest code..."
-            git fetch origin production
-            git reset --hard origin/production
+              echo "🔄 Fetching latest code..."
+              git fetch origin production
+              git reset --hard origin/production
 
-            echo "📦 Installing dependencies..."
-            rm -rf node_modules package-lock.json .next
-            npm install
+              echo "📦 Installing dependencies..."
+              rm -rf node_modules .next
+              npm ci
 
-            echo "🏗️ Building project..."
-            npm run build
+              echo "🏗️ Building Next.js frontend..."
+              npm run build
 
-            echo "🚀 Restarting app..."
-            pm2 delete sargen_frontend || true
-            PORT=3000 pm2 start ecosystem.config.js --name sargen_frontend
-            pm2 save
+              echo "🔄 Restarting PM2 on port 3000..."
+              pm2 delete ${PROJECT_KEY} || true
+              PORT=3000 pm2 start ecosystem.config.js --name "${PROJECT_KEY}"
+              pm2 save
 
-            echo "🔁 Reloading NGINX..."
-            nginx -t && systemctl reload nginx
+              echo "🔁 Restarting Nginx..."
+              nginx -t && systemctl reload nginx
 
-            echo "✅ Deployment completed"
-          '''
+              echo "✅ Deployment completed successfully"
+            '
+          """
         }
       }
     }
