@@ -37,7 +37,7 @@ pipeline {
 
     stage('Deploy to Contabo') {
       steps {
-        sshagent (credentials: ['root']) {
+        sshagent (credentials: ['contabo-ssh']) {
           sh '''
             echo "🧠 Loading NVM..."
             export NVM_DIR="$HOME/.nvm"
