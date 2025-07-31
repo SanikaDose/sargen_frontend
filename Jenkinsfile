@@ -54,7 +54,7 @@ pipeline {
               source "\$NVM_DIR/nvm.sh"
               nvm use 22
               rm -rf node_modules .next
-              npm ci
+              npm install
 
               echo "🏗️ Building Next.js frontend..."
               npm run build
