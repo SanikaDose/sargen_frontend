@@ -50,20 +50,28 @@ pipeline {
               git reset --hard origin/production
 
               echo "📦 Installing dependencies..."
+              export NVM_DIR="\$HOME/.nvm"
+              source "\$NVM_DIR/nvm.sh"
+              nvm use 22
               rm -rf node_modules .next
-              npm install
+              npm ci
 
               echo "🏗️ Building Next.js frontend..."
               npm run build
 
+              echo "steps to fix .next standalone issue"
+              mkdir -p .next/standalone/.next
+              cp -r .next/static .next/standalone/.next/
+              cp -r public .next/standalone/
+
+
               echo "🔄 Restarting PM2 on port 3000..."
               pm2 delete ${PROJECT_KEY} || true
-              PORT=3000 pm2 start npm --name "${PROJECT_KEY}" -- start
+              PORT=3000 pm2 start ecosystem.config.js --name "${PROJECT_KEY}"
               pm2 save
 
-              echo "restarting nginx server"
-              nginx -t
-              systemctl reload nginx
+              echo "🔁 Restarting Nginx..."
+              nginx -t && systemctl reload nginx
 
               echo "✅ Deployment completed successfully"
             '
