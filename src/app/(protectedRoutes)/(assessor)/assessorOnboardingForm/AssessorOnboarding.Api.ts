@@ -272,7 +272,7 @@ export const assessorApi = protectedApi.injectEndpoints({
       query: ({ tenantId, file }) => {
         const formData = new FormData();
         if (file) {
-          formData.append('dim_band_description_table_', file);
+          formData.append('dimension_band_weight_scale_', file);
         }
         return {
           url: `${apiControllerPath.assessorOnboarding.root}${apiControllerPath.assessorOnboarding.uploadDimBandDescription}${tenantId}`,

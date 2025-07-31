@@ -201,7 +201,7 @@ function AssessorOnboarding() {
     cost_lookup_table_: uploadCostProfileLookup,
     industry_selection_lookup_table_: uploadIndustrySelectionLookup,
     kpi_lookup_table_: uploadKPILookup,
-    dim_band_description_table_: uploadDimBandDescriptionMatrix,
+    dimension_band_weight_scale_: uploadDimBandDescriptionMatrix,
     solutions_with_band_weights_: uploadSolutionMetadata,
     band_definition_table_: uploadBandDefinition,
   };

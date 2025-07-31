@@ -7,7 +7,7 @@ export const fileUploadKeyMap: { [key: string]: string } = {
   'Cost Profile LookUp': 'cost_lookup_table_',
   'Industry Selection LookUp': 'industry_selection_lookup_table_',
   'KPI Selection LookUp': 'kpi_lookup_table_',
-  'Dim Band Description': 'dim_band_description_table_',
+  'Dimension To Band': 'dimension_band_weight_scale_',
   'Solutions Metadata': 'solutions_with_band_weights_',
   'Band Definitions': 'band_definition_table_',
 };
