@@ -77,7 +77,11 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, downloadReportLoading 
             color="primary"
             width="100%"
             height="30px"
-            disabled={data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT || downloadReportLoading}
+            disabled={
+              data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT ||
+              data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT ||
+              downloadReportLoading
+            }
             onClick={onClick}
           >
             {downloadReportLoading
@@ -103,7 +107,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, downloadReportLoading 
         </Box>
         <Box className={styles.progressCircle}>
           {data?.assessmentCompletionStage &&
-          [AsseessmentStatus.REQUESTED_ASSESSMENT, AsseessmentStatus.NOT_STARTED].includes(
+          [AsseessmentStatus.REQUESTED_ASSESSMENT, AsseessmentStatus.NOT_STARTED, AsseessmentStatus.REVIEW_ASSESSMENT].includes(
             data.assessmentCompletionStage as AsseessmentStatus,
           ) ? null : (
             <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />

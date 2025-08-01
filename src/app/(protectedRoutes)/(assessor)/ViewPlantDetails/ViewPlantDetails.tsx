@@ -19,6 +19,8 @@ import { AssessorProps } from './Assessor.types';
 import { useGetAssessorMetadataQuery, usePostAssessorMetadataToPlantMutation } from './AssessorApi';
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
 import { AsseessmentStatus } from '@/constants/enums';
+import { useChangeAssessmentStatusMutation } from './AssessorApi';
+import { triggerToast } from '@/app/utils/toast';
 
 const excludeKeys = [
   'plantLogo',
@@ -40,6 +42,9 @@ const ViewPlantDetails = ({}: AssessorProps) => {
   const assessorId = useSelector((state: RootState) => state.tokenDecode.decodedToken?.tenantId);
   const plantId = params?.plantId as string;
   const dispatch = useDispatch();
+
+  //assessment status to change under preview
+  const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
 
   // Move all dispatch calls to useEffect to avoid setState during render
   useEffect(() => {
@@ -119,10 +124,19 @@ const ViewPlantDetails = ({}: AssessorProps) => {
       console.error('Failed to allow assessment:', error);
     }
   };
+  const handleClick = async () => {
+    try {
+      await postAssesmentStatus({
+        tenantId: organisationId,
+        plantId,
+        assessment: AsseessmentStatus.REVIEW_ASSESSMENT,
+      }).unwrap();
 
-  const handleClick = () => {
-    router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
-    // dispatch(setShowAssessmentListSideBar(true));
+      router.push(`/IndustrySelectionPreview/${organisationId}/${plantId}`);
+    } catch (err) {
+      console.error('Status update failed:', err);
+      triggerToast('Failed to update assessment status', 'error');
+    }
   };
 
   if (isFetching) {
