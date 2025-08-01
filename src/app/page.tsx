@@ -1,5 +1,12 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
-  return <h1>This is the home page without any route</h1>;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/login');
+  }, [router]);
+  return null;
 }
