@@ -88,8 +88,13 @@ const ViewPlantDetails = ({}: AssessorProps) => {
 
   // Check if assessment is completed
   const isAssessmentCompleted = useMemo(() => {
-    return plant?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT;
+    return (
+      plant?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT ||
+      plant?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
+    );
   }, [plant?.assessmentCompletionStage]);
+
+  console.log('isAssessmentCompleted', isAssessmentCompleted);
 
   // Check if assessment is finished - New condition for the first button
   const isAssessmentFinished = useMemo(() => {
@@ -198,7 +203,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                 objectFit: 'contain',
                 objectPosition: 'center',
                 border: '2px solid #d8d8d8',
-                padding: 1,
+                // padding: 1,
               }}
             />
           ) : (
@@ -211,7 +216,7 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                 alignItems: 'center',
                 backgroundColor: 'rgba(243, 243, 243, 0.767)',
                 border: '2px solid #d8d8d8',
-                padding: 1,
+                // padding: 1,
               }}
               variant="square"
             >

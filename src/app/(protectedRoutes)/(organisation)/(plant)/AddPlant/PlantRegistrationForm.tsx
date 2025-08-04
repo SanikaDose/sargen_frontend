@@ -52,7 +52,6 @@ const PlantRegistrationForm = () => {
     control,
     handleSubmit,
     reset,
-
     formState: { errors },
   } = useForm<PlantFormType>();
   const [addPlantInfo, { isLoading }] = useAddPlantInfoMutation();
@@ -226,6 +225,7 @@ const PlantRegistrationForm = () => {
                                     />
                                   ) : (
                                     <>
+                                      {console.log('fieldState error', fieldState.error)}
                                       <InputWithLabel
                                         {...field}
                                         label={input.label}
@@ -238,6 +238,7 @@ const PlantRegistrationForm = () => {
                                         }
                                         onChange={(e) => {
                                           const value = e.target.value;
+                                          console.log(value, 'value');
 
                                           if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
                                             // Remove all commas and only allow digits

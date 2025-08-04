@@ -4,7 +4,7 @@ export const plantFormInputs: PlantFormInput[] = [
   {
     name: 'name',
     label: 'Plant Name',
-    placeholder: 'Enter First Name',
+    placeholder: 'Enter Plant Name',
     required: true,
     rules: {
       required: 'Plant Name is required',
@@ -18,7 +18,7 @@ export const plantFormInputs: PlantFormInput[] = [
   {
     name: 'location',
     label: 'Plant Location',
-    placeholder: 'Enter Last Name',
+    placeholder: 'Enter Plant Location',
     required: true,
     rules: {
       required: 'Location is required',
@@ -46,14 +46,14 @@ export const plantFormInputs: PlantFormInput[] = [
       required: 'GSTIN is required',
       minLength: {
         value: 15,
-        message: 'GSTIN must be exactly 15 characters',
+        message: 'GSTIN must be minimum 15 characters',
       },
       maxLength: {
-        value: 15,
-        message: 'GSTIN must be exactly 15 characters',
+        value: 20,
+        message: 'GSTIN must be exactly 20 characters',
       },
       pattern: {
-        value: /^[A-Za-z0-9]{15}$/,
+        value: /^[A-Z0-9-]+$/,
         message: 'Enter a valid GSTIN (only letters and numbers allowed)',
       },
     },
