@@ -74,18 +74,15 @@ export default function PlantOverview() {
     } else if (assessmentStage === AsseessmentStatus.FINISH_ASSESSMENT) {
       setDownloadingPlantId(plantId);
       try {
-        const bufferResponse = await downloadReport({
+        const { blob, filename } = await downloadReport({
           tenantId,
           plantId,
-        }).unwrap();
-
-        const byteArray = new Uint8Array(bufferResponse.data);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        }).unwrap(); // blob and filename from backend
 
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'Assessment_Report.pdf';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();

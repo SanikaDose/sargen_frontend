@@ -91,19 +91,17 @@ export default function ReportFinalisedPage() {
     const payload = { tenantId, plantId };
 
     try {
-      const bufferResponse = await downloadReport(payload).unwrap();
-
-      const byteArray = new Uint8Array(bufferResponse.data);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const { blob, filename } = await downloadReport(payload).unwrap();
 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Assessment_Report.pdf';
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+
       await postAssesmentStatus({
         tenantId,
         plantId,
