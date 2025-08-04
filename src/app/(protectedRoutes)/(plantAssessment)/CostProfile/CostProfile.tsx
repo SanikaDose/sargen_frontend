@@ -38,7 +38,7 @@ const CostProfile = () => {
 
   const tenantId = organisationId;
   const [getCostCategories, { isLoading: isLoadingGet }] = useGetCostCategoriesMutation();
-  const [addCostCategories] = useAddCostCategoriesMutation();
+  const [addCostCategories, { isLoading: isLoadingAdd }] = useAddCostCategoriesMutation();
   // const [getAssesmentStatus, { isLoading: isLoadingStatus }] = useGetAssesmentStatusMutation({ tenantId, plantId });
 
   const [isMounting, setIsMounting] = useState(true);
@@ -194,7 +194,7 @@ const CostProfile = () => {
                   <InfoBox heading={aboutSection.costProfile.heading} content={aboutSection.costProfile.description} />
                 </Box>
 
-                <Box  
+                <Box
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
@@ -216,12 +216,13 @@ const CostProfile = () => {
                     Back
                   </CustomButton>
                   <CustomButton
+                    disabled={isLoadingGet || isLoadingAdd}
                     // children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
                     variant="contained"
                     icon="save"
                     type="submit"
                   >
-                    {isLoadingGet ? 'Saving...' : 'Save'}
+                    {isLoadingAdd ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

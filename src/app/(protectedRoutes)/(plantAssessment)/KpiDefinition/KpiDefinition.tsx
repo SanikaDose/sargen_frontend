@@ -39,7 +39,7 @@ const KpiDefinition = () => {
   }, [dispatch]);
 
   const [getKPIDefinition, { isLoading: isLoadingGet }] = useGetKPIDefinitionMutation();
-  const [selectKPIDefinition] = useSelectKPIDefinitionMutation();
+  const [selectKPIDefinition, { isLoading: isLoadingSelect }] = useSelectKPIDefinitionMutation();
   const [kpiList, setKpiList] = useState<Kpi[]>([]);
   const { control, handleSubmit, reset } = useForm<KpiFormValues>({
     defaultValues: { kpis: [] },
@@ -185,8 +185,13 @@ const KpiDefinition = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton disabled={selectedCount !== 5 || isLoadingGet} variant="contained" icon="save" type="submit">
-                    {isLoadingGet ? 'Saving...' : 'Save'}
+                  <CustomButton
+                    disabled={selectedCount !== 5 || isLoadingGet || isLoadingSelect}
+                    variant="contained"
+                    icon="save"
+                    type="submit"
+                  >
+                    {isLoadingSelect ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

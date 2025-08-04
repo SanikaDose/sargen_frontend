@@ -38,7 +38,7 @@ const IndustrySelection = () => {
   const organisationId = params.OrganisationId as string;
   const plantId = params.PlantId as string;
   const [getIndustrySelectionList, { isLoading: isLoadingGet }] = useGetIndustrySelectionListMutation();
-  const [selectIndustrySelectionList] = useSelectIndustrySelectionListMutation();
+  const [selectIndustrySelectionList, { isLoading: isLoadingSelect }] = useSelectIndustrySelectionListMutation();
   const tenantId = organisationId;
   const [industryData, setIndustryData] = useState<Industry[]>([]);
 
@@ -207,8 +207,13 @@ const IndustrySelection = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton disabled={!selectedIndustryId || isLoadingGet} variant="contained" icon="save" type="submit">
-                    {isLoadingGet ? 'Saving...' : 'Save'}
+                  <CustomButton
+                    disabled={!selectedIndustryId || isLoadingGet || isLoadingSelect}
+                    variant="contained"
+                    icon="save"
+                    type="submit"
+                  >
+                    {isLoadingSelect ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

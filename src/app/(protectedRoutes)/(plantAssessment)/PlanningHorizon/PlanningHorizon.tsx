@@ -40,7 +40,7 @@ const PlanningHorizon = () => {
   const plantId = params.PlantId as string;
 
   const [getHorizonOptions, { isLoading: isLoadingGet }] = useGetPlanningHorizonListMutation();
-  const [selectHorizonOption] = useSelectPlanningHorizonListMutation();
+  const [selectHorizonOption, { isLoading: isLoadingSelect }] = useSelectPlanningHorizonListMutation();
   const tenantId = organisationId;
 
   const [horizonOptions, setHorizonOptions] = useState<HorizonOption[]>([]);
@@ -96,8 +96,6 @@ const PlanningHorizon = () => {
 
     fetchHorizonOptions();
   }, [getHorizonOptions, tenantId, plantId, reset]);
-
-  console.log('horizonOptions', horizonOptions);
 
   const onSubmit = async (data: HorizonFormValues) => {
     const selectedOption = horizonOptions.find((opt) => opt.id === data.selectedHorizonId);
@@ -228,8 +226,13 @@ const PlanningHorizon = () => {
                   >
                     Back
                   </CustomButton>
-                  <CustomButton disabled={!selectedHorizonId || isLoadingGet} variant="contained" icon="save" type="submit">
-                    {isLoadingGet ? 'Saving...' : 'Save'}
+                  <CustomButton
+                    disabled={!selectedHorizonId || isLoadingGet || isLoadingSelect}
+                    variant="contained"
+                    icon="save"
+                    type="submit"
+                  >
+                    {isLoadingSelect ? 'Saving...' : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>
