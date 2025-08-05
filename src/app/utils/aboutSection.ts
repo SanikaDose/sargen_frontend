@@ -2,22 +2,27 @@ export const aboutSection = {
   organisationOnboarding: {
     heading: 'Organisation Details Guide',
     description: `
-      <p>Please fill in all required details about your organization:</p>
-      <ul>
-        <li><strong>Company name</strong> should match official registration documents</li>
-        <li><strong>Website</strong> must include full URL (e.g., https://www.example.com)</li>
-        <li><strong>GSTIN</strong> should be 15 characters in the format: 27AAAAA0000A1Z5</li>
-        <li><strong>Revenue</strong> can be entered in:
-          <ul>
-            <li>Thousands (e.g., 1,000)</li>
-            <li>Lakhs (e.g., 1,00,000)</li>
-            <li>Crores (e.g., 1,00,00,000)</li>
-          </ul>
-        </li>
-        <li><strong>About organization</strong> limited to 200 characters</li>
-      </ul>
-      <p><em>All fields marked with * are mandatory for successful onboarding.</em></p>
-    `,
+    <p>Please fill in all required details about your organization:</p>
+    <ul>
+      <li><strong>Company name</strong> should match official registration documents</li>
+      <li><strong>Website</strong> must include full URL (e.g., https://www.example.com)</li>
+      <li><strong>Tax Registration Number (GST / VAT)</strong> should follow your country's official format
+        <ul>
+          <li>For GST (India): 15 alphanumeric characters (e.g., 27AAAAA0000A1Z5)</li>
+          <li>For VAT: Format varies by country (e.g., GB123456789, DE123456789)</li>
+        </ul>
+      </li>
+      <li><strong>Revenue</strong> can be entered in:
+        <ul>
+          <li>Thousands (e.g., 1,000)</li>
+          <li>Lakhs (e.g., 1,00,000)</li>
+          <li>Crores (e.g., 1,00,00,000)</li>
+        </ul>
+      </li>
+      <li><strong>About organization</strong> limited to 1000 characters</li>
+    </ul>
+    <p><em>All fields marked with * are mandatory for successful onboarding.</em></p>
+  `,
   },
   contactPerson: {
     heading: 'Contact Person Information',

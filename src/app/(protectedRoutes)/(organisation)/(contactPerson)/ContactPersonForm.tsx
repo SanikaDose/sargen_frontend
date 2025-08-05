@@ -192,6 +192,18 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                 <Grid className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={profilePic} onUpload={handleUpload} />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 1,
+                        textAlign: 'center',
+                        color: '#6E7275',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Upload the Profile Picture
+                    </Typography>
                   </Box>
                   <Box className={styles.formFieldsBox}>
                     <Grid container spacing={1}>
@@ -210,6 +222,7 @@ const ContactPersonForm = ({ editMode = false }: ContactPersonFormProps) => {
                                 placeholder={`Enter ${fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}`}
                                 onFocus={handleFocus}
                                 required
+                                hideAsterisk={fieldName === 'employeeId'}
                                 error={!!errors[fieldName]}
                                 helperText={errors[fieldName]?.message}
                                 readonly={fieldName === 'email'}

@@ -29,7 +29,7 @@ export const OrgFormInputs: OrgFormInput[] = [
   },
   {
     name: 'gstin',
-    label: 'GST IN',
+    label: 'Tax Reg. No. (GST / VAT)',
     placeholder: 'Enter GST IN no',
     required: true,
     rules: {

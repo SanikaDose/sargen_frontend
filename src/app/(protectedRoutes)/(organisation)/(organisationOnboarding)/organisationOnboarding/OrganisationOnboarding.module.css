@@ -54,6 +54,7 @@
 .imageBox {
   display: flex;
   width: 200px;
+  flex-direction: column;
   height: 200px;
   justify-content: center;
   align-items: center;

@@ -8,7 +8,7 @@ import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, Grid, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -120,7 +120,6 @@ function OrganizationOnbording() {
         revenue: normalizedRevenue.toString() || '',
         //  revenueUnit: selectedUnit.value.toString() || '',
         revenueUnit: revenueUnitValue,
-
         uom: org.uom || '',
         numberOfEmployees: org.numberOfEmployees || '',
         about: org.about || '',
@@ -232,6 +231,18 @@ function OrganizationOnbording() {
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 1,
+                        textAlign: 'center',
+                        color: '#6E7275',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Upload the Organisation Logo
+                    </Typography>
                   </Box>
 
                   <Box className={styles.formFieldsBox}>
@@ -258,9 +269,9 @@ function OrganizationOnbording() {
                                                 label: name,
                                                 value: name,
                                               }))
-                                            : currencyOptions.map(({ name }) => ({
-                                                label: name,
-                                                value: name,
+                                            : currencyOptions.map(({ code, symbol }) => ({
+                                                label: `${code} (${symbol})`,
+                                                value: `${code} (${symbol})`,
                                               }))
                                         }
                                         required={true}
@@ -337,18 +348,18 @@ function OrganizationOnbording() {
                           control={control}
                           defaultValue=""
                           rules={{
-                            required: 'About Organization is required',
+                            // required: 'About Organization is required',
                             maxLength: {
-                              value: 200,
-                              message: 'Only 200 characters are allowed',
+                              value: 1000,
+                              message: 'Only 1000 characters are allowed',
                             },
                           }}
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Orgnization (max 200 characters)"
-                              placeholder="Enter About Orgnization"
-                              // required={true}
+                              label="About Organisation (max 1000 characters)"
+                              placeholder="Enter About Plant"
+                              required={false}
                               multiline
                               type="text"
                               rows={2}
