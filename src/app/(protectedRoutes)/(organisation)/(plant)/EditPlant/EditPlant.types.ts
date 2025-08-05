@@ -28,6 +28,7 @@ export interface PlantFormInput {
   isCurrency?: boolean;
   isRevenueUnit?: boolean;
   rules?: RegisterOptions<PlantFormType, keyof PlantFormType>;
+  isDropdown?: boolean;
 }
 
 export interface EditPlantApi {

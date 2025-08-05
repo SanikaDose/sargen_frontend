@@ -23,6 +23,12 @@ import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
 import { aboutSection } from '@/app/utils/aboutSection';
+import {
+  useGetIndustrySelectionListMutation,
+  useSelectIndustrySelectionListMutation,
+} from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
+import { Dropdown } from '@/components/Dropdown/Dropdown';
+import { industrySelectionOptions } from '@/app/utils/industrySelectionOptions';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -32,9 +38,9 @@ const steps = [
   'GSTIN',
   'Type',
   'Age',
+  'Currency',
   'Revenue',
   'Revenue Unit',
-  'Currency',
   'Employees',
   'Lines',
   'Assessment',
@@ -46,6 +52,8 @@ const steps = [
 
 const PlantRegistrationForm = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
+
   dispatch(setPageNameHeader(pagesNames.plantOnboarding));
   const {
     control,
@@ -59,10 +67,7 @@ const PlantRegistrationForm = () => {
   const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const router = useRouter();
-
   const watchedValues = useWatch({ control });
-
   const handleUpload = async (file: File) => {
     const localUrl = URL.createObjectURL(file);
     setLogoUrl(localUrl); // Only for preview
@@ -74,7 +79,7 @@ const PlantRegistrationForm = () => {
   //this is an function which will fill the form with the data from the API and then uload the image while getting the plantId from respomse
   const onSubmit = async (data: PlantFormType) => {
     const { revenue, revenueUnit, numberOfEmployees, numberOfLines, ...rest } = data;
-    console.log('data', data);
+
     const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
     const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
     const cleanedLines = Number((numberOfLines || '').toString().replace(/,/g, ''));
@@ -92,7 +97,6 @@ const PlantRegistrationForm = () => {
         tenantId: tenantId ?? '',
         body: payload,
       }).unwrap()) as unknown as AddPlantInfoResponse;
-      console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
       const newPlantId = (response?.data as { id: string | number })?.id;
@@ -206,9 +210,9 @@ const PlantRegistrationForm = () => {
                               control={control}
                               defaultValue=""
                               rules={input.rules}
-                              render={({ field, fieldState }) => (
-                                <>
-                                  {input.isCurrency || input.isRevenueUnit ? (
+                              render={({ field, fieldState }) => {
+                                if (input.isCurrency || input.isRevenueUnit) {
+                                  return (
                                     <CurrencyValueSelector
                                       {...field}
                                       value={String(field.value ?? '')}
@@ -216,71 +220,77 @@ const PlantRegistrationForm = () => {
                                       placeholder={input.placeholder}
                                       options={
                                         input.isCurrency
-                                          ? currencyOptions.map(({ name }) => ({
-                                              label: name,
-                                              value: name,
+                                          ? currencyOptions.map(({ code, symbol }) => ({
+                                              label: `${code} (${symbol})`,
+                                              value: code,
                                             }))
                                           : [
                                               { label: 'Thousand', value: '1000' },
                                               { label: 'Lakh', value: '100000' },
                                               { label: 'Crore', value: '10000000' },
-                                            ].map(({ label, value }) => ({
-                                              label: label,
-                                              value: value,
-                                            }))
+                                            ]
                                       }
                                       required={true}
                                       onFocus={() => setFocusedField(input.name)}
                                       error={!!fieldState.error}
                                       helperText={fieldState.error?.message}
                                     />
-                                  ) : (
-                                    <>
-                                      {console.log('fieldState error', fieldState.error)}
-                                      <InputWithLabel
-                                        {...field}
-                                        label={input.label}
-                                        placeholder={input.placeholder}
-                                        type={input.type || 'text'}
-                                        value={
-                                          ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
-                                            ? formatWithIndianCommas(field.value)
-                                            : field.value
+                                  );
+                                } else if (input.isDropdown) {
+                                  return (
+                                    // This is for industry selection dropdown  but use currency dropdown component
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      options={industrySelectionOptions.map((opt) => ({
+                                        label: opt.industry_name,
+                                        value: opt.industry_name,
+                                      }))}
+                                      placeholder={input.placeholder}
+                                      label={input.label}
+                                      required={input.required}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <InputWithLabel
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      type={input.type || 'text'}
+                                      value={
+                                        ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                          ? formatWithIndianCommas(field.value)
+                                          : field.value
+                                      }
+                                      onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                          const rawValue = value.replace(/,/g, '');
+                                          if (/^\d*$/.test(rawValue)) {
+                                            field.onChange(rawValue);
+                                          }
+                                        } else if (input.name === 'gstin') {
+                                          field.onChange(value.toUpperCase());
+                                        } else {
+                                          field.onChange(value);
                                         }
-                                        onChange={(e) => {
-                                          const value = e.target.value;
-                                          console.log(value, 'value');
-
-                                          if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
-                                            // Remove all commas and only allow digits
-                                            const rawValue = value.replace(/,/g, '');
-
-                                            if (/^\d*$/.test(rawValue)) {
-                                              console.log('rawvaueee', rawValue);
-                                              field.onChange(rawValue); // Save raw digits only
-                                            }
-                                          }
-                                          if (input.name === 'gstin') {
-                                            field.onChange(value.toUpperCase());
-                                          } else {
-                                            field.onChange(value);
-                                          }
-                                        }}
-                                        onFocus={() => setFocusedField(input.name)}
-                                        size="small"
-                                        required={true}
-                                        error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
-                                      />
-                                    </>
-                                  )}
-                                </>
-                              )}
+                                      }}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      size="small"
+                                      required={input.required}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  );
+                                }
+                              }}
                             />
                           </Grid>
                         ))}
                       </Grid>
-
                       <Box className={styles.aboutSection}>
                         <Controller
                           name="about"
@@ -309,7 +319,6 @@ const PlantRegistrationForm = () => {
                           )}
                         />
                       </Box>
-
                       <Grid size={{ xs: 12 }}>
                         <Divider sx={{ width: '100%' }}>
                           <Typography variant="subtitle1" fontWeight={600}>
@@ -317,7 +326,6 @@ const PlantRegistrationForm = () => {
                           </Typography>
                         </Divider>
                       </Grid>
-
                       <Grid container spacing={1}>
                         <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
                           <Controller

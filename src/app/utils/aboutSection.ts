@@ -50,7 +50,7 @@ export const aboutSection = {
         GST – <code>27AAAAA0000A1Z5</code><br />
         VAT – <code>GB123456789</code>
       </li>
-      <li><strong>Type</strong>: Nature of manufacturing (e.g., Automotive, Pharma, FMCG)</li>
+      <li><strong>Industry Type </strong>: Nature of manufacturing (e.g., Automotive, Aerospace, Food and Beverages, Logistic)</li>
       <li><strong>Plant Age</strong>: Years since commencement of operations</li>
       <hr />
       <li><strong>Revenue</strong>:
@@ -59,7 +59,7 @@ export const aboutSection = {
           <li>Select unit (Thousands / Lakhs / Crores)</li>
         </ul>
       </li>
-      <li><strong>Assessment/Debrief Dates</strong>: Use <code>DD-MM-YYYY</code> format</li>
+      <li><strong>Assessment</strong>: Use <code>DD-MM-YYYY</code> format</li>
       <li><strong>Point of Contact</strong>: Authorized representative details</li>
     </ul>
     <hr />

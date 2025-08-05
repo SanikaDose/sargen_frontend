@@ -6,14 +6,14 @@ export const plantFormInputs: PlantFormInput[] = [
     label: 'Plant Name',
     placeholder: 'Enter Plant Name',
     required: true,
-    rules: {
-      required: 'Plant Name is required',
-      minLength: { value: 3, message: 'Minimum 3 characters required' },
-      pattern: {
-        value: /^[A-Za-z ]+$/, // Only letters and spaces
-        message: 'Only letters allowed ',
-      },
-    },
+    // rules: {
+    //   required: 'Plant Name is required',
+    //   minLength: { value: 3, message: 'Minimum 3 characters required' },
+    //   pattern: {
+    //     value: /^[A-Za-z ]+$/, // Only letters and spaces
+    //     message: 'Only letters allowed ',
+    //   },
+    // },
   },
   {
     name: 'location',
@@ -32,10 +32,10 @@ export const plantFormInputs: PlantFormInput[] = [
     name: 'registrationNo',
     label: 'Registration No.',
     placeholder: 'Enter Registration no',
-    required: true,
-    rules: {
-      required: 'Registration Number is required',
-    },
+    required: false,
+    // rules: {
+    //   required: 'Registration Number is required',
+    // },
   },
   {
     name: 'gstin',
@@ -59,16 +59,13 @@ export const plantFormInputs: PlantFormInput[] = [
     },
   },
   {
-    name: 'type',
-    label: 'Type',
-    placeholder: 'Enter Plant Type',
+    name: 'type', // Changed from 'type' to 'industryType' for clarity
+    label: 'Industry Type',
+    placeholder: 'Select Industry Type',
     required: true,
+    isDropdown: true, // Add this flag
     rules: {
-      required: 'Plant type is required',
-      pattern: {
-        value: /^[A-Za-z ]+$/, // Only letters and spaces
-        message: 'Only letters allowed ',
-      },
+      required: 'Industry type is required',
     },
   },
   {

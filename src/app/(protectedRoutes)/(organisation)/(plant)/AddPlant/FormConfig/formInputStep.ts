@@ -32,10 +32,10 @@ export const plantFormInputs: PlantFormInput[] = [
     name: 'registrationNo',
     label: 'Registration No.',
     placeholder: 'Enter Registration no',
-    required: true,
-    rules: {
-      required: 'Registration Number is required',
-    },
+    required: false,
+    // rules: {
+    //   required: 'Registration Number is required',
+    // },
   },
   {
     name: 'gstin',
@@ -58,17 +58,28 @@ export const plantFormInputs: PlantFormInput[] = [
       },
     },
   },
+  // {
+  //   name: 'type',
+  //   label: 'Industry Type',
+  //   placeholder: 'Enter Plant Type',
+  //   required: true,
+  //   rules: {
+  //     required: 'Plant type is required',
+  //     pattern: {
+  //       value: /^[A-Za-z ]+$/, // Only letters and spaces
+  //       message: 'Only letters allowed ',
+  //     },
+  //   },
+  // },
+
   {
-    name: 'type',
-    label: 'Type',
-    placeholder: 'Enter Plant Type',
+    name: 'type', // Changed from 'type' to 'industryType' for clarity
+    label: 'Industry Type',
+    placeholder: 'Select Industry Type',
     required: true,
+    isDropdown: true, // Add this flag
     rules: {
-      required: 'Plant type is required',
-      pattern: {
-        value: /^[A-Za-z ]+$/, // Only letters and spaces
-        message: 'Only letters allowed ',
-      },
+      required: 'Industry type is required',
     },
   },
   {
@@ -84,6 +95,16 @@ export const plantFormInputs: PlantFormInput[] = [
         value: /^[0-9]+$/,
         message: 'Enter a valid number',
       },
+    },
+  },
+  {
+    name: 'currencyType',
+    placeholder: 'Enter Currency',
+    label: 'Currency Type',
+    isCurrency: true,
+    required: true,
+    rules: {
+      required: 'Currency type is required',
     },
   },
 
@@ -110,16 +131,6 @@ export const plantFormInputs: PlantFormInput[] = [
     required: true,
     rules: {
       required: 'Revenue unit is required',
-    },
-  },
-  {
-    name: 'currencyType',
-    placeholder: 'Enter Currency',
-    label: 'Currency Type',
-    isCurrency: true,
-    required: true,
-    rules: {
-      required: 'Currency type is required',
     },
   },
   {

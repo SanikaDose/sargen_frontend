@@ -35,10 +35,18 @@ export default function PlantOverview() {
     dispatch(setShowAssessmentListSideBar(false));
   }, [dispatch]);
 
-  const { data: plantInfo, isLoading: plantsLoading } = useGetAllPlantInfoQuery({
+  const {
+    data: plantInfo,
+    isLoading: plantsLoading,
+    refetch: refetchPlantInfo,
+  } = useGetAllPlantInfoQuery({
     tenantId,
     search: searchValue,
   });
+
+  useEffect(() => {
+    refetchPlantInfo();
+  }, [searchValue, refetchPlantInfo, router]);
 
   const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
   const [downloadReport] = useDownloadReportMutation();

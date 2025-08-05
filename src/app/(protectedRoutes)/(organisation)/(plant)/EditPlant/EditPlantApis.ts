@@ -10,6 +10,7 @@ export const plantInfoApi = protectedApi.injectEndpoints({
         url: `${apiControllerPath.plantInfo.root}/${tenantId}/${plantId}${apiControllerPath.plantInfo.getPlantInfoById}`,
         method: 'GET',
       }),
+      providesTags: (result, error, { tenantId, plantId }) => [{ type: 'Plant', id: `${tenantId}-${plantId}` }],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         await rtkAPIToast(queryFulfilled, dispatch, {
           successMessage: 'Plant Information Get successfully!',
@@ -32,7 +33,10 @@ export const plantInfoApi = protectedApi.injectEndpoints({
           duration: 4000,
         });
       },
-      invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
+      invalidatesTags: (result, error, { tenantId, plantId }) => [
+        { type: 'Plant', id: `${tenantId}-${plantId}` }, // invalidate specific plant
+        { type: 'Plant', id: `LIST-${tenantId}` }, // invalidate plant list
+      ],
     }),
 
     // 📤 Upload Plant Logo
