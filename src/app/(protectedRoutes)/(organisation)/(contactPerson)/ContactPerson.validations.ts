@@ -30,7 +30,7 @@ export const contactPersonValidationRules = {
     },
   },
   employeeId: {
-    required: 'Employee ID is required',
+    required: false,
     minLength: {
       value: 3,
       message: 'Employee ID must be at least 3 characters long',

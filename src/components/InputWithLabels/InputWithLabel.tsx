@@ -7,6 +7,7 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
   required?: boolean;
   allowEmojis?: boolean; // Optional prop to control emoji behavior
   readonly?: boolean; // Optional prop to make the input read-only
+  hideAsterisk?: boolean;
 }
 
 /**
@@ -15,7 +16,7 @@ export interface InputWithLabelProps extends Omit<TextFieldProps, 'label'> {
  * Prevents emoji input by default.
  */
 export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelProps>(
-  ({ label, name, required = false, allowEmojis = false, readonly = false, ...textFieldProps }, ref) => {
+  ({ label, name, required = false, allowEmojis = false, readonly = false, hideAsterisk = false, ...textFieldProps }, ref) => {
     // Emoji regex pattern - matches most common emojis and symbols
     const emojiRegex =
       /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F018}-\u{1F270}]|[\u{238C}-\u{2454}]|[\u{20D0}-\u{20FF}]/gu;
@@ -98,7 +99,7 @@ export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelP
       <FormControl fullWidth margin="normal">
         <FormLabel htmlFor={name} sx={{ fontWeight: 600, mb: 0, color: '#313131' }}>
           {label}
-          {required && <span style={{ color: 'red' }}> *</span>}
+          {required && !hideAsterisk && <span style={{ color: 'red' }}> *</span>}
         </FormLabel>
         <TextField
           id={name}

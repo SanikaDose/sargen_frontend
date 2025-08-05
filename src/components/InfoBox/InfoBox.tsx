@@ -15,7 +15,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
       sx={{
         height: '100%',
         borderRadius: '16px',
-        bgcolor: '#F5FAFD',
+        bgcolor: '#F5F5F7',
         p: 2,
         display: 'flex',
         flexDirection: 'column',
