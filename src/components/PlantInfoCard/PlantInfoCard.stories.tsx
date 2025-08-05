@@ -27,7 +27,7 @@ Default.args = {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     assessmentStartDate: new Date().toISOString(),
-    debriefDate: new Date().toISOString(),
+
     assessmentCompletionPercentage: 75,
     assessmentCompletionStage: 'Stage 2',
   },

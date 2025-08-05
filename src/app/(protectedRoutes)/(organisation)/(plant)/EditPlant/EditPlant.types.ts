@@ -12,7 +12,6 @@ export interface PlantFormType {
   numberOfEmployees: string;
   numberOfLines: string;
   assessmentStartDate: string;
-  debriefDate: string;
   about: string;
   revenueUnit: string;
   pocFullName: string;
@@ -41,7 +40,6 @@ export interface EditPlantApi {
   numberOfEmployees: number;
   numberOfLines: number;
   assessmentStartDate: string;
-  debriefDate: string;
   about?: string;
   currencyType: string;
   gstin: string;

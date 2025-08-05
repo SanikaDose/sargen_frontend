@@ -27,7 +27,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
         <Typography
           variant="h4"
           sx={{
-            mb: 2,
+            mb: 0.5,
             fontWeight: 600,
             color: 'darkgrey',
           }}

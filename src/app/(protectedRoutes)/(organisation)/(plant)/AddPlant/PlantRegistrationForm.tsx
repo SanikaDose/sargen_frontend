@@ -38,11 +38,10 @@ const steps = [
   'Employees',
   'Lines',
   'Assessment',
-  'Debrief',
   'About',
-  'Full Name',
-  'Email',
-  'Contact ',
+  // 'Full Name',
+  // 'Email',
+  // 'Contact ',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
@@ -86,7 +85,7 @@ const PlantRegistrationForm = () => {
       numberOfLines: cleanedLines,
       age: data.age ? Number(data.age) : 0,
     };
-    console.log('updated addda', payload);
+
     try {
       //  🔁 Step 1: Submit plant form
       const response = (await addPlantInfo({
@@ -169,7 +168,7 @@ const PlantRegistrationForm = () => {
     return str; // fallback to raw input
   }
   return (
-    <>
+    <Box sx={{ width: '100%', height: '99%' }}>
       {isLoading ? (
         <Loader loading={true} />
       ) : (
@@ -183,11 +182,23 @@ const PlantRegistrationForm = () => {
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 1,
+                        textAlign: 'center',
+                        color: '#6E7275',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Upload the Plant Logo
+                    </Typography>
                   </Box>
 
                   <Box className={styles.formFieldsBox} sx={{}}>
                     <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1} sx={{}}>
+                      <Grid container spacing={1}>
                         {plantFormInputs.map((input) => (
                           <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller
@@ -276,18 +287,18 @@ const PlantRegistrationForm = () => {
                           control={control}
                           defaultValue=""
                           rules={{
-                            required: 'About Organization is required',
+                            // required: 'About Organization is required',
                             maxLength: {
-                              value: 200,
-                              message: 'Only 200 characters are allowed',
+                              value: 1000,
+                              message: 'Only 1000 characters are allowed',
                             },
                           }}
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant (max 200 characters)"
+                              label="About Plant (max 1000 characters)"
                               placeholder="Enter About Plant"
-                              // required={true}
+                              required={false}
                               multiline
                               type="text"
                               rows={2}
@@ -300,7 +311,7 @@ const PlantRegistrationForm = () => {
                       </Box>
 
                       <Grid size={{ xs: 12 }}>
-                        <Divider sx={{ my: 3, width: '100%' }}>
+                        <Divider sx={{ width: '100%' }}>
                           <Typography variant="subtitle1" fontWeight={600}>
                             Point Of Contact
                           </Typography>
@@ -431,13 +442,21 @@ const PlantRegistrationForm = () => {
               </Box>
             </form>
 
-            <Box sx={{ width: '30%' }} className={styles.rightSection}>
-              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+            <Box className={styles.rightSection}>
+              <Box
+                className={styles.infoboxSection}
+                sx={{
+                  overflowY: 'auto',
+                  padding: 0.4,
+                }}
+              >
+                <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+              </Box>
             </Box>
           </Paper>
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 

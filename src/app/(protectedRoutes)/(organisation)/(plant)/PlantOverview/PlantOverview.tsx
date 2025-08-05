@@ -157,7 +157,7 @@ export default function PlantOverview() {
                     assessmentCompletionPercentage: plant.assessmentCompletionPercentage,
                     assessmentStartDate: plant.assessmentDate,
                     createdAt: plant.createdAt,
-                    debriefDate: plant.debriefDate,
+                    updatedAt: plant.updatedAt,
                     gstin: plant.gstin,
                     location: plant.location,
                     name: plant.name,
@@ -166,7 +166,6 @@ export default function PlantOverview() {
                     plantLogo: plant.plantLogo || '',
                     registrationNo: plant.registrationNo,
                     revenue: plant.revenue,
-                    updatedAt: plant.debriefDate,
                     assessmentCompletionStage: plant?.assessmentCompletionStage,
                   }}
                   editPlantOnClick={() => router.push(`EditPlant/${tenantId}/${plant.id}`)}

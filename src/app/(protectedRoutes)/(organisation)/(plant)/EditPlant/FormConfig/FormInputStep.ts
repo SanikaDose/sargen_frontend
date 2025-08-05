@@ -39,22 +39,22 @@ export const plantFormInputs: PlantFormInput[] = [
   },
   {
     name: 'gstin',
-    label: 'GST IN',
-    placeholder: 'Enter GST IN no',
+    label: 'Tax Reg. No. (GST / VAT)',
+    placeholder: 'Enter Tax Registration Number',
     required: true,
     rules: {
-      required: 'GSTIN is required',
+      required: 'Tax Registration Number is required',
       minLength: {
         value: 15,
-        message: 'GSTIN must be minimum 15 characters',
+        message: 'Tax Registration Number must be exactly 15 characters',
       },
       maxLength: {
-        value: 20,
-        message: 'GSTIN must be exactly 20 characters',
+        value: 15,
+        message: 'Tax Registration Number must be exactly 15 characters',
       },
       pattern: {
-        value: /^[A-Z0-9-]+$/,
-        message: 'Enter a valid GSTIN (only letters and numbers allowed)',
+        value: /^[A-Za-z0-9]{15}$/,
+        message: 'Enter a valid Tax Registration Number (only letters and numbers allowed)',
       },
     },
   },
@@ -161,14 +161,14 @@ export const plantFormInputs: PlantFormInput[] = [
       required: 'Assessment date is required',
     },
   },
-  {
-    name: 'debriefDate',
-    label: 'Debrief Date',
-    placeholder: 'Enter Debrief Date',
-    type: 'date',
-    required: true,
-    rules: {
-      required: 'Debrief date is required',
-    },
-  },
+  // {
+  //   name: 'debriefDate',
+  //   label: 'Debrief Date',
+  //   placeholder: 'Enter Debrief Date',
+  //   type: 'date',
+  //   required: true,
+  //   rules: {
+  //     required: 'Debrief date is required',
+  //   },
+  // },
 ];
