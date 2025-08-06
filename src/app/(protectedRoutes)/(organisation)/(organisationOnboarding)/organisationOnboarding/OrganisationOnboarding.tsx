@@ -271,7 +271,7 @@ function OrganizationOnbording() {
                                               }))
                                             : currencyOptions.map(({ code, symbol }) => ({
                                                 label: `${code} (${symbol})`,
-                                                value: `${code} (${symbol})`,
+                                                value: code,
                                               }))
                                         }
                                         required={true}

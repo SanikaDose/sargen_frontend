@@ -17,6 +17,7 @@ import { FormValues, RawCostCategory } from '../../(plantAssessment)/plantAsseme
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../../(plantAssessment)/plantAssementApi';
 import styles from './CostProfilePreview.module.css';
 import { setPlantAssessmentDepartment } from '../../(plantAssessment)/plantAssementSlice';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const CostProfilePreview = () => {
   const params = useParams();
@@ -218,10 +219,7 @@ const CostProfilePreview = () => {
               {/* Right Section */}
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac nulla arcu..."
-                    heading="About Industry"
-                  />
+                  <InfoBox heading={aboutSection.costProfile.heading} content={aboutSection.costProfile.description} />
                 </Box>
 
                 <Box

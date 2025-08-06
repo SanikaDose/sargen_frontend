@@ -27,9 +27,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({
         <Typography
           variant="h4"
           sx={{
-            mb: 2,
             fontWeight: 600,
-            color: 'darkgrey',
+            color: 'text.primary',
           }}
         >
           {heading}
@@ -37,7 +36,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
       )}
       <Box
         sx={{
-          color: 'text.secondary',
+          color: 'text.primary',
           lineHeight: 1.5,
           flexGrow: 1,
           p: 2,

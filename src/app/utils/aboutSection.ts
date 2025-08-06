@@ -63,19 +63,21 @@ export const aboutSection = {
     heading: 'Industry Selection Guide',
     description: `
       <p>Please select your <strong>primary industry sector</strong>:</p>
-      <ul>
+      <ul style="font-size: 0.9rem; margin-top: 0.5rem;">
         <li><strong>Single Selection Only</strong> - Choose the one that best represents your core business</li>
+        <hr style="margin: 0.5rem 0;" />
         <li><strong>Categories Explained</strong>:
-          <ul>
+          <ul style="padding-left: 40px; font-size: 0.9rem;">
             <li><strong>Aerospace</strong>: Aircraft, spacecraft, and related systems</li>
             <li><strong>Electronics</strong>: Electronic components and devices</li>
             <li><strong>Automotive</strong>: Vehicle manufacturing and parts</li>
             <li><strong>Other Sectors</strong>: See detailed descriptions below</li>
           </ul>
         </li>
+        <hr style="margin: 0.5rem 0;" />
         <li><strong>Can't find your exact industry?</strong> Select the closest match</li>
       </ul>
-      <p><em>This selection will determine:
+      <p style="font-size: 0.9rem; margin-top: 1rem;"><em>This selection will determine:
       <br>- Relevant compliance requirements
       <br>- Industry-specific reporting
       <br>- Tailored support resources</em></p>
@@ -84,99 +86,106 @@ export const aboutSection = {
   planningHorizon: {
     heading: 'Planning Horizon Selection Guide',
     description: `
-      <p>Select <strong>one planning horizon</strong> that matches your initiative's timeframe:</p>
-      
-      <ul>
-        <li><strong>Strategic</strong> (3-5 years):
-          <ul>
-            <li>Long-term organizational goals</li>
-            <li>Market positioning</li>
-            <li>Major investments</li>
-          </ul>
-        </li>
-        
-        <li><strong>Operational</strong> (1-2 years):
-          <ul>
-            <li>Department-level planning</li>
-            <li>Resource allocation</li>
-            <li>Process improvements</li>
-          </ul>
-        </li>
-        
-        <li><strong>Tactical</strong> (0-12 months):
-          <ul>
-            <li>Immediate action plans</li>
-            <li>Team-level execution</li>
-            <li>Short-term KPIs</li>
-          </ul>
-        </li>
-      </ul>
-      
-      <p><em>Note: This selection will affect:
-      <br>- Reporting requirements
-      <br>- Approval workflow
-      <br>- Measurement criteria</em></p>
-    `,
+    <p style="margin: 0.5rem 0;">Select <strong>one planning horizon</strong> that matches your initiative's timeframe:</p>
+    
+    <ul style="font-size: 0.9rem;">
+      <li>
+        <strong>Strategic</strong> (3–5 years):
+        <ul style="padding-left: 40px;">
+          <li>Long-term organizational goals</li>
+          <li>Market positioning</li>
+          <li>Major investments</li>
+        </ul>
+      </li>
+      <hr style="margin: 0.5rem 0;" />
+      <li>
+        <strong>Operational</strong> (1–2 years):
+        <ul style="padding-left: 40px;">
+          <li>Department-level planning</li>
+          <li>Resource allocation</li>
+          <li>Process improvements</li>
+        </ul>
+      </li>
+      <hr style="margin: 0.5rem 0;" />
+      <li>
+        <strong>Tactical</strong> (0–12 months):
+        <ul style="padding-left: 40px;">
+          <li>Immediate action plans</li>
+          <li>Team-level execution</li>
+          <li>Short-term KPIs</li>
+        </ul>
+      </li>
+    </ul>
+    
+    <p style="font-size: 0.9rem; margin-top: 1rem;"><em>Note: This selection will affect:</em></p>
+    <ul style="padding-left: 40px; font-size: 0.9rem;">
+      <li><em>Reporting requirements</em></li>
+      <li><em>Approval workflow</em></li>
+      <li><em>Measurement criteria</em></li>
+    </ul>
+  `,
   },
   kpiSelection: {
     heading: 'KPI Selection Guide',
     description: `
-      <p>Select <strong>5 KPIs</strong> to track operational performance:</p>
-      
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.9rem;">
-        <div>
-          <strong>Efficiency</strong>
-          <ul style="margin-top: 0.2rem;">
-            <li><strong>Assets</strong>: Utilization rates</li>
-            <li><strong>Workforce</strong>: Productivity</li>
-            <li><strong>Utilities</strong>: Consumption ratios</li>
-          </ul>
-          
-          <strong>Quality</strong>
-          <ul style="margin-top: 0.2rem;">
-            <li><strong>Process</strong>: Defect rates</li>
-            <li><strong>Product</strong>: Returns</li>
-          </ul>
-        </div>
-        
-        <div>
-          <strong>Time Metrics</strong>
-          <ul style="margin-top: 0.2rem;">
-            <li><strong>To Market</strong>: Development cycle</li>
-            <li><strong>To Delivery</strong>: Fulfillment speed</li>
-          </ul>
-          
-          <strong>Safety/Flexibility</strong>
-          <ul style="margin-top: 0.2rem;">
-            <li><strong>Safety</strong>: Incident rates</li>
-            <li><strong>Production Flex</strong>: Changeovers</li>
-            <li><strong>Workforce Flex</strong>: Cross-training</li>
-          </ul>
-        </div>
+    <p style="margin: 0.5rem 0;">Select <strong>5 KPIs</strong> to track operational performance:</p>
+    
+    <div style="font-size: 0.9rem;">
+
+      <div>
+        <strong>Efficiency</strong>
+        <ul style="margin-top: 0.2rem; padding-left: 1rem;">
+          <li><strong>Assets</strong>: Utilization rates</li>
+          <li><strong>Workforce</strong>: Productivity</li>
+          <li><strong>Utilities</strong>: Consumption ratios</li>
+        </ul>
+      <hr style="margin: 0.5rem 0;" />
+        <strong>Quality</strong>
+        <ul style="margin-top: 0.2rem; padding-left: 1rem;">
+          <li><strong>Process</strong>: Defect rates</li>
+          <li><strong>Product</strong>: Returns</li>
+        </ul>
       </div>
-      
-      <p style="margin-top: 0.5rem; font-size: 0.85rem;"><em>Tip: Balance across categories and ensure measurable data exists.</em></p>
-    `,
+      <hr style="margin: 0.5rem 0;" />
+      <div>
+        <strong>Time Metrics</strong>
+        <ul style="margin-top: 0.2rem; padding-left: 1rem;">
+          <li><strong>To Market</strong>: Development cycle</li>
+          <li><strong>To Delivery</strong>: Fulfillment speed</li>
+        </ul>
+      <hr style="margin: 0.5rem 0;" />
+        <strong>Safety/Flexibility</strong>
+        <ul style="margin-top: 0.2rem; padding-left: 1rem;">
+          <li><strong>Safety</strong>: Incident rates</li>
+          <li><strong>Production Flex</strong>: Changeovers</li>
+          <li><strong>Workforce Flex</strong>: Cross-training</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top: 1rem; font-size: 0.85rem;"><em>Tip: Balance across categories and ensure measurable data exists.</em></p>
+  `,
   },
   costProfile: {
     heading: 'Cost Profile Analysis',
     description: `
       <div>
         <p><strong>Cost Allocation Rules</strong></p>
-        <ul style="margin-top: 0.2rem;">
+        <ul style="margin-top: 0.2rem; font-size: 0.9rem">
           <li>∑ < 100% → <span style="color: #4CAF50;">Profit</span></li>
           <li>∑ > 100% → <span style="color: #F44336;">Loss</span></li>
           <li>Ideal range: 85-95%</li>
         </ul>
+        <hr style="margin: 0.5rem 0;" />
         <p><strong>Key Controls</strong></p>
-        <ul style="margin-top: 0.2rem;">
+        <ul style="margin-top: 0.2rem; font-size: 0.9rem">
           <li>Labor + Materials ≤ 65%</li>
           <li>R&D + Maintenance ≤ 25%</li>
           <li>SG&A ≤ 15%</li>
         </ul>
       </div>
       
-      <p style="margin-top: 0.5rem; font-size: 0.85rem;"><em>Tip: Balance across categories and ensure measurable data exists.</em></p>
+      <p style="margin-top: 1rem; font-size: 0.85rem;"><em>Tip: Balance across categories and ensure measurable data exists.</em></p>
     `,
   },
 };
