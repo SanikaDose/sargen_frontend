@@ -23,11 +23,6 @@ import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
 import { aboutSection } from '@/app/utils/aboutSection';
-import {
-  useGetIndustrySelectionListMutation,
-  useSelectIndustrySelectionListMutation,
-} from '@/app/(protectedRoutes)/(plantAssessment)/plantAssementApi';
-import { Dropdown } from '@/components/Dropdown/Dropdown';
 import { industrySelectionOptions } from '@/app/utils/industrySelectionOptions';
 const tenantId = getValueLocalStorage('tenantId');
 
