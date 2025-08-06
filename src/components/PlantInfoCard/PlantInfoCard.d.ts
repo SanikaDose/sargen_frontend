@@ -11,7 +11,6 @@ export interface PlantData {
   createdAt: string;
   updatedAt: string;
   assessmentStartDate: string;
-  debriefDate: string;
   assessmentCompletionPercentage: number;
   assessmentCompletionStage: string;
 }

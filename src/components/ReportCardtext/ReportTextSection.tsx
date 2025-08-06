@@ -34,7 +34,6 @@ export default function ReportTextSection({ reportData, className = '', sx = {} 
             p: 2,
             display: 'flex',
             flexDirection: 'column',
-
             // boxShadow: '0 0 8px rgba(0,0,0,0.05)',
           }}
         >

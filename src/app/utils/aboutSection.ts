@@ -39,26 +39,34 @@ export const aboutSection = {
   plantRegistration: {
     heading: 'Plant Registration Guide',
     description: `
-      <p>Please provide accurate details about your manufacturing plant:</p>
-      <ul>
-        <li><strong>Plant Name</strong>: Official registered name of the facility</li>
-        <li><strong>Location</strong>: Physical address of the plant</li>
-        <li><strong>Registration No.</strong>: Government-issued registration number</li>
-        <li><strong>GSTIN</strong>: 15-character GST identification number (e.g., 27AAAAA0000A1Z5)</li>
-        <li><strong>Type</strong>: Nature of manufacturing (e.g., Automotive, Pharma, FMCG)</li>
-        <li><strong>Plant Age</strong>: Years since commencement of operations</li>
-        <li><strong>Revenue</strong>:
-          <ul>
-            <li>Enter amount</li>
-            <li>Select unit (Thousands/Lakhs/Crores)</li>
-          </ul>
-        </li>
-        <li><strong>Assessment/Debrief Dates</strong>: Use DD-MM-YYYY format</li>
-        <li><strong>Point of Contact</strong>: Authorized representative details</li>
-      </ul>
-      <p><em>All fields marked with * are mandatory for registration.</em></p>
-    `,
+    <p>Please provide accurate details about your manufacturing plant:</p>
+    <hr />
+    <ul style="font-size: 14px; line-height: 1.6;">
+      <li><strong>Plant Name</strong>: Official registered name of the facility</li>
+      <li><strong>Location</strong>: Physical address of the plant</li>
+      <li><strong>Registration No.</strong>: Government-issued registration number</li>
+      <li><strong>Tax Registration Number</strong>: 
+        Value-added tax (VAT) and goods and services tax (GST) are similar taxes that are levied on the sale of goods and services.<br />
+        GST – <code>27AAAAA0000A1Z5</code><br />
+        VAT – <code>GB123456789</code>
+      </li>
+      <li><strong>Industry Type </strong>: Nature of manufacturing (e.g., Automotive, Aerospace, Food and Beverages, Logistic)</li>
+      <li><strong>Plant Age</strong>: Years since commencement of operations</li>
+      <hr />
+      <li><strong>Revenue</strong>:
+        <ul style="font-size: 13px; margin-top: 4px;">
+          <li>Enter amount</li>
+          <li>Select unit (Thousands / Lakhs / Crores)</li>
+        </ul>
+      </li>
+      <li><strong>Assessment</strong>: Use <code>DD-MM-YYYY</code> format</li>
+      <li><strong>Point of Contact</strong>: Authorized representative details</li>
+    </ul>
+    <hr />
+    <p><em>All fields marked with * are mandatory for registration.</em></p>
+  `,
   },
+
   industrySelection: {
     heading: 'Industry Selection Guide',
     description: `

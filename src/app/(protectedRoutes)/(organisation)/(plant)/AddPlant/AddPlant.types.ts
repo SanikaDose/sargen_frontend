@@ -12,7 +12,6 @@ export interface PlantFormType {
   numberOfEmployees: string;
   numberOfLines: string;
   assessmentStartDate: string;
-  debriefDate: string;
   about: string;
   revenueUnit: string;
   pocFullName: string;
@@ -29,6 +28,7 @@ export interface PlantFormInput {
   isCurrency?: boolean;
   isRevenueUnit?: boolean;
   rules?: RegisterOptions<PlantFormType, keyof PlantFormType>;
+  isDropdown?: boolean;
 }
 
 export interface AddPlantApi {
@@ -41,7 +41,6 @@ export interface AddPlantApi {
   numberOfEmployees: number;
   numberOfLines: number;
   assessmentStartDate: string;
-  debriefDate: string;
   about?: string;
   currencyType: string;
   gstin: string;
@@ -64,7 +63,6 @@ export type AddPlantInfoResponse = {
   numberOfEmployees: string;
   numberOfLines: string;
   assessmentStartDate: string; // ISO date string (e.g., '2025-06-23')
-  debriefDate: string; // ISO date string (e.g., '2025-06-30')
   pocFullName: string;
   pocEmail: string;
   pocContactNo: string;

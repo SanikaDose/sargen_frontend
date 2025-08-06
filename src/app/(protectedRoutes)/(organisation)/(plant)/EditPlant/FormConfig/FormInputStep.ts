@@ -6,14 +6,14 @@ export const plantFormInputs: PlantFormInput[] = [
     label: 'Plant Name',
     placeholder: 'Enter Plant Name',
     required: true,
-    rules: {
-      required: 'Plant Name is required',
-      minLength: { value: 3, message: 'Minimum 3 characters required' },
-      pattern: {
-        value: /^[A-Za-z ]+$/, // Only letters and spaces
-        message: 'Only letters allowed ',
-      },
-    },
+    // rules: {
+    //   required: 'Plant Name is required',
+    //   minLength: { value: 3, message: 'Minimum 3 characters required' },
+    //   pattern: {
+    //     value: /^[A-Za-z ]+$/, // Only letters and spaces
+    //     message: 'Only letters allowed ',
+    //   },
+    // },
   },
   {
     name: 'location',
@@ -32,43 +32,40 @@ export const plantFormInputs: PlantFormInput[] = [
     name: 'registrationNo',
     label: 'Registration No.',
     placeholder: 'Enter Registration no',
-    required: true,
-    rules: {
-      required: 'Registration Number is required',
-    },
+    required: false,
+    // rules: {
+    //   required: 'Registration Number is required',
+    // },
   },
   {
     name: 'gstin',
-    label: 'GST IN',
-    placeholder: 'Enter GST IN no',
+    label: 'Tax Reg. No. (GST / VAT)',
+    placeholder: 'Enter Tax Registration Number',
     required: true,
     rules: {
-      required: 'GSTIN is required',
+      required: 'Tax Registration Number is required',
       minLength: {
         value: 15,
-        message: 'GSTIN must be minimum 15 characters',
+        message: 'Tax Registration Number must be exactly 15 characters',
       },
       maxLength: {
-        value: 20,
-        message: 'GSTIN must be exactly 20 characters',
+        value: 15,
+        message: 'Tax Registration Number must be exactly 15 characters',
       },
       pattern: {
-        value: /^[A-Z0-9-]+$/,
-        message: 'Enter a valid GSTIN (only letters and numbers allowed)',
+        value: /^[A-Za-z0-9]{15}$/,
+        message: 'Enter a valid Tax Registration Number (only letters and numbers allowed)',
       },
     },
   },
   {
-    name: 'type',
-    label: 'Type',
-    placeholder: 'Enter Plant Type',
+    name: 'type', // Changed from 'type' to 'industryType' for clarity
+    label: 'Industry Type',
+    placeholder: 'Select Industry Type',
     required: true,
+    isDropdown: true, // Add this flag
     rules: {
-      required: 'Plant type is required',
-      pattern: {
-        value: /^[A-Za-z ]+$/, // Only letters and spaces
-        message: 'Only letters allowed ',
-      },
+      required: 'Industry type is required',
     },
   },
   {
@@ -161,14 +158,14 @@ export const plantFormInputs: PlantFormInput[] = [
       required: 'Assessment date is required',
     },
   },
-  {
-    name: 'debriefDate',
-    label: 'Debrief Date',
-    placeholder: 'Enter Debrief Date',
-    type: 'date',
-    required: true,
-    rules: {
-      required: 'Debrief date is required',
-    },
-  },
+  // {
+  //   name: 'debriefDate',
+  //   label: 'Debrief Date',
+  //   placeholder: 'Enter Debrief Date',
+  //   type: 'date',
+  //   required: true,
+  //   rules: {
+  //     required: 'Debrief date is required',
+  //   },
+  // },
 ];

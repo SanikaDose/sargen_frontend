@@ -17,7 +17,7 @@ export type Plant = {
   createdBy: string | null;
   updatedBy: string | null;
   assessmentStartDate: string;
-  debriefDate: string;
+
   about: string;
   assessor: string;
   assessmentTableAssignedList: string[];

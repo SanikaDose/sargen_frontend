@@ -23,6 +23,7 @@ import { AddPlantInfoResponse, PlantFormType } from './AddPlant.types';
 import { useAddPlantInfoMutation, useUploadPlantLogoMutation } from './AddPlantApis';
 import { plantFormInputs } from './FormConfig/formInputStep';
 import { aboutSection } from '@/app/utils/aboutSection';
+import { industrySelectionOptions } from '@/app/utils/industrySelectionOptions';
 const tenantId = getValueLocalStorage('tenantId');
 
 const steps = [
@@ -32,21 +33,22 @@ const steps = [
   'GSTIN',
   'Type',
   'Age',
+  'Currency',
   'Revenue',
   'Revenue Unit',
-  'Currency',
   'Employees',
   'Lines',
   'Assessment',
-  'Debrief',
   'About',
-  'Full Name',
-  'Email',
-  'Contact ',
+  // 'Full Name',
+  // 'Email',
+  // 'Contact ',
 ].map((label) => ({ label }));
 
 const PlantRegistrationForm = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
+
   dispatch(setPageNameHeader(pagesNames.plantOnboarding));
   const {
     control,
@@ -60,10 +62,7 @@ const PlantRegistrationForm = () => {
   const [, setSelectedFile] = useState<File | null>(null);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const router = useRouter();
-
   const watchedValues = useWatch({ control });
-
   const handleUpload = async (file: File) => {
     const localUrl = URL.createObjectURL(file);
     setLogoUrl(localUrl); // Only for preview
@@ -75,7 +74,7 @@ const PlantRegistrationForm = () => {
   //this is an function which will fill the form with the data from the API and then uload the image while getting the plantId from respomse
   const onSubmit = async (data: PlantFormType) => {
     const { revenue, revenueUnit, numberOfEmployees, numberOfLines, ...rest } = data;
-    console.log('data', data);
+
     const finalRevenue = Number((revenue || '').toString().replace(/,/g, '')) * Number(revenueUnit);
     const cleanedEmployees = Number((numberOfEmployees || '').toString().replace(/,/g, ''));
     const cleanedLines = Number((numberOfLines || '').toString().replace(/,/g, ''));
@@ -86,14 +85,13 @@ const PlantRegistrationForm = () => {
       numberOfLines: cleanedLines,
       age: data.age ? Number(data.age) : 0,
     };
-    console.log('updated addda', payload);
+
     try {
       //  🔁 Step 1: Submit plant form
       const response = (await addPlantInfo({
         tenantId: tenantId ?? '',
         body: payload,
       }).unwrap()) as unknown as AddPlantInfoResponse;
-      console.log('Response from addPlantInfo:', response);
 
       // ✅ Step 2: Extract `plantId` from response
       const newPlantId = (response?.data as { id: string | number })?.id;
@@ -169,7 +167,7 @@ const PlantRegistrationForm = () => {
     return str; // fallback to raw input
   }
   return (
-    <>
+    <Box sx={{ width: '100%', height: '99%' }}>
       {isLoading ? (
         <Loader loading={true} />
       ) : (
@@ -183,11 +181,23 @@ const PlantRegistrationForm = () => {
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 1,
+                        textAlign: 'center',
+                        color: '#6E7275',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Upload the Plant Logo
+                    </Typography>
                   </Box>
 
                   <Box className={styles.formFieldsBox} sx={{}}>
                     <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1} sx={{}}>
+                      <Grid container spacing={1}>
                         {plantFormInputs.map((input) => (
                           <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
                             <Controller
@@ -195,9 +205,9 @@ const PlantRegistrationForm = () => {
                               control={control}
                               defaultValue=""
                               rules={input.rules}
-                              render={({ field, fieldState }) => (
-                                <>
-                                  {input.isCurrency || input.isRevenueUnit ? (
+                              render={({ field, fieldState }) => {
+                                if (input.isCurrency || input.isRevenueUnit) {
+                                  return (
                                     <CurrencyValueSelector
                                       {...field}
                                       value={String(field.value ?? '')}
@@ -205,89 +215,95 @@ const PlantRegistrationForm = () => {
                                       placeholder={input.placeholder}
                                       options={
                                         input.isCurrency
-                                          ? currencyOptions.map(({ name }) => ({
-                                              label: name,
-                                              value: name,
+                                          ? currencyOptions.map(({ code, symbol }) => ({
+                                              label: `${code} (${symbol})`,
+                                              value: code,
                                             }))
                                           : [
                                               { label: 'Thousand', value: '1000' },
                                               { label: 'Lakh', value: '100000' },
                                               { label: 'Crore', value: '10000000' },
-                                            ].map(({ label, value }) => ({
-                                              label: label,
-                                              value: value,
-                                            }))
+                                            ]
                                       }
                                       required={true}
                                       onFocus={() => setFocusedField(input.name)}
                                       error={!!fieldState.error}
                                       helperText={fieldState.error?.message}
                                     />
-                                  ) : (
-                                    <>
-                                      {console.log('fieldState error', fieldState.error)}
-                                      <InputWithLabel
-                                        {...field}
-                                        label={input.label}
-                                        placeholder={input.placeholder}
-                                        type={input.type || 'text'}
-                                        value={
-                                          ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
-                                            ? formatWithIndianCommas(field.value)
-                                            : field.value
+                                  );
+                                } else if (input.isDropdown) {
+                                  return (
+                                    // This is for industry selection dropdown  but use currency dropdown component
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      options={industrySelectionOptions.map((opt) => ({
+                                        label: opt.industry_name,
+                                        value: opt.industry_name,
+                                      }))}
+                                      placeholder={input.placeholder}
+                                      label={input.label}
+                                      required={input.required}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <InputWithLabel
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      type={input.type || 'text'}
+                                      value={
+                                        ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                          ? formatWithIndianCommas(field.value)
+                                          : field.value
+                                      }
+                                      onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                          const rawValue = value.replace(/,/g, '');
+                                          if (/^\d*$/.test(rawValue)) {
+                                            field.onChange(rawValue);
+                                          }
+                                        } else if (input.name === 'gstin') {
+                                          field.onChange(value.toUpperCase());
+                                        } else {
+                                          field.onChange(value);
                                         }
-                                        onChange={(e) => {
-                                          const value = e.target.value;
-                                          console.log(value, 'value');
-
-                                          if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
-                                            // Remove all commas and only allow digits
-                                            const rawValue = value.replace(/,/g, '');
-
-                                            if (/^\d*$/.test(rawValue)) {
-                                              console.log('rawvaueee', rawValue);
-                                              field.onChange(rawValue); // Save raw digits only
-                                            }
-                                          }
-                                          if (input.name === 'gstin') {
-                                            field.onChange(value.toUpperCase());
-                                          } else {
-                                            field.onChange(value);
-                                          }
-                                        }}
-                                        onFocus={() => setFocusedField(input.name)}
-                                        size="small"
-                                        required={true}
-                                        error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
-                                      />
-                                    </>
-                                  )}
-                                </>
-                              )}
+                                      }}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      size="small"
+                                      required={input.required}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  );
+                                }
+                              }}
                             />
                           </Grid>
                         ))}
                       </Grid>
-
                       <Box className={styles.aboutSection}>
                         <Controller
                           name="about"
                           control={control}
                           defaultValue=""
                           rules={{
-                            required: 'About Organization is required',
+                            // required: 'About Organization is required',
                             maxLength: {
-                              value: 200,
-                              message: 'Only 200 characters are allowed',
+                              value: 1000,
+                              message: 'Only 1000 characters are allowed',
                             },
                           }}
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant (max 200 characters)"
+                              label="About Plant (max 1000 characters)"
                               placeholder="Enter About Plant"
-                              // required={true}
+                              required={false}
                               multiline
                               type="text"
                               rows={2}
@@ -298,15 +314,13 @@ const PlantRegistrationForm = () => {
                           )}
                         />
                       </Box>
-
                       <Grid size={{ xs: 12 }}>
-                        <Divider sx={{ my: 3, width: '100%' }}>
+                        <Divider sx={{ width: '100%' }}>
                           <Typography variant="subtitle1" fontWeight={600}>
                             Point Of Contact
                           </Typography>
                         </Divider>
                       </Grid>
-
                       <Grid container spacing={1}>
                         <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
                           <Controller
@@ -431,13 +445,21 @@ const PlantRegistrationForm = () => {
               </Box>
             </form>
 
-            <Box sx={{ width: '30%' }} className={styles.rightSection}>
-              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+            <Box className={styles.rightSection}>
+              <Box
+                className={styles.infoboxSection}
+                sx={{
+                  overflowY: 'auto',
+                  padding: 0.4,
+                }}
+              >
+                <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+              </Box>
             </Box>
           </Paper>
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 

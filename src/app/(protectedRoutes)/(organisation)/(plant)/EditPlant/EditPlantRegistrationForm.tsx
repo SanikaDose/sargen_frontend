@@ -21,6 +21,7 @@ import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import CurrencyValueSelector from '@/components/CurrencyDropDown/CurrencyDropDown';
 import { aboutSection } from '@/app/utils/aboutSection';
+import { industrySelectionOptions } from '@/app/utils/industrySelectionOptions';
 const steps = [
   'Name',
   'Location',
@@ -34,7 +35,6 @@ const steps = [
   'Employees',
   'Lines',
   'Assessment',
-  'Debrief',
   'About',
 ].map((label) => ({ label }));
 
@@ -104,7 +104,6 @@ const EditPlantRegistrationForm = () => {
         numberOfEmployees: plant.numberOfEmployees?.toString() || '',
         numberOfLines: plant.numberOfLines?.toString() || '',
         assessmentStartDate: plant.assessmentStartDate || '',
-        debriefDate: plant.debriefDate || '',
         about: plant.about || '',
         pocFullName: plant.pocFullName || '',
         pocEmail: plant.pocEmail || '',
@@ -115,7 +114,7 @@ const EditPlantRegistrationForm = () => {
         setLogoUrl(plant.plantLogo);
       }
     }
-  }, [getPlantData, reset]);
+  }, [getPlantData, editPlantInfo, params]);
 
   const watchedValues = useWatch({ control });
 
@@ -192,11 +191,11 @@ const EditPlantRegistrationForm = () => {
   }
 
   return (
-    <>
+    <Box sx={{ width: '100%', height: '99%' }}>
       {isLoading || isFetching ? (
         <Loader loading={true} />
       ) : (
-        <Box sx={{ width: '100%', height: '99.5%' }}>
+        <Box sx={{ width: '100%', height: '90%' }}>
           <Box className={styles.stepperContainer}>
             <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
           </Box>
@@ -207,78 +206,20 @@ const EditPlantRegistrationForm = () => {
                 <Box className={styles.formContainer}>
                   <Box className={styles.imageBox}>
                     <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 1,
+                        textAlign: 'center',
+                        color: '#6E7275',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Upload the Plant Logo
+                    </Typography>
                   </Box>
 
-                  {/* <Box className={styles.formFieldsBox}>
-                    <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1}>
-                        {plantFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 4 }} key={input.name}>
-                            <Controller
-                              name={input.name as keyof PlantFormType}
-                              control={control}
-                              defaultValue=""
-                              rules={input.rules}
-                              render={({ field, fieldState }) => (
-                                <>
-                                  {input.isCurrency ? (
-                                    <CurrencyValueSelector
-                                      {...field}
-                                      value={String(field.value ?? '')}
-                                      label={input.label}
-                                      placeholder={input.placeholder}
-                                      options={currencyOptions.map(({ name }) => ({
-                                        label: name,
-                                        value: name,
-                                      }))}
-                                      required={true}
-                                      onFocus={() => setFocusedField(input.name)}
-                                      error={!!fieldState.error}
-                                      helperText={fieldState.error?.message}
-                                    />
-                                  ) : (
-                                   <>
-                                      <InputWithLabel
-                                        {...field}
-                                        label={input.label + (input.rules?.required ? ' *' : '')}
-                                        placeholder={input.placeholder}
-                                        type={input.type || 'text'}
-                                        onFocus={() => setFocusedField(input.name)}
-                                        size="small"
-                                      />
-                                      {fieldState?.error?.message && (
-                                        <Typography variant="caption" color="error">
-                                          {fieldState.error.message}
-                                        </Typography>
-                                      )}
-                                    </>
-                                  )}
-                                </>
-                              )}
-                            />
-                          </Grid>
-                        ))}
-                      </Grid>
-
-                      <Box className={styles.aboutSection}>
-                        <Controller
-                          name="about"
-                          control={control}
-                          defaultValue=""
-                          render={({ field }) => (
-                            <InputWithLabel
-                              {...field}
-                              label="About Us"
-                              placeholder="Enter About Plant"
-                              multiline
-                              type="text"
-                              onFocus={() => setFocusedField('about')}
-                            />
-                          )}
-                        />
-                      </Box>
-                    </section>
-                  </Box> */}
                   <Box className={styles.formFieldsBox}>
                     <section className={styles.formFieldsInner}>
                       <Grid container spacing={1}>
@@ -289,9 +230,9 @@ const EditPlantRegistrationForm = () => {
                               control={control}
                               defaultValue=""
                               rules={input.rules}
-                              render={({ field, fieldState }) => (
-                                <>
-                                  {input.isCurrency || input.isRevenueUnit ? (
+                              render={({ field, fieldState }) => {
+                                if (input.isCurrency || input.isRevenueUnit) {
+                                  return (
                                     <CurrencyValueSelector
                                       {...field}
                                       value={String(field.value ?? '')}
@@ -299,64 +240,72 @@ const EditPlantRegistrationForm = () => {
                                       placeholder={input.placeholder}
                                       options={
                                         input.isCurrency
-                                          ? currencyOptions.map(({ name }) => ({
-                                              label: name,
-                                              value: name,
+                                          ? currencyOptions.map(({ code, symbol }) => ({
+                                              label: `${code} (${symbol})`,
+                                              value: code,
                                             }))
                                           : [
                                               { label: 'Thousand', value: '1000' },
                                               { label: 'Lakh', value: '100000' },
                                               { label: 'Crore', value: '10000000' },
-                                            ].map(({ label, value }) => ({
-                                              label: label,
-                                              value: value,
-                                            }))
+                                            ]
                                       }
                                       required={true}
                                       onFocus={() => setFocusedField(input.name)}
                                       error={!!fieldState.error}
                                       helperText={fieldState.error?.message}
                                     />
-                                  ) : (
-                                    <>
-                                      <InputWithLabel
-                                        {...field}
-                                        label={input.label}
-                                        placeholder={input.placeholder}
-                                        type={input.type || 'text'}
-                                        value={
-                                          ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
-                                            ? formatWithIndianCommas(field.value)
-                                            : field.value
+                                  );
+                                } else if (input.isDropdown) {
+                                  return (
+                                    <CurrencyValueSelector
+                                      {...field}
+                                      options={industrySelectionOptions.map((opt) => ({
+                                        label: opt.industry_name,
+                                        value: opt.industry_name,
+                                      }))}
+                                      placeholder={input.placeholder}
+                                      label={input.label}
+                                      required={input.required}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  );
+                                } else {
+                                  return (
+                                    <InputWithLabel
+                                      {...field}
+                                      label={input.label}
+                                      placeholder={input.placeholder}
+                                      type={input.type || 'text'}
+                                      value={
+                                        ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                          ? formatWithIndianCommas(field.value)
+                                          : field.value
+                                      }
+                                      onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                          const rawValue = value.replace(/,/g, '');
+                                          if (/^\d*$/.test(rawValue)) {
+                                            field.onChange(rawValue);
+                                          }
+                                        } else if (input.name === 'gstin') {
+                                          field.onChange(value.toUpperCase());
+                                        } else {
+                                          field.onChange(value);
                                         }
-                                        onChange={(e) => {
-                                          const value = e.target.value;
-
-                                          if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
-                                            // Remove all commas and only allow digits
-                                            const rawValue = value.replace(/,/g, '');
-
-                                            if (/^\d*$/.test(rawValue)) {
-                                              console.log('rawvaueee', rawValue);
-                                              field.onChange(rawValue); // Save raw digits only
-                                            }
-                                          }
-                                          if (input.name === 'gstin') {
-                                            field.onChange(value.toUpperCase());
-                                          } else {
-                                            field.onChange(value);
-                                          }
-                                        }}
-                                        onFocus={() => setFocusedField(input.name)}
-                                        size="small"
-                                        required={true}
-                                        error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
-                                      />
-                                    </>
-                                  )}
-                                </>
-                              )}
+                                      }}
+                                      onFocus={() => setFocusedField(input.name)}
+                                      size="small"
+                                      required={input.required}
+                                      error={!!fieldState.error}
+                                      helperText={fieldState.error?.message}
+                                    />
+                                  );
+                                }
+                              }}
                             />
                           </Grid>
                         ))}
@@ -368,18 +317,18 @@ const EditPlantRegistrationForm = () => {
                           control={control}
                           defaultValue=""
                           rules={{
-                            required: 'About Organization is required',
+                            // required: 'About Organization is required',
                             maxLength: {
-                              value: 200,
-                              message: 'Only 200 characters are allowed',
+                              value: 1000,
+                              message: 'Only 1000 characters are allowed',
                             },
                           }}
                           render={({ field, fieldState }) => (
                             <InputWithLabel
                               {...field}
-                              label="About Plant (max 200 characters)"
+                              label="About Plant (max 1000 characters)"
                               placeholder="Enter About Plant"
-                              // required={true}
+                              required={false}
                               multiline
                               type="text"
                               rows={2}
@@ -392,7 +341,7 @@ const EditPlantRegistrationForm = () => {
                       </Box>
 
                       <Grid size={{ xs: 12 }}>
-                        <Divider sx={{ my: 3, width: '100%' }}>
+                        <Divider sx={{ width: '100%' }}>
                           <Typography variant="subtitle1" fontWeight={600}>
                             Point Of Contact
                           </Typography>
@@ -508,7 +457,7 @@ const EditPlantRegistrationForm = () => {
                 mt={5}
                 ml={5}
                 mr={5}
-                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px' }}
+                sx={{ background: '#F5FAFD', height: '70px', borderRadius: '8px', marginTop: { sx: 5, md: 2, sm: 3, lg: 0 } }}
               >
                 <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
                   Back
@@ -520,12 +469,20 @@ const EditPlantRegistrationForm = () => {
             </form>
 
             <Box className={styles.rightSection}>
-              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+              <Box
+                className={styles.infoboxSection}
+                sx={{
+                  overflowY: 'auto',
+                  padding: 0.4,
+                }}
+              >
+                <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+              </Box>
             </Box>
           </Paper>
         </Box>
       )}
-    </>
+    </Box>
   );
 };
 
