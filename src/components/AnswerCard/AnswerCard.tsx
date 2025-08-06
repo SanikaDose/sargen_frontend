@@ -24,13 +24,16 @@ const AnswerCard = ({
       onClick={onClick}
       className={styles.outerContainer}
       sx={{
-        backgroundColor: isSelected ? 'rgba(16, 85, 124, 1)' : '#fff',
-        color: isSelected ? '#fff!important' : '#000',
+        // When selected, use the original question card styling (light blue)
+        backgroundColor: isSelected ? '#f1faff' : '#fff',
+        border: isSelected ? '1px solid rgba(90, 162, 196, 1)' : '2px outset rgb(255, 255, 255)',
+        boxShadow: isSelected ? '0px 2px 5px rgba(16, 84, 124, 1)' : 'none',
+        color: isSelected ? '#1a1a1a' : '#000',
         cursor: 'pointer',
         borderRadius: '16px',
         p: 2,
         mb: 1.5,
-        transition: 'background-color 0.3s ease',
+        transition: 'all 0.3s ease',
         display: 'flex',
         gap: 2,
       }}
@@ -58,7 +61,7 @@ const AnswerCard = ({
             alignSelf: 'flex-end',
             fontSize: '0.875rem',
             fontWeight: 500,
-            color: isSelected ? '#fff' : '#10557C',
+            color: isSelected ? '#10557C' : '#10557C',
             display: 'flex',
             width: '9%',
           }}
