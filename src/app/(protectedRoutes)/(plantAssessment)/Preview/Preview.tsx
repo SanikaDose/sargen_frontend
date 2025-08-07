@@ -53,31 +53,39 @@ export default function Preview() {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
+  const [departmentQuestionOrder, setDepartmentQuestionOrder] = useState<{ [dept: string]: string[] }>({});
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
   const [getQuestionnairesList, { isLoading }] = useGetQuestionnairesListMutation();
   const [selectQuestionnairesAnswer, { isLoading: isSaving }] = useSelectQuestionnairesAnswerMutation();
   const [postAssesmentStatus] = useChangeAssessmentStatusMutation();
+
+  // Update your fetchAllDepartmentQuestions useEffect:
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
         const all: Question[] = [];
-
         const result = await getQuestionnairesList({
           tenantId: organisationId,
           plantId: plantId || '',
-          // department: dept,
         }).unwrap();
         all.push(...(result?.questionsToSend || []));
 
         const grouped: { [key: string]: Question[] } = {};
         const justification: { [key: string]: string } = {};
-        console.log('grouped questions', grouped);
+        const deptQuestionOrder: { [dept: string]: string[] } = {};
 
         all.forEach((q) => {
-          // Create a unique composite key
           const key = `${q.question_uid}__${q.department}__${q.context}`;
 
-          if (!grouped[key]) grouped[key] = [];
+          if (!grouped[key]) {
+            grouped[key] = [];
+            // Track question order within department
+            const dept = q.department || 'Unknown'; // Use q.department here
+            if (!deptQuestionOrder[dept]) {
+              deptQuestionOrder[dept] = [];
+            }
+            deptQuestionOrder[dept].push(key);
+          }
           grouped[key].push(q);
 
           if (q.isselected) {
@@ -85,12 +93,16 @@ export default function Preview() {
           }
         });
 
-        const dedupedQuestions = Object.keys(grouped).map((key, index) => {
+        // Assign department-wise question numbers
+        const dedupedQuestions = Object.keys(grouped).map((key) => {
           const first = grouped[key][0];
+          const dept = first.department || 'Unknown'; // Use first.department here
+          const deptIndex = deptQuestionOrder[dept].indexOf(key);
           return {
             ...first,
             groupKey: key,
-            questionNo: index + 1,
+            departmentQuestionNo: deptIndex + 1, // 1-based index
+            department: dept, // Add department to the question object
           };
         });
 
@@ -98,6 +110,7 @@ export default function Preview() {
         setGroupKeys(Object.keys(grouped));
         setJustificationMap(justification);
         setAllQuestions(dedupedQuestions);
+        setDepartmentQuestionOrder(deptQuestionOrder);
         setCurrentIndex(0);
       } catch (error) {
         console.error('Failed to load questions:', error);
@@ -105,7 +118,73 @@ export default function Preview() {
     };
 
     fetchAllDepartmentQuestions();
-  }, []);
+  }, [organisationId, plantId]); // Add dependencies
+  const navigateNext = () => {
+    const currentQuestion = allQuestions[currentIndex];
+    const currentDept = currentQuestion.department;
+    const deptQuestions = departmentQuestionOrder[currentDept];
+    // console.log('deptQuestions', deptQuestions);
+
+    // Find next question in same department
+    const currentInDept = deptQuestions.indexOf(groupKeys[currentIndex]);
+    if (currentInDept < deptQuestions.length - 1) {
+      // Next question in same department
+      const nextKey = deptQuestions[currentInDept + 1];
+      const nextIndex = groupKeys.indexOf(nextKey);
+      setCurrentIndex(nextIndex);
+    } else {
+      // Find next department
+      const depts = Object.keys(departmentQuestionOrder);
+      console.log('depts', depts);
+
+      const currentDeptIndex = depts.indexOf(currentDept);
+      console.log('currentDeptIndex', currentDeptIndex);
+      console.log('depts.length', depts.length);
+
+      if (currentDeptIndex < depts.length - 1) {
+        // First question of next department
+        const nextDept = depts[currentDeptIndex + 1];
+
+        console.log('nextDept', nextDept);
+
+        const nextKey = departmentQuestionOrder[nextDept][0];
+        const nextIndex = groupKeys.indexOf(nextKey);
+        setCurrentIndex(nextIndex);
+      } else if (currentDeptIndex === depts.length - 1) {
+        // Last question of last department
+        setFinalSubmitModel(true);
+      }
+    }
+  };
+
+  const navigatePrev = () => {
+    if (currentIndex <= 0) return;
+
+    const currentQuestion = allQuestions[currentIndex];
+    const currentDept = currentQuestion.department;
+    const deptQuestions = departmentQuestionOrder[currentDept];
+
+    // Find previous question in same department
+    const currentInDept = deptQuestions.indexOf(groupKeys[currentIndex]);
+    if (currentInDept > 0) {
+      // Previous question in same department
+      const prevKey = deptQuestions[currentInDept - 1];
+      const prevIndex = groupKeys.indexOf(prevKey);
+      setCurrentIndex(prevIndex);
+    } else {
+      // Find previous department
+      const depts = Object.keys(departmentQuestionOrder);
+      const currentDeptIndex = depts.indexOf(currentDept);
+      if (currentDeptIndex > 0) {
+        // Last question of previous department
+        const prevDept = depts[currentDeptIndex - 1];
+        const prevDeptQuestions = departmentQuestionOrder[prevDept];
+        const prevKey = prevDeptQuestions[prevDeptQuestions.length - 1];
+        const prevIndex = groupKeys.indexOf(prevKey);
+        setCurrentIndex(prevIndex);
+      }
+    }
+  };
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return; //if edit is off then it will return
@@ -189,6 +268,36 @@ export default function Preview() {
       setFinalSubmitModel(true); // Re-open modal if failed
     }
   };
+
+  // get the current department and assign sequential numbers to questions
+  const departmentGroups: { [department: string]: { key: string; question: Question; questionNo: number }[] } = {};
+  const departmentCurrentNumbers: { [department: string]: number } = {};
+  Object.entries(groupedQuestions).forEach(([key, questions]) => {
+    const q = questions[0];
+    if (!q) return;
+
+    const dept = q.department || 'Unknown';
+    if (!departmentGroups[dept]) {
+      departmentGroups[dept] = [];
+      departmentCurrentNumbers[dept] = 1; // Initialize counter for this department
+    }
+
+    departmentGroups[dept].push({
+      key,
+      question: q,
+      questionNo: departmentCurrentNumbers[dept]++, // Assign and increment
+    });
+  });
+
+  const currentGroupKey = groupKeys[currentIndex];
+  const currentQuestion = groupedQuestions[currentGroupKey]?.[0];
+  const department = currentQuestion?.department || 'Unknown';
+
+  const departmentQuestionNumber = departmentQuestionOrder[department]?.indexOf(currentGroupKey) + 1 || 0;
+  console.log('departmentQuestionOrder', departmentQuestionOrder);
+
+  console.log('departmentGroups', departmentGroups);
+
   return (
     <Box component="form" sx={{ height: '99%' }}>
       <Paper
@@ -233,7 +342,7 @@ export default function Preview() {
 
                 <Box className={styles.questionAnsweresSection}>
                   <Box className={styles.questionSection}>
-                    <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
+                    <QuestionCard questionNumber={departmentQuestionNumber} questionText={questionText} />
                   </Box>
 
                   <Box className={styles.answerSection}>
@@ -289,14 +398,7 @@ export default function Preview() {
               sx={{ background: '#F5FAFD', height: '70px', borderRadius: '16px' }}
               className={styles.buttonSection}
             >
-              <CustomButton
-                variant="contained"
-                color="primary"
-                icon="left"
-                type="button"
-                onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-                disabled={currentIndex === 0}
-              >
+              <CustomButton variant="contained" color="primary" icon="left" type="button" onClick={navigatePrev}>
                 Back
               </CustomButton>
 
@@ -327,19 +429,7 @@ export default function Preview() {
                 Submit
               </CustomButton>
 
-              <CustomButton
-                variant="contained"
-                icon="right"
-                type="button"
-                onClick={async () => {
-                  if (currentIndex < groupKeys.length - 1) {
-                    setCurrentIndex((prev) => prev + 1);
-                  } else if (currentIndex == groupKeys.length - 1) {
-                    setFinalSubmitModel(true);
-                  }
-                }}
-                disabled={isSaving || isEditMode}
-              >
+              <CustomButton variant="contained" icon="right" type="button" onClick={navigateNext} disabled={isSaving || isEditMode}>
                 {isSaving ? 'Saving...' : 'Next'}
               </CustomButton>
             </Box>

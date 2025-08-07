@@ -1,6 +1,6 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Box, CircularProgress, Divider, Typography } from '@mui/material';
-import ProgressCircle from '../ProgressCircle/ProgressCircle';
+// import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
 import { CustomButton } from '../CustomButton/CustomButton';
@@ -106,12 +106,12 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, downloadReportLoading 
           </CustomButton>
         </Box>
         <Box className={styles.progressCircle}>
-          {data?.assessmentCompletionStage &&
+          {/* {data?.assessmentCompletionStage &&
           [AsseessmentStatus.REQUESTED_ASSESSMENT, AsseessmentStatus.NOT_STARTED, AsseessmentStatus.REVIEW_ASSESSMENT].includes(
             data.assessmentCompletionStage as AsseessmentStatus,
           ) ? null : (
             <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
-          )}
+          )} */}
         </Box>
       </Box>
     </Box>

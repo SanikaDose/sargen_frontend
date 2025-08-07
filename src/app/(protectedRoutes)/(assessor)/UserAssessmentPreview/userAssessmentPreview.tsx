@@ -32,6 +32,7 @@ const UserAssessmentPreview = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [groupedQuestions, setGroupedQuestions] = useState<{ [question_uid: string]: Question[] }>({});
+  const [departmentQuestionOrder, setDepartmentQuestionOrder] = useState<{ [dept: string]: string[] }>({});
   const [groupKeys, setGroupKeys] = useState<string[]>([]);
   const [justificationMap, setJustificationMap] = useState<{ [question_uid: string]: string }>({});
   const [isFinishing, setIsFinishing] = useState(false);
@@ -49,27 +50,34 @@ const UserAssessmentPreview = () => {
     dispatch(setPlantAssessmentDepartment(''));
   }, [dispatch]);
 
+  // Update your fetchAllDepartmentQuestions useEffect:
+  // Update your fetchAllDepartmentQuestions useEffect:
   useEffect(() => {
     const fetchAllDepartmentQuestions = async () => {
       try {
         const all: Question[] = [];
-
         const result = await getQuestionnairesList({
           tenantId: organisationId,
           plantId: plantId || '',
-          // department: dept,
         }).unwrap();
         all.push(...(result?.questionsToSend || []));
 
         const grouped: { [key: string]: Question[] } = {};
         const justification: { [key: string]: string } = {};
-        console.log('grouped questions', grouped);
+        const deptQuestionOrder: { [dept: string]: string[] } = {};
 
         all.forEach((q) => {
-          // Create a unique composite key
           const key = `${q.question_uid}__${q.department}__${q.context}`;
 
-          if (!grouped[key]) grouped[key] = [];
+          if (!grouped[key]) {
+            grouped[key] = [];
+            // Track question order within department
+            const dept = q.department || 'Unknown'; // Use q.department here
+            if (!deptQuestionOrder[dept]) {
+              deptQuestionOrder[dept] = [];
+            }
+            deptQuestionOrder[dept].push(key);
+          }
           grouped[key].push(q);
 
           if (q.isselected) {
@@ -77,12 +85,16 @@ const UserAssessmentPreview = () => {
           }
         });
 
-        const dedupedQuestions = Object.keys(grouped).map((key, index) => {
+        // Assign department-wise question numbers
+        const dedupedQuestions = Object.keys(grouped).map((key) => {
           const first = grouped[key][0];
+          const dept = first.department || 'Unknown'; // Use first.department here
+          const deptIndex = deptQuestionOrder[dept].indexOf(key);
           return {
             ...first,
             groupKey: key,
-            questionNo: index + 1,
+            departmentQuestionNo: deptIndex + 1, // 1-based index
+            department: dept, // Add department to the question object
           };
         });
 
@@ -90,6 +102,7 @@ const UserAssessmentPreview = () => {
         setGroupKeys(Object.keys(grouped));
         setJustificationMap(justification);
         setAllQuestions(dedupedQuestions);
+        setDepartmentQuestionOrder(deptQuestionOrder);
         setCurrentIndex(0);
       } catch (error) {
         console.error('Failed to load questions:', error);
@@ -97,10 +110,129 @@ const UserAssessmentPreview = () => {
     };
 
     fetchAllDepartmentQuestions();
-  }, [getQuestionnairesList, organisationId, plantId]);
+  }, [organisationId, plantId]); // Add dependencies
 
-  console.log('set grouped questions', groupedQuestions);
-  console.log('set setAllQuestions questions', allQuestions);
+  const navigateNext = async () => {
+    // Get current question details
+    const currentQuestion = allQuestions[currentIndex];
+    const currentDept = currentQuestion.department;
+    const deptQuestions = departmentQuestionOrder[currentDept] || [];
+    const selectedOption = currentGroup.find((q) => q.isselected);
+    const currentKey = groupKeys[currentIndex];
+
+    // Verify current question if an option is selected
+    if (selectedOption) {
+      setIsFinishing(true);
+      try {
+        // Update question status via API
+        const payload = {
+          tenantId: organisationId,
+          plantId: plantId,
+          questionId: selectedOption.id,
+          questionStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED,
+        };
+
+        await changeQuestionsStatus(payload).unwrap();
+
+        // Update local state
+        const updatedGroup = currentGroup.map((q) => ({
+          ...q,
+          questionVerificationStatus:
+            q.id === selectedOption.id ? QuestionVerificationStatus.ASSESSOR_VERIFIED : q.questionVerificationStatus,
+        }));
+
+        setGroupedQuestions((prev) => ({
+          ...prev,
+          [currentKey]: updatedGroup,
+        }));
+
+        setAllQuestions((prev) =>
+          prev.map((q) =>
+            q.question_uid === currentQuestion.question_uid &&
+            q.department === currentQuestion.department &&
+            q.context === currentQuestion.context
+              ? {
+                  ...q,
+                  questionVerificationStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED,
+                }
+              : q,
+          ),
+        );
+      } catch (error) {
+        console.error('Failed to verify question:', error);
+        triggerToast('Failed to verify question', 'error');
+        return;
+      } finally {
+        setIsFinishing(false);
+      }
+    }
+
+    // Determine position in department and overall assessment
+    const currentInDept = deptQuestions.indexOf(currentKey);
+    const isLastQuestionInDept = currentInDept === deptQuestions.length - 1;
+    const allDepts = Object.keys(departmentQuestionOrder);
+    const isLastDept = allDepts.indexOf(currentDept) === allDepts.length - 1;
+    const isFinalQuestion = isLastQuestionInDept && isLastDept;
+
+    // Handle navigation based on question position
+    if (isFinalQuestion) {
+      // Final question of the entire assessment
+      await handleVerifyAndFinishClick();
+    } else if (isLastQuestionInDept) {
+      // Last question in current department
+      const nextDeptIndex = allDepts.indexOf(currentDept) + 1;
+      const nextDept = allDepts[nextDeptIndex];
+      const nextDeptFirstQuestion = departmentQuestionOrder[nextDept][0];
+      const nextIndex = groupKeys.indexOf(nextDeptFirstQuestion);
+
+      // Show department completion feedback
+      triggerToast(`${currentDept} assessment completed!`, 'success');
+      setCurrentIndex(nextIndex);
+    } else {
+      // Regular next question in same department
+      const nextKey = deptQuestions[currentInDept + 1];
+      const nextIndex = groupKeys.indexOf(nextKey);
+      setCurrentIndex(nextIndex);
+    }
+
+    // Auto-save justification if exists
+    if (justificationMap[currentKey]) {
+      try {
+        await submitQuestionnaireAnswer();
+      } catch (error) {
+        console.error('Failed to save justification:', error);
+      }
+    }
+  };
+
+  const navigatePrev = () => {
+    if (currentIndex <= 0) return;
+
+    const currentQuestion = allQuestions[currentIndex];
+    const currentDept = currentQuestion.department;
+    const deptQuestions = departmentQuestionOrder[currentDept];
+
+    // Find previous question in same department
+    const currentInDept = deptQuestions.indexOf(groupKeys[currentIndex]);
+    if (currentInDept > 0) {
+      // Previous question in same department
+      const prevKey = deptQuestions[currentInDept - 1];
+      const prevIndex = groupKeys.indexOf(prevKey);
+      setCurrentIndex(prevIndex);
+    } else {
+      // Find previous department
+      const depts = Object.keys(departmentQuestionOrder);
+      const currentDeptIndex = depts.indexOf(currentDept);
+      if (currentDeptIndex > 0) {
+        // Last question of previous department
+        const prevDept = depts[currentDeptIndex - 1];
+        const prevDeptQuestions = departmentQuestionOrder[prevDept];
+        const prevKey = prevDeptQuestions[prevDeptQuestions.length - 1];
+        const prevIndex = groupKeys.indexOf(prevKey);
+        setCurrentIndex(prevIndex);
+      }
+    }
+  };
 
   const handleAnswerClick = (answerId: string) => {
     if (!isEditMode) return;
@@ -173,7 +305,7 @@ const UserAssessmentPreview = () => {
   };
 
   const handleVerifyAndFinishClick = async () => {
-    const currentQuestion = currentGroup[0];
+    // const currentQuestion = currentGroup[0];
     const selectedOption = currentGroup.find((q) => q.isselected);
 
     if (!currentQuestion || !selectedOption) return;
@@ -213,59 +345,6 @@ const UserAssessmentPreview = () => {
     }
   };
 
-  const handleVerifyClick = async () => {
-    if (currentIndex < groupKeys.length - 1) {
-      const currentQuestion = currentGroup[0];
-      const selectedOption = currentGroup.find((q) => q.isselected);
-
-      if (
-        (currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.NOT_VERIFIED ||
-          currentQuestion?.questionVerificationStatus === QuestionVerificationStatus.ASSESSOR_FLAGGED) &&
-        selectedOption
-      ) {
-        try {
-          const payload = {
-            tenantId: organisationId,
-            plantId: plantId,
-            questionId: selectedOption.id,
-            questionStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED,
-          };
-
-          await changeQuestionsStatus(payload).unwrap();
-
-          // Update ONLY the selected option's status in the group
-          const updatedGroup = currentGroup.map((q) => ({
-            ...q,
-            questionVerificationStatus:
-              q.id === selectedOption.id ? QuestionVerificationStatus.ASSESSOR_VERIFIED : q.questionVerificationStatus,
-          }));
-
-          setGroupedQuestions((prev) => ({
-            ...prev,
-            [currentKey]: updatedGroup,
-          }));
-
-          // Update allQuestions array as well
-          setAllQuestions((prev) =>
-            prev.map((q) =>
-              q.question_uid === currentQuestion.question_uid &&
-              q.department === currentQuestion.department &&
-              q.context === currentQuestion.context
-                ? { ...q, questionVerificationStatus: QuestionVerificationStatus.ASSESSOR_VERIFIED }
-                : q,
-            ),
-          );
-        } catch (error) {
-          console.error('Failed to verify question:', error);
-          return;
-        }
-      }
-
-      setCurrentIndex((prev) => prev + 1);
-    }
-  };
-  console.log('groupKeys', groupKeys[0]);
-
   const currentKey = groupKeys[currentIndex];
   const currentGroup = groupedQuestions[currentKey];
 
@@ -273,7 +352,6 @@ const UserAssessmentPreview = () => {
 
   const questionText = currentGroup[0].question;
   const completedQuestionIds = groupKeys.filter((key) => groupedQuestions[key]?.some((q) => q.isselected));
-  const isLastQuestion = currentIndex === groupKeys.length - 1;
 
   const handlePrimaryClick = async () => {
     setIsModalOpen(false);
@@ -325,6 +403,44 @@ const UserAssessmentPreview = () => {
     setIsModalOpen(false);
   };
 
+  // get the current department and assign sequential numbers to questions
+  const departmentGroups: { [department: string]: { key: string; question: Question; questionNo: number }[] } = {};
+  const departmentCurrentNumbers: { [department: string]: number } = {};
+  Object.entries(groupedQuestions).forEach(([key, questions]) => {
+    const q = questions[0];
+    if (!q) return;
+
+    const dept = q.department || 'Unknown';
+    if (!departmentGroups[dept]) {
+      departmentGroups[dept] = [];
+      departmentCurrentNumbers[dept] = 1; // Initialize counter for this department
+    }
+
+    departmentGroups[dept].push({
+      key,
+      question: q,
+      questionNo: departmentCurrentNumbers[dept]++, // Assign and increment
+    });
+  });
+
+  const currentGroupKey = groupKeys[currentIndex];
+  const currentQuestion = groupedQuestions[currentGroupKey]?.[0];
+  const department = currentQuestion?.department || 'Unknown';
+
+  const departmentQuestionNumber = departmentQuestionOrder[department]?.indexOf(currentGroupKey) + 1 || 0;
+
+  // Calculate navigation status variables
+  const currentDept = currentGroup[0]?.department || 'Unknown';
+  const deptQuestions = departmentQuestionOrder[currentDept] || [];
+  const currentInDept = deptQuestions.indexOf(currentKey);
+  const isLastQuestionInDept = currentInDept === deptQuestions.length - 1;
+
+  const allDepts = Object.keys(departmentQuestionOrder);
+  const currentDeptIndex = allDepts.indexOf(currentDept);
+  const isLastDept = currentDeptIndex === allDepts.length - 1;
+
+  const isFinalQuestion = isLastQuestionInDept && isLastDept;
+
   return (
     <Box component="form" sx={{ height: '99%' }}>
       <Paper
@@ -345,7 +461,7 @@ const UserAssessmentPreview = () => {
 
             <Box className={styles.questionAnsweresSection}>
               <Box className={styles.questionSection}>
-                <QuestionCard questionNumber={currentIndex + 1} questionText={questionText} />
+                <QuestionCard questionNumber={departmentQuestionNumber} questionText={questionText} />
               </Box>
               <Box className={styles.answerSection}>
                 {currentGroup.map((option, idx) => (
@@ -402,7 +518,7 @@ const UserAssessmentPreview = () => {
                 color="primary"
                 icon="left"
                 type="button"
-                onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+                onClick={navigatePrev}
                 disabled={currentIndex === 0 || isEditMode}
               >
                 Back
@@ -441,13 +557,13 @@ const UserAssessmentPreview = () => {
 
               <CustomButton
                 variant="contained"
-                color="primary"
-                icon="success"
+                icon={isFinalQuestion ? 'submit' : 'save'}
+                color={isFinalQuestion ? 'success' : 'primary'}
                 type="button"
-                onClick={isLastQuestion ? handleVerifyAndFinishClick : handleVerifyClick}
+                onClick={navigateNext}
                 disabled={isEditMode || isSaving || isFinishing}
               >
-                {isFinishing ? 'Processing...' : isLastQuestion ? 'Finish' : 'Verify'}
+                {isFinishing ? 'Processing...' : isFinalQuestion ? 'Submit' : 'Verify'}
               </CustomButton>
             </Box>
           </Box>

@@ -492,7 +492,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         {/* Main list */}
         <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
           <>
-            <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="subtitle2">
+            <Typography sx={{ pl: 2, pt: 2, fontWeight: 'bold' }} variant="h4">
               {onboardingStatus !== OnboardingStatus.COMPLETED ? 'Onboarding menu' : 'Menu'}
             </Typography>
 
@@ -503,6 +503,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 sx={{
                   pl: 0,
                   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                  fontSize: '14px',
+                  color: 'text.primary',
                 }}
               >
                 <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
@@ -510,6 +512,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     sx={{
                       mr: 2,
                       color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                      fontSize: '14px',
                     }}
                   >
                     {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
@@ -520,6 +523,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         variant="caption"
                         sx={{
                           color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                          fontSize: '14px',
                         }}
                       >
                         {item.text}
@@ -538,12 +542,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 sx={{
                   pl: 0,
                   backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                  fontSize: '14px',
                 }}
               >
                 <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
                   <ListItemIcon
                     sx={{
                       mr: 2,
+                      fontSize: '14px',
                       color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
                     }}
                   >
@@ -555,6 +561,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         variant="caption"
                         sx={{
                           color: item.linkRoute === pathName ? theme.palette.primary.main : 'text.primary',
+                          fontSize: '14px',
                         }}
                       >
                         {item.text}
@@ -598,22 +605,27 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                           backgroundColor: 'transparent',
                           opacity: 1000,
                           m: 0,
+                          fontSize: '14px',
                         }}
                       >
                         <ListItemButton onClick={() => assementSideBarListItemOnClick(item.linkRoute)} sx={{ p: 0 }}>
                           <ListItemIcon
                             sx={{
-                              mr: 2,
+                              mr: 1,
+                              fontSize: '14px',
                               color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
                             }}
                           >
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             {item.icon && ICONS[item.icon] ? React.createElement(ICONS[item.icon]) : null}
+                            {/* <FiberManualRecordTwoToneIcon fontSize="small" /> */}
                           </ListItemIcon>
                           <ListItemText
                             primary={
                               <Typography
                                 variant="caption"
                                 sx={{
+                                  fontSize: '14px',
                                   color: isActive ? theme.palette.primary.main : theme.palette.secondary[100],
                                 }}
                               >

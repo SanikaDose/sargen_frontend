@@ -33,9 +33,6 @@ export const plantFormInputs: PlantFormInput[] = [
     label: 'Registration No.',
     placeholder: 'Enter Registration no',
     required: false,
-    // rules: {
-    //   required: 'Registration Number is required',
-    // },
   },
   {
     name: 'gstin',
@@ -54,18 +51,18 @@ export const plantFormInputs: PlantFormInput[] = [
       },
       pattern: {
         value: /^[A-Za-z0-9]{15}$/,
-        message: 'Enter a valid Tax Registration Number (only letters and numbers allowed)',
+        message: 'Enter a valid Tax Registra ftion Number (only letters and numbers allowed)',
       },
     },
   },
   {
     name: 'type', // Changed from 'type' to 'industryType' for clarity
-    label: 'Industry Type',
-    placeholder: 'Select Industry Type',
+    label: 'Industry Sector',
+    placeholder: 'Select Industry Sector',
     required: true,
     isDropdown: true, // Add this flag
     rules: {
-      required: 'Industry type is required',
+      required: 'Industry sector is required',
     },
   },
   {
