@@ -4,6 +4,7 @@
 import React from 'react';
 import styles from './style.module.css';
 import { PopupModalProps } from './PopupModal.types';
+import { CustomButton } from '../CustomButton/CustomButton';
 
 export const PopupModal: React.FC<PopupModalProps> = ({
   label,
@@ -19,12 +20,12 @@ export const PopupModal: React.FC<PopupModalProps> = ({
         <h2 className={styles.label}>{label}</h2>
         <p className={styles.text}>{text}</p>
         <div className={styles.buttonGroup}>
-          <button className={styles.secondaryButton} onClick={onSecondaryClick}>
-            {secondaryButtonText}
-          </button>
-          <button className={styles.primaryButton} onClick={onPrimaryClick}>
-            {primaryButtonText}
-          </button>
+          <CustomButton children={secondaryButtonText} height={40} onClick={onSecondaryClick} />
+          {/* {secondaryButtonText} */}
+          {/* </button> */}
+          <CustomButton children={primaryButtonText} color="success" height={40} onClick={onPrimaryClick} />
+          {/* {primaryButtonText} */}
+          {/* </button> */}
         </div>
       </div>
     </div>

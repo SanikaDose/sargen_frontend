@@ -3,7 +3,7 @@ import { Theme } from '@mui/material/styles';
 
 export const sargenPalette = {
   primary: {
-    main: '#047af2',
+    main: '#336590',
     dark: '#0356b0',
     contrastText: '#ffffff',
   },

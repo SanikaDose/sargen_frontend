@@ -12,7 +12,7 @@ import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalS
 import { Plant } from './PlantOverview.type';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
+import { useAutomateTheAssessmentStatusMutation, useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
 import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
 import styles from './PlantOverview.module.css';
@@ -48,7 +48,11 @@ export default function PlantOverview() {
     refetchPlantInfo();
   }, [searchValue, refetchPlantInfo, router]);
 
-  const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
+  // this is an api to change the assesment status
+  // const [postAssesmentStatus, { isLoading: assesmentStatusLoading }] = useChangeAssessmentStatusMutation();
+
+  //newly implement the api to bypass the assesment status
+  const [automateAssessmentStatus, { isLoading: automatingProcessLoading }] = useAutomateTheAssessmentStatusMutation();
   const [downloadReport] = useDownloadReportMutation();
   const [downloadingPlantId, setDownloadingPlantId] = useState<string | null>(null);
   const handleSearch = (value: string) => {
@@ -60,11 +64,17 @@ export default function PlantOverview() {
 
     if (assessmentStage === AsseessmentStatus.NOT_STARTED || assessmentStage === AsseessmentStatus.REQUESTED_ASSESSMENT) {
       try {
-        await postAssesmentStatus({
+        // this is an api to change the assesment styatus which will be uncomment
+        // await postAssesmentStatus({
+        //   tenantId,
+        //   plantId,
+        //   assessment: AsseessmentStatus.REQUESTED_ASSESSMENT,
+        // }).unwrap();
+
+        await automateAssessmentStatus({
           tenantId,
           plantId,
-          assessment: AsseessmentStatus.REQUESTED_ASSESSMENT,
-        }).unwrap();
+        });
 
         return;
       } catch (error) {
@@ -124,7 +134,7 @@ export default function PlantOverview() {
           </Paper>
         </Box>
       </Typography>
-      {plantsLoading || assesmentStatusLoading ? (
+      {plantsLoading || automatingProcessLoading ? (
         <Grid
           container
           spacing={{ xs: 1.5, md: 1.5 }}

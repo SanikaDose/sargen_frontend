@@ -56,16 +56,16 @@
     box-shadow 0.2s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-
+/* 
 .primaryButton {
   background-color: #047af2;
   color: white;
-}
+} */
 
-.primaryButton:hover {
+/* .primaryButton:hover {
   background-color: #0356b0;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
+} */
 
 .secondaryButton {
   background-color: #e0e0e0;

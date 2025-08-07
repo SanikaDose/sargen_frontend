@@ -32,6 +32,15 @@ export const plantInfoApi = protectedApi.injectEndpoints({
       invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
     }),
 
+    automateTheAssessmentStatus: builder.mutation<boolean, { tenantId: string; plantId: string }>({
+      query: (body) => ({
+        url: `${apiControllerPath.plantAssessment.root}${apiControllerPath.plantAssessment.automateAssesment}`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (result, error, { tenantId }) => [{ type: 'Plant', id: tenantId }],
+    }),
+
     // 📥 Get Plant Logo
     getPlantLogo: builder.query<string, { tenantId: string; plantId: string }>({
       query: ({ tenantId, plantId }) => ({
@@ -46,4 +55,5 @@ export const plantInfoApi = protectedApi.injectEndpoints({
 });
 
 // Export hooks for using the endpoints in components
-export const { useGetAllPlantInfoQuery, useGetPlantLogoQuery, useChangeAssessmentStatusMutation } = plantInfoApi;
+export const { useGetAllPlantInfoQuery, useGetPlantLogoQuery, useChangeAssessmentStatusMutation, useAutomateTheAssessmentStatusMutation } =
+  plantInfoApi;

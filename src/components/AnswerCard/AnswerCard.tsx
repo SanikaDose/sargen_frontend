@@ -25,9 +25,9 @@ const AnswerCard = ({
       className={styles.outerContainer}
       sx={{
         // When selected, use the original question card styling (light blue)
-        backgroundColor: isSelected ? '#f1faff' : '#fff',
-        border: isSelected ? '1px solid rgba(90, 162, 196, 1)' : '2px outset rgb(255, 255, 255)',
-        boxShadow: isSelected ? '0px 2px 5px rgba(16, 84, 124, 1)' : 'none',
+        backgroundColor: isSelected ? '#014a7d2b' : '#fff',
+        // border: isSelected ? '1px solid rgba(90, 162, 196, 1)' : '2px outset rgb(255, 255, 255)',
+        boxShadow: isSelected ? '2px 2px 5px #014a7d2b' : 'none',
         color: isSelected ? '#1a1a1a' : '#000',
         cursor: 'pointer',
         borderRadius: '16px',

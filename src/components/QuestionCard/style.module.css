@@ -1,9 +1,9 @@
 /* QuestionCard styles - blue theme like original selected answer card */
 .outerContainer {
-  background-color: rgba(16, 85, 124, 1);
+  background-color: #014a7dd9;
   border-radius: 16px;
   padding: 12px 16px;
-  border: 1px solid rgba(16, 85, 124, 1);
+  border: 1px solid #047af2;
   box-shadow: 0px 2px 5px rgba(16, 84, 124, 0.3);
   width: 100%;
   height: auto;

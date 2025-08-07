@@ -33,9 +33,6 @@ export const plantFormInputs: PlantFormInput[] = [
     label: 'Registration No.',
     placeholder: 'Enter Registration no',
     required: false,
-    // rules: {
-    //   required: 'Registration Number is required',
-    // },
   },
   {
     name: 'gstin',
@@ -58,28 +55,14 @@ export const plantFormInputs: PlantFormInput[] = [
       },
     },
   },
-  // {
-  //   name: 'type',
-  //   label: 'Industry Type',
-  //   placeholder: 'Enter Plant Type',
-  //   required: true,
-  //   rules: {
-  //     required: 'Plant type is required',
-  //     pattern: {
-  //       value: /^[A-Za-z ]+$/, // Only letters and spaces
-  //       message: 'Only letters allowed ',
-  //     },
-  //   },
-  // },
-
   {
     name: 'type', // Changed from 'type' to 'industryType' for clarity
-    label: 'Industry Type',
-    placeholder: 'Select Industry Type',
+    label: 'Industry Sector',
+    placeholder: 'Select Industry Sector',
     required: true,
     isDropdown: true, // Add this flag
     rules: {
-      required: 'Industry type is required',
+      required: 'Industry sector is required',
     },
   },
   {
