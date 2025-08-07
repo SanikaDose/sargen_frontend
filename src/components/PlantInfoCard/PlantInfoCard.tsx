@@ -1,6 +1,6 @@
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Box, CircularProgress, Divider, Typography } from '@mui/material';
-import ProgressCircle from '../ProgressCircle/ProgressCircle';
+// import ProgressCircle from '../ProgressCircle/ProgressCircle';
 import { PlantInfoCardProps } from './PlantInfoCard.d';
 import styles from './style.module.css';
 import { CustomButton } from '../CustomButton/CustomButton';

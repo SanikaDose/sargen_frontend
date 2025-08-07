@@ -12,7 +12,7 @@ import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalS
 import { Plant } from './PlantOverview.type';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useAutomateTheAssessmentStatusMutation, useChangeAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
+import { useAutomateTheAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
 import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
 import styles from './PlantOverview.module.css';

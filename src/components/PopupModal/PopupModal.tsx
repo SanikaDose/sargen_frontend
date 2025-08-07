@@ -20,10 +20,14 @@ export const PopupModal: React.FC<PopupModalProps> = ({
         <h2 className={styles.label}>{label}</h2>
         <p className={styles.text}>{text}</p>
         <div className={styles.buttonGroup}>
-          <CustomButton children={secondaryButtonText} height={40} onClick={onSecondaryClick} />
+          <CustomButton height={40} onClick={onSecondaryClick}>
+            {secondaryButtonText}
+          </CustomButton>
           {/* {secondaryButtonText} */}
           {/* </button> */}
-          <CustomButton children={primaryButtonText} color="success" height={40} onClick={onPrimaryClick} />
+          <CustomButton color="success" height={40} onClick={onPrimaryClick}>
+            {primaryButtonText}{' '}
+          </CustomButton>
           {/* {primaryButtonText} */}
           {/* </button> */}
         </div>
