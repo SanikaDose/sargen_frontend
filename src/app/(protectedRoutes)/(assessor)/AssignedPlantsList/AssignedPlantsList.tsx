@@ -2,7 +2,7 @@
 
 import { Box, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import styles from '../../(organisation)/(plant)/PlantOverview/PlantOverview.module.css';
+import styles from './AssignedPlantsList.module.css';
 import { useRouter } from 'next/navigation';
 import AssessorPlantInfoCard from './AssessorPlantInfoCard';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';

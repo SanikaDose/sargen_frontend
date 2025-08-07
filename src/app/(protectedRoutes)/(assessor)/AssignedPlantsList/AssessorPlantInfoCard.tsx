@@ -36,6 +36,7 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
         <VisibilityIcon fontSize="small" />
       </Box>
 
+      {/* Plant and Organization Info */}
       <Box className={styles.contentSection}>
         <Typography className={styles.label}>
           Plant Name: <span className={styles.value}>{plantName}</span>
@@ -45,14 +46,20 @@ const AssessorPlantInfoCard = ({ data, viewPlantOnClick }: AssessorPlantDataProp
         </Typography>
       </Box>
 
+      {/* Divider after plant and org name */}
       <Divider className={styles.divider} />
 
+      {/* Dates Section */}
       <Box className={styles.dateSection}>
         <Typography className={styles.dateTitle}>Dates:</Typography>
         <Typography className={styles.dateText}>Created: {formatDate(createdAt)}</Typography>
         <Typography className={styles.dateText}>Updated: {formatDate(updatedAt)}</Typography>
       </Box>
 
+      {/* Divider after dates section */}
+      <Divider className={styles.divider} />
+
+      {/* Status Section */}
       <Box className={styles.statusBadge}>{displayStatus}</Box>
     </Box>
   );
