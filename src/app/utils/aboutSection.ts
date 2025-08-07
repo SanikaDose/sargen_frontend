@@ -3,17 +3,17 @@ export const aboutSection = {
     heading: 'Organisation Details Guide',
     description: `
     <p>Please fill in all required details about your organization:</p>
-    <ul>
+    <ul style="font-size: 0.9rem; margin-top: 4px;">
       <li><strong>Company name</strong> should match official registration documents</li>
       <li><strong>Website</strong> must include full URL (e.g., https://www.example.com)</li>
       <li><strong>Tax Registration Number (GST / VAT)</strong> should follow your country's official format
-        <ul>
+        <ul style="padding-left: 40px;">
           <li>For GST (India): 15 alphanumeric characters (e.g., 27AAAAA0000A1Z5)</li>
           <li>For VAT: Format varies by country (e.g., GB123456789, DE123456789)</li>
         </ul>
       </li>
       <li><strong>Revenue</strong> can be entered in:
-        <ul>
+        <ul style="padding-left: 40px;">
           <li>Thousands (e.g., 1,000)</li>
           <li>Lakhs (e.g., 1,00,000)</li>
           <li>Crores (e.g., 1,00,00,000)</li>
@@ -21,19 +21,19 @@ export const aboutSection = {
       </li>
       <li><strong>About organization</strong> limited to 1000 characters</li>
     </ul>
-    <p><em>All fields marked with * are mandatory for successful onboarding.</em></p>
+    <p style="font-size: 0.9rem; margin-top: 1rem;"><em>All fields marked with * are mandatory for successful onboarding.</em></p>
   `,
   },
   contactPerson: {
     heading: 'Contact Person Information',
     description: `
       <p>Please provide details of your primary contact person:</p>
-      <ul>
+      <ul style="font-size: 0.9rem; margin-top: 1rem;">
         <li>This should be an authorized representative</li>
         <li>Ensure email and phone number are regularly monitored</li>
         <li>Contact person will receive all system communications</li>
       </ul>
-      <p><em>All fields marked with * are mandatory for successful onboarding.</em></p>
+      <p style="font-size: 0.9rem; margin-top: 1rem;"><em>All fields marked with * are mandatory for successful onboarding.</em></p>
     `,
   },
   plantRegistration: {
@@ -188,8 +188,8 @@ export const aboutSection = {
         <p><strong>Key Controls</strong></p>
         <ul style="margin-top: 0.2rem; font-size: 0.9rem">
           <li>Labor + Materials ≤ 65%</li>
-          <li>R&D + Maintenance ≤ 25%</li>
-          <li>SG&A ≤ 15%</li>
+          <li>Research & Development + Maintenance ≤ 25%</li>
+          <li>Selling, General & Administrative ≤ 15%</li>
         </ul>
       </div>
       
