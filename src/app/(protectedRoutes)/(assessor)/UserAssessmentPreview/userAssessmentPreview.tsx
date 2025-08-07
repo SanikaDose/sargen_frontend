@@ -550,7 +550,7 @@ const UserAssessmentPreview = () => {
                 color="primary"
                 icon="success"
                 type="button"
-                onClick={handleVerifyClick}
+                onClick={navigateNext}
                 disabled={isEditMode || isSaving || isFinishing}
               >
                 {isFinishing ? 'Processing...' : 'Verify'}
