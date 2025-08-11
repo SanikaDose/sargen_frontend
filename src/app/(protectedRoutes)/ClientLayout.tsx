@@ -282,18 +282,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   };
 
   const DEPARTMENT_LINKS = [
+    'Management',
     'R&D',
     'Planning',
+    'Supply Chain - Purchase',
     'Production',
     'Quality',
     'Maintenance',
-    'Supply Chain - Sales',
-    'Supply Chain - Purchase',
-    'Finance',
     'Utilities',
+    'Supply Chain - Sales',
+    'Finance',
     'IT',
     'Learning & Development',
-    'Management',
     'HR',
   ];
 
