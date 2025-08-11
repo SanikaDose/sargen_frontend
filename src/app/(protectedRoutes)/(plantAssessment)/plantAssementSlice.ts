@@ -5,7 +5,7 @@ type PlantAssessmentState = {
 };
 
 const initialState: PlantAssessmentState = {
-  questionnairesDeparment: 'R&D',
+  questionnairesDeparment: 'Management',
 };
 
 const PlantAssessmentStateSlice = createSlice({

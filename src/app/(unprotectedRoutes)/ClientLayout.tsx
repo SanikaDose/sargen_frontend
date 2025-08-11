@@ -141,7 +141,7 @@ const ClientLayout = ({ children }: Props) => {
                 fontSize: { xs: '2rem', md: '2.5rem', lg: '2.75rem', xl: '3rem', xxl: '3rem' },
                 color: '#1e293b',
                 lineHeight: 1.2,
-                mb: { xs: '2px', md: '2.5px', lg: '2.75px', xl: '3px', xxl: '3px' },
+                mb: { xs: '2px', md: '2.5px', lg: '2.5px', xl: '3px', xxl: '3px' },
               }}
             >
               From Assessment to Action:
@@ -160,7 +160,7 @@ const ClientLayout = ({ children }: Props) => {
               component="p"
               sx={{
                 color: '#64748b',
-                mb: 6,
+                mb: 2,
                 lineHeight: 1.6,
                 fontSize: '1.125rem',
                 fontWeight: 400,
@@ -171,7 +171,7 @@ const ClientLayout = ({ children }: Props) => {
             </Typography>
 
             {/* Feature Cards */}
-            <Grid container spacing={3} sx={{ mb: 6 }}>
+            <Grid container spacing={3} sx={{ mb: 2 }}>
               {keyFeatures.map((feature, index) => (
                 <Grid sx={{ xs: 12, md: 4 }} key={index}>
                   <Box sx={{ mb: 3 }}>

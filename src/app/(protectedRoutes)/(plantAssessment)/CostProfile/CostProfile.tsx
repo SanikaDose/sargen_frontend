@@ -87,7 +87,7 @@ const CostProfile = () => {
       if (!res) return;
       await router.push(`/Questionaire/${organisationId}/${plantId}`);
 
-      dispatch(setPlantAssessmentDepartment('R&D'));
+      dispatch(setPlantAssessmentDepartment('Management'));
     } catch (error) {
       console.log(error);
     }
