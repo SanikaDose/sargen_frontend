@@ -33,6 +33,13 @@ const plantAssessmentConfigurationList: SidebarItem[] = [
 
 const PlantAssessmentMenuList: SidebarItem[] = [
   {
+    text: 'Management',
+    icon: 'SupervisorAccountIcon',
+    linkRoute: 'Management',
+    matchKeyword: 'Management',
+    show: false,
+  },
+  {
     text: 'Research and development',
     icon: 'ScienceIcon',
     linkRoute: 'R&D',
@@ -44,6 +51,13 @@ const PlantAssessmentMenuList: SidebarItem[] = [
     icon: 'EventNoteIcon',
     linkRoute: 'Planning',
     matchKeyword: 'Planning',
+    show: false,
+  },
+  {
+    text: 'Supply Chain - Purchase',
+    icon: 'ShoppingCartIcon',
+    linkRoute: 'Supply Chain - Purchase',
+    matchKeyword: 'Supply Chain - Purchase',
     show: false,
   },
   {
@@ -68,6 +82,13 @@ const PlantAssessmentMenuList: SidebarItem[] = [
     show: false,
   },
   {
+    text: 'Utilities',
+    icon: 'ElectricalServicesIcon',
+    linkRoute: 'Utilities',
+    matchKeyword: 'Utilities',
+    show: false,
+  },
+  {
     text: 'Supply Chain - Sales',
     icon: 'TrendingUpIcon',
     linkRoute: 'Supply Chain - Sales',
@@ -75,24 +96,10 @@ const PlantAssessmentMenuList: SidebarItem[] = [
     show: false,
   },
   {
-    text: 'Supply Chain - Purchase',
-    icon: 'ShoppingCartIcon',
-    linkRoute: 'Supply Chain - Purchase',
-    matchKeyword: 'Supply Chain - Purchase',
-    show: false,
-  },
-  {
     text: 'Finance',
     icon: 'AccountBalanceIcon',
     linkRoute: 'Finance',
     matchKeyword: 'Finance',
-    show: false,
-  },
-  {
-    text: 'Utilities',
-    icon: 'ElectricalServicesIcon',
-    linkRoute: 'Utilities',
-    matchKeyword: 'Utilities',
     show: false,
   },
   {
@@ -110,20 +117,12 @@ const PlantAssessmentMenuList: SidebarItem[] = [
     show: false,
   },
   {
-    text: 'Management',
-    icon: 'SupervisorAccountIcon',
-    linkRoute: 'Management',
-    matchKeyword: 'Management',
-    show: false,
-  },
-  {
     text: 'HR',
     icon: 'GroupIcon',
     linkRoute: 'HR',
     matchKeyword: 'HR',
     show: false,
   },
-
   {
     text: 'Preview',
     icon: 'VisibilityIcon',

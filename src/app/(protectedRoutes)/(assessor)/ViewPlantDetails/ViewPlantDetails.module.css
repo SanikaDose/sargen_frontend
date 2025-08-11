@@ -5,8 +5,9 @@
   margin: auto;
 }
 
-.plantImage img {
-  background-color: rgba(243, 243, 243, 0.767);
-  object-fit: contain;
-  object-position: center;
+.plantImage .MuiAvatar-img {
+  object-fit: contain !important;
+  object-position: center !important;
+  width: 100% !important;
+  height: 100% !important;
 }

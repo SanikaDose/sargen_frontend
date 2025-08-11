@@ -200,10 +200,13 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                 height: 100,
                 borderRadius: '16px',
                 backgroundColor: 'rgba(243, 243, 243, 0.767)',
-                objectFit: 'contain',
-                objectPosition: 'center',
                 border: '2px solid #d8d8d8',
-                // padding: 1,
+                '& img': {
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  width: '100%',
+                  height: '100%',
+                },
               }}
             />
           ) : (
@@ -216,11 +219,10 @@ const ViewPlantDetails = ({}: AssessorProps) => {
                 alignItems: 'center',
                 backgroundColor: 'rgba(243, 243, 243, 0.767)',
                 border: '2px solid #d8d8d8',
-                // padding: 1,
               }}
               variant="square"
             >
-              <FactoryIcon sx={{ fontSize: '40px', borderRadius: '16px' }} />
+              <FactoryIcon sx={{ fontSize: '40px', borderRadius: '16px', color: '#6E7275' }} />
             </Avatar>
           )}
 
