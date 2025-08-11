@@ -1,7 +1,7 @@
 'use client';
 
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Button, Container, Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import styles from './style.module.css'; // ✅ Use your existing CSS
 import { EnquiryRequest } from './enquiry.types';
@@ -27,7 +27,7 @@ const EnquiryPage = () => {
     <Container maxWidth="sm" className={styles.enquiryContainer}>
       <Box className={styles.enquiryPaper}>
         <section className={styles.textContainer}>
-          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold">
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
             Enquiry Form
           </Typography>
           <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
@@ -151,17 +151,14 @@ const EnquiryPage = () => {
             )}
           />
 
-          <Box mt={-1.5}>
-            <ButtonWithLoader
-              label="Submit Enquiry"
-              type="submit"
-              loaderColor="white"
-              loading={isLoading}
-              fullWidth
-              height="5vh"
-              disabled={isLoading}
-              backgroundColor="rgb(20, 122, 224)"
-            />
+          <Box mt={2}>
+            <Button type="submit" fullWidth variant="contained" className={styles.button}>
+              {isLoading ? (
+                <ButtonWithLoader label="Submit Enquiry" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
+              ) : (
+                'Submit Enquiry'
+              )}
+            </Button>
           </Box>
         </Box>
       </Box>

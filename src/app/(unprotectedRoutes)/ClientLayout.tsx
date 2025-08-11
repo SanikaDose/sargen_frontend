@@ -1,30 +1,34 @@
 'use client';
-import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
-import RouteIcon from '@mui/icons-material/Route';
-import VerifiedIcon from '@mui/icons-material/Verified';
+import { Analytics, Rocket, TrendingUp, BarChart } from '@mui/icons-material';
+import { Box, Container, Typography, Card, CardContent, Grid, Button, useTheme, useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import styles from './style.module.css';
 import { Props } from './unprotected.types';
-import Image from 'next/image';
+import { CustomButton } from '@/components/CustomButton/CustomButton';
 
 const ClientLayout = ({ children }: Props) => {
-  const chip = [
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const keyFeatures = [
     {
-      icon: <VerifiedIcon sx={{ color: 'green', height: '3vw' }} />,
-      text: 'Real Analysis',
+      icon: <Analytics sx={{ color: '#ff6b9d', fontSize: '2rem' }} />,
+      title: 'AI-Powered Insight',
+      description: 'Scientific assessment across 16 business functions.',
     },
     {
-      icon: <RouteIcon sx={{ color: 'purple', height: '3vw' }} />,
-      text: 'Road Map',
+      icon: <Rocket sx={{ color: '#4ecdc4', fontSize: '2rem' }} />,
+      title: 'Strategic Roadmap',
+      description: 'Clear execution plan with ROI-driven prioritization.',
     },
     {
-      icon: <EmojiObjectsIcon sx={{ color: 'orange', height: '3vw' }} />,
-      text: 'Modern Solution',
+      icon: <BarChart sx={{ color: '#45b7d1', fontSize: '2rem' }} />,
+      title: 'Investment Clarity',
+      description: 'Forecasted KPIs and cost-benefit projections.',
     },
   ];
-  // const router = usePathname();
+
   const currentPath = usePathname();
+
   const getNavItems = () => {
     if (currentPath.includes('/register')) {
       return [
@@ -37,70 +41,237 @@ const ClientLayout = ({ children }: Props) => {
         { label: 'Login', href: '/login' },
       ];
     } else {
-      // Default for other pages (like login)
       return [
         { label: 'Register', href: '/register' },
         { label: 'Enquiry', href: '/enquiry' },
       ];
     }
   };
+
   return (
-    <>
-      {/* {Nav bar} */}
-      <nav className={styles.navbar}>
-        <div className={styles.nav_container}>
-          {/* <div className={styles.nav_brand}> */}
-          <Image src="/sargen-png-logo.png" alt="logo" className={styles.logo} width={100} height={100} />
-          {/* </div> */}
-          <div className={styles.nav_links}>
-            {getNavItems().map((item, index) => (
-              <Link key={index} href={item.href} className={styles.nav_link}>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </nav>
+    <Box
+      sx={{
+        // height: '100%',
+        height: { xs: 'auto', lg: '100%' },
+        backgroundColor: '#f8fafc',
+      }}
+    >
+      {/* Navigation Bar */}
+      <Box
+        component="nav"
+        sx={{
+          backgroundColor: 'white',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          zIndex: 1100,
+          height: '7%',
+        }}
+      >
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              p: 2,
+            }}
+          >
+            <Typography
+              component="img"
+              src="/sargen-png-logo.png"
+              alt="Sargen Logo"
+              sx={{
+                height: 48,
+                width: 'auto',
+                cursor: 'pointer',
+              }}
+            />
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                gap: 4,
+                alignItems: 'center',
+              }}
+            >
+              {getNavItems().map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.href}
+                  style={{
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Button variant={'contained'}>{item.label}</Button>
+                </Link>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
-      <div className={styles.chip}>
-        <h1>QA</h1>
-      </div>
-      <div className={styles.chip2}>
-        <h1>Future</h1>
-      </div>
-      <article className={styles.main_article}>
-        <section className={styles.left_section}>
-          <figure className={styles.imageWrapper}>
-            <video className={styles.videoSetting} autoPlay muted preload="none">
-              <source src="/EN-Transforming-Industries-with-Yokogawas-Certified-SIRI-Assessor_4.mp4" type="video/mp4" />
-              <track
-                src="/EN-Transforming-Industries-with-Yokogawas-Certified-SIRI-Assessor_4.vtt"
-                kind="subtitles"
-                srcLang="en"
-                label="English"
-              />
-              Your browser does not support the video tag.
-            </video>
-          </figure>
-          <div className={styles.text_outer_container}>
-            <h1>Unlock Your Industry&apos;s Future</h1>
-            <p>
-              Transform your business with AI-powered roadmaps and strategic insights tailored to your industry&apos;s unique challenges.
-            </p>
-          </div>
+      {/* main section */}
 
-          <section className={styles.chip_outer_div}>
-            {chip.map((item, indx) => (
-              <span key={indx}>
-                {item.icon}
-                <h4>{item.text}</h4>
-              </span>
-            ))}
-          </section>
-        </section>
-        <section className={styles.right_section}>{children}</section>
-      </article>
-    </>
+      <Box sx={{ width: '100%', height: '86%', display: 'flex', px: 4, flexDirection: { xs: 'column', md: 'column', lg: 'row' } }}>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row', lg: 'row' },
+            height: { xs: 'auto', md: 'auto', lg: '100%' },
+          }}
+        >
+          {/* Left Section - Main Content (Fixed) */}
+          <Box
+            sx={{
+              width: { xs: '100%', lg: '70%' },
+              height: { xs: 'auto', lg: '100%' },
+              pr: { lg: 4 },
+              // overflowY: { md: 'auto', lg: 'hidden' },
+              position: 'sticky',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            {/* Main Heading */}
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontWeight: 'bold',
+                fontSize: { xs: '2rem', md: '2.5rem', lg: '2.75rem', xl: '3rem', xxl: '3rem' },
+                color: '#1e293b',
+                lineHeight: 1.2,
+                mb: { xs: '2px', md: '2.5px', lg: '2.75px', xl: '3px', xxl: '3px' },
+              }}
+            >
+              From Assessment to Action:
+              <br />
+              <Box
+                component="span"
+                sx={{ color: '#1976d2', fontSize: { xs: '2rem', md: '2.5rem', lg: '2.75rem', xl: '3rem', xxl: '3rem' } }}
+              >
+                Your Strategic Partner for Industry 4.0 Transformation
+              </Box>
+            </Typography>
+
+            {/* Description */}
+            <Typography
+              variant="h6"
+              component="p"
+              sx={{
+                color: '#64748b',
+                mb: 6,
+                lineHeight: 1.6,
+                fontSize: '1.125rem',
+                fontWeight: 400,
+              }}
+            >
+              SARGEN empowers manufacturing companies to assess their digital maturity, generate strategic roadmaps, and drive data-driven
+              Industry 4.0 decisions.
+            </Typography>
+
+            {/* Feature Cards */}
+            <Grid container spacing={3} sx={{ mb: 6 }}>
+              {keyFeatures.map((feature, index) => (
+                <Grid sx={{ xs: 12, md: 4 }} key={index}>
+                  <Box sx={{ mb: 3 }}>
+                    <Box sx={{ mb: 2 }}>{feature.icon}</Box>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{
+                        fontWeight: 'bold',
+                        color: '#1e293b',
+                        mb: 1,
+                      }}
+                    >
+                      {feature.title}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        color: '#64748b',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {feature.description}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+
+            {/* CTA Button */}
+            <CustomButton width={isSmallScreen ? '30%' : '20%'} endIcon={<TrendingUp />}>
+              Start Your Assessment →
+            </CustomButton>
+          </Box>
+
+          {/* Right Section - Login Card */}
+          <Box sx={{ height: '100%', overflowY: 'auto', width: { xs: '100%', lg: '30%' } }}>
+            <Card
+              elevation={0}
+              sx={{
+                borderRadius: 3,
+                border: '1px solid #e2e8f0',
+                backgroundColor: 'white',
+                height: '100%',
+              }}
+            >
+              <CardContent sx={{ p: 4 }}>{children}</CardContent>
+            </Card>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Footer */}
+      <Box
+        sx={{
+          backgroundColor: 'white',
+          borderTop: '1px solid #e2e8f0',
+          py: 3,
+          height: '7%',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 3,
+              flexWrap: 'wrap',
+            }}
+          >
+            <Link
+              href="/privacy"
+              style={{
+                textDecoration: 'none',
+                color: '#64748b',
+                fontSize: '0.875rem',
+              }}
+            >
+              Privacy Policy
+            </Link>
+            <Box sx={{ color: '#cbd5e1' }}>|</Box>
+            <Link
+              href="/terms"
+              style={{
+                textDecoration: 'none',
+                color: '#64748b',
+                fontSize: '0.875rem',
+              }}
+            >
+              Terms of Use
+            </Link>
+            <Box sx={{ color: '#cbd5e1' }}>|</Box>
+            <Typography variant="body2" sx={{ color: '#64748b' }}>
+              © {new Date().getFullYear()} Elansol Technologies Private Limited
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

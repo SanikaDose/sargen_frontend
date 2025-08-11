@@ -8,11 +8,10 @@ import { CustomButton } from '@/components/CustomButton/CustomButton';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
-import Loader from '@/components/Loader/Loader';
 import Stepper from '@/components/Stepper/Stepper';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader } from '@/store/globalSlice';
-import { Box, Divider, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress, Divider, Paper, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -168,297 +167,293 @@ const PlantRegistrationForm = () => {
   }
   return (
     <Box sx={{ width: '100%', height: '99%' }}>
-      {isLoading ? (
-        <Loader loading={true} />
-      ) : (
-        <Box sx={{ width: '100%', height: '90%' }}>
-          <Box className={styles.stepperContainer}>
-            <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
-          </Box>
-          <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
-            <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
-              <Box className={styles.formOuterContainer}>
-                <Box className={styles.formContainer}>
-                  <Box className={styles.imageBox}>
-                    <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mt: 1,
-                        textAlign: 'center',
-                        color: '#6E7275',
-                        fontSize: '14px',
-                        fontWeight: 500,
-                      }}
-                    >
-                      Upload the Plant Logo
-                    </Typography>
-                  </Box>
+      <Box sx={{ width: '100%', height: '90%' }}>
+        <Box className={styles.stepperContainer}>
+          <Stepper steps={steps} activeStep={activeStep} completedSteps={completedSteps} />
+        </Box>
+        <Paper elevation={2} sx={{ borderRadius: '16px' }} className={styles.paperContainer}>
+          <form className={styles.mostOuterConatiner} onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Box className={styles.formOuterContainer}>
+              <Box className={styles.formContainer}>
+                <Box className={styles.imageBox}>
+                  <ImageUploader imageProp={logoUrl} onUpload={handleUpload} shape="square" />
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 1,
+                      textAlign: 'center',
+                      color: '#6E7275',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                    }}
+                  >
+                    Upload the Plant Logo
+                  </Typography>
+                </Box>
 
-                  <Box className={styles.formFieldsBox} sx={{}}>
-                    <section className={styles.formFieldsInner}>
-                      <Grid container spacing={1}>
-                        {plantFormInputs.map((input) => (
-                          <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
-                            <Controller
-                              name={input.name as keyof PlantFormType}
-                              control={control}
-                              defaultValue=""
-                              rules={input.rules}
-                              render={({ field, fieldState }) => {
-                                if (input.isCurrency || input.isRevenueUnit) {
-                                  return (
-                                    <CurrencyValueSelector
-                                      {...field}
-                                      value={String(field.value ?? '')}
-                                      label={input.label}
-                                      placeholder={input.placeholder}
-                                      options={
-                                        input.isCurrency
-                                          ? currencyOptions.map(({ code, symbol }) => ({
-                                              label: `${code} (${symbol})`,
-                                              value: code,
-                                            }))
-                                          : [
-                                              { label: 'Thousand', value: '1000' },
-                                              { label: 'Lakh', value: '100000' },
-                                              { label: 'Crore', value: '10000000' },
-                                            ]
-                                      }
-                                      required={true}
-                                      onFocus={() => setFocusedField(input.name)}
-                                      error={!!fieldState.error}
-                                      helperText={fieldState.error?.message}
-                                    />
-                                  );
-                                } else if (input.isDropdown) {
-                                  return (
-                                    // This is for industry selection dropdown  but use currency dropdown component
-                                    <CurrencyValueSelector
-                                      {...field}
-                                      options={industrySelectionOptions.map((opt) => ({
-                                        label: opt.industry_name,
-                                        value: opt.industry_name,
-                                      }))}
-                                      placeholder={input.placeholder}
-                                      label={input.label}
-                                      required={input.required}
-                                      onFocus={() => setFocusedField(input.name)}
-                                      error={!!fieldState.error}
-                                      helperText={fieldState.error?.message}
-                                    />
-                                  );
-                                } else {
-                                  return (
-                                    <InputWithLabel
-                                      {...field}
-                                      label={input.label}
-                                      placeholder={input.placeholder}
-                                      type={input.type || 'text'}
-                                      value={
-                                        ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
-                                          ? formatWithIndianCommas(field.value)
-                                          : field.value
-                                      }
-                                      onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
-                                          const rawValue = value.replace(/,/g, '');
-                                          if (/^\d*$/.test(rawValue)) {
-                                            field.onChange(rawValue);
-                                          }
-                                        } else if (input.name === 'gstin') {
-                                          field.onChange(value.toUpperCase());
-                                        } else {
-                                          field.onChange(value);
+                <Box className={styles.formFieldsBox} sx={{}}>
+                  <section className={styles.formFieldsInner}>
+                    <Grid container spacing={1}>
+                      {plantFormInputs.map((input) => (
+                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }} key={input.name}>
+                          <Controller
+                            name={input.name as keyof PlantFormType}
+                            control={control}
+                            defaultValue=""
+                            rules={input.rules}
+                            render={({ field, fieldState }) => {
+                              if (input.isCurrency || input.isRevenueUnit) {
+                                return (
+                                  <CurrencyValueSelector
+                                    {...field}
+                                    value={String(field.value ?? '')}
+                                    label={input.label}
+                                    placeholder={input.placeholder}
+                                    options={
+                                      input.isCurrency
+                                        ? currencyOptions.map(({ code, symbol }) => ({
+                                            label: `${code} (${symbol})`,
+                                            value: code,
+                                          }))
+                                        : [
+                                            { label: 'Thousand', value: '1000' },
+                                            { label: 'Lakh', value: '100000' },
+                                            { label: 'Crore', value: '10000000' },
+                                          ]
+                                    }
+                                    required={true}
+                                    onFocus={() => setFocusedField(input.name)}
+                                    error={!!fieldState.error}
+                                    helperText={fieldState.error?.message}
+                                  />
+                                );
+                              } else if (input.isDropdown) {
+                                return (
+                                  // This is for industry selection dropdown  but use currency dropdown component
+                                  <CurrencyValueSelector
+                                    {...field}
+                                    options={industrySelectionOptions.map((opt) => ({
+                                      label: opt.industry_name,
+                                      value: opt.industry_name,
+                                    }))}
+                                    placeholder={input.placeholder}
+                                    label={input.label}
+                                    required={input.required}
+                                    onFocus={() => setFocusedField(input.name)}
+                                    error={!!fieldState.error}
+                                    helperText={fieldState.error?.message}
+                                  />
+                                );
+                              } else {
+                                return (
+                                  <InputWithLabel
+                                    {...field}
+                                    label={input.label}
+                                    placeholder={input.placeholder}
+                                    type={input.type || 'text'}
+                                    value={
+                                      ['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)
+                                        ? formatWithIndianCommas(field.value)
+                                        : field.value
+                                    }
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (['numberOfEmployees', 'revenue', 'numberOfLines'].includes(input.name)) {
+                                        const rawValue = value.replace(/,/g, '');
+                                        if (/^\d*$/.test(rawValue)) {
+                                          field.onChange(rawValue);
                                         }
-                                      }}
-                                      onFocus={() => setFocusedField(input.name)}
-                                      size="small"
-                                      required={input.required}
-                                      error={!!fieldState.error}
-                                      helperText={fieldState.error?.message}
-                                    />
-                                  );
-                                }
-                              }}
-                            />
-                          </Grid>
-                        ))}
-                      </Grid>
-                      <Box className={styles.aboutSection}>
+                                      } else if (input.name === 'gstin') {
+                                        field.onChange(value.toUpperCase());
+                                      } else {
+                                        field.onChange(value);
+                                      }
+                                    }}
+                                    onFocus={() => setFocusedField(input.name)}
+                                    size="small"
+                                    required={input.required}
+                                    error={!!fieldState.error}
+                                    helperText={fieldState.error?.message}
+                                  />
+                                );
+                              }
+                            }}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                    <Box className={styles.aboutSection}>
+                      <Controller
+                        name="about"
+                        control={control}
+                        defaultValue=""
+                        rules={{
+                          // required: 'About Organization is required',
+                          maxLength: {
+                            value: 1000,
+                            message: 'Only 1000 characters are allowed',
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <InputWithLabel
+                            {...field}
+                            label="About Plant (max 1000 characters)"
+                            placeholder="Enter About Plant"
+                            required={false}
+                            multiline
+                            type="text"
+                            rows={2}
+                            onFocus={() => setFocusedField('about')}
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Grid size={{ xs: 12 }}>
+                      <Divider sx={{ width: '100%' }}>
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          Point Of Contact
+                        </Typography>
+                      </Divider>
+                    </Grid>
+                    <Grid container spacing={1}>
+                      <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
                         <Controller
-                          name="about"
+                          name="pocFullName"
                           control={control}
                           defaultValue=""
                           rules={{
-                            // required: 'About Organization is required',
-                            maxLength: {
-                              value: 1000,
-                              message: 'Only 1000 characters are allowed',
+                            required: 'Full Name is required',
+                            minLength: { value: 3, message: 'Minimum 3 characters required' },
+                          }}
+                          render={({ field, fieldState }) => (
+                            <>
+                              <InputWithLabel
+                                {...field}
+                                required
+                                label="Full Name"
+                                placeholder="Enter Full Name"
+                                onFocus={() => setFocusedField('pocFullName')}
+                                size="small"
+                              />
+                              {fieldState?.error?.message && (
+                                <Typography variant="caption" color="red">
+                                  {fieldState.error.message}
+                                </Typography>
+                              )}
+                            </>
+                          )}
+                        />
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                        <Controller
+                          name="pocEmail"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: 'Email is required',
+                            pattern: {
+                              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                              message: 'Enter a valid email address',
                             },
                           }}
                           render={({ field, fieldState }) => (
-                            <InputWithLabel
-                              {...field}
-                              label="About Plant (max 1000 characters)"
-                              placeholder="Enter About Plant"
-                              required={false}
-                              multiline
-                              type="text"
-                              rows={2}
-                              onFocus={() => setFocusedField('about')}
-                              error={!!fieldState.error}
-                              helperText={fieldState.error?.message}
-                            />
+                            <>
+                              <InputWithLabel
+                                {...field}
+                                required
+                                label="Email"
+                                placeholder="Enter Email"
+                                onFocus={() => setFocusedField('pocEmail')}
+                                size="small"
+                              />
+                              {fieldState?.error?.message && (
+                                <Typography variant="caption" color="red">
+                                  {fieldState.error.message}
+                                </Typography>
+                              )}
+                            </>
                           )}
                         />
-                      </Box>
-                      <Grid size={{ xs: 12 }}>
-                        <Divider sx={{ width: '100%' }}>
-                          <Typography variant="subtitle1" fontWeight={600}>
-                            Point Of Contact
-                          </Typography>
-                        </Divider>
                       </Grid>
-                      <Grid container spacing={1}>
-                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                          <Controller
-                            name="pocFullName"
-                            control={control}
-                            defaultValue=""
-                            rules={{
-                              required: 'Full Name is required',
-                              minLength: { value: 3, message: 'Minimum 3 characters required' },
-                            }}
-                            render={({ field, fieldState }) => (
-                              <>
-                                <InputWithLabel
-                                  {...field}
-                                  required
-                                  label="Full Name"
-                                  placeholder="Enter Full Name"
-                                  onFocus={() => setFocusedField('pocFullName')}
-                                  size="small"
-                                />
-                                {fieldState?.error?.message && (
-                                  <Typography variant="caption" color="red">
-                                    {fieldState.error.message}
-                                  </Typography>
-                                )}
-                              </>
-                            )}
-                          />
-                        </Grid>
 
-                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                          <Controller
-                            name="pocEmail"
-                            control={control}
-                            defaultValue=""
-                            rules={{
-                              required: 'Email is required',
-                              pattern: {
-                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                message: 'Enter a valid email address',
-                              },
-                            }}
-                            render={({ field, fieldState }) => (
-                              <>
-                                <InputWithLabel
-                                  {...field}
-                                  required
-                                  label="Email"
-                                  placeholder="Enter Email"
-                                  onFocus={() => setFocusedField('pocEmail')}
-                                  size="small"
-                                />
-                                {fieldState?.error?.message && (
-                                  <Typography variant="caption" color="red">
-                                    {fieldState.error.message}
-                                  </Typography>
-                                )}
-                              </>
-                            )}
-                          />
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
-                          <Controller
-                            name="pocContactNo"
-                            control={control}
-                            defaultValue=""
-                            rules={{
-                              required: 'Contact number is required',
-                              minLength: { value: 10, message: 'Minimum 10 characters required' },
-                              maxLength: { value: 10, message: 'Maximum 10 characters allowed' },
-                              pattern: {
-                                value: /^[0-9]+$/,
-                                message: 'Enter a valid number',
-                              },
-                            }}
-                            render={({ field, fieldState }) => (
-                              <>
-                                <InputWithLabel
-                                  {...field}
-                                  required
-                                  label="Contact Number"
-                                  placeholder="Enter Contact Number"
-                                  onFocus={() => setFocusedField('pocContactNo')}
-                                  size="small"
-                                />
-                                {fieldState?.error?.message && (
-                                  <Typography variant="caption" color="red">
-                                    {fieldState.error.message}
-                                  </Typography>
-                                )}
-                              </>
-                            )}
-                          />
-                        </Grid>
+                      <Grid size={{ xs: 12, sm: 4, md: 4, lg: 4, xl: 4 }}>
+                        <Controller
+                          name="pocContactNo"
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: 'Contact number is required',
+                            minLength: { value: 10, message: 'Minimum 10 characters required' },
+                            maxLength: { value: 10, message: 'Maximum 10 characters allowed' },
+                            pattern: {
+                              value: /^[0-9]+$/,
+                              message: 'Enter a valid number',
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
+                            <>
+                              <InputWithLabel
+                                {...field}
+                                required
+                                label="Contact Number"
+                                placeholder="Enter Contact Number"
+                                onFocus={() => setFocusedField('pocContactNo')}
+                                size="small"
+                              />
+                              {fieldState?.error?.message && (
+                                <Typography variant="caption" color="red">
+                                  {fieldState.error.message}
+                                </Typography>
+                              )}
+                            </>
+                          )}
+                        />
                       </Grid>
-                    </section>
-                  </Box>
+                    </Grid>
+                  </section>
                 </Box>
               </Box>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                p={1}
-                mt={5}
-                ml={5}
-                mr={5}
-                sx={{
-                  background: '#F5FAFD',
-                  height: '70px',
-                  borderRadius: '8px',
-                  marginTop: { sx: 5, md: 2, sm: 3, lg: 0 },
-                }}
-              >
-                <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
-                  Back
-                </CustomButton>
-                <CustomButton type="submit" variant="contained" icon="save">
-                  {isLoading ? 'Saving..' : 'Save'}
-                </CustomButton>
-              </Box>
-            </form>
-
-            <Box className={styles.rightSection}>
-              <Box
-                className={styles.infoboxSection}
-                sx={{
-                  overflowY: 'auto',
-                  padding: 0.4,
-                }}
-              >
-                <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
-              </Box>
             </Box>
-          </Paper>
-        </Box>
-      )}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              p={1}
+              mt={5}
+              ml={5}
+              mr={5}
+              sx={{
+                background: '#F5FAFD',
+                height: '70px',
+                borderRadius: '8px',
+                marginTop: { sx: 5, md: 2, sm: 3, lg: 0 },
+              }}
+            >
+              <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
+                Back
+              </CustomButton>
+              <CustomButton type="submit" variant="contained" icon={!isLoading ? 'save' : ''}>
+                {isLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
+              </CustomButton>
+            </Box>
+          </form>
+
+          <Box className={styles.rightSection}>
+            <Box
+              className={styles.infoboxSection}
+              sx={{
+                overflowY: 'auto',
+                padding: 0.4,
+              }}
+            >
+              <InfoBox heading={aboutSection.plantRegistration.heading} content={aboutSection.plantRegistration.description} />
+            </Box>
+          </Box>
+        </Paper>
+      </Box>
     </Box>
   );
 };

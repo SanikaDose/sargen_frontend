@@ -10,7 +10,7 @@ import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { RootState } from '@/store/store';
-import { Box, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, CircularProgress, Paper, Skeleton, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -279,7 +279,6 @@ const Questionaire = () => {
               className={styles.buttonSection}
             >
               <CustomButton
-                // children="Back"
                 variant="contained"
                 color="primary"
                 icon="left"
@@ -290,9 +289,7 @@ const Questionaire = () => {
                 Back
               </CustomButton>
               <CustomButton
-                // children={isSaving ? 'Saving...' : 'Save'}
                 variant="contained"
-                icon="save"
                 type="button"
                 onClick={async () => {
                   const success = await submitQuestionnaireAnswer();
@@ -319,8 +316,9 @@ const Questionaire = () => {
                   }
                 }}
                 disabled={isSaving}
+                icon={!isSaving ? 'save' : ''}
               >
-                {isSaving ? 'Saving...' : 'Save'}
+                {isSaving ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
               </CustomButton>
             </Box>
           </Box>

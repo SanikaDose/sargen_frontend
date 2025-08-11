@@ -13,7 +13,7 @@ import AssessorPreviewSideBox from '@/components/previewSideBox/AssessorPreviewS
 import TextArea from '@/components/textArea/TextArea';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -552,7 +552,7 @@ const UserAssessmentPreview = () => {
                 onClick={handleEditSaveClick}
                 disabled={isSaving}
               >
-                {isSaving ? 'Saving...' : isEditMode ? 'Save' : 'Edit'}
+                {isSaving ? <CircularProgress size={20} sx={{ color: 'white' }} /> : isEditMode ? 'Save' : 'Edit'}
               </CustomButton>
 
               <CustomButton
@@ -563,7 +563,7 @@ const UserAssessmentPreview = () => {
                 onClick={navigateNext}
                 disabled={isEditMode || isSaving || isFinishing}
               >
-                {isFinishing ? 'Processing...' : isFinalQuestion ? 'Submit' : 'Verify'}
+                {isFinishing ? <CircularProgress size={20} sx={{ color: 'white' }} /> : isFinalQuestion ? 'Submit' : 'Verify'}
               </CustomButton>
             </Box>
           </Box>

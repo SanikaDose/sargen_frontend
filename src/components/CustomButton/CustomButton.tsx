@@ -9,7 +9,7 @@ import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
 import CancelIcon from '@mui/icons-material/Cancel';
 export type ButtonVariant = 'text' | 'contained' | 'outlined';
-export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success' | 'cancel' | 'edit' | 'submit' | 'startAssesment';
+export type ButtonIcon = 'left' | 'right' | 'save' | 'alert' | 'success' | 'cancel' | 'edit' | 'submit' | 'startAssesment' | '';
 
 type CustomButtonProps = {
   children?: React.ReactNode;

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetPlanningHorizonListMutation, useSelectPlanningHorizonListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './PlanningHorizon.module.css';
 import { HorizonFormValues, HorizonOption } from '../plantAssement.model';
@@ -114,7 +114,8 @@ const PlanningHorizon = () => {
       },
     };
 
-    await selectHorizonOption(payload).unwrap();
+    const res = await selectHorizonOption(payload).unwrap();
+    if (!res) return;
 
     router.push(`/KpiDefinition/${organisationId}/${plantId}`);
   };
@@ -229,10 +230,10 @@ const PlanningHorizon = () => {
                   <CustomButton
                     disabled={!selectedHorizonId || isLoadingGet || isLoadingSelect}
                     variant="contained"
-                    icon="save"
+                    icon={!isLoadingSelect ? 'save' : ''}
                     type="submit"
                   >
-                    {isLoadingSelect ? 'Saving...' : 'Save'}
+                    {isLoadingSelect ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

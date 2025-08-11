@@ -1,16 +1,15 @@
 .container {
-  width: 30vw !important;
   backdrop-filter: blur(17px) saturate(124%);
   -webkit-backdrop-filter: blur(17px) saturate(124%);
   background-color: rgba(255, 255, 255, 0.24);
-  border-radius: 2%;
+  /* border-radius: 2%; */
   z-index: 2;
 }
 
 .paper {
   height: 100%;
   width: 100%;
-  border-radius: 24px;
+  /* border-radius: 24px; */
   padding: 5% 0px;
   background-color: transparent !important;
   display: flex;

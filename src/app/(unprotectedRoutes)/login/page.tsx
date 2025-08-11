@@ -127,7 +127,7 @@ const LoginPage = () => {
     <Container maxWidth="sm" className={styles.container}>
       <Box className={styles.paper}>
         <section className={styles.textContainer}>
-          <Typography className={styles.welcomeBackText} variant="h3" fontWeight="bold">
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
             Welcome
           </Typography>
           <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
@@ -204,25 +204,13 @@ const LoginPage = () => {
             )}
           />
 
-          {/* <Button type="submit" fullWidth variant="contained" className={styles.button}>
+          <Button type="submit" fullWidth variant="contained" className={styles.button}>
             {loading ? (
               <ButtonWithLoader label="Sign In" backgroundColor="inherit" loaderColor="white" loading={true} height="30px" />
             ) : (
               'Sign In'
             )}
-          </Button> */}
-
-          <ButtonWithLoader
-            type="submit"
-            fullWidth
-            variant="contained"
-            className={styles.button}
-            label="Sign In"
-            // backgroundColor="inherit"
-            loaderColor="white"
-            loading={loading}
-            height="40px" // Adjust height to match PasswordTextField
-          />
+          </Button>
 
           <Typography variant="body2" className={styles.forgotPassword}>
             <Button

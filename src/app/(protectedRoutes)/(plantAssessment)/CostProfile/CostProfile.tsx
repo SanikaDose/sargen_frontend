@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAddCostCategoriesMutation, useGetCostCategoriesMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
 import { FormValues, RawCostCategory } from '../plantAssement.model';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import styles from './costProfile.module.css';
 import OverallCostProfileCard from '@/components/CostProfileCard/OverallCostProfileCard';
@@ -83,7 +83,8 @@ const CostProfile = () => {
           costAsAPercentageOfRevenue: parseFloat(String(cost.costAsAPercentageOfRevenue)),
         })),
       };
-      await addCostCategories(payload).unwrap();
+      const res = await addCostCategories(payload).unwrap();
+      if (!res) return;
       await router.push(`/Questionaire/${organisationId}/${plantId}`);
 
       dispatch(setPlantAssessmentDepartment('R&D'));
@@ -217,12 +218,11 @@ const CostProfile = () => {
                   </CustomButton>
                   <CustomButton
                     disabled={isLoadingGet || isLoadingAdd}
-                    // children={isLoadingGet || isLoadingAdd ? 'Saving...' : 'Save'}
                     variant="contained"
-                    icon="save"
+                    icon={!isLoadingAdd ? 'save' : ''}
                     type="submit"
                   >
-                    {isLoadingAdd ? 'Saving...' : 'Save'}
+                    {isLoadingAdd ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

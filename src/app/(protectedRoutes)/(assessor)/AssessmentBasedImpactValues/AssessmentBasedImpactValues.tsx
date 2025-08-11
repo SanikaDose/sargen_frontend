@@ -6,7 +6,7 @@ import InfoBox from '@/components/InfoBox/InfoBox';
 import Loader from '@/components/Loader/Loader';
 import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper, Typography } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -146,7 +146,7 @@ const AssessmentBasedImpactValues = () => {
 
   return (
     <>
-      {isGetLoading || isGetSelectLoading || isSelectLoading ? (
+      {isGetLoading || isGetSelectLoading ? (
         <Loader loading={true} />
       ) : (
         <Box
@@ -240,7 +240,7 @@ const AssessmentBasedImpactValues = () => {
                     Back
                   </CustomButton>
                   <CustomButton variant="contained" icon="save" type="submit" disabled={selectedDimensions.length !== 4}>
-                    Save
+                    {isSelectLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

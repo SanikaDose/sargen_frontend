@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetKPIDefinitionMutation, useSelectKPIDefinitionMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './kpiDefinition.module.css';
 import { Kpi, KpiFormValues } from '../plantAssement.model';
@@ -81,10 +81,9 @@ const KpiDefinition = () => {
           isselected: item.isselected,
         })),
       };
-      await selectKPIDefinition(payload).unwrap();
-      // if (kpisSaveSuccesfully) {
+      const res = await selectKPIDefinition(payload).unwrap();
+      if (!res) return;
       router.push(`/CostProfile/${organisationId}/${plantId}`);
-      // }
     } catch (error) {
       console.log('error', error);
     }
@@ -188,10 +187,10 @@ const KpiDefinition = () => {
                   <CustomButton
                     disabled={selectedCount !== 5 || isLoadingGet || isLoadingSelect}
                     variant="contained"
-                    icon="save"
+                    icon={!isLoadingSelect ? 'save' : ''}
                     type="submit"
                   >
-                    {isLoadingSelect ? 'Saving...' : 'Save'}
+                    {isLoadingSelect ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

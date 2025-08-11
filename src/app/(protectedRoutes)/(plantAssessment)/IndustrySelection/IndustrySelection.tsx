@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useGetIndustrySelectionListMutation, useSelectIndustrySelectionListMutation } from '../plantAssementApi';
 import { useParams, useRouter } from 'next/navigation';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import styles from './IndustrySelection.module.css';
 import { Industry, IndustryFormValues } from '../plantAssement.model';
@@ -103,8 +103,8 @@ const IndustrySelection = () => {
       },
     };
 
-    await selectIndustrySelectionList(payload).unwrap();
-
+    const res = await selectIndustrySelectionList(payload).unwrap();
+    if (!res) return;
     router.push(`/PlanningHorizon/${organisationId}/${plantId}`);
   };
 
@@ -210,10 +210,10 @@ const IndustrySelection = () => {
                   <CustomButton
                     disabled={!selectedIndustryId || isLoadingGet || isLoadingSelect}
                     variant="contained"
-                    icon="save"
+                    icon={!isLoadingSelect ? 'save' : ''}
                     type="submit"
                   >
-                    {isLoadingSelect ? 'Saving...' : 'Save'}
+                    {isLoadingSelect ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

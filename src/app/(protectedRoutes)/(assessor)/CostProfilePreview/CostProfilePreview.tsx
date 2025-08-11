@@ -8,7 +8,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepCompleted, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
@@ -143,7 +143,7 @@ const CostProfilePreview = () => {
 
   return (
     <>
-      {isLoadingGet || isLoadingAdd ? (
+      {isLoadingGet ? (
         <Loader loading={true} />
       ) : (
         <Box component="form" sx={{ height: '99%' }} onSubmit={handleSubmit(handleFormSubmit)}>
@@ -255,8 +255,8 @@ const CostProfilePreview = () => {
                     Edit
                   </CustomButton>
 
-                  <CustomButton variant="contained" icon="save" type="submit" disabled={isSaveDisabled}>
-                    {isLoadingAdd ? 'Saving...' : 'Save'}
+                  <CustomButton variant="contained" icon={!isLoadingAdd ? 'save' : ''} type="submit" disabled={isSaveDisabled}>
+                    {isLoadingAdd ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
 
                   <CustomButton

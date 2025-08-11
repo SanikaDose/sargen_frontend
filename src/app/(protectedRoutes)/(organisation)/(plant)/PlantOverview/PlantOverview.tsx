@@ -13,10 +13,11 @@ import { Plant } from './PlantOverview.type';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAutomateTheAssessmentStatusMutation, useGetAllPlantInfoQuery } from './PlantOverviewApi';
-import { Box, Grid, IconButton, InputBase, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
 import { GridSearchIcon } from '@mui/x-data-grid';
 import styles from './PlantOverview.module.css';
 import { useDownloadReportMutation } from '@/app/(protectedRoutes)/(assessor)/ReportFinalizedPage/ReportFinalizedPageApi';
+import Loader from '@/components/Loader/Loader';
 
 export default function PlantOverview() {
   const dispatch = useDispatch();
@@ -135,24 +136,9 @@ export default function PlantOverview() {
         </Box>
       </Typography>
       {plantsLoading || automatingProcessLoading ? (
-        <Grid
-          container
-          spacing={{ xs: 1.5, md: 1.5 }}
-          columns={{ xs: 12, sm: 12, md: 12, xl: 12, lg: 12 }}
-          className={styles.gridContainer}
-        >
-          {[...Array(8)].map((_, index) => (
-            <Grid key={index} size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} className={styles.cardGrid}>
-              <Box sx={{ padding: 2, borderRadius: '12px', backgroundColor: '#f4f4f4', width: '100%' }}>
-                <Skeleton variant="rectangular" width="100%" height={140} />
-                <Skeleton variant="text" height={30} sx={{ mt: 1 }} />
-                <Skeleton variant="text" height={20} width="60%" />
-                <Skeleton variant="text" height={20} width="80%" />
-                <Skeleton variant="text" height={20} width="40%" />
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
+        <Box sx={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Loader loading={true} />
+        </Box>
       ) : (
         <Grid
           container

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 import InfoBox from '@/components/InfoBox/InfoBox';
 import { useGetSolutionsByImpactQuery, useSelectSolutionsByImpactMutation } from './AssessmentSolutionApi';
-import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox, Divider } from '@mui/material';
+import { Box, Typography, Grid, List, ListItemButton, Paper, Checkbox, Divider, CircularProgress } from '@mui/material';
 import styles from './AssessmentSolution.module.css';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
@@ -108,7 +108,7 @@ const AssessmentSolution = () => {
 
   return (
     <>
-      {isLoading || isSavingSolutions ? (
+      {isLoading ? (
         <Loader loading={true} />
       ) : (
         <Box sx={{ height: '99%' }}>
@@ -184,7 +184,7 @@ const AssessmentSolution = () => {
                     onClick={handleSave}
                     disabled={isSavingSolutions || selectedSolutions.size === 0}
                   >
-                    {isSavingSolutions ? 'Saving...' : 'Save'}
+                    {isSavingSolutions ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                   </CustomButton>
                 </Box>
               </Box>

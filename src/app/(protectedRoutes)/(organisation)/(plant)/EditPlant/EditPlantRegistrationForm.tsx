@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { Box, Paper, Typography, Divider } from '@mui/material';
+import { Box, Paper, Typography, Divider, CircularProgress } from '@mui/material';
 import ImageUploader from '@/components/ImageUpload/ImageUpload';
 import { plantFormInputs } from './FormConfig/FormInputStep';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
@@ -192,7 +192,7 @@ const EditPlantRegistrationForm = () => {
 
   return (
     <Box sx={{ width: '100%', height: '99%' }}>
-      {isLoading || isFetching ? (
+      {isFetching ? (
         <Loader loading={true} />
       ) : (
         <Box sx={{ width: '100%', height: '90%' }}>
@@ -462,8 +462,8 @@ const EditPlantRegistrationForm = () => {
                 <CustomButton variant="contained" icon="left" onClick={() => router.back()}>
                   Back
                 </CustomButton>
-                <CustomButton type="submit" variant="contained" icon="save">
-                  {isLoading ? 'Saving...' : 'Save'}
+                <CustomButton type="submit" variant="contained" icon={!isLoading ? 'save' : ''}>
+                  {isLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
                 </CustomButton>
               </Box>
             </form>

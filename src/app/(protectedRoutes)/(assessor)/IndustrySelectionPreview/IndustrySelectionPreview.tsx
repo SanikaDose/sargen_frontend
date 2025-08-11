@@ -9,7 +9,7 @@ import { pagesNames } from '@/constants/pagesHeaderNames';
 import { setPageNameHeader, setShowAssessmentListSideBar } from '@/store/globalSlice';
 import { markStepIncomplete, setActiveStep } from '@/store/Slices/StepperSlice';
 import { RootState } from '@/store/store';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, CircularProgress, Grid, Paper } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -150,7 +150,7 @@ const IndustrySelectionPreview = () => {
   const isEditDisabled = isEditMode || isLoadingGet || isLoadingAdd;
 
   // Show loader at the top level if loading
-  if (isLoadingGet || isLoadingAdd) {
+  if (isLoadingGet) {
     return (
       <Box sx={{ height: '99%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Loader loading />
@@ -262,8 +262,8 @@ const IndustrySelectionPreview = () => {
                 Edit
               </CustomButton>
 
-              <CustomButton variant="contained" icon="save" type="submit" disabled={isSaveDisabled}>
-                {isLoadingAdd ? 'Saving...' : 'Save'}
+              <CustomButton variant="contained" icon={!isLoadingAdd ? 'save' : ''} type="submit" disabled={isSaveDisabled}>
+                {isLoadingAdd ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Save'}
               </CustomButton>
 
               <CustomButton
