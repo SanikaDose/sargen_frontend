@@ -164,7 +164,7 @@ function AssessorOnboarding() {
       populateFormAndFile();
     }
   }, [existingData, reset]);
-  console.log('uploade files after the fetchhh', uploadedFiles);
+
   // console.log('selectedfile', selectedFile);
 
   //function to view the metadata files
