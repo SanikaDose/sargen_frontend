@@ -127,6 +127,20 @@ const AssessorPreviewSideBox: React.FC<PreviewSideBoxProps> = ({
                   height: { xs: '8px', sm: '10px', md: '20px' },
                   borderRadius: '50%',
                 }}
+                className={`${styles.statusDot} ${styles.statusCurrentQuestion}`}
+              />
+              <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>
+                Current Question
+              </Typography>
+            </section>
+
+            <section className={styles.innerStatusLegend}>
+              <Box
+                sx={{
+                  width: { xs: '8px', sm: '10px', md: '20px' },
+                  height: { xs: '8px', sm: '10px', md: '20px' },
+                  borderRadius: '50%',
+                }}
                 className={`${styles.statusDot} ${styles.statusReviewed}`}
               />
               <Typography sx={{ fontSize: { xs: '0.3rem', sm: '0.7rem', md: '0.9rem' } }} className={styles.statusLabel}>

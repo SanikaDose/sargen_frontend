@@ -96,6 +96,10 @@
   background-color: #4caf50;
 }
 
+.statusCurrentQuestion {
+  background-color: #336590;
+}
+
 .statusAlert {
   background-color: #ed6c02;
 }
