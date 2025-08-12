@@ -501,13 +501,24 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 key={item.text}
                 disablePadding
                 sx={{
-                  pl: 0,
-                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                  px: 1, // Add horizontal padding for gap from sides
+                  mb: 0.5, // Add small margin bottom between items
+                  backgroundColor: 'transparent',
                   fontSize: '14px',
                   color: 'text.primary',
                 }}
               >
-                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                <ListItemButton
+                  onClick={() => sideBarListItemOnClick(item.linkRoute)}
+                  sx={{
+                    backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                    borderRadius: '12px', // Add border radius
+                    '&:hover': {
+                      backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'action.hover',
+                      borderRadius: '12px',
+                    },
+                  }}
+                >
                   <ListItemIcon
                     sx={{
                       mr: 2,
@@ -540,12 +551,24 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 key={item.text}
                 disablePadding
                 sx={{
-                  pl: 0,
-                  backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                  px: 1, // Add horizontal padding for gap from sides
+                  mb: 0.5, // Add small margin bottom between items
+                  backgroundColor: 'transparent',
                   fontSize: '14px',
+                  color: 'text.primary',
                 }}
               >
-                <ListItemButton onClick={() => sideBarListItemOnClick(item.linkRoute)}>
+                <ListItemButton
+                  onClick={() => sideBarListItemOnClick(item.linkRoute)}
+                  sx={{
+                    backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'transparent',
+                    borderRadius: '12px', // Add border radius
+                    '&:hover': {
+                      backgroundColor: item.linkRoute === pathName ? 'secondary.main' : 'action.hover',
+                      borderRadius: '12px',
+                    },
+                  }}
+                >
                   <ListItemIcon
                     sx={{
                       mr: 2,
