@@ -79,7 +79,7 @@ const ReportHistory = () => {
           headerName: 'Report Name',
           flex: 1,
           minWidth: 150,
-          renderCell: (params: GridRenderCellParams) => <span>{`Report_${params.row.plantId}`}</span>,
+          renderCell: (params: GridRenderCellParams) => <span>{`${params.row.plantName} Assessment Report`}</span>,
         },
         {
           field: 'actions',
@@ -90,7 +90,7 @@ const ReportHistory = () => {
           renderCell: (params: GridRenderCellParams) => (
             <IconButton
               color="primary"
-              onClick={() => handleDownload(params.row.reportPath, params.row.plantId)}
+              onClick={() => handleDownload(params.row.reportPath, params.row.plantName)}
               aria-label="download"
               disabled={!params.row.reportPath}
               size="small"
@@ -109,10 +109,10 @@ const ReportHistory = () => {
           headerName: 'Report Name',
           flex: 1,
           minWidth: 180,
-          renderCell: (params: GridRenderCellParams) => <span>{`Report_${params.row.plantId}`}</span>,
+          renderCell: (params: GridRenderCellParams) => <span>{`${params.row.plantName} Assessment Report`}</span>,
         },
         {
-          field: 'plantId',
+          field: 'plantName',
           headerName: 'Plant Name',
           flex: 1,
           minWidth: 130,
@@ -126,7 +126,7 @@ const ReportHistory = () => {
           renderCell: (params: GridRenderCellParams) => (
             <IconButton
               color="primary"
-              onClick={() => handleDownload(params.row.reportPath, params.row.plantId)}
+              onClick={() => handleDownload(params.row.reportPath, params.row.plantName)}
               aria-label="download"
               disabled={!params.row.reportPath}
             >
@@ -144,7 +144,7 @@ const ReportHistory = () => {
           headerName: 'Report Name',
           flex: 1,
           minWidth: 200,
-          renderCell: (params: GridRenderCellParams) => <span>{`Report_${params.row.plantId}`}</span>,
+          renderCell: (params: GridRenderCellParams) => <span>{`${params.row.plantName} Assessment Report`}</span>,
         },
         {
           field: 'version',
@@ -154,16 +154,23 @@ const ReportHistory = () => {
           renderCell: () => <span>1.0</span>,
         },
         {
-          field: 'plantId',
+          field: 'plantName',
           headerName: 'Plant Name',
           flex: 1,
           minWidth: 150,
         },
         {
-          field: 'orgName',
-          headerName: 'Organisation Name',
+          field: 'createdAt',
+          headerName: 'Report Creation Date',
           flex: 1,
           minWidth: 200,
+          renderCell: (params) => {
+            const date = new Date(params.value);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
+            const year = date.getFullYear();
+            return `${day} / ${month} / ${year}`;
+          },
         },
         {
           field: 'actions',
