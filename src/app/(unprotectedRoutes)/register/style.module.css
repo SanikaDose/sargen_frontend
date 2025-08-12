@@ -33,6 +33,9 @@
 }
 #platFormUser {
   width: 100%;
+  display: flex;
+  gap: 10;
+  margin-top: 0px;
 }
 .textContainer {
   height: 20%;
@@ -86,5 +89,8 @@
   }
   .welcomeBackHelperText {
     font-size: 2vw !important;
+  }
+  #platFormUser {
+    flex-direction: column;
   }
 }

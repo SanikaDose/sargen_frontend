@@ -80,7 +80,7 @@ const RegisterPage = () => {
     <Container maxWidth="sm" className={styles.container}>
       <Box className={styles.paper}>
         <section className={styles.textContainer}>
-          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold">
             Register
           </Typography>
           <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
