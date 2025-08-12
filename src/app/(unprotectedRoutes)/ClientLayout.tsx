@@ -2,13 +2,15 @@
 import { Analytics, Rocket, TrendingUp, BarChart } from '@mui/icons-material';
 import { Box, Container, Typography, Card, CardContent, Grid, Button, useTheme, useMediaQuery } from '@mui/material';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Props } from './unprotected.types';
 import { CustomButton } from '@/components/CustomButton/CustomButton';
 
 const ClientLayout = ({ children }: Props) => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const router = useRouter();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
   const keyFeatures = [
     {
       icon: <Analytics sx={{ color: '#ff6b9d', fontSize: '2rem' }} />,
@@ -110,12 +112,21 @@ const ClientLayout = ({ children }: Props) => {
 
       {/* main section */}
 
-      <Box sx={{ width: '100%', height: '86%', display: 'flex', px: 4, flexDirection: { xs: 'column', md: 'column', lg: 'row' } }}>
+      <Box
+        sx={{
+          width: '100%',
+          height: '86%',
+          display: 'flex',
+          px: 4,
+          flexDirection: { xs: 'column', md: 'column', lg: 'row' },
+        }}
+      >
         <Box
           sx={{
             width: '100%',
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row', lg: 'row' },
+            gap: { xs: '10px', lg: '0px' },
             height: { xs: 'auto', md: 'auto', lg: '100%' },
           }}
         >
@@ -202,13 +213,17 @@ const ClientLayout = ({ children }: Props) => {
             </Grid>
 
             {/* CTA Button */}
-            <CustomButton width={isSmallScreen ? '30%' : '20%'} endIcon={<TrendingUp />}>
+            <CustomButton
+              width={isSmallScreen ? '50%' : isMediumScreen ? '32%' : '35%'}
+              endIcon={<TrendingUp />}
+              onClick={() => router.push('/register')}
+            >
               Start Your Assessment →
             </CustomButton>
           </Box>
 
           {/* Right Section - Login Card */}
-          <Box sx={{ height: '100%', overflowY: 'auto', width: { xs: '100%', lg: '30%' } }}>
+          <Box sx={{ height: 'auto', overflowY: 'auto', width: { xs: '100%', lg: '30%' } }}>
             <Card
               elevation={0}
               sx={{
