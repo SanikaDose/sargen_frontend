@@ -6,7 +6,7 @@ import styles from './style.module.css';
 const MAX_PREVIEW_LENGTH = 260;
 
 const AnswerCard = ({
-  answerNumber = 1,
+  answerNumber = 0, // 0 will represent A, 1 = B, etc.
   answerText = 'How is product Design and WORK INSTRUCTIONS transferred to manufacturing so that they know how to produce it?',
   isSelected = false,
   onClick = () => {},
@@ -15,18 +15,19 @@ const AnswerCard = ({
   const showReadMore = answerText.length > MAX_PREVIEW_LENGTH;
 
   const toggleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
     setExpanded((prev) => !prev);
   };
+
+  // Convert number index to letter (A, B, C...)
+  const answerLetter = String.fromCharCode(64 + answerNumber);
 
   return (
     <Box
       onClick={onClick}
       className={styles.outerContainer}
       sx={{
-        // When selected, use the original question card styling (light blue)
         backgroundColor: isSelected ? '#014a7d2b' : '#fff',
-        // border: isSelected ? '1px solid rgba(90, 162, 196, 1)' : '2px outset rgb(255, 255, 255)',
         boxShadow: isSelected ? '2px 2px 5px #014a7d2b' : 'none',
         color: isSelected ? '#1a1a1a' : '#000',
         cursor: 'pointer',
@@ -51,7 +52,7 @@ const AnswerCard = ({
           width: '100%',
         }}
       >
-        <strong>{String(answerNumber).padStart(2, '0')}.</strong>&nbsp;&nbsp;
+        <strong>{answerLetter}.</strong>&nbsp;&nbsp;
         {answerText}
       </Typography>
       {showReadMore && (
@@ -61,7 +62,7 @@ const AnswerCard = ({
             alignSelf: 'flex-end',
             fontSize: '0.875rem',
             fontWeight: 500,
-            color: isSelected ? '#10557C' : '#10557C',
+            color: '#10557C',
             display: 'flex',
             width: '9%',
           }}
