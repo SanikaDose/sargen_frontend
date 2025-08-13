@@ -1,33 +1,25 @@
 'use client';
 
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Box, Button, FormControl, FormHelperText, OutlinedInput, Stack, Typography } from '@mui/material';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { Box, Button, FormControl, FormHelperText, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import styles from './style.module.css';
 import { useForgotPasswordApiMutation } from '../login/loginApi';
 import { pageRoutes } from '@/constants/pagesRoutes';
+import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 
 type FormValues = {
   email: string;
 };
 
-const inputSx = {
-  backgroundColor: 'transparent ',
-  borderRadius: '16px',
-  fontSize: '0.9rem',
-  height: '35px',
-};
-
-// Remove the prop interface since this is a page component
 const ForgotPasswordPage = () => {
   const router = useRouter();
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-
   const [forgotPasswordApi] = useForgotPasswordApiMutation();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
@@ -42,55 +34,49 @@ const ForgotPasswordPage = () => {
   };
 
   const handleBackClick = () => {
-    // Navigate back to login page instead of using a prop
-    router.push(pageRoutes.unprotected.login); // Adjust this route as needed
+    router.push(pageRoutes.unprotected.login);
   };
 
-  const renderFormField = (
-    name: keyof FormValues,
-    label: string,
-    type: string = 'text',
-    validate?: (value: string) => string | boolean,
-  ) => {
-    return (
-      <FormControl fullWidth variant="outlined" error={!!errors[name]}>
-        <Typography variant="subtitle1" className={styles.labelOfForm}>
-          {label}
-        </Typography>
-        <OutlinedInput
-          placeholder={`Enter your ${label.toLowerCase()}`}
-          type={type}
-          {...register(name, {
-            required: `${label} is required`,
-            validate,
-          })}
-          sx={inputSx}
-        />
-        <FormHelperText>{errors[name]?.message}</FormHelperText>
-      </FormControl>
-    );
-  };
+  const renderFormField = (name: keyof FormValues, label: string, type: string = 'text', rules?: object) => (
+    <FormControl fullWidth variant="outlined" error={!!errors[name]}>
+      <Controller
+        name={name}
+        control={control}
+        defaultValue=""
+        rules={rules}
+        render={({ field }) => (
+          <InputWithLabel {...field} label={label} name={name} placeholder={`Enter your ${label.toLowerCase()}`} type={type} />
+        )}
+      />
+      <FormHelperText>{errors[name]?.message}</FormHelperText>
+    </FormControl>
+  );
 
   return (
-    <form className={styles.outerContainer} onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3}>
-        <Box className={styles.form_header_outerContainer}>
-          <Typography variant="h4" textAlign="center" className={styles.form_header}>
+    <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
+      <Box className={styles.paper}>
+        <section className={styles.textContainer}>
+          <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold" gutterBottom>
             Forgot Password
           </Typography>
-          <Typography variant="caption" className={styles.form_header_caption}>
+          <Typography className={styles.welcomeBackHelperText} variant="subtitle1" color="text.secondary" gutterBottom>
             Forgot password? Don&#39;t worry, we&#39;re here to help.
           </Typography>
-        </Box>
-        {renderFormField('email', 'Email', 'email')}
+        </section>
 
-        <Button type="submit" variant="contained">
+        {renderFormField('email', 'Email', 'email', {
+          required: 'Email is required',
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: 'Enter a valid email address',
+          },
+        })}
+
+        <Button type="submit" sx={{ width: '100%', mt: '10px' }} variant="contained">
           Submit
         </Button>
-        <Button variant="outlined" onClick={handleBackClick}>
-          Back
-        </Button>
-      </Stack>
+        <Button onClick={handleBackClick}>Back</Button>
+      </Box>
     </form>
   );
 };

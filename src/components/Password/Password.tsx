@@ -35,7 +35,7 @@ export const PasswordTextField: React.FC<PasswordTextFieldProps> = ({
 
   return (
     <FormControl fullWidth margin="normal">
-      <FormLabel htmlFor={name} className={styles.formLabel} color="primary">
+      <FormLabel htmlFor={name} className={styles.formLabel} sx={{ mb: 0 }} color="primary">
         {label}
         {required ? ' *' : ''}
       </FormLabel>

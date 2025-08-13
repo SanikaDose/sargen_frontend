@@ -294,9 +294,6 @@ export default function Preview() {
   const department = currentQuestion?.department || 'Unknown';
 
   const departmentQuestionNumber = departmentQuestionOrder[department]?.indexOf(currentGroupKey) + 1 || 0;
-  console.log('departmentQuestionOrder', departmentQuestionOrder);
-
-  console.log('departmentGroups', departmentGroups);
 
   return (
     <Box component="form" sx={{ height: '99%' }}>
@@ -426,11 +423,12 @@ export default function Preview() {
                 }}
                 disabled={!isEditMode || isSaving} // ✅ Only enabled when editing
               >
-                Submit
+                Save
               </CustomButton>
 
               <CustomButton variant="contained" icon="right" type="button" onClick={navigateNext} disabled={isSaving || isEditMode}>
-                {isSaving ? 'Saving...' : 'Next'}
+                {/* {isSaving ? 'Saving...' : 'Next'} */}
+                Next
               </CustomButton>
             </Box>
           </Box>

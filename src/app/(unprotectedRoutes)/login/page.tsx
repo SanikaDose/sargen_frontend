@@ -22,9 +22,6 @@ const LoginPage = () => {
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch();
 
-  // const onboardingStatus = useSelector((state: RootState) => state.tokenDecode.onboardingStatus);
-  // console.log('onboardingStatus', onboardingStatus);
-
   const router = useRouter();
   const [getOnboardingStatus] = useLazyGetOnboardingStatusQuery();
 
@@ -38,14 +35,12 @@ const LoginPage = () => {
       if (!result.success) throw new Error('Login unsuccessful');
 
       const token = result.accessToken;
-      console.log('token', token);
 
       const rawDecoded = jwtDecode<RawToken>(token);
-      console.log('rawDecoded', rawDecoded);
+
       const { tenantId, userType } = rawDecoded;
 
       const typedToken = decodeAndStoreToken(token);
-      console.log('typedToken', typedToken);
 
       dispatch(setDecodedToken(typedToken));
 
