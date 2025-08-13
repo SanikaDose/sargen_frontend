@@ -196,4 +196,12 @@ export const aboutSection = {
       <p style="margin-top: 1rem; font-size: 0.85rem;"><em>Tip: Balance across categories and ensure measurable data exists.</em></p>
     `,
   },
+  impactValues: {
+    heading: 'Dimension Selection Guide',
+    description: `
+    <p style="margin: 0.5rem 0;">Select <strong>4</strong> Impact Values.</p>
+  
+    <p style="margin-top: 1rem;">This section evaluates impact values like vertical and horizontal integration from the assessment results.</p>
+  `,
+  },
 };

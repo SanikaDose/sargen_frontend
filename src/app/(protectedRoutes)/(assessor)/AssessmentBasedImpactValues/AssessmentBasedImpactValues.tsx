@@ -17,6 +17,7 @@ import {
   useGetSelectedImpactValuesMutation,
   useSelectImpactValuesMutation,
 } from './AssessmentBasedImpactValuesApi';
+import { aboutSection } from '@/app/utils/aboutSection';
 
 const AssessmentBasedImpactValues = () => {
   const params = useParams();
@@ -219,10 +220,7 @@ const AssessmentBasedImpactValues = () => {
 
               <Box className={styles.rightSection}>
                 <Box className={styles.aboutSection}>
-                  <InfoBox
-                    content="This section evaluates impact values like vertical and horizontal integration from the assessment results."
-                    heading="About Impact Values"
-                  />
+                  <InfoBox content={aboutSection.impactValues.description} heading={aboutSection.impactValues.heading} />
                 </Box>
 
                 <Box
