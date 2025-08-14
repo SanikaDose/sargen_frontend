@@ -51,67 +51,95 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, downloadReportLoading 
         </Box>
       </Box>
 
-      {/* Dates */}
-      <Box className={styles.dates}>
-        <Typography className={styles.datesTitle}>Dates</Typography>
-        <Divider sx={{ marginBottom: 1 }} />
-        <Box>
-          <Typography className={styles.textLabel}>
-            Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString('en-GB')}
-          </Typography>
-          <Typography className={styles.textLabel}>
-            Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString('en-GB')}
-          </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', gap: 2 }}>
+        {/* Dates, status (left section) */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
+          {/* Dates */}
+          <Box className={styles.dates}>
+            <Typography className={styles.datesTitle}>Dates</Typography>
+            <Divider sx={{ marginBottom: 1 }} />
+            <Box>
+              <Typography className={styles.textLabel}>
+                Plant Created: {new Date(plantData?.createdAt ?? '').toLocaleDateString('en-GB')}
+              </Typography>
+              <Typography className={styles.textLabel}>
+                Plant Updated: {new Date(plantData?.updatedAt ?? '').toLocaleDateString('en-GB')}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Status */}
+          <Box className={styles.status}>
+            <Box sx={{}}>
+              <Divider sx={{ marginBottom: 1 }} />
+              <Typography className={styles.statusLabel}>Status</Typography>
+
+              <CustomButton
+                icon="startAssesment"
+                variant="contained"
+                color="primary"
+                width="100%"
+                height="30px"
+                disabled={
+                  data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT ||
+                  data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT ||
+                  downloadReportLoading
+                }
+                onClick={onClick}
+              >
+                {downloadReportLoading
+                  ? 'Downloading Report'
+                  : data?.assessmentCompletionStage === AsseessmentStatus.NOT_STARTED
+                    ? 'Request for Assessment'
+                    : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
+                      ? 'Assessor Assigning ...'
+                      : data?.assessmentCompletionStage === AsseessmentStatus.START_ASSESSMENT
+                        ? 'Start Assessment'
+                        : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
+                          ? 'Assessment Started'
+                          : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
+                            ? 'Edit Assessment'
+                            : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
+                              ? 'Assessment in Review'
+                              : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
+                                ? 'Download Assessment'
+                                : 'Status Unknown'}
+
+                {downloadReportLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : ''}
+              </CustomButton>
+            </Box>
+          </Box>
         </Box>
-      </Box>
 
-      {/* Status */}
-      <Box className={styles.status}>
-        <Box>
-          <Divider sx={{ marginBottom: 1 }} />
-          <Typography className={styles.statusLabel}>Status</Typography>
-
-          <CustomButton
-            icon="startAssesment"
-            variant="contained"
-            color="primary"
-            width="100%"
-            height="30px"
-            disabled={
-              data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT ||
-              data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT ||
-              downloadReportLoading
-            }
-            onClick={onClick}
-          >
-            {downloadReportLoading
-              ? 'Downloading Report'
-              : data?.assessmentCompletionStage === AsseessmentStatus.NOT_STARTED
-                ? 'Request for Assessment'
-                : data?.assessmentCompletionStage === AsseessmentStatus.REQUESTED_ASSESSMENT
-                  ? 'Assessor Assigning ...'
-                  : data?.assessmentCompletionStage === AsseessmentStatus.START_ASSESSMENT
-                    ? 'Start Assessment'
-                    : data?.assessmentCompletionStage === AsseessmentStatus.ONGOING_ASSESSMENT
-                      ? 'Assessment Started'
-                      : data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT
-                        ? 'Edit Assessment'
-                        : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
-                          ? 'Assessment in Review'
-                          : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
-                            ? 'Download Assessment'
-                            : 'Status Unknown'}
-
-            {downloadReportLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : ''}
-          </CustomButton>
-        </Box>
-        <Box className={styles.progressCircle}>
-          {/* {data?.assessmentCompletionStage &&
-          [AsseessmentStatus.REQUESTED_ASSESSMENT, AsseessmentStatus.NOT_STARTED, AsseessmentStatus.REVIEW_ASSESSMENT].includes(
-            data.assessmentCompletionStage as AsseessmentStatus,
-          ) ? null : (
-            <ProgressCircle color="#1976d2" size={60} thickness={4} value={75} />
-          )} */}
+        {/* Simple Waiting Section */}
+        <Box
+          sx={{
+            width: '30%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            marginTop: 2,
+          }}
+          className={`${styles.progressCircle} ${
+            data?.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT ? styles.simpleWaitingCard : ''
+          }`}
+        >
+          {data?.assessmentCompletionStage && data.assessmentCompletionStage === AsseessmentStatus.COMPLETED_ASSESSMENT ? (
+            <>
+              <Typography
+                sx={{
+                  color: '#336590',
+                  fontWeight: 500,
+                  fontSize: '0.95rem',
+                  lineHeight: 1.4,
+                }}
+              >
+                Waiting For Assessor To Review
+              </Typography>
+            </>
+          ) : null}
         </Box>
       </Box>
     </Box>

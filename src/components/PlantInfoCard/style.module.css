@@ -78,9 +78,9 @@
 .textLabelLg {
   font-size: 13px !important;
 }
-/* .dates {
-  border: 1px solid;
-} */
+.dates {
+  width: 100%;
+}
 
 .datesTitle {
   color: gray;
@@ -111,8 +111,22 @@
 } */
 
 .progressCircle {
-  position: relative;
-  display: inline-flex;
+  height: 100%;
+  width: 100%;
+  color: #10557c;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+}
+
+.simpleWaitingCard {
+  border: 1px solid #e0e7ef;
+  border-radius: 12px;
+  background-color: #fafbfc;
+  min-height: 100px;
 }
 
 @media (min-width: 300px) and (max-width: 500px) {

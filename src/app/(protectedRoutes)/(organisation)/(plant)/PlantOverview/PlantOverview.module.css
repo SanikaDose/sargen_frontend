@@ -22,7 +22,7 @@
 
 .cardGrid {
   flex: 0 0 25%; /* 4 items per row = 25% */
-  height: 54%; /* Each row takes 50% height */
+  height: 52%; /* Each row takes 50% height */
   display: flex;
   box-sizing: border-box;
 }
