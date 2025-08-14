@@ -81,3 +81,16 @@ export type RawUploadResponse = {
 export type UploadFunction = (args: UploadArgs) => {
   unwrap: () => Promise<UploadResponse>;
 };
+export const fileNameDisplayMap: Record<string, string> = {
+  questionnaires_: 'Questionnaires',
+  cost_profile_: 'Cost Profile',
+  kpi_selection_: 'KPI Selection',
+  industry_selection_: 'Industry Selection',
+  planning_horizon_: 'Planning Horizon',
+  cost_lookup_table_: 'Cost Profile LookUp',
+  industry_selection_lookup_table_: 'Industry Selection LookUp',
+  kpi_lookup_table_: 'KPI Selection LookUp',
+  dimension_band_weight_scale_: 'Dimension To Band',
+  solutions_with_band_weights_: 'Solutions Metadata',
+  band_definition_table_: 'Band Definitions',
+};

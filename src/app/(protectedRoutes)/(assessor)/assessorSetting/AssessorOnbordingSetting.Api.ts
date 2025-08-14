@@ -8,6 +8,7 @@ import {
   UploadArgs,
   RawUploadResponse,
   UploadFileMetadata,
+  fileNameDisplayMap,
 } from './AssessorOnbordingSetting.types';
 
 export const assessorApi = protectedApi.injectEndpoints({
@@ -362,12 +363,12 @@ export const assessorApi = protectedApi.injectEndpoints({
         body: { userType, fileName },
         responseHandler: async (response) => {
           const blob = await response.blob();
-
+          const displayName = fileNameDisplayMap[fileName];
           // Trigger file download manually here
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.setAttribute('download', fileName);
+          link.setAttribute('download', displayName);
           document.body.appendChild(link);
           link.click();
           link.remove();
