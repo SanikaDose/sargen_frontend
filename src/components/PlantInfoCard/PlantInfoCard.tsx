@@ -102,7 +102,7 @@ const PlantInfoCard = ({ data, editPlantOnClick, onClick, downloadReportLoading 
                             : data?.assessmentCompletionStage === AsseessmentStatus.REVIEW_ASSESSMENT
                               ? 'Assessment in Review'
                               : data?.assessmentCompletionStage === AsseessmentStatus.FINISH_ASSESSMENT
-                                ? 'Download Assessment'
+                                ? 'Download Report'
                                 : 'Status Unknown'}
 
                 {downloadReportLoading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : ''}
