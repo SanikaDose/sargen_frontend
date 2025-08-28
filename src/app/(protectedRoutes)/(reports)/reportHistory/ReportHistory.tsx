@@ -5,11 +5,11 @@ import Paper from '@mui/material/Paper';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Box, TextField, useMediaQuery, Typography } from '@mui/material';
+import { Box, TextField, useMediaQuery, Typography, CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { setPageNameHeader } from '@/store/globalSlice';
 import { pagesNames } from '@/constants/pagesHeaderNames';
-import { useGetAllReportsQuery } from './ReportHistoryApi';
+import { useGetAllReportsQuery, useDownloadReportMutation } from './ReportHistoryApi';
 import { getValueLocalStorage } from '@/app/utils/localStorageGetterSetter';
 import { ReportData } from './ReportHistory.types';
 import Loader from '@/components/Loader/Loader';
@@ -18,9 +18,13 @@ const ReportHistory = () => {
   const tenantId = getValueLocalStorage('tenantId') ?? '';
   const [searchText, setSearchText] = React.useState('');
   const [filteredRows, setFilteredRows] = React.useState<ReportData[]>([]);
+  const [downloadingPlantId, setDownloadingPlantId] = React.useState<string | null>(null);
 
   // Fetch reports using the API
   const { data: reportsData, isLoading, error } = useGetAllReportsQuery({ tenantId });
+
+  // Download mutation
+  const [downloadReport, { isLoading: isDownloading }] = useDownloadReportMutation();
 
   const isMobile = useMediaQuery('(max-width: 600px)');
   const isTablet = useMediaQuery('(max-width: 900px)');
@@ -35,24 +39,34 @@ const ReportHistory = () => {
     }
   }, [reportsData]);
 
-  const handleDownload = async (reportPath: string, plantId: string) => {
-    if (reportPath) {
+  const handleDownload = async (plantId: string) => {
+    if (plantId && tenantId) {
+      setDownloadingPlantId(plantId);
+
       try {
-        // Create a temporary anchor element to trigger download
-        const link = document.createElement('a');
-        link.href = reportPath;
-        link.download = `Report_${plantId}_${new Date().toISOString().split('T')[0]}.pdf`;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const result = await downloadReport({
+          tenantId,
+          plantId,
+        }).unwrap();
+
+        // Handle the download
+        if (result && result.blob) {
+          const url = window.URL.createObjectURL(result.blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = result.filename || `Report_${plantId}_${new Date().toISOString().split('T')[0]}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }
       } catch (error) {
         console.error('Download failed:', error);
-        // Fallback to opening in new tab
-        window.open(reportPath, '_blank');
+      } finally {
+        setDownloadingPlantId(null);
       }
     } else {
-      console.log(`No report path available for plant: ${plantId}`);
+      console.error('Missing plantId or tenantId for download');
     }
   };
 
@@ -90,12 +104,12 @@ const ReportHistory = () => {
           renderCell: (params: GridRenderCellParams) => (
             <IconButton
               color="primary"
-              onClick={() => handleDownload(params.row.reportPath, params.row.plantName)}
+              onClick={() => handleDownload(params.row.plantId)}
               aria-label="download"
-              disabled={!params.row.reportPath}
+              disabled={isDownloading || downloadingPlantId === params.row.plantId}
               size="small"
             >
-              <DownloadIcon fontSize="small" />
+              {downloadingPlantId === params.row.plantId ? <CircularProgress size={16} /> : <DownloadIcon fontSize="small" />}
             </IconButton>
           ),
         },
@@ -126,11 +140,11 @@ const ReportHistory = () => {
           renderCell: (params: GridRenderCellParams) => (
             <IconButton
               color="primary"
-              onClick={() => handleDownload(params.row.reportPath, params.row.plantName)}
+              onClick={() => handleDownload(params.row.plantId)}
               aria-label="download"
-              disabled={!params.row.reportPath}
+              disabled={isDownloading || downloadingPlantId === params.row.plantId}
             >
-              <DownloadIcon />
+              {downloadingPlantId === params.row.plantId ? <CircularProgress size={20} /> : <DownloadIcon />}
             </IconButton>
           ),
         },
@@ -181,11 +195,11 @@ const ReportHistory = () => {
           renderCell: (params: GridRenderCellParams) => (
             <IconButton
               color="primary"
-              onClick={() => handleDownload(params.row.reportPath, params.row.plantId)}
+              onClick={() => handleDownload(params.row.plantId)}
               aria-label="download"
-              disabled={!params.row.reportPath}
+              disabled={isDownloading || downloadingPlantId === params.row.plantId}
             >
-              <DownloadIcon />
+              {downloadingPlantId === params.row.plantId ? <CircularProgress size={24} /> : <DownloadIcon />}
             </IconButton>
           ),
         },
