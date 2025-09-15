@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import { Box, Button, Container, Typography, FormControl, FormControlLabel, FormHelperText, Radio, RadioGroup } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
 import { InputWithLabel } from '@/components/InputWithLabels/InputWithLabel';
 import { PasswordTextField } from '@/components/Password/Password';
-import styles from './style.module.css';
+import { Box, Button, Container, FormControl, FormControlLabel, FormHelperText, Radio, RadioGroup, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import Script from 'next/script';
+import { useCallback, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { RegisterFormInputs } from './register.types';
 import { useRegisterUserMutation } from './registerApi';
-import { useRouter } from 'next/navigation';
-import ButtonWithLoader from '@/components/ButtonWithLoader/buttonWithLoader';
+import styles from './style.module.css';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -78,6 +79,17 @@ const RegisterPage = () => {
 
   return (
     <Container maxWidth="sm" className={styles.container}>
+      {/* Google Analytics Scripts */}
+      <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-C09F7G22B4" />
+      <Script id="gtag-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-C09F7G22B4');
+        `}
+      </Script>
+
       <Box className={styles.paper}>
         <section className={styles.textContainer}>
           <Typography className={styles.welcomeBackText} variant="h4" fontWeight="bold">
