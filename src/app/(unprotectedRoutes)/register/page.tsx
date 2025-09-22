@@ -203,6 +203,10 @@ const RegisterPage = () => {
                 required: 'Organisation name is required',
                 minLength: { value: 2, message: 'Organisation name must be at least 2 characters' },
                 maxLength: { value: 100, message: 'Organisation name must be at most 100 characters' },
+                pattern: {
+                  value: /^[^@.$#\-\/+!^*&`,~]+$/,
+                  message: 'Organisation name must not contain special characters (@ . $ # - / + ! ^ * & , ` ~)',
+                },
               }}
               render={({ field, fieldState }) => (
                 <InputWithLabel

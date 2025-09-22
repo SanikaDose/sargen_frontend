@@ -259,7 +259,7 @@ const ClientLayout = ({ children }: Props) => {
             }}
           >
             <Link
-              href="/privacy"
+              href="/privacyAndPolicies"
               style={{
                 textDecoration: 'none',
                 color: '#64748b',
@@ -270,7 +270,7 @@ const ClientLayout = ({ children }: Props) => {
             </Link>
             <Box sx={{ color: '#cbd5e1' }}>|</Box>
             <Link
-              href="/terms"
+              href="/termsToUse"
               style={{
                 textDecoration: 'none',
                 color: '#64748b',
