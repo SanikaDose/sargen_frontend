@@ -11,7 +11,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { RegisterFormInputs } from './register.types';
 import { useRegisterUserMutation } from './registerApi';
 import styles from './style.module.css';
-
 const RegisterPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -79,6 +78,7 @@ const RegisterPage = () => {
 
   return (
     <Container maxWidth="sm" className={styles.container}>
+      {/* <GoogleAnalytics gaId="G-C09F7G22B4" /> */}
       {/* Google Analytics Scripts */}
       <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-C09F7G22B4" />
       <Script id="gtag-init" strategy="afterInteractive">
@@ -87,6 +87,16 @@ const RegisterPage = () => {
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-C09F7G22B4');
+        `}
+      </Script>
+      {/* Microsoft Clarity */}
+      <Script id="clarity" strategy="afterInteractive">
+        {`
+          (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "s1bqjxtcaz");
         `}
       </Script>
 
