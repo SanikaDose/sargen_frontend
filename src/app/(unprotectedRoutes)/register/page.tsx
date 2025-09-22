@@ -6,8 +6,9 @@ import { PasswordTextField } from '@/components/Password/Password';
 import { Box, Button, Container, FormControl, FormControlLabel, FormHelperText, Radio, RadioGroup, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { clarity } from 'react-microsoft-clarity';
 import { RegisterFormInputs } from './register.types';
 import { useRegisterUserMutation } from './registerApi';
 import styles from './style.module.css';
@@ -44,6 +45,7 @@ const RegisterPage = () => {
   //     'Password must be 8–16 characters long, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and no spaces',
   //   [passwordRegex],
   // );
+  useEffect(() => clarity.init('s1bqjxtcaz'), []);
 
   const validatePassword = useCallback((value: string) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[^\s]{8,16}$/;
@@ -90,7 +92,7 @@ const RegisterPage = () => {
         `}
       </Script>
       {/* Microsoft Clarity */}
-      <Script id="clarity" strategy="afterInteractive">
+      {/* <Script id="clarity" strategy="afterInteractive">
         {`
           (function(c,l,a,r,i,t,y){
               c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -98,7 +100,7 @@ const RegisterPage = () => {
               y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
           })(window, document, "clarity", "script", "s1bqjxtcaz");
         `}
-      </Script>
+      </Script> */}
 
       <Box className={styles.paper}>
         <section className={styles.textContainer}>

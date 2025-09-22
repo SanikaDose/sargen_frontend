@@ -39,6 +39,7 @@
     "react-hook-form": "7.57.0",
     "react-i18next": "15.5.2",
     "react-icons": "5.5.0",
+    "react-microsoft-clarity": "^2.0.0",
     "react-pdf": "10.0.1",
     "react-redux": "9.2.0",
     "uuidv7": "1.0.2",
