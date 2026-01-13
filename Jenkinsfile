@@ -5,7 +5,7 @@ pipeline {
     GIT_SSH_COMMAND = "ssh -o StrictHostKeyChecking=no"
     PROJECT_KEY = 'sargen_frontend'
     CONTABO_HOST = '109.199.109.4'
-    DEPLOY_DIR = '/var/www/sargen_frontend'
+    DEPLOY_DIR = '/var/www/S-SGN-02-SW-Frontend-2.0.0'
     REPO_URL = 'git@github.com:elansol/sargen_frontend.git'
   }
 
