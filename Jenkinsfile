@@ -6,10 +6,10 @@ pipeline {
     PROJECT_KEY = 'S-SGN-02-SW-Frontend-2.0.0'
     CONTABO_HOST = '109.199.109.4'
     DEPLOY_DIR = '/var/www/S-SGN-02-SW-Frontend-2.0.0'
-    REPO_URL = 'git@github.com:elansol/sargen_frontend.git'
   }
 
   stages {
+
     stage('Clean Workspace') {
       steps {
         cleanWs()
@@ -49,28 +49,26 @@ pipeline {
               git fetch origin production
               git reset --hard origin/production
 
-              echo "📦 Installing dependencies..."
-              export NVM_DIR="\$HOME/.nvm"
+              echo "🧠 Loading Node environment..."
+              export NVM_DIR="/root/.nvm"
               source "\$NVM_DIR/nvm.sh"
               nvm use 22
+
+              echo "📦 Installing dependencies..."
               rm -rf node_modules .next
               npm install
 
               echo "🏗️ Building Next.js frontend..."
               npm run build
 
-              echo "steps to fix .next standalone issue"
-              mkdir -p .next/standalone/.next
-              cp -r .next/static .next/standalone/.next/
-              cp -r public .next/standalone/
-
-
-              echo "🔄 Restarting PM2 on port 3000..."
+              echo "🔄 Restarting frontend with PM2 on port 3000..."
               pm2 delete ${PROJECT_KEY} || true
-              PORT=3000 pm2 start ecosystem.config.js --name "${PROJECT_KEY}"
+              PORT=3000 pm2 start npm \
+                --name "${PROJECT_KEY}" \
+                -- start
               pm2 save
 
-              echo "🔁 Restarting Nginx..."
+              echo "🔁 Reloading Nginx..."
               nginx -t && systemctl reload nginx
 
               echo "✅ Deployment completed successfully"
