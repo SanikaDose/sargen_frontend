@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import GlobalReduxProvider from '@/providers/GlobalReduxProvider';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
