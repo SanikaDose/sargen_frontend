@@ -12,5 +12,4 @@ export const onboarding = protectedApi.injectEndpoints({
     }),
   }),
 });
-
 export const { useAddOrganizationsInformationMutation } = onboarding;
